@@ -4,7 +4,7 @@
 
 | Inviter | Invitee |
 | --- | --- |
-|![inviter_video_calling](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/invitation/inviter_video_calling.gif)|![inviter_video_calling](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/invitation/invitee_video_accept.gif)|
+|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/inviter_video_calling.gif)|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/invitee_video_accept.gif)|
 
 ## Add ZegoUIKitPrebuiltCall as dependencies
 
@@ -104,7 +104,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-![customize_config](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/invitation/customize_config.gif)
+![customize_config](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/customize_config.gif)
 
 ## Build & Run
 
@@ -114,7 +114,7 @@ Widget build(BuildContext context) {
 
 1. If your project was created with a version of flutter that is not the latest stable, you may need to manually modify compileSdkVersion in `your_project/android/app/build.gradle` to 33
 
-   ![compileSdkVersion](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/compile_sdk_version.png)
+   ![compileSdkVersion](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/compile_sdk_version.png)
 
 2. Need to add app permissions, Open the file `your_project/app/src/main/AndroidManifest.xml`, add the following code:
 
@@ -132,7 +132,7 @@ Widget build(BuildContext context) {
    <uses-permission android:name="android.permission.VIBRATE"/>
    ```
 
-<img src="http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/invitation/permission_android.png" width=800>
+<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/permission_android.png" width=800>
 
 #### iOS
 
@@ -145,12 +145,12 @@ Need add app permissions, open ·your_project/ios/Runner/Info.plist·, add the f
 <string>We require microphone access to connect to a call</string>
 ```
 
-<img src="http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/permission_ios.png" width=800>
+<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png" width=800>
 
 ### 2. Run & Debug
 
 Now you can simply click the **Run** or **Debug** button to build and run your App on your device.
-![/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
+![/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
 
 ## Related guide
 
