@@ -2,10 +2,6 @@
 
 ---
 
-| Inviter | Invitee |
-| --- | --- |
-|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/inviter_video_calling.gif)|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/invitee_video_accept.gif)|
-
 ## Add ZegoUIKitPrebuiltCall as dependencies
 
 1. Edit your project's pubspec.yaml and add local project dependencies
@@ -35,7 +31,7 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 ### 1. Warp your widget with ZegoUIKitPrebuiltCallWithInvitation
 
-> You can get the AppID, AppSign, and AppSecret from [ZEGOCLOUD&#39;s Console](https://console.zegocloud.com).
+> You can get the AppID and AppSign from [ZEGOCLOUD&#39;s Console](https://console.zegocloud.com).
 > Users who use the same callID can talk to each other. (ZegoUIKitPrebuiltCall supports 1 on 1 call for now, and will support group call soon)
 
 ```dart
@@ -43,7 +39,6 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 Widget build(BuildContext context) {
    return ZegoUIKitPrebuiltCallWithInvitation(
       appID: yourAppID,
-      serverSecret: yourServerSecret,
       appSign: kIsWeb ? '' : yourAppSign,
       userID: userID,
       userName: useName,
@@ -80,7 +75,6 @@ Now, you can invite someone to the call by simply clicking this button.
 Widget build(BuildContext context) {
    return ZegoUIKitPrebuiltCallWithInvitation(
       appID: yourAppID,
-      serverSecret: yourServerSecret,
       appSign: kIsWeb ? '' : yourAppSign,
       userID: userID,
       userName: userName,

@@ -34,20 +34,19 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.call),
-        onPressed: () =>
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) {
-                return ZegoUIKitPrebuiltCall(
-                  appID: /*input your AppID*/,
-                  appSign: /*input your AppSign*/,
-                  userID: localUserID,
-                  userName: "user_$localUserID",
-                  callID: callID,
-                  config: ZegoUIKitPrebuiltCallConfig(),
-                );
-              }),
-            ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return ZegoUIKitPrebuiltCall(
+              appID: /*input your AppID*/,
+              appSign: /*input your AppSign*/,
+              userID: localUserID,
+              userName: "user_$localUserID",
+              callID: callID,
+              config: ZegoUIKitPrebuiltCallConfig(),
+            );
+          }),
+        ),
       ),
     );
   }

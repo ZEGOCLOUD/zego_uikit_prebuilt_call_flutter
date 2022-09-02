@@ -14,7 +14,6 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
     Key? key,
     required this.appID,
     required this.appSign,
-    required this.serverSecret,
     required this.userID,
     required this.userName,
     this.tokenServerUrl = '',
@@ -26,9 +25,8 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   final int appID;
 
   /// for Android/iOS
-  /// you need to fill in the appID you obtained from console.zegocloud.com
+  /// you need to fill in the appSign you obtained from console.zegocloud.com
   final String appSign;
-  final String serverSecret;
 
   /// tokenServerUrl is only for web.
   /// If you have to support Web and Android, iOS, then you can use it like this
@@ -89,7 +87,6 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
     ZegoCallInvitationService.instance.init(
       appID: widget.appID,
       appSign: widget.appSign,
-      serverSecret: widget.serverSecret,
       tokenServerUrl: widget.tokenServerUrl,
       userID: widget.userID,
       userName: widget.userName,

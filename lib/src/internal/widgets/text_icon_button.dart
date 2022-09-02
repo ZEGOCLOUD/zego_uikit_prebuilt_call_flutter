@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zego_uikit/src/components/defines.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 /// text button
 /// icon button

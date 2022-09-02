@@ -39,7 +39,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return ZegoUIKitPrebuiltCallWithInvitation(
       appID: /*input your AppID*/,
-      serverSecret: /*input your ServerSecret*/,
       appSign: /*input your AppSign*/,
       userID: localUserID,
       userName: "user_$localUserID",

@@ -2,11 +2,6 @@
 
 - - -
 
-
-| Caller | Callee |
-| --- | --- |
-|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/caller.gif)|![inviter_video_calling](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/callee.gif)|
-
 ## Integrate the SDK
 
 ### Add ZegoUIKitPrebuiltCall as dependencies

@@ -22,7 +22,6 @@ class ZegoCallInvitationService {
 
   late int appID;
   late String appSign;
-  late String serverSecret;
   late String userID;
   late String userName;
   late String tokenServerUrl;
@@ -36,7 +35,6 @@ class ZegoCallInvitationService {
   Future<void> init({
     required int appID,
     String appSign = '',
-    String serverSecret = '',
     String tokenServerUrl = '',
     required String userID,
     required String userName,
@@ -45,7 +43,6 @@ class ZegoCallInvitationService {
   }) async {
     this.appID = appID;
     this.appSign = appSign;
-    this.serverSecret = serverSecret;
     this.userID = userID;
     this.userName = userName;
     this.configQuery = configQuery;
@@ -54,13 +51,13 @@ class ZegoCallInvitationService {
 
     await ZegoUIKit()
         .init(appID: appID, appSign: appSign, tokenServerUrl: tokenServerUrl);
-    await ZegoUIKit().loadZIM(appID: appID, serverSecret: serverSecret);
+    await ZegoUIKit().loadZIM(appID: appID, appSign: appSign);
     await ZegoUIKit().login(userID, userName);
 
     ZegoInvitationPageService.instance.init();
 
     debugPrint(
-        'zim init, appID:$appID, appSign:$appSign, serverSecret:$serverSecret, tokenServerUrl:$tokenServerUrl, userID:$userID, userName:$userName');
+        'zim init, appID:$appID, appSign:$appSign, tokenServerUrl:$tokenServerUrl, userID:$userID, userName:$userName');
   }
 
   Future<void> uninit() async {
