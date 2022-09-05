@@ -3,7 +3,7 @@ enum ZegoMenuBarButtonName {
   toggleMicrophoneButton,
   toggleCameraButton,
   switchAudioOutputButton,
-  switchCameraFacingButton,
+  switchCameraButton,
   hangUpButton,
 }
 

@@ -84,9 +84,9 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
                 inviterID: widget.invitationData.inviter?.id ?? "",
                 icon: ButtonIcon(
                   icon: Image(
-                    image:
-                    PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteReject)
-                            .image,
+                    image: PrebuiltCallImage.asset(
+                            InvitationStyleIconUrls.inviteReject)
+                        .image,
                     fit: BoxFit.fill,
                   ),
                 ),

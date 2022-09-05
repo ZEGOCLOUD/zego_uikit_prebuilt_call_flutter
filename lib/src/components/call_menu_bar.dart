@@ -94,19 +94,17 @@ class _ZegoUIKitPrebuiltCallMenuBarState
   List<Widget> getDisplayButtons(BuildContext context) {
     List<Widget> buttonList = [
       ...getDefaultButtons(context),
-      ...widget.config.bottomMenuBarConfig.menuBarExtendButtons
+      ...widget.config.bottomMenuBarConfig.extendButtons
     ];
 
     List<Widget> displayButtonList = [];
-    if (buttonList.length >
-        widget.config.bottomMenuBarConfig.menuBarButtonsMaxCount) {
+    if (buttonList.length > widget.config.bottomMenuBarConfig.maxCount) {
       /// the list count exceeds the limit, so divided into two parts,
       /// one part display in the Menu bar, the other part display in the menu with more buttons
-      displayButtonList = buttonList.sublist(
-          0, widget.config.bottomMenuBarConfig.menuBarButtonsMaxCount - 1);
+      displayButtonList =
+          buttonList.sublist(0, widget.config.bottomMenuBarConfig.maxCount - 1);
 
-      buttonList.removeRange(
-          0, widget.config.bottomMenuBarConfig.menuBarButtonsMaxCount - 1);
+      buttonList.removeRange(0, widget.config.bottomMenuBarConfig.maxCount - 1);
       displayButtonList.add(
         buttonWrapper(
           child: ZegoMoreButton(menuButtonList: buttonList),
@@ -133,7 +131,7 @@ class _ZegoUIKitPrebuiltCallMenuBarState
   }
 
   void countdownToHideBar() {
-    if (!widget.config.bottomMenuBarConfig.hideMenuBarAutomatically) {
+    if (!widget.config.bottomMenuBarConfig.hideAutomatically) {
       return;
     }
 
@@ -156,11 +154,11 @@ class _ZegoUIKitPrebuiltCallMenuBarState
   }
 
   List<Widget> getDefaultButtons(BuildContext context) {
-    if (widget.config.bottomMenuBarConfig.menuBarButtons.isEmpty) {
+    if (widget.config.bottomMenuBarConfig.buttons.isEmpty) {
       return [];
     }
 
-    return widget.config.bottomMenuBarConfig.menuBarButtons
+    return widget.config.bottomMenuBarConfig.buttons
         .map((type) => buttonWrapper(
               child: generateDefaultButtonsByEnum(context, type),
             ))
@@ -182,12 +180,12 @@ class _ZegoUIKitPrebuiltCallMenuBarState
         return ZegoToggleCameraButton(
           defaultOn: widget.config.turnOnCameraWhenJoining,
         );
-      case ZegoMenuBarButtonName.switchCameraFacingButton:
-        return const ZegoSwitchCameraFacingButton();
+      case ZegoMenuBarButtonName.switchCameraButton:
+        return const ZegoSwitchCameraButton();
       case ZegoMenuBarButtonName.hangUpButton:
         return ZegoLeaveButton(
           onLeaveConfirmation: (context) async {
-            return await widget.config.onHangUpConfirming!(context);
+            return await widget.config.onHangUpConfirmation!(context);
           },
           onPress: () {
             if (widget.config.onHangUp != null) {

@@ -109,7 +109,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   @override
   Widget build(BuildContext context) {
-    widget.config.onHangUpConfirming ??= onQuitConfirming;
+    widget.config.onHangUpConfirmation ??= onQuitConfirming;
     return ScreenUtilInit(
       designSize: const Size(750, 1334),
       minTextAdapt: true,
@@ -118,7 +118,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         return Scaffold(
           body: WillPopScope(
             onWillPop: () async {
-              return await widget.config.onHangUpConfirming!(context) ?? false;
+              return await widget.config.onHangUpConfirmation!(context) ??
+                  false;
             },
             child: clickListener(
               child: Stack(
@@ -175,8 +176,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   void correctConfigValue() {
-    if (widget.config.bottomMenuBarConfig.menuBarButtonsMaxCount > 5) {
-      widget.config.bottomMenuBarConfig.menuBarButtonsMaxCount = 5;
+    if (widget.config.bottomMenuBarConfig.maxCount > 5) {
+      widget.config.bottomMenuBarConfig.maxCount = 5;
       debugPrint('menu bar buttons limited count\'s value  is exceeding the '
           'maximum limit');
     }
@@ -198,7 +199,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return GestureDetector(
       onTap: () {
         /// listen only click event in empty space
-        if (widget.config.bottomMenuBarConfig.hideMenuBarByClick) {
+        if (widget.config.bottomMenuBarConfig.hideByClick) {
           setState(() {
             barVisibilityNotifier.value = !barVisibilityNotifier.value;
           });

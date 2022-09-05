@@ -27,9 +27,9 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
           invitee: [callee.id],
           icon: ButtonIcon(
             icon: Image(
-              image:
-              PrebuiltCallImage.asset(InvitationStyleIconUrls.toolbarBottomCancel)
-                      .image,
+              image: PrebuiltCallImage.asset(
+                      InvitationStyleIconUrls.toolbarBottomCancel)
+                  .image,
               fit: BoxFit.fill,
             ),
           ),

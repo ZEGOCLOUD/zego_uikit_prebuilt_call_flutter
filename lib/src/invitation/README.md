@@ -84,7 +84,7 @@ Widget build(BuildContext context) {
         config.turnOnCameraWhenJoining =
             ZegoInvitationType.videoCall == data.type;
         if (ZegoInvitationType.videoCall == data.type) {
-          config.menuBarExtendButtons = [
+          config.bottomMenuBarConfig.extendButtons = [
             IconButton(color: Colors.white, icon: const Icon(Icons.phone), onPressed:() {}),
             IconButton(color: Colors.white, icon: const Icon(Icons.cookie), onPressed:() {}),
             IconButton(color: Colors.white, icon: const Icon(Icons.speaker), onPressed:() {}),

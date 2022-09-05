@@ -11,3 +11,7 @@
 * Update some bugs
 * remove **serverSecret** in init function
 * Update a dependency to the latest release..
+
+## 0.0.4
+
+* Update some bugs

@@ -149,10 +149,10 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
     if (ZegoInvitationType.videoCall != pageService.invitationData.type) {
       var list = List<ZegoMenuBarButtonName>.from(
-          callConfig?.bottomMenuBarConfig.menuBarButtons ?? []);
+          callConfig?.bottomMenuBarConfig.buttons ?? []);
       list.remove(ZegoMenuBarButtonName.toggleCameraButton);
-      list.remove(ZegoMenuBarButtonName.switchCameraFacingButton);
-      callConfig?.bottomMenuBarConfig.menuBarButtons = list;
+      list.remove(ZegoMenuBarButtonName.switchCameraButton);
+      callConfig?.bottomMenuBarConfig.buttons = list;
     }
 
     return ZegoUIKitPrebuiltCall(

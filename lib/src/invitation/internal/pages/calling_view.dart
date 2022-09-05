@@ -135,7 +135,8 @@ Widget backgroundImage() {
     height: double.infinity,
     decoration: BoxDecoration(
       image: DecorationImage(
-        image: PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteBackground).image,
+        image: PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteBackground)
+            .image,
         fit: BoxFit.fitHeight,
       ),
     ),

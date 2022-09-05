@@ -17,7 +17,7 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoMemberListConfig? memberListConfig,
     this.layout,
     this.hangUpConfirmDialogInfo,
-    this.onHangUpConfirming,
+    this.onHangUpConfirmation,
     this.onHangUp,
   })  : audioVideoViewConfig =
             audioVideoViewConfig ?? ZegoAudioVideoViewConfig(),
@@ -40,13 +40,13 @@ class ZegoUIKitPrebuiltCallConfig {
   /// configs about audio video view
   ZegoAudioVideoViewConfig audioVideoViewConfig;
 
-  Widget? appBar;
-
   /// configs about bottom menu bar
   ZegoBottomMenuBarConfig bottomMenuBarConfig;
 
   /// configs about bottom member list
   ZegoMemberListConfig memberListConfig;
+
+  Widget? appBar;
 
   /// layout config
   ZegoLayout? layout;
@@ -59,7 +59,7 @@ class ZegoUIKitPrebuiltCallConfig {
   /// The callback will triggered when user click hang up button or use system's return,
   /// If you need to handle custom logic, you can set this callback to handle (such as showAlertDialog to let user determine).
   /// if you return true in the callback, prebuilt page will quit and return to your previous page, otherwise will ignore.
-  Future<bool?> Function(BuildContext context)? onHangUpConfirming;
+  Future<bool?> Function(BuildContext context)? onHangUpConfirmation;
 
   /// customize handling after hang up
   VoidCallback? onHangUp;
@@ -140,39 +140,39 @@ class ZegoAudioVideoViewConfig {
 
 class ZegoBottomMenuBarConfig {
   /// if true, menu bars will collapse after stand still for 5 seconds
-  bool hideMenuBarAutomatically;
+  bool hideAutomatically;
 
   /// if true, menu bars will collapse when clicks on blank spaces
-  bool hideMenuBarByClick;
+  bool hideByClick;
 
   /// these buttons will displayed on the menu bar, order by the list
-  List<ZegoMenuBarButtonName> menuBarButtons;
+  List<ZegoMenuBarButtonName> buttons;
 
   /// limited item count display on menu bar,
   /// if this count is exceeded, More button is displayed
-  int menuBarButtonsMaxCount;
+  int maxCount;
 
   /// style
   ZegoMenuBarStyle style;
 
   /// these buttons will sequentially added to menu bar,
   /// and auto added extra buttons to the pop-up menu
-  /// when the limit [menuBarButtonsMaxCount] is exceeded
-  List<Widget> menuBarExtendButtons;
+  /// when the limit [maxCount] is exceeded
+  List<Widget> extendButtons;
 
   ZegoBottomMenuBarConfig({
-    this.hideMenuBarAutomatically = true,
-    this.hideMenuBarByClick = true,
-    this.menuBarButtons = const [
+    this.hideAutomatically = true,
+    this.hideByClick = true,
+    this.buttons = const [
       ZegoMenuBarButtonName.toggleCameraButton,
       ZegoMenuBarButtonName.toggleMicrophoneButton,
       ZegoMenuBarButtonName.hangUpButton,
       ZegoMenuBarButtonName.switchAudioOutputButton,
-      ZegoMenuBarButtonName.switchCameraFacingButton,
+      ZegoMenuBarButtonName.switchCameraButton,
     ],
-    this.menuBarButtonsMaxCount = 5,
+    this.maxCount = 5,
     this.style = ZegoMenuBarStyle.light,
-    this.menuBarExtendButtons = const [],
+    this.extendButtons = const [],
   });
 }
 
