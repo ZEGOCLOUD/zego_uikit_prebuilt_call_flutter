@@ -15,3 +15,8 @@
 ## 0.0.4
 
 * Update some bugs
+
+## 0.0.5
+
+* Update some bugs
+* Update ZegoUIKitPrebuiltCallConfig
