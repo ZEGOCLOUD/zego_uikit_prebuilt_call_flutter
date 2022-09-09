@@ -61,34 +61,6 @@ flutter:
 
   
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/boy.png
-    - assets/images/girl.png
-    - assets/images/boy_avatar.png
-    - assets/images/girl_avatar.png
-    - assets/images/girl_horizontal.png
-    - assets/images/boy_horizontal.png
-
-    - assets/icons/member_normal.png
-    - assets/icons/camera_overturn.png
-    - assets/icons/voice_call_normal.png
-    - assets/icons/video_call_normal.png
-    - assets/icons/voice_call_disable.png
-    - assets/icons/video_call_disable.png
-
-    - assets/icons/2.0x/member_normal.png
-    - assets/icons/2.0x/camera_overturn.png
-    - assets/icons/2.0x/voice_call_normal.png
-    - assets/icons/2.0x/video_call_normal.png
-    - assets/icons/2.0x/voice_call_disable.png
-    - assets/icons/2.0x/video_call_disable.png
-
-    - assets/icons/3.0x/member_normal.png
-    - assets/icons/3.0x/camera_overturn.png
-    - assets/icons/3.0x/voice_call_normal.png
-    - assets/icons/3.0x/video_call_normal.png
-    - assets/icons/3.0x/voice_call_disable.png
-    - assets/icons/3.0x/video_call_disable.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

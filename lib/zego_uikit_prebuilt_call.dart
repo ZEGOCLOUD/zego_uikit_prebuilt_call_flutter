@@ -1,5 +1,4 @@
-export 'src/call_config.dart';
-export 'src/call.dart';
-export 'src/invitation/invitation.dart';
-export 'src/call_defines.dart';
+export 'src/prebuilt_call_config.dart';
+export 'src/prebuilt_call.dart';
+export 'src/prebuilt_call_defines.dart';
 export 'package:zego_uikit/zego_uikit.dart';

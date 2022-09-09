@@ -20,3 +20,11 @@
 
 * Update some bugs
 * Update ZegoUIKitPrebuiltCallConfig
+
+## 1.0.0
+
+* Congratulations!
+
+## 1.0.1
+
+* Update some bugs

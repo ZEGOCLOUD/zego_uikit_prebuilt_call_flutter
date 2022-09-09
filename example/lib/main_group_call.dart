@@ -47,9 +47,13 @@ class HomePage extends StatelessWidget {
                   userName: "user_$localUserID",
                   callID: callID,
                   config: ZegoUIKitPrebuiltCallConfig(
+                    layout: ZegoLayout.sideBySide(),
                     turnOnCameraWhenJoining: isVideoCall,
-                    bottomMenuBarConfig:
-                    ZegoBottomMenuBarConfig(
+                    topMenuBarConfig: ZegoTopMenuBarConfig(
+                      style: ZegoMenuBarStyle.dark,
+                    ),
+                    bottomMenuBarConfig: ZegoBottomMenuBarConfig(
+                      style: ZegoMenuBarStyle.dark,
                       buttons: isVideoCall ? const [
                         ZegoMenuBarButtonName.toggleCameraButton,
                         ZegoMenuBarButtonName.toggleMicrophoneButton,

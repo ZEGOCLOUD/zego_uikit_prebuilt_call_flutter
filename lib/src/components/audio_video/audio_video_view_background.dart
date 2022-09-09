@@ -1,6 +1,3 @@
-// Dart imports:
-import 'dart:math' as math;
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -34,25 +31,20 @@ class ZegoAudioVideoBackground extends StatelessWidget {
     }
 
     var screenSize = MediaQuery.of(context).size;
-    var isSmallView = (screenSize.width - size.width).abs() > 1;
+    var isSmallView = size.height < screenSize.height / 2;
 
-    var centralAvatar = avatarBuilder?.call(
-            context,
-            Size(
-              isSmallView ? 110.w : 258.w,
-              isSmallView ? 110.w : 258.w,
-            ),
-            user,
-            {}) ??
-        circleName(context, size, user);
+    var avatarSize =
+        Size(isSmallView ? 110.r : 258.r, isSmallView ? 110.r : 258.r);
+    var centralAvatar = avatarBuilder?.call(context, avatarSize, user, {}) ??
+        circleName(context, size, user, isSmallView ? 46.0.r : 68.0.r);
 
     return Center(
       child: SizedBox(
-        width: isSmallView ? 110.w : 258.w,
-        height: isSmallView ? 110.w : 258.w,
+        width: avatarSize.width,
+        height: avatarSize.height,
         child: showSoundLevel
             ? ZegoRippleAvatar(
-                minRadius: math.min(size.width, size.height) / 6,
+                minRadius: avatarSize.width / 2.0,
                 radiusIncrement: isSmallView ? 0.12 : 0.06,
                 soundLevelStream:
                     ZegoUIKit().getSoundLevelStream(user?.id ?? ""),
@@ -63,10 +55,8 @@ class ZegoAudioVideoBackground extends StatelessWidget {
     );
   }
 
-  Widget circleName(BuildContext context, Size size, ZegoUIKitUser? user) {
-    var screenSize = MediaQuery.of(context).size;
-    var isSmallView = (screenSize.width - size.width).abs() > 1;
-
+  Widget circleName(
+      BuildContext context, Size size, ZegoUIKitUser? user, double fontSize) {
     var userName = user?.name ?? "";
     return Container(
       decoration:
@@ -75,7 +65,7 @@ class ZegoAudioVideoBackground extends StatelessWidget {
         child: Text(
           userName.isNotEmpty ? userName.characters.first : "",
           style: TextStyle(
-            fontSize: isSmallView ? 46.0.w : 68.0.w,
+            fontSize: fontSize,
             color: const Color(0xff222222),
             decoration: TextDecoration.none,
           ),

@@ -1,6 +1,6 @@
 name: zego_uikit_prebuilt_call
 description: PrebuiltCall is a full-featured call kit that provides a ready-made call invitation, voice/video chat, device detection, etc. Add a voice/video call to your app in minutes.
-version: 0.0.5
+version: 1.0.1
 homepage: https://www.zegocloud.com/
 repository: https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter
 
@@ -11,73 +11,38 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # import_sorter: ^4.6.0  # run 'flutter pub run import_sorter:main'
   http: ^0.13.4
   flutter_screenutil: ^5.5.3+2
-  statemachine: ^3.2.0
-  flutter_vibrate: ^1.3.0
-  audioplayers: ^1.0.1
-  zego_uikit: ^0.0.5
+  zego_uikit: ^1.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  import_sorter: ^4.6.0  # run 'flutter pub run import_sorter:main'
 
 flutter:
   assets:
-    - assets/audio/CallRing.wav
-
-    - assets/icons/s1_ctrl_bar_more_checked.png
-    - assets/icons/s1_ctrl_bar_more_normal.png
-    - assets/icons/invite_voice.png
-    - assets/icons/invite_video.png
-    - assets/icons/invite_reject.png
-    - assets/icons/invite_background.png
-    - assets/icons/toolbar_bottom_video.png
-    - assets/icons/toolbar_bottom_voice.png
-    - assets/icons/toolbar_bottom_decline.png
-    - assets/icons/toolbar_bottom_cancel.png
-    - assets/icons/toolbar_bottom_cancel.png
-    - assets/icons/toolbar_top_switch_camera.png
     - assets/icons/member_camera_normal.png
     - assets/icons/member_camera_off.png
     - assets/icons/member_mic_normal.png
     - assets/icons/member_mic_off.png
     - assets/icons/member_mic_speaking.png
+    - assets/icons/top_member_normal.png
+    - assets/icons/top_camera_overturn.png
 
-    - assets/icons/2.0x/s1_ctrl_bar_more_checked.png
-    - assets/icons/2.0x/s1_ctrl_bar_more_normal.png
-    - assets/icons/2.0x/invite_voice.png
-    - assets/icons/2.0x/invite_video.png
-    - assets/icons/2.0x/invite_reject.png
-    - assets/icons/2.0x/invite_background.png
-    - assets/icons/2.0x/toolbar_bottom_video.png
-    - assets/icons/2.0x/toolbar_bottom_voice.png
-    - assets/icons/2.0x/toolbar_bottom_decline.png
-    - assets/icons/2.0x/toolbar_bottom_cancel.png
-    - assets/icons/2.0x/toolbar_bottom_cancel.png
-    - assets/icons/2.0x/toolbar_top_switch_camera.png
     - assets/icons/2.0x/member_camera_normal.png
     - assets/icons/2.0x/member_camera_off.png
     - assets/icons/2.0x/member_mic_normal.png
     - assets/icons/2.0x/member_mic_off.png
     - assets/icons/2.0x/member_mic_speaking.png
+    - assets/icons/2.0x/top_member_normal.png
+    - assets/icons/2.0x/top_camera_overturn.png
 
-    - assets/icons/3.0x/s1_ctrl_bar_more_checked.png
-    - assets/icons/3.0x/s1_ctrl_bar_more_normal.png
-    - assets/icons/3.0x/invite_voice.png
-    - assets/icons/3.0x/invite_video.png
-    - assets/icons/3.0x/invite_reject.png
-    - assets/icons/3.0x/invite_background.png
-    - assets/icons/3.0x/toolbar_bottom_video.png
-    - assets/icons/3.0x/toolbar_bottom_voice.png
-    - assets/icons/3.0x/toolbar_bottom_decline.png
-    - assets/icons/3.0x/toolbar_bottom_cancel.png
-    - assets/icons/3.0x/toolbar_bottom_cancel.png
-    - assets/icons/3.0x/toolbar_top_switch_camera.png
     - assets/icons/3.0x/member_camera_normal.png
     - assets/icons/3.0x/member_camera_off.png
     - assets/icons/3.0x/member_mic_normal.png
     - assets/icons/3.0x/member_mic_off.png
     - assets/icons/3.0x/member_mic_speaking.png
+    - assets/icons/3.0x/top_member_normal.png
+    - assets/icons/3.0x/top_camera_overturn.png
