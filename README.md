@@ -52,7 +52,11 @@ class CallPage extends StatelessWidget {
         userID: userID,
         userName: userName,
         callID: callID,
-        config: ZegoUIKitPrebuiltCallConfig(),
+        config: ZegoUIKitPrebuiltCallConfig(
+           onOnlySelfInRoom: () {
+              Navigator.of(context).pop();
+           },
+        ),
     );
   }
 }

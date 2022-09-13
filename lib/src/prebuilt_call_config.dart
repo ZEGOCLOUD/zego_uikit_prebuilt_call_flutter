@@ -171,10 +171,7 @@ class ZegoTopMenuBarConfig {
   ZegoTopMenuBarConfig({
     this.hideAutomatically = true,
     this.hideByClick = true,
-    this.buttons = const [
-      ZegoMenuBarButtonName.showMemberListButton,
-      ZegoMenuBarButtonName.switchCameraButton,
-    ],
+    this.buttons = const [],
     this.style = ZegoMenuBarStyle.light,
     this.extendButtons = const [],
   });

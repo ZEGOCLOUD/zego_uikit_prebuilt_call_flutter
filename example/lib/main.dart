@@ -47,6 +47,9 @@ class HomePage extends StatelessWidget {
                   userName: "user_$localUserID",
                   callID: callID,
                   config: ZegoUIKitPrebuiltCallConfig(
+                    onOnlySelfInRoom: () {
+                      Navigator.of(context).pop();
+                    },
                     turnOnCameraWhenJoining: isVideoCall,
                     bottomMenuBarConfig:
                     ZegoBottomMenuBarConfig(

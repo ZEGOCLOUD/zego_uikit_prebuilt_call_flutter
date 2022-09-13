@@ -175,13 +175,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void onUserLeave(List<ZegoUIKitUser> users) {
     if (ZegoUIKit().getRemoteUsers().isEmpty) {
       //  remote users is empty
-      if (widget.config.onOnlySelfInRoom != null) {
-        widget.config.onOnlySelfInRoom!.call();
-      } else {
-        /// default behaviour if onOnlySelfInRoom is null, back to previous page
-        //  return to client page if user is empty
-        Navigator.of(context).pop();
-      }
+      widget.config.onOnlySelfInRoom?.call();
     }
   }
 
@@ -339,12 +333,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
     var screenSize = MediaQuery.of(context).size;
     var isSmallView = (screenSize.width - size.width).abs() > 1;
+
+    var backgroundColor =
+        isSmallView ? const Color(0xff333437) : const Color(0xff4A4B4D);
+    if (widget.config.layout is ZegoLayoutSideBySideConfig) {
+      backgroundColor = const Color(0xff4A4B4D);
+    }
+
     return Stack(
       children: [
-        Container(
-            color: isSmallView
-                ? const Color(0xff333437)
-                : const Color(0xff4A4B4D)),
+        Container(color: backgroundColor),
         widget.config.audioVideoViewConfig.backgroundBuilder
                 ?.call(context, size, user, extraInfo) ??
             Container(color: Colors.transparent),

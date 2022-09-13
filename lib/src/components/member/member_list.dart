@@ -77,7 +77,7 @@ class _ZegoCallMemberListState extends State<ZegoCallMemberList> {
 
 void showMemberList(BuildContext context) {
   showModalBottomSheet(
-    backgroundColor: const Color(0xff222222).withOpacity(0.8),
+    backgroundColor: const Color(0xff242736).withOpacity(0.95),
     context: context,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -86,14 +86,18 @@ void showMemberList(BuildContext context) {
       ),
     ),
     isDismissible: true,
+    isScrollControlled: true,
     builder: (BuildContext context) {
-      return AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets,
-        duration: const Duration(milliseconds: 50),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          height: 1142.h,
-          child: const ZegoCallMemberList(),
+      return FractionallySizedBox(
+        heightFactor: 0.7,
+        child: AnimatedPadding(
+          padding: MediaQuery.of(context).viewInsets,
+          duration: const Duration(milliseconds: 50),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            height: 1142.h,
+            child: const ZegoCallMemberList(),
+          ),
         ),
       );
     },
