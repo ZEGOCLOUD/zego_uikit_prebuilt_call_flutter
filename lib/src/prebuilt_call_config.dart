@@ -8,6 +8,64 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
 
 class ZegoUIKitPrebuiltCallConfig {
+  ZegoUIKitPrebuiltCallConfig.oneOnOne({
+    bool isVideo = true,
+    this.onOnlySelfInRoom,
+  })  : layout = ZegoLayout.pictureInPicture(
+          showSelfInLargeView: false,
+        ),
+        turnOnCameraWhenJoining = isVideo,
+        turnOnMicrophoneWhenJoining = true,
+        useSpeakerWhenJoining = true,
+        bottomMenuBarConfig = ZegoBottomMenuBarConfig(
+          buttons: isVideo
+              ? const [
+                  ZegoMenuBarButtonName.toggleCameraButton,
+                  ZegoMenuBarButtonName.toggleMicrophoneButton,
+                  ZegoMenuBarButtonName.hangUpButton,
+                  ZegoMenuBarButtonName.switchAudioOutputButton,
+                  ZegoMenuBarButtonName.switchCameraButton,
+                ]
+              : const [
+                  ZegoMenuBarButtonName.toggleMicrophoneButton,
+                  ZegoMenuBarButtonName.hangUpButton,
+                  ZegoMenuBarButtonName.switchAudioOutputButton,
+                ],
+        ),
+        audioVideoViewConfig = ZegoAudioVideoViewConfig(),
+        memberListConfig = ZegoMemberListConfig(),
+        topMenuBarConfig = ZegoTopMenuBarConfig();
+
+  ZegoUIKitPrebuiltCallConfig.group({bool isVideo = true})
+      : layout = ZegoLayout.sideBySide(),
+        turnOnCameraWhenJoining = isVideo,
+        turnOnMicrophoneWhenJoining = true,
+        useSpeakerWhenJoining = true,
+        topMenuBarConfig = ZegoTopMenuBarConfig(
+          style: ZegoMenuBarStyle.dark,
+          buttons: [
+            ZegoMenuBarButtonName.showMemberListButton,
+          ],
+        ),
+        bottomMenuBarConfig = ZegoBottomMenuBarConfig(
+          style: ZegoMenuBarStyle.dark,
+          buttons: isVideo
+              ? const [
+                  ZegoMenuBarButtonName.toggleCameraButton,
+                  ZegoMenuBarButtonName.toggleMicrophoneButton,
+                  ZegoMenuBarButtonName.hangUpButton,
+                  ZegoMenuBarButtonName.switchAudioOutputButton,
+                  ZegoMenuBarButtonName.switchCameraButton,
+                ]
+              : const [
+                  ZegoMenuBarButtonName.toggleMicrophoneButton,
+                  ZegoMenuBarButtonName.hangUpButton,
+                  ZegoMenuBarButtonName.switchAudioOutputButton,
+                ],
+        ),
+        audioVideoViewConfig = ZegoAudioVideoViewConfig(),
+        memberListConfig = ZegoMemberListConfig();
+
   ZegoUIKitPrebuiltCallConfig({
     this.turnOnCameraWhenJoining = true,
     this.turnOnMicrophoneWhenJoining = true,
@@ -158,7 +216,7 @@ class ZegoTopMenuBarConfig {
 
   /// limited item count display on menu bar,
   /// if this count is exceeded, More button is displayed
-  final int maxCount = 4;
+  final int maxCount = 3;
 
   /// style
   ZegoMenuBarStyle style;

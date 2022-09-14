@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/internal/icon_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/icon_defines.dart';
 
 class ZegoCallMemberList extends StatefulWidget {
   const ZegoCallMemberList({
@@ -35,7 +35,41 @@ class _ZegoCallMemberListState extends State<ZegoCallMemberList> {
 
   @override
   Widget build(BuildContext context) {
-    return ZegoMemberList(itemBuilder: itemBuilder);
+    return Column(
+      children: [
+        header(98.h),
+        ZegoMemberList(itemBuilder: itemBuilder),
+      ],
+    );
+  }
+
+  Widget header(double height) {
+    return SizedBox(
+      height: height,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: SizedBox(
+              width: 70.r,
+              height: 70.r,
+              child: PrebuiltCallImage.asset(PrebuiltCallIconUrls.back),
+            ),
+          ),
+          SizedBox(width: 10.r),
+          Text(
+            "Member",
+            style: TextStyle(
+              fontSize: 36.0.r,
+              color: const Color(0xffffffff),
+              decoration: TextDecoration.none,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget itemBuilder(
@@ -75,7 +109,7 @@ class _ZegoCallMemberListState extends State<ZegoCallMemberList> {
   }
 }
 
-void showMemberList(BuildContext context) {
+void showMemberListSheet(BuildContext context) {
   showModalBottomSheet(
     backgroundColor: const Color(0xff242736).withOpacity(0.95),
     context: context,

@@ -11,7 +11,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
-import 'internal/icon_defines.dart';
+import 'icon_defines.dart';
 import 'member/member_list_button.dart';
 
 class ZegoTopMenuBar extends StatefulWidget {
@@ -83,7 +83,12 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
               hasScrollBody: false,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: getDisplayButtons(context),
+                children: [
+                  ...getDisplayButtons(context),
+                  SizedBox(
+                    width: 27.r,
+                  )
+                ],
               ),
             ),
           ],
@@ -96,6 +101,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
     var buttons = [
       ...getDefaultButtons(context),
       ...widget.config.topMenuBarConfig.extendButtons
+          .map((extendButton) => buttonWrapper(child: extendButton))
     ];
 
     if (buttons.length > widget.config.topMenuBarConfig.maxCount) {

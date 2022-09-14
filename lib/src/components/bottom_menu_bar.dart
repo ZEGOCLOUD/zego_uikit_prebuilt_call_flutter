@@ -94,6 +94,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     List<Widget> buttonList = [
       ...getDefaultButtons(context),
       ...widget.config.bottomMenuBarConfig.extendButtons
+          .map((extendButton) => buttonWrapper(child: extendButton))
     ];
 
     List<Widget> displayButtonList = [];

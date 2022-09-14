@@ -1,6 +1,6 @@
 name: zego_uikit_prebuilt_call
 description: PrebuiltCall is a full-featured call kit that provides a ready-made call invitation, voice/video chat, device detection, etc. Add a voice/video call to your app in minutes.
-version: 1.0.3
+version: 1.1.0
 homepage: https://www.zegocloud.com/
 repository: https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   http: ^0.13.4
   flutter_screenutil: ^5.5.3+2
-  zego_uikit: ^1.1.1
+  zego_uikit: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +23,7 @@ dev_dependencies:
 
 flutter:
   assets:
+    - assets/icons/back.png
     - assets/icons/member_camera_normal.png
     - assets/icons/member_camera_off.png
     - assets/icons/member_mic_normal.png
@@ -31,6 +32,7 @@ flutter:
     - assets/icons/top_member_normal.png
     - assets/icons/top_camera_overturn.png
 
+    - assets/icons/2.0x/back.png
     - assets/icons/2.0x/member_camera_normal.png
     - assets/icons/2.0x/member_camera_off.png
     - assets/icons/2.0x/member_mic_normal.png
@@ -39,6 +41,7 @@ flutter:
     - assets/icons/2.0x/top_member_normal.png
     - assets/icons/2.0x/top_camera_overturn.png
 
+    - assets/icons/3.0x/back.png
     - assets/icons/3.0x/member_camera_normal.png
     - assets/icons/3.0x/member_camera_off.png
     - assets/icons/3.0x/member_mic_normal.png
