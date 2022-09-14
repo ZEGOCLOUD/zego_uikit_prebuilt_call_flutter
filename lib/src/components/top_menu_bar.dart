@@ -76,24 +76,35 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
             topRight: Radius.circular(widget.borderRadius ?? 0),
           ),
         ),
-        child: CustomScrollView(
-          scrollDirection: Axis.horizontal,
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ...getDisplayButtons(context),
-                  SizedBox(
-                    width: 27.r,
-                  )
-                ],
-              ),
-            ),
+        child: Row(
+          children: [
+            SizedBox(width: 4.r),
+            title(),
+            Expanded(child: Container()),
+            rightBar(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget title() {
+    return Text(
+      widget.config.topMenuBarConfig.title,
+      style: TextStyle(
+          color: Colors.white, fontSize: 36.r, fontWeight: FontWeight.w500),
+    );
+  }
+
+  Widget rightBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ...getDisplayButtons(context),
+        SizedBox(
+          width: 27.r,
+        )
+      ],
     );
   }
 

@@ -74,6 +74,11 @@ class _ZegoCallMemberListState extends State<ZegoCallMemberList> {
 
   Widget itemBuilder(
       BuildContext context, Size size, ZegoUIKitUser user, Map extraInfo) {
+    var userName = ZegoUIKit().getLocalUser().id == user.id
+        ? "${user.name} "
+            "(You)"
+        : user.name;
+
     return Container(
       margin: EdgeInsets.only(bottom: 36.r),
       child: Row(
@@ -81,7 +86,7 @@ class _ZegoCallMemberListState extends State<ZegoCallMemberList> {
           SizedBox(width: 36.r),
           memberListNameIcon(user.name),
           SizedBox(width: 20.r),
-          memberListItemUserName(user.name),
+          memberListItemUserName(userName),
           const Expanded(child: SizedBox()),
           widget.showCameraState
               ? ZegoCameraStateIcon(

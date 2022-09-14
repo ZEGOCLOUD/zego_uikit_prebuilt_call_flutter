@@ -205,6 +205,9 @@ class ZegoAudioVideoViewConfig {
 }
 
 class ZegoTopMenuBarConfig {
+  ///
+  String title;
+
   /// if true, top bars will collapse after stand still for 5 seconds
   bool hideAutomatically;
 
@@ -232,6 +235,7 @@ class ZegoTopMenuBarConfig {
     this.buttons = const [],
     this.style = ZegoMenuBarStyle.light,
     this.extendButtons = const [],
+    this.title = "",
   });
 }
 
