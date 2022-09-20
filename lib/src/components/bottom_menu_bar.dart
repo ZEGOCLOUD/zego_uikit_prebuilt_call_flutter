@@ -17,6 +17,7 @@ class ZegoBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
   final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
+  final int autoHideSeconds;
   final ValueNotifier<int> restartHideTimerNotifier;
 
   final double? height;
@@ -28,6 +29,7 @@ class ZegoBottomMenuBar extends StatefulWidget {
     required this.config,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
+    this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
     this.borderRadius,
@@ -136,7 +138,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     }
 
     hideTimerOfMenuBar?.cancel();
-    hideTimerOfMenuBar = Timer(const Duration(seconds: 5), () {
+    hideTimerOfMenuBar = Timer(Duration(seconds: widget.autoHideSeconds), () {
       widget.visibilityNotifier.value = false;
     });
   }

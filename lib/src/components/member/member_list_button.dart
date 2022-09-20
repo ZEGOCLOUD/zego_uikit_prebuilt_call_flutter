@@ -10,7 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/icon_defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/member/member_list.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_sheet.dart';
 
 /// switch cameras
 class ZegoMemberListButton extends StatefulWidget {

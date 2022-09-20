@@ -1,4 +1,4 @@
-package com.zegocloud.zego_uikit_example
+package com.zegocloud.uikit.flutter.example.call
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -18,6 +18,7 @@ class ZegoTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
   final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
+  final int autoHideSeconds;
   final ValueNotifier<int> restartHideTimerNotifier;
 
   final double? height;
@@ -29,6 +30,7 @@ class ZegoTopMenuBar extends StatefulWidget {
     required this.config,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
+    this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
     this.borderRadius,
@@ -78,7 +80,6 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
         ),
         child: Row(
           children: [
-            SizedBox(width: 4.r),
             title(),
             Expanded(child: Container()),
             rightBar(),
@@ -89,10 +90,18 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
   }
 
   Widget title() {
-    return Text(
-      widget.config.topMenuBarConfig.title,
-      style: TextStyle(
-          color: Colors.white, fontSize: 36.r, fontWeight: FontWeight.w500),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: 27.r,
+        ),
+        Text(
+          widget.config.topMenuBarConfig.title,
+          style: TextStyle(
+              color: Colors.white, fontSize: 36.r, fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 
@@ -115,8 +124,11 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           .map((extendButton) => buttonWrapper(child: extendButton))
     ];
 
-    if (buttons.length > widget.config.topMenuBarConfig.maxCount) {
-      return buttons.sublist(0, widget.config.topMenuBarConfig.maxCount);
+    /// limited item count display on menu bar,
+    /// if this count is exceeded, Trim down the extra buttons
+    const int maxCount = 3;
+    if (buttons.length > maxCount) {
+      return buttons.sublist(0, maxCount);
     }
 
     return buttons;
@@ -141,7 +153,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
     }
 
     hideTimerOfMenuBar?.cancel();
-    hideTimerOfMenuBar = Timer(const Duration(seconds: 5), () {
+    hideTimerOfMenuBar = Timer(Duration(seconds: widget.autoHideSeconds), () {
       widget.visibilityNotifier.value = false;
     });
   }

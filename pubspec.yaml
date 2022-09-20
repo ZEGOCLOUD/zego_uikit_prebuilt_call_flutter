@@ -24,28 +24,13 @@ dev_dependencies:
 flutter:
   assets:
     - assets/icons/back.png
-    - assets/icons/member_camera_normal.png
-    - assets/icons/member_camera_off.png
-    - assets/icons/member_mic_normal.png
-    - assets/icons/member_mic_off.png
-    - assets/icons/member_mic_speaking.png
     - assets/icons/top_member_normal.png
     - assets/icons/top_camera_overturn.png
 
     - assets/icons/2.0x/back.png
-    - assets/icons/2.0x/member_camera_normal.png
-    - assets/icons/2.0x/member_camera_off.png
-    - assets/icons/2.0x/member_mic_normal.png
-    - assets/icons/2.0x/member_mic_off.png
-    - assets/icons/2.0x/member_mic_speaking.png
     - assets/icons/2.0x/top_member_normal.png
     - assets/icons/2.0x/top_camera_overturn.png
 
     - assets/icons/3.0x/back.png
-    - assets/icons/3.0x/member_camera_normal.png
-    - assets/icons/3.0x/member_camera_off.png
-    - assets/icons/3.0x/member_mic_normal.png
-    - assets/icons/3.0x/member_mic_off.png
-    - assets/icons/3.0x/member_mic_speaking.png
     - assets/icons/3.0x/top_member_normal.png
     - assets/icons/3.0x/top_camera_overturn.png

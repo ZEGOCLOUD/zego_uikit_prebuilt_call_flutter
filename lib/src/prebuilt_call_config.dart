@@ -8,69 +8,27 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
 
 class ZegoUIKitPrebuiltCallConfig {
-  ZegoUIKitPrebuiltCallConfig.oneOnOne({
-    bool isVideo = true,
-    this.onOnlySelfInRoom,
-  })  : layout = ZegoLayout.pictureInPicture(
-          showSelfInLargeView: false,
-        ),
-        turnOnCameraWhenJoining = isVideo,
-        turnOnMicrophoneWhenJoining = true,
-        useSpeakerWhenJoining = true,
-        bottomMenuBarConfig = ZegoBottomMenuBarConfig(
-          buttons: isVideo
-              ? const [
-                  ZegoMenuBarButtonName.toggleCameraButton,
-                  ZegoMenuBarButtonName.toggleMicrophoneButton,
-                  ZegoMenuBarButtonName.hangUpButton,
-                  ZegoMenuBarButtonName.switchAudioOutputButton,
-                  ZegoMenuBarButtonName.switchCameraButton,
-                ]
-              : const [
-                  ZegoMenuBarButtonName.toggleMicrophoneButton,
-                  ZegoMenuBarButtonName.hangUpButton,
-                  ZegoMenuBarButtonName.switchAudioOutputButton,
-                ],
-        ),
-        audioVideoViewConfig = ZegoAudioVideoViewConfig(),
-        memberListConfig = ZegoMemberListConfig(),
-        topMenuBarConfig = ZegoTopMenuBarConfig();
+  factory ZegoUIKitPrebuiltCallConfig.groupVideo() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
+          isGroup: true, isVideo: true);
 
-  ZegoUIKitPrebuiltCallConfig.group({bool isVideo = true})
-      : layout = ZegoLayout.sideBySide(),
-        turnOnCameraWhenJoining = isVideo,
-        turnOnMicrophoneWhenJoining = true,
-        useSpeakerWhenJoining = true,
-        topMenuBarConfig = ZegoTopMenuBarConfig(
-          style: ZegoMenuBarStyle.dark,
-          buttons: [
-            ZegoMenuBarButtonName.showMemberListButton,
-          ],
-        ),
-        bottomMenuBarConfig = ZegoBottomMenuBarConfig(
-          style: ZegoMenuBarStyle.dark,
-          buttons: isVideo
-              ? const [
-                  ZegoMenuBarButtonName.toggleCameraButton,
-                  ZegoMenuBarButtonName.toggleMicrophoneButton,
-                  ZegoMenuBarButtonName.hangUpButton,
-                  ZegoMenuBarButtonName.switchAudioOutputButton,
-                  ZegoMenuBarButtonName.switchCameraButton,
-                ]
-              : const [
-                  ZegoMenuBarButtonName.toggleMicrophoneButton,
-                  ZegoMenuBarButtonName.hangUpButton,
-                  ZegoMenuBarButtonName.switchAudioOutputButton,
-                ],
-        ),
-        audioVideoViewConfig = ZegoAudioVideoViewConfig(),
-        memberListConfig = ZegoMemberListConfig();
+  factory ZegoUIKitPrebuiltCallConfig.groupVoice() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
+          isGroup: true, isVideo: false);
+
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideo() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
+          isGroup: false, isVideo: true);
+
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoice() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
+          isGroup: false, isVideo: false);
 
   ZegoUIKitPrebuiltCallConfig({
     this.turnOnCameraWhenJoining = true,
     this.turnOnMicrophoneWhenJoining = true,
     this.useSpeakerWhenJoining = true,
-    ZegoAudioVideoViewConfig? audioVideoViewConfig,
+    ZegoPrebuiltAudioVideoViewConfig? audioVideoViewConfig,
     ZegoTopMenuBarConfig? topMenuBarConfig,
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoMemberListConfig? memberListConfig,
@@ -80,7 +38,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.onHangUp,
     this.onOnlySelfInRoom,
   })  : audioVideoViewConfig =
-            audioVideoViewConfig ?? ZegoAudioVideoViewConfig(),
+            audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
         bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
         memberListConfig = memberListConfig ?? ZegoMemberListConfig() {
@@ -99,7 +57,7 @@ class ZegoUIKitPrebuiltCallConfig {
   bool useSpeakerWhenJoining;
 
   /// configs about audio video view
-  ZegoAudioVideoViewConfig audioVideoViewConfig;
+  ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
 
   /// configs about top bar
   ZegoTopMenuBarConfig topMenuBarConfig;
@@ -131,7 +89,7 @@ class ZegoUIKitPrebuiltCallConfig {
   VoidCallback? onOnlySelfInRoom;
 }
 
-class ZegoAudioVideoViewConfig {
+class ZegoPrebuiltAudioVideoViewConfig {
   /// hide microphone state of audio video view if set false
   bool showMicrophoneStateOnView;
 
@@ -191,9 +149,9 @@ class ZegoAudioVideoViewConfig {
   ///
   AudioVideoViewAvatarBuilder? avatarBuilder;
 
-  ZegoAudioVideoViewConfig({
+  ZegoPrebuiltAudioVideoViewConfig({
     this.showMicrophoneStateOnView = true,
-    this.showCameraStateOnView = true,
+    this.showCameraStateOnView = false,
     this.showUserNameOnView = true,
     this.foregroundBuilder,
     this.backgroundBuilder,
@@ -206,6 +164,9 @@ class ZegoAudioVideoViewConfig {
 
 class ZegoTopMenuBarConfig {
   ///
+  bool isVisible;
+
+  ///
   String title;
 
   /// if true, top bars will collapse after stand still for 5 seconds
@@ -217,10 +178,6 @@ class ZegoTopMenuBarConfig {
   /// these buttons will displayed on the menu bar, order by the list
   List<ZegoMenuBarButtonName> buttons;
 
-  /// limited item count display on menu bar,
-  /// if this count is exceeded, More button is displayed
-  final int maxCount = 3;
-
   /// style
   ZegoMenuBarStyle style;
 
@@ -230,6 +187,7 @@ class ZegoTopMenuBarConfig {
   List<Widget> extendButtons;
 
   ZegoTopMenuBarConfig({
+    this.isVisible = false,
     this.hideAutomatically = true,
     this.hideByClick = true,
     this.buttons = const [],
@@ -311,4 +269,65 @@ class ZegoHangUpConfirmDialogInfo {
     this.cancelButtonName = "Cancel",
     this.confirmButtonName = "Confirm",
   });
+}
+
+extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
+  static ZegoUIKitPrebuiltCallConfig generate({
+    required bool isGroup,
+    required bool isVideo,
+  }) {
+    return ZegoUIKitPrebuiltCallConfig(
+      turnOnCameraWhenJoining: isVideo,
+      turnOnMicrophoneWhenJoining: true,
+      useSpeakerWhenJoining: true,
+      layout: isGroup
+          ? ZegoLayout.fixedSideBySide()
+          : ZegoLayout.pictureInPicture(
+              showSelfInLargeView: false,
+            ),
+      topMenuBarConfig: isGroup
+          ? ZegoTopMenuBarConfig(
+              isVisible: true,
+              style: ZegoMenuBarStyle.dark,
+              buttons: [
+                ZegoMenuBarButtonName.showMemberListButton,
+              ],
+            )
+          : ZegoTopMenuBarConfig(isVisible: false, buttons: []),
+      bottomMenuBarConfig: isGroup
+          ? ZegoBottomMenuBarConfig(
+              style: ZegoMenuBarStyle.dark,
+              buttons: isVideo
+                  ? const [
+                      ZegoMenuBarButtonName.toggleCameraButton,
+                      ZegoMenuBarButtonName.switchCameraButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ]
+                  : const [
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ],
+            )
+          : ZegoBottomMenuBarConfig(
+              buttons: isVideo
+                  ? const [
+                      ZegoMenuBarButtonName.toggleCameraButton,
+                      ZegoMenuBarButtonName.switchCameraButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ]
+                  : const [
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ],
+            ),
+      audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(),
+      memberListConfig: ZegoMemberListConfig(),
+    );
+  }
 }

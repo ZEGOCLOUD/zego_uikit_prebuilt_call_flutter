@@ -110,15 +110,19 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           minTextAdapt: true,
           splitScreenMode: true,
           builder: (context, child) {
-            return clickListener(
-              child: Stack(
-                children: [
-                  audioVideoContainer(),
-                  topMenuBar(),
-                  bottomMenuBar(),
-                ],
-              ),
-            );
+            return LayoutBuilder(builder: (context, constraints) {
+              return clickListener(
+                child: Stack(
+                  children: [
+                    audioVideoContainer(constraints.maxHeight),
+                    widget.config.topMenuBarConfig.isVisible
+                        ? topMenuBar()
+                        : Container(),
+                    bottomMenuBar(),
+                  ],
+                ),
+              );
+            });
           },
         ),
       ),
@@ -204,11 +208,19 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
   }
 
-  Widget audioVideoContainer() {
-    return ZegoAudioVideoContainer(
-      layout: widget.config.layout!,
-      backgroundBuilder: audioVideoViewBackground,
-      foregroundBuilder: audioVideoViewForeground,
+  Widget audioVideoContainer(double height) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      child: SizedBox(
+        width: 750.w,
+        height: height,
+        child: ZegoAudioVideoContainer(
+          layout: widget.config.layout!,
+          backgroundBuilder: audioVideoViewBackground,
+          foregroundBuilder: audioVideoViewForeground,
+        ),
+      ),
     );
   }
 
@@ -226,9 +238,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         height: 88.r,
-        backgroundColor:
-            isLightStyle ? null : const Color(0xff222222).withOpacity(0.8),
-        borderRadius: isLightStyle ? null : 32.r,
+        backgroundColor: isLightStyle ? null : const Color(0xff262A2D),
       ),
     );
   }
@@ -336,7 +346,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     var backgroundColor =
         isSmallView ? const Color(0xff333437) : const Color(0xff4A4B4D);
-    if (widget.config.layout is ZegoLayoutSideBySideConfig) {
+    if (widget.config.layout is ZegoLayoutFixedSideBySideConfig) {
       backgroundColor = const Color(0xff4A4B4D);
     }
 

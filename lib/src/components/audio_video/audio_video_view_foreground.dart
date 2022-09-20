@@ -29,54 +29,59 @@ class ZegoAudioVideoForeground extends StatelessWidget {
     if (user == null) {
       return Container(color: Colors.transparent);
     }
-
-    return Container(
-      padding: const EdgeInsets.all(5),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.2),
-                borderRadius: const BorderRadius.all(Radius.circular(4)),
+    return LayoutBuilder(builder: ((context, constraints) {
+      return Container(
+        padding: const EdgeInsets.all(5),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    userName(
+                      context,
+                      constraints.maxWidth * 0.8,
+                    ),
+                    microphoneStateIcon(),
+                    cameraStateIcon(),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  userName(context),
-                  microphoneStateIcon(),
-                  cameraStateIcon(),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    }));
   }
 
-  Widget userName(BuildContext context) {
+  Widget userName(BuildContext context, double maxWidth) {
     return showUserNameOnView
-        ? Text(
-            user?.name ?? "",
-            style: TextStyle(
-              fontSize: 24.0.r,
-              color: const Color(0xffffffff),
-              decoration: TextDecoration.none,
+        ? ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxWidth,
+            ),
+            child: Text(
+              user?.name ?? "",
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 24.0.r,
+                color: const Color(0xffffffff),
+                decoration: TextDecoration.none,
+              ),
             ),
           )
         : const SizedBox();
   }
 
   Widget microphoneStateIcon() {
-    var isLocalUser = user?.id == ZegoUIKit().getLocalUser().id;
-    if (isLocalUser) {
-      return const SizedBox();
-    }
-
     if (!showMicrophoneStateOnView) {
       return const SizedBox();
     }
@@ -85,11 +90,6 @@ class ZegoAudioVideoForeground extends StatelessWidget {
   }
 
   Widget cameraStateIcon() {
-    var isLocalUser = user?.id == ZegoUIKit().getLocalUser().id;
-    if (isLocalUser) {
-      return const SizedBox();
-    }
-
     if (!showCameraStateOnView) {
       return const SizedBox();
     }
