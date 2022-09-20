@@ -346,7 +346,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     var backgroundColor =
         isSmallView ? const Color(0xff333437) : const Color(0xff4A4B4D);
-    if (widget.config.layout is ZegoLayoutFixedSideBySideConfig) {
+    if (widget.config.layout is ZegoLayoutGalleryConfig) {
       backgroundColor = const Color(0xff4A4B4D);
     }
 

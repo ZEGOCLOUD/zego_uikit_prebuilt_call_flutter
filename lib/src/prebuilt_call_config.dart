@@ -242,10 +242,10 @@ enum ZegoMenuBarStyle {
 
 class ZegoMemberListConfig {
   /// show microphone state or not
-  bool showMicroPhoneState = true;
+  bool showMicroPhoneState;
 
   /// show camera state or not
-  bool showCameraState = true;
+  bool showCameraState;
 
   /// customize your item view of member list
   MemberListItemBuilder? itemBuilder;
@@ -281,7 +281,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
       turnOnMicrophoneWhenJoining: true,
       useSpeakerWhenJoining: true,
       layout: isGroup
-          ? ZegoLayout.fixedSideBySide()
+          ? ZegoLayout.gallery()
           : ZegoLayout.pictureInPicture(
               showSelfInLargeView: false,
             ),

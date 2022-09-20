@@ -235,6 +235,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
         );
       case ZegoMenuBarButtonName.showMemberListButton:
         return ZegoMemberListButton(
+          config: widget.config.memberListConfig,
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(
