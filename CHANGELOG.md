@@ -4,22 +4,22 @@
 
 ## 0.0.2
 
-* Update some documents
+* update some documents
 
 ## 0.0.3
 
-* Fix some bugs
+* fix some bugs
 * remove **serverSecret** in init function
-* Update a dependency to the latest release..
+* update a dependency to the latest release..
 
 ## 0.0.4
 
-* Fix some bugs
+* fix some bugs
 
 ## 0.0.5
 
-* Fix some bugs
-* Update ZegoUIKitPrebuiltCallConfig
+* fix some bugs
+* update ZegoUIKitPrebuiltCallConfig
 
 ## 1.0.0
 
@@ -27,18 +27,22 @@
 
 ## 1.0.1
 
-* Fix some bugs
-* Update a dependency to the latest release..
+* fix some bugs
+* update a dependency to the latest release..
 
 ## 1.0.2
 
-* Fix some bugs
+* fix some bugs
 
 ## 1.0.3
 
-* Fix some bugs
+* fix some bugs
 
 ## 1.1.0
 
 * support group call
-* Fix some bugs
+* fix some bugs
+
+## 1.1.1
+
+* update a dependency to the latest release..

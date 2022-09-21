@@ -37,6 +37,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.onHangUpConfirmation,
     this.onHangUp,
     this.onOnlySelfInRoom,
+    this.avatarBuilder,
   })  : audioVideoViewConfig =
             audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
@@ -70,6 +71,37 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// layout config
   ZegoLayout? layout;
+
+  /// customize your user's avatar, default we use userID's first character as avatar
+  /// User avatars are generally stored in your server, ZegoUIkitPrebuiltCall does not know each user's avatar, so by default, ZegoUIkitPrebuiltCall will use the first letter of the user name to draw the default user avatar, as shown in the following figure,
+  ///
+  /// |When the user is not speaking|When the user is speaking|
+  /// |--|--|
+  /// |<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="10%">|<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar.jpg" width="10%">|
+  ///
+  /// If you need to display the real avatar of your user, you can use the avatarBuilder to set the user avatar builder method (set user avatar widget builder), the usage is as follows:
+  ///
+  /// ```dart
+  ///
+  ///  // eg:
+  ///  avatarBuilder: (BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
+  ///    return user != null
+  ///        ? Container(
+  ///            decoration: BoxDecoration(
+  ///              shape: BoxShape.circle,
+  ///              image: DecorationImage(
+  ///                image: NetworkImage(
+  ///                  'https://your_server/app/avatar/${user.id}.png',
+  ///                ),
+  ///              ),
+  ///            ),
+  ///          )
+  ///        : const SizedBox();
+  ///  },
+  ///
+  /// ```
+  ///
+  AvatarBuilder? avatarBuilder;
 
   /// alert dialog information of quit
   /// if confirm info is not null, APP will pop alert dialog when you hang up
@@ -118,37 +150,6 @@ class ZegoPrebuiltAudioVideoViewConfig {
   /// hide sound level of audio video view if set false
   bool showSoundWavesInAudioMode;
 
-  /// customize your user's avatar, default we use userID's first character as avatar
-  /// User avatars are generally stored in your server, ZegoUIkitPrebuiltCall does not know each user's avatar, so by default, ZegoUIkitPrebuiltCall will use the first letter of the user name to draw the default user avatar, as shown in the following figure,
-  ///
-  /// |When the user is not speaking|When the user is speaking|
-  /// |--|--|
-  /// |<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="10%">|<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar.jpg" width="10%">|
-  ///
-  /// If you need to display the real avatar of your user, you can use the avatarBuilder to set the user avatar builder method (set user avatar widget builder), the usage is as follows:
-  ///
-  /// ```dart
-  ///
-  ///  // eg:
-  ///  avatarBuilder: (BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
-  ///    return user != null
-  ///        ? Container(
-  ///            decoration: BoxDecoration(
-  ///              shape: BoxShape.circle,
-  ///              image: DecorationImage(
-  ///                image: NetworkImage(
-  ///                  'https://your_server/app/avatar/${user.id}.png',
-  ///                ),
-  ///              ),
-  ///            ),
-  ///          )
-  ///        : const SizedBox();
-  ///  },
-  ///
-  /// ```
-  ///
-  AudioVideoViewAvatarBuilder? avatarBuilder;
-
   ZegoPrebuiltAudioVideoViewConfig({
     this.showMicrophoneStateOnView = true,
     this.showCameraStateOnView = false,
@@ -158,7 +159,6 @@ class ZegoPrebuiltAudioVideoViewConfig {
     this.useVideoViewAspectFill = false,
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
-    this.avatarBuilder,
   });
 }
 

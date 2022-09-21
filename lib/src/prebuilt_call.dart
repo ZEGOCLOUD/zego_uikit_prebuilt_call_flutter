@@ -362,7 +362,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           showAvatar: widget.config.audioVideoViewConfig.showAvatarInAudioMode,
           showSoundLevel:
               widget.config.audioVideoViewConfig.showSoundWavesInAudioMode,
-          avatarBuilder: widget.config.audioVideoViewConfig.avatarBuilder,
+          avatarBuilder: widget.config.avatarBuilder,
         ),
       ],
     );
