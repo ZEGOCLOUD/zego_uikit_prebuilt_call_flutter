@@ -2,28 +2,20 @@
 
 - - -
 
+
 ## Integrate the SDK
 
 ### Add ZegoUIKitPrebuiltCall as dependencies
 
-1. Edit your project's pubspec.yaml and add local project dependencies
+Run the following code in your project root directory: 
 
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  zego_uikit_prebuilt_call: ^1.1.1 # Add this line
-```
-
-2. Execute the command as shown below under your project's root folder to install all dependencies
-
-```
-flutter pub get
+```dart
+flutter pub add zego_uikit_prebuilt_call
 ```
 
 ### Import the SDK
 
-Now in your Dart code, import the prebuilt SDK.
+Now in your Dart code, import the prebuilt Call Kit SDK.
 
 ```dart
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -31,7 +23,9 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 ### Using the ZegoUIKitPrebuiltCall in your project
 
-You can get `appID` and `appSign` from [ZEGOCLOUD's Admin Console](https://console.zegocloud.com/). Pick up the `userID` and `userName` for connecting to ZEGOCLOUD's service. And you should also pick up a `callID` for making a new call.
+- Go to [ZEGOCLOUD Admin Console\|_blank](https://console.zegocloud.com/), get the `appID` and `appSign` of your project.
+- Specify the `userID` and `userName` for connecting the Call Kit service. 
+- Create a `callID` that represents the call you want to make. 
 
 <div class="mk-hint">
 
@@ -39,26 +33,22 @@ You can get `appID` and `appSign` from [ZEGOCLOUD's Admin Console](https://conso
 - Users that join the call with the same `callID` can talk to each other. 
 </div>
 
-
 ```dart
 class CallPage extends StatelessWidget {
-   final String callID;
+  const CallPage({Key? key, required this.callID}) : super(key: key);
+  final String callID;
 
-   const CallPage({Key? key, required this.callID}) : super(key: key);
-  
   @override
   Widget build(BuildContext context) {
     return ZegoUIKitPrebuiltCall(
-        appID: yourAppID,
-        appSign: yourAppSign,
-        userID: userID,
-        userName: userName,
-        callID: callID,
-        config: ZegoUIKitPrebuiltCallConfig(
-           onOnlySelfInRoom: () {
-              Navigator.of(context).pop();
-           },
-        ),
+      appID: yourAppID, // Fill in the appID that you get from ZEGOCLOUD Admin Console.
+      appSign: yourAppSign, // Fill in the appSign that you get from ZEGOCLOUD Admin Console.
+      userID: 'user_id',
+      userName: 'user_name',
+      callID: callID,
+      // You can also use groupVideo/groupVoice/oneOnOneVoice to make more types of calls.
+      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideo() 
+        ..onOnlySelfInRoom = () => Navigator.of(context).pop(),
     );
   }
 }
@@ -67,17 +57,17 @@ class CallPage extends StatelessWidget {
 Now, you can make a new call by navigating to this `CallPage`.
 
 
-## Build & Run
+## Configure your project
 
-### 1. Config your project
 
-#### Android
+- Android:
+1. If your project is created with Flutter 2.x.x, you will need to open the `your_project/android/app/build.gradle` file, and modify the `compileSdkVersion` to 33.
 
-1. If your project was created with a version of flutter that is not the latest stable, you may need to manually modify compileSdkVersion in `your_project/android/app/build.gradle` to 33
 
 ![compileSdkVersion.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/compileSdkVersion.png)
 
-2. Need to add app permissions, Open the file `your_project/app/src/main/AndroidManifest.xml`, add the following code:
+2. Add app permissions.
+Open the file `your_project/app/src/main/AndroidManifest.xml`, and add the following code:
    ```xml
    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
    <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -92,9 +82,9 @@ Now, you can make a new call by navigating to this `CallPage`.
    ```
 ![/Pics/ZegoUIKit/Flutter/permission_android.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_android.png)
 
-#### iOS
+- iOS: 
 
-Need add app permissions, open `your_project/ios/Runner/Info.plist`, add the following code inside the `dict` tag:
+To add permissions, open `your_project/ios/Runner/Info.plist`, and add the following code to the `dict` part:
 
 ```plist
 <key>NSCameraUsageDescription</key>
@@ -104,16 +94,22 @@ Need add app permissions, open `your_project/ios/Runner/Info.plist`, add the fol
 ```
 ![/Pics/ZegoUIKit/Flutter/permission_ios.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png)
 
-### 2. Run & Debug
 
-Now you can simply click the **Run** or **Debug** button to build and run your App on your device.
+## Run & Test
+
+Now you have finished all the steps!
+
+You can simply click the **Run** or **Debug** to run and test your App on your device.
+
 ![/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
 
 ## Related guide
 
-[Custom prebuilt UI](!ZEGOUIKIT_Custom_prebuilt_UI)
+[Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
 
 
 ## Resources
 
-[Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example/tree/master/basic_call/flutter)
+## Resources
+
+[Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
