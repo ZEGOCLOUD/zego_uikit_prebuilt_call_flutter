@@ -107,9 +107,6 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 
 [Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
 
-
-## Resources
-
 ## Resources
 
 [Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
