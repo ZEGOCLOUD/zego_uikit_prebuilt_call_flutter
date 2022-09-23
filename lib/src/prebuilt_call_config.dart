@@ -8,19 +8,19 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
 
 class ZegoUIKitPrebuiltCallConfig {
-  factory ZegoUIKitPrebuiltCallConfig.groupVideo() =>
+  factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() =>
       ZegoUIKitPrebuiltCallConfigExtension.generate(
           isGroup: true, isVideo: true);
 
-  factory ZegoUIKitPrebuiltCallConfig.groupVoice() =>
+  factory ZegoUIKitPrebuiltCallConfig.groupVoiceCall() =>
       ZegoUIKitPrebuiltCallConfigExtension.generate(
           isGroup: true, isVideo: false);
 
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideo() =>
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() =>
       ZegoUIKitPrebuiltCallConfigExtension.generate(
           isGroup: false, isVideo: true);
 
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoice() =>
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall() =>
       ZegoUIKitPrebuiltCallConfigExtension.generate(
           isGroup: false, isVideo: false);
 
@@ -279,7 +279,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
     return ZegoUIKitPrebuiltCallConfig(
       turnOnCameraWhenJoining: isVideo,
       turnOnMicrophoneWhenJoining: true,
-      useSpeakerWhenJoining: true,
+      useSpeakerWhenJoining: isGroup ? true : false,
       layout: isGroup
           ? ZegoLayout.gallery()
           : ZegoLayout.pictureInPicture(
@@ -312,6 +312,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                     ],
             )
           : ZegoBottomMenuBarConfig(
+              style: ZegoMenuBarStyle.light,
               buttons: isVideo
                   ? const [
                       ZegoMenuBarButtonName.toggleCameraButton,
@@ -326,7 +327,9 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                       ZegoMenuBarButtonName.switchAudioOutputButton,
                     ],
             ),
-      audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(),
+      audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(
+        useVideoViewAspectFill: isGroup ? false : true,
+      ),
       memberListConfig: ZegoMemberListConfig(),
     );
   }

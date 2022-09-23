@@ -46,3 +46,7 @@
 ## 1.1.1
 
 * update a dependency to the latest release..
+
+## 1.1.2
+
+* fix some bugs

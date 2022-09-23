@@ -220,7 +220,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
         return ZegoLeaveButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          icon: const ButtonIcon(backgroundColor: Colors.transparent),
+          icon: ButtonIcon(backgroundColor: Colors.transparent),
           onLeaveConfirmation: (context) async {
             return await widget.config.onHangUpConfirmation!(context);
           },
