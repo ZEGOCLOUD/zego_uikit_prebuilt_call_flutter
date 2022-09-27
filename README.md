@@ -154,3 +154,5 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 [Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
 
 [About Us](https://www.zegocloud.com)
+
+If you have any questions regarding bugs and feature requests, visit the [ZEGOCLOUD community](https://discord.gg/EtNRATttyp) or email us at global_support@zegocloud.com.
