@@ -77,7 +77,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      log("ZegoUIKit version: $version");
+      log("version: zego_uikit_prebuilt_call:1.1.3; $version");
     });
 
     initUIKit();
@@ -98,9 +98,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   @override
   Widget build(BuildContext context) {
-    widget.config.onHangUpConfirmation ??= onQuitConfirming;
+    widget.config.onHangUpConfirmation ??= onHangUpConfirmation;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
           return await widget.config.onHangUpConfirmation!(context) ?? false;
@@ -238,7 +239,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         height: 88.r,
-        backgroundColor: isLightStyle ? null : const Color(0xff262A2D),
+        backgroundColor:
+            isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
       ),
     );
   }
@@ -258,7 +260,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         height: isLightStyle ? null : 208.r,
         backgroundColor:
-            isLightStyle ? null : const Color(0xff222222).withOpacity(0.8),
+            isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
         borderRadius: isLightStyle ? null : 32.r,
       ),
     );
@@ -276,7 +278,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
   }
 
-  Future<bool> onQuitConfirming(BuildContext context) async {
+  Future<bool> onHangUpConfirmation(BuildContext context) async {
     if (widget.config.hangUpConfirmDialogInfo == null) {
       return true;
     }

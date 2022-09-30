@@ -9,7 +9,7 @@ And it includes the business logic with the UI, you can add or remove features a
 
 |One-on-one call|Group call|
 |---|---|
-|![One-on-one call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![Group call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.png)|
+|![One-on-one call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![Group call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|
 
 
 ## When do you need the Call Kit
@@ -154,3 +154,5 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 [Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
 
 [About Us](https://www.zegocloud.com)
+
+If you have any questions regarding bugs and feature requests, visit the [ZEGOCLOUD community](https://discord.gg/EtNRATttyp) or email us at global_support@zegocloud.com.

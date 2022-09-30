@@ -279,7 +279,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
     return ZegoUIKitPrebuiltCallConfig(
       turnOnCameraWhenJoining: isVideo,
       turnOnMicrophoneWhenJoining: true,
-      useSpeakerWhenJoining: isGroup ? true : false,
+      useSpeakerWhenJoining: (!isGroup && !isVideo) ? false : true,
       layout: isGroup
           ? ZegoLayout.gallery()
           : ZegoLayout.pictureInPicture(
