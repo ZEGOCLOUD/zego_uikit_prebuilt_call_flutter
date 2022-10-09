@@ -27,6 +27,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.userName,
     this.tokenServerUrl = '',
     required this.config,
+    this.onDispose,
   }) : super(key: key);
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -43,11 +44,11 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   /// tokenServerUrl is only for web.
   /// If you have to support Web and Android, iOS, then you can use it like this
   /// ```
-  ///   ZegoUIKitPrebuiltCallConfig(
+  ///   ZegoUIKitPrebuiltCall(
   ///     appID: appID,
+  ///     appSign: kIsWeb ? '' : appSign,
   ///     userID: userID,
   ///     userName: userName,
-  ///     appSign: kIsWeb ? '' : appSign,
   ///     tokenServerUrl: kIsWeb ? tokenServerUrl：'',
   ///   );
   /// ```
@@ -58,6 +59,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   final String userName;
 
   final ZegoUIKitPrebuiltCallConfig config;
+
+  final VoidCallback? onDispose;
 
   @override
   State<ZegoUIKitPrebuiltCall> createState() => _ZegoUIKitPrebuiltCallState();
@@ -77,7 +80,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      log("version: zego_uikit_prebuilt_call:1.1.3; $version");
+      log("version: zego_uikit_prebuilt_call:1.1.4; $version");
     });
 
     initUIKit();
@@ -94,6 +97,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     await ZegoUIKit().leaveRoom();
     // await ZegoUIKit().uninit();
+
+    widget.onDispose?.call();
   }
 
   @override

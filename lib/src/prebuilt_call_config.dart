@@ -264,10 +264,10 @@ class ZegoHangUpConfirmDialogInfo {
   String confirmButtonName;
 
   ZegoHangUpConfirmDialogInfo({
-    this.title = "Hangup confirm",
+    this.title = "Hangup Confirmation",
     this.message = "Do you want to hangup?",
     this.cancelButtonName = "Cancel",
-    this.confirmButtonName = "Confirm",
+    this.confirmButtonName = "OK",
   });
 }
 
