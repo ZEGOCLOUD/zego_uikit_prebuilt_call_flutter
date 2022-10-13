@@ -11,7 +11,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
-import 'icon_defines.dart';
+import 'assets.dart';
 import 'member/member_list_button.dart';
 
 class ZegoTopMenuBar extends StatefulWidget {
@@ -215,6 +215,10 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
                 PrebuiltCallImage.asset(PrebuiltCallIconUrls.topCameraOverturn),
             backgroundColor: Colors.transparent,
           ),
+          defaultUseFrontFacingCamera: ZegoUIKit()
+              .getUseFrontFacingCameraStateNotifier(
+                  ZegoUIKit().getLocalUser().id)
+              .value,
         );
       case ZegoMenuBarButtonName.hangUpButton:
         return ZegoLeaveButton(

@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/icon_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
 class ZegoMemberListSheet extends StatefulWidget {
   const ZegoMemberListSheet({

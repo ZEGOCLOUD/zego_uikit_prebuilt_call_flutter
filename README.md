@@ -89,7 +89,7 @@ class CallPage extends StatelessWidget {
       callID: callID,
       // You can also use groupVideo/groupVoice/oneOnOneVoice to make more types of calls.
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideo() 
-        ..onOnlySelfInRoom = () => Navigator.of(context).pop(),
+        ..onOnlySelfInRoom = (context) => Navigator.of(context).pop(),
     );
   }
 }
@@ -97,6 +97,97 @@ class CallPage extends StatelessWidget {
 
 Now, you can make a new call by navigating to this `CallPage`.
 
+
+### Call With Invitation
+
+#### Add as dependencies
+
+1. Edit your project's pubspec.yaml and add local project dependencies
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  zego_uikit_prebuilt_call: ^1.2.0 # Add this line
+  zego_uikit_signaling_plugin: ^1.0.7 # Add this line
+```
+
+2. Execute the command as shown below under your project's root folder to install all dependencies
+
+```dart
+flutter pub get
+```
+
+#### Import SDK
+
+Now in your Dart code, you can import prebuilt.
+
+```dart
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+```
+
+#### Integrate the call functionality with the invitation feature
+
+##### 1. Warp your widget with ZegoUIKitPrebuiltCallInvitationService
+
+> You can get the AppID and AppSign from [ZEGOCLOUD&#39;s Console](https://console.zegocloud.com).
+> Users who use the same callID can talk to each other. (ZegoUIKitPrebuiltCallInvitationService supports 1 on 1 call and group call)
+
+```dart
+@override
+Widget build(BuildContext context) {
+   return ZegoUIKitPrebuiltCallInvitationService(
+      appID: yourAppID,
+      appSign: yourAppSign,
+      userID: userID,
+      userName: userName,
+      requireConfig: (ZegoCallInvitationData data) {
+         late ZegoUIKitPrebuiltCallConfig config;
+
+         if (data.invitees.length > 1) {
+            ///  group call
+            config = ZegoInvitationType.videoCall == data.type
+                    ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+                    : ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
+         } else {
+            ///  one on one call
+            config = ZegoInvitationType.videoCall == data.type
+                    ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+                    : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+
+            config.onHangUp = () {
+               Navigator.of(context).pop();
+            };
+         }
+
+         return config;
+      },
+      child: YourWidget(),
+   );
+}
+```
+
+##### 2. Add a button for making a call
+
+```dart
+ZegoStartCallCallInvitation(
+   isVideoCall: true,
+   invitees: [
+      ZegoUIKitUser(
+         id: targetUserID,
+         name: targetUserName,
+      ),
+      ...
+      ZegoUIKitUser(
+        id: targetUserID,
+        name: targetUserName,
+      )
+   ],
+)
+```
+
+Now, you can invite someone to the call by simply clicking this button.
 
 ## Configure your project
 
@@ -121,6 +212,7 @@ Open the file `your_project/app/src/main/AndroidManifest.xml`, and add the follo
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.VIBRATE"/>
 ```
 
 ![/Pics/ZegoUIKit/Flutter/permission_android.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_android.png)
@@ -152,6 +244,7 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 [Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
 
 [Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
+[Invitation Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example/tree/master/call_with_invitation/flutter)
 
 [About Us](https://www.zegocloud.com)
 

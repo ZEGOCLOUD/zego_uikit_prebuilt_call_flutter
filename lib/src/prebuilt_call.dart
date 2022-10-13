@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-import 'dart:developer';
 
 // Flutter imports:
 import 'package:flutter/foundation.dart';
@@ -80,7 +79,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      log("version: zego_uikit_prebuilt_call:1.1.4; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.0; $version");
     });
 
     initUIKit();
@@ -185,7 +184,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void onUserLeave(List<ZegoUIKitUser> users) {
     if (ZegoUIKit().getRemoteUsers().isEmpty) {
       //  remote users is empty
-      widget.config.onOnlySelfInRoom?.call();
+      widget.config.onOnlySelfInRoom?.call(context);
     }
   }
 
@@ -215,6 +214,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   Widget audioVideoContainer(double height) {
+    if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+      var layout = widget.config.layout as ZegoLayoutPictureInPictureConfig;
+      layout.smallViewSize = Size(190.0.w, 338.0.h);
+      layout.smallViewSpacing =
+          EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
+      widget.config.layout = layout;
+    }
+
     return Positioned(
       top: 0,
       left: 0,

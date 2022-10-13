@@ -58,3 +58,7 @@
 ## 1.1.4
 
 * fix some bugs
+
+## 1.2.0
+
+* support group call

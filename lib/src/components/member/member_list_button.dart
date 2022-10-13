@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/icon_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_sheet.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 
@@ -28,7 +28,7 @@ class ZegoMemberListButton extends StatefulWidget {
 
   final ButtonIcon? icon;
 
-  ///  You can do what you want after clicked.
+  ///  You can do what you want after pressed.
   final VoidCallback? afterClicked;
 
   /// the size of button's icon
