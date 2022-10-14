@@ -148,6 +148,9 @@ class ZegoInvitationPageManager {
     ZegoInvitationType invitationType,
     List<String> errorInvitees,
   ) {
+    debugPrint("local send invitation, call id:$callID, invitees:$invitees, "
+        "type: $invitationType, error invitees:$errorInvitees");
+
     inviteErrorInvitees =
         errorInvitees.map((userID) => ZegoUIKit().getUser(userID)).toList();
 
@@ -218,11 +221,14 @@ class ZegoInvitationPageManager {
     debugPrint(
         "on invitation received, data:${inviter.toString()}, $type $data");
 
-    if (CallingState.kIdle != callingMachine.getPageState()) {
-      debugPrint("auto refuse this call, because call state is not idle, "
-          "current state is ${callingMachine.getPageState()}");
+    if (invitationData.callID.isNotEmpty ||
+        CallingState.kIdle != callingMachine.getPageState()) {
+      debugPrint("auto refuse this call, because is busy, "
+          "is inviting: ${invitationData.callID.isNotEmpty}, "
+          "current state: ${callingMachine.getPageState()}");
 
-      ZegoUIKitInvitationService().refuseInvitation(inviter.id, '');
+      ZegoUIKitInvitationService()
+          .refuseInvitation(inviter.id, '{"reason":"busy"}');
 
       return;
     }
@@ -352,7 +358,7 @@ class ZegoInvitationPageManager {
     debugPrint("on hang up");
 
     if (callerRingtone.isRingTimerRunning) {
-      /// still nobody accept this call
+      /// still ring mean nobody accept this invitation
       ZegoUIKitInvitationService().cancelInvitation(
           invitingInvitees.map((user) => user.id).toList(), '');
     }

@@ -53,14 +53,18 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.invitationData.inviter?.name ?? "",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 36.0.r,
-                  fontWeight: FontWeight.w500,
-                  decoration: TextDecoration.none,
+              SizedBox(
+                width: 350.w,
+                child: Text(
+                  widget.invitationData.inviter?.name ?? "",
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 36.0.r,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.none,
+                  ),
                 ),
               ),
               SizedBox(height: 7.h),
@@ -84,6 +88,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               absorbing: false,
               child: ZegoRefuseInvitationButton(
                 inviterID: widget.invitationData.inviter?.id ?? "",
+                data: '{"reason":"decline"}',
                 icon: ButtonIcon(
                   icon: Image(
                     image: PrebuiltCallImage.asset(

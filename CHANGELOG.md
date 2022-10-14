@@ -62,3 +62,7 @@
 ## 1.2.0
 
 * support group call
+
+## 1.2.1
+
+* fix some bugs

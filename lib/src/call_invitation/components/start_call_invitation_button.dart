@@ -60,11 +60,13 @@ class ZegoStartCallInvitationButton extends StatefulWidget {
 
 class _ZegoStartCallInvitationButtonState
     extends State<ZegoStartCallInvitationButton> {
-  String? callID;
+  var callIDNotifier = ValueNotifier<String>("");
 
   @override
   void initState() {
     super.initState();
+
+    updateCallID();
   }
 
   @override
@@ -74,54 +76,70 @@ class _ZegoStartCallInvitationButtonState
 
   @override
   Widget build(BuildContext context) {
-    var now = DateTime.now();
-    var timestamp =
-        "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString()}";
-    callID = 'call_${ZegoUIKit().getLocalUser().id}_$timestamp';
     return ScreenUtilInit(
       designSize: const Size(750, 1334),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return ZegoStartInvitationButton(
-          invitationType: ZegoInvitationTypeExtension(widget.isVideoCall
-                  ? ZegoInvitationType.videoCall
-                  : ZegoInvitationType.voiceCall)
-              .value,
-          invitees: widget.invitees.map((user) {
-            return user.id;
-          }).toList(),
-          data: InvitationInternalData(
-                  callID!, List.from(widget.invitees), widget.customData)
-              .toJson(),
-          icon: widget.icon ??
-              ButtonIcon(
-                icon: widget.isVideoCall
-                    ? PrebuiltCallImage.asset(
-                        InvitationStyleIconUrls.inviteVideo)
-                    : PrebuiltCallImage.asset(
-                        InvitationStyleIconUrls.inviteVoice),
-              ),
-          iconSize: widget.iconSize,
-          text: widget.text,
-          textStyle: widget.textStyle,
-          iconTextSpacing: widget.iconTextSpacing,
-          verticalLayout: widget.verticalLayout,
-          buttonSize: widget.buttonSize,
-          timeoutSeconds: widget.timeoutSeconds,
-          onPressed: onPressed,
-          clickableTextColor: widget.clickableTextColor,
-          unclickableTextColor: widget.unclickableTextColor,
-          clickableBackgroundColor: widget.clickableBackgroundColor,
-          unclickableBackgroundColor: widget.unclickableBackgroundColor,
+        return Listener(
+          onPointerDown: (e) {
+            updateCallID();
+          },
+          child: AbsorbPointer(
+            absorbing: false,
+            child: ValueListenableBuilder<String>(
+              valueListenable: callIDNotifier,
+              builder: (context, callID, _) {
+                return button();
+              },
+            ),
+          ),
         );
       },
     );
   }
 
+  void updateCallID() {
+    callIDNotifier.value =
+        'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
+  }
+
+  Widget button() {
+    return ZegoStartInvitationButton(
+      invitationType: ZegoInvitationTypeExtension(widget.isVideoCall
+              ? ZegoInvitationType.videoCall
+              : ZegoInvitationType.voiceCall)
+          .value,
+      invitees: widget.invitees.map((user) {
+        return user.id;
+      }).toList(),
+      data: InvitationInternalData(callIDNotifier.value,
+              List.from(widget.invitees), widget.customData)
+          .toJson(),
+      icon: widget.icon ??
+          ButtonIcon(
+            icon: widget.isVideoCall
+                ? PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteVideo)
+                : PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteVoice),
+          ),
+      iconSize: widget.iconSize,
+      text: widget.text,
+      textStyle: widget.textStyle,
+      iconTextSpacing: widget.iconTextSpacing,
+      verticalLayout: widget.verticalLayout,
+      buttonSize: widget.buttonSize,
+      timeoutSeconds: widget.timeoutSeconds,
+      onPressed: onPressed,
+      clickableTextColor: widget.clickableTextColor,
+      unclickableTextColor: widget.unclickableTextColor,
+      clickableBackgroundColor: widget.clickableBackgroundColor,
+      unclickableBackgroundColor: widget.unclickableBackgroundColor,
+    );
+  }
+
   void onPressed(List<String> errorInvitees) {
     ZegoInvitationPageManager.instance.onLocalSendInvitation(
-      callID!,
+      callIDNotifier.value,
       List.from(widget.invitees),
       widget.isVideoCall
           ? ZegoInvitationType.videoCall

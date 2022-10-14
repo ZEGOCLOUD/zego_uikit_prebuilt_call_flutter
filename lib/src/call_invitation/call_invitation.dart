@@ -74,7 +74,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
     ZegoUIKit().installPlugins(widget.plugins);
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.0; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.1; $uikitVersion");
     });
 
     for (var pluginType in ZegoUIKitPluginType.values) {

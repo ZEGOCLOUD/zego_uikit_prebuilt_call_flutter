@@ -108,7 +108,7 @@ Now, you can make a new call by navigating to this `CallPage`.
 dependencies:
   flutter:
     sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.0 # Add this line
+  zego_uikit_prebuilt_call: ^1.2.1 # Add this line
   zego_uikit_signaling_plugin: ^1.0.7 # Add this line
 ```
 
@@ -229,6 +229,24 @@ To add permissions, open `your_project/ios/Runner/Info.plist`, and add the follo
 ```
 
 ![/Pics/ZegoUIKit/Flutter/permission_ios.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png)
+
+### Turn off some classes's confusion
+
+To prevent the ZEGO SDK public class names from being obfuscated, please complete the following steps:
+
+1. Create `proguard-rules.pro` file under [your_project > android > app] with content as show below:
+```
+-keep class **.zego.** { *; }
+-keep class **.zego.zim.**  { *; }
+-keep class **.**.zego_zim.** { *; }
+```
+
+2. Add the following config code to the release part of the `your_project/android/app/build.gradle` file.
+```
+proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+```
+
+![image](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/android_class_confusion.png)
 
 
 ## Run & Test
