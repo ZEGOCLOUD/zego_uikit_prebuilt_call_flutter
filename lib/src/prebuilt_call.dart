@@ -79,7 +79,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.1; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.3; $version");
     });
 
     initUIKit();
@@ -119,7 +119,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               return clickListener(
                 child: Stack(
                   children: [
-                    audioVideoContainer(constraints.maxHeight),
+                    audioVideoContainer(context, constraints.maxHeight),
                     widget.config.topMenuBarConfig.isVisible
                         ? topMenuBar()
                         : Container(),
@@ -213,13 +213,38 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
   }
 
-  Widget audioVideoContainer(double height) {
-    if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
-      var layout = widget.config.layout as ZegoLayoutPictureInPictureConfig;
-      layout.smallViewSize = Size(190.0.w, 338.0.h);
-      layout.smallViewSpacing =
-          EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
-      widget.config.layout = layout;
+  Widget audioVideoContainer(BuildContext context, double height) {
+    late Widget container;
+    if (widget.config.audioVideoContainerBuilder != null) {
+      /// custom
+      container = StreamBuilder<List<ZegoUIKitUser>>(
+        stream: ZegoUIKit().getUserListStream(),
+        builder: (context, snapshot) {
+          List<ZegoUIKitUser> allUsers = ZegoUIKit().getAllUsers();
+          return StreamBuilder<List<ZegoUIKitUser>>(
+            stream: ZegoUIKit().getAudioVideoListStream(),
+            builder: (context, snapshot) {
+              List<ZegoUIKitUser> streamUsers = snapshot.data ?? [];
+              return widget.config.audioVideoContainerBuilder!
+                  .call(context, allUsers, streamUsers);
+            },
+          );
+        },
+      );
+    } else {
+      /// audio video container
+      if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+        var layout = widget.config.layout as ZegoLayoutPictureInPictureConfig;
+        layout.smallViewSize = Size(190.0.w, 338.0.h);
+        layout.smallViewSpacing =
+            EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
+        widget.config.layout = layout;
+      }
+      container = ZegoAudioVideoContainer(
+        layout: widget.config.layout!,
+        backgroundBuilder: audioVideoViewBackground,
+        foregroundBuilder: audioVideoViewForeground,
+      );
     }
 
     return Positioned(
@@ -228,11 +253,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       child: SizedBox(
         width: 750.w,
         height: height,
-        child: ZegoAudioVideoContainer(
-          layout: widget.config.layout!,
-          backgroundBuilder: audioVideoViewBackground,
-          foregroundBuilder: audioVideoViewForeground,
-        ),
+        child: container,
       ),
     );
   }

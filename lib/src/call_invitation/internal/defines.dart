@@ -19,32 +19,25 @@ class InvitationInternalData {
     customData = dict['custom_data'] as String;
 
     for (var invitee in dict['invitees'] as List) {
-      invitees.add(userFromJson(invitee));
+      var inviteeDict = invitee as Map<String, dynamic>;
+      var user = ZegoUIKitUser(
+        id: inviteeDict['user_id'] as String,
+        name: inviteeDict['user_name'] as String,
+      );
+      invitees.add(user);
     }
   }
 
   String toJson() {
     var dict = {
       'call_id': callID,
-      'invitees': invitees.map((e) => userToJson(e)).toList(),
+      'invitees': invitees
+          .map((user) => {
+                'user_id': user.id,
+                'user_name': user.name,
+              })
+          .toList(),
       'custom_data': customData,
-    };
-    return const JsonEncoder().convert(dict);
-  }
-
-  ZegoUIKitUser userFromJson(String json) {
-    var dict = jsonDecode(json) as Map<String, dynamic>;
-
-    return ZegoUIKitUser(
-      id: dict['user_id'] as String,
-      name: dict['user_name'] as String,
-    );
-  }
-
-  String userToJson(ZegoUIKitUser user) {
-    var dict = {
-      'user_id': user.id,
-      'user_name': user.name,
     };
     return const JsonEncoder().convert(dict);
   }

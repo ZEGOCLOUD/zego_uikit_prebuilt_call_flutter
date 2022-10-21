@@ -69,7 +69,10 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               ),
               SizedBox(height: 7.h),
               Text(
-                invitationTypeString(widget.invitationData.type),
+                invitationTypeString(
+                  widget.invitationData.type,
+                  widget.invitationData.invitees,
+                ),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24.0.r,
@@ -88,6 +91,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               absorbing: false,
               child: ZegoRefuseInvitationButton(
                 inviterID: widget.invitationData.inviter?.id ?? "",
+                // customization is not supported
                 data: '{"reason":"decline"}',
                 icon: ButtonIcon(
                   icon: Image(
@@ -163,12 +167,13 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
     }
   }
 
-  String invitationTypeString(ZegoInvitationType invitationType) {
+  String invitationTypeString(
+      ZegoInvitationType invitationType, List<ZegoUIKitUser> invitees) {
     switch (invitationType) {
       case ZegoInvitationType.voiceCall:
-        return "Voice Call";
+        return invitees.length > 1 ? "Group voice call" : "Voice call";
       case ZegoInvitationType.videoCall:
-        return "Video Call";
+        return invitees.length > 1 ? "Group video call" : "Video call";
     }
   }
 }

@@ -66,3 +66,11 @@
 ## 1.2.1
 
 * fix some bugs
+
+## 1.2.2
+
+* update a dependency to the latest release..
+
+## 1.2.3
+
+* fix some bugs

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -138,6 +139,27 @@ class _ZegoStartCallInvitationButtonState
   }
 
   void onPressed(List<String> errorInvitees) {
+    if (errorInvitees.isNotEmpty) {
+      String userIDs = "";
+      for (int index = 0; index < errorInvitees.length; index++) {
+        if (index >= 5) {
+          userIDs += '... ';
+          break;
+        }
+
+        var userID = errorInvitees.elementAt(index);
+        userIDs += userID + ' ';
+      }
+      if (userIDs.isNotEmpty) {
+        userIDs = userIDs.substring(0, userIDs.length - 1);
+      }
+
+      Fluttertoast.showToast(
+        msg: 'User doesn\'t exist or is offline: $userIDs',
+        gravity: ToastGravity.TOP,
+      );
+    }
+
     ZegoInvitationPageManager.instance.onLocalSendInvitation(
       callIDNotifier.value,
       List.from(widget.invitees),

@@ -1,5 +1,8 @@
 // Dart imports:
 
+// Dart imports:
+import 'dart:async';
+
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 
@@ -65,16 +68,30 @@ class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
       _ZegoUIKitPrebuiltCallInvitationServiceState();
 }
 
+enum CallInvitationNetworkState {
+  unknown,
+  offline,
+  online,
+}
+
 class _ZegoUIKitPrebuiltCallInvitationServiceState
-    extends State<ZegoUIKitPrebuiltCallInvitationService> {
+    extends State<ZegoUIKitPrebuiltCallInvitationService>
+    with WidgetsBindingObserver {
+  CallInvitationNetworkState networkState = CallInvitationNetworkState.unknown;
+  List<StreamSubscription<dynamic>?> streamSubscriptions = [];
+  PluginConnectionState pluginConnectionState =
+      PluginConnectionState.disconnected;
+
   @override
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
+
     ZegoUIKit().installPlugins(widget.plugins);
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.1; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.3; $uikitVersion");
     });
 
     for (var pluginType in ZegoUIKitPluginType.values) {
@@ -90,7 +107,27 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
       }
     });
 
+    streamSubscriptions.add(ZegoUIKitInvitationService()
+        .getInvitationConnectionStateStream()
+        .listen(onInvitationConnectionState));
+
+    streamSubscriptions
+        .add(ZegoUIKit().getNetworkModeStream().listen(onNetworkModeChanged));
+
     initContext();
+  }
+
+  @override
+  void dispose() async {
+    WidgetsBinding.instance?.removeObserver(this);
+
+    super.dispose();
+
+    for (var streamSubscription in streamSubscriptions) {
+      streamSubscription?.cancel();
+    }
+
+    uninitContext();
   }
 
   @override
@@ -101,10 +138,22 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
   }
 
   @override
-  void dispose() async {
-    super.dispose();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
 
-    uninitContext();
+    debugPrint("[call invitation] didChangeAppLifecycleState $state");
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        reconnectIfDisconnected();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   @override
@@ -112,7 +161,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
     return widget.child;
   }
 
-  void initContext() async {
+  Future<void> initContext() async {
     await ZegoUIKitInvitationService()
         .init(widget.appID, appSign: widget.appSign);
     await ZegoUIKitInvitationService().login(widget.userID, widget.userName);
@@ -154,5 +203,49 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
 
     await ZegoUIKitInvitationService().logout();
     await ZegoUIKitInvitationService().login(userID, userName);
+  }
+
+  void onInvitationConnectionState(Map params) {
+    debugPrint("[call invitation] onInvitationConnectionState, param: $params");
+
+    pluginConnectionState = PluginConnectionState.values[params['state']!];
+
+    debugPrint(
+        "[call invitation] onInvitationConnectionState, state: $pluginConnectionState");
+  }
+
+  void onNetworkModeChanged(ZegoNetworkMode networkMode) {
+    debugPrint("[call invitation] onNetworkModeChanged $networkMode, "
+        "network state: $networkState");
+
+    switch (networkMode) {
+      case ZegoNetworkMode.Offline:
+      case ZegoNetworkMode.Unknown:
+        networkState = CallInvitationNetworkState.offline;
+        break;
+      case ZegoNetworkMode.Ethernet:
+      case ZegoNetworkMode.WiFi:
+      case ZegoNetworkMode.Mode2G:
+      case ZegoNetworkMode.Mode3G:
+      case ZegoNetworkMode.Mode4G:
+      case ZegoNetworkMode.Mode5G:
+        if (CallInvitationNetworkState.offline == networkState) {
+          reconnectIfDisconnected();
+        }
+        networkState = CallInvitationNetworkState.online;
+        break;
+    }
+  }
+
+  void reconnectIfDisconnected() {
+    debugPrint(
+        "[call invitation] reconnectIfDisconnected, state:$pluginConnectionState");
+    if (pluginConnectionState == PluginConnectionState.disconnected) {
+      debugPrint(
+          "[call invitation] reconnect, id:${widget.userID}, name:${widget.userName}");
+      ZegoUIKitInvitationService().logout().then((value) {
+        ZegoUIKitInvitationService().login(widget.userID, widget.userName);
+      });
+    }
   }
 }

@@ -79,6 +79,7 @@ class ZegoInviteeCallingBottomToolBarState
           children: [
             ZegoRefuseInvitationButton(
               inviterID: widget.inviter.id,
+              // data customization is not supported
               data: '{"reason":"decline"}',
               text: "Decline",
               icon: ButtonIcon(

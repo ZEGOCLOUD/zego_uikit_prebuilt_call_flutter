@@ -38,6 +38,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.onHangUp,
     this.onOnlySelfInRoom,
     this.avatarBuilder,
+    this.audioVideoContainerBuilder,
   })  : audioVideoViewConfig =
             audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
@@ -69,6 +70,10 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// layout config
   ZegoLayout? layout;
+
+  /// if you don't want to use the default video layout widget, you can customize it entirely
+  Widget Function(BuildContext, List<ZegoUIKitUser> allUsers,
+      List<ZegoUIKitUser> audioVideoUsers)? audioVideoContainerBuilder;
 
   /// customize your user's avatar, default we use userID's first character as avatar
   /// User avatars are generally stored in your server, ZegoUIkitPrebuiltCall does not know each user's avatar, so by default, ZegoUIkitPrebuiltCall will use the first letter of the user name to draw the default user avatar, as shown in the following figure,

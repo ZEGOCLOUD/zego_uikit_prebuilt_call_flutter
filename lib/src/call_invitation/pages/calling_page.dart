@@ -7,10 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
 import 'calling_machine.dart';
 import 'calling_view.dart';
 import 'page_manager.dart';
@@ -140,25 +138,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
     callConfigHandUp = callConfig?.onHangUp;
     callConfig?.onHangUp = onCallHandUp;
-
-    switch (pageManager.invitationData.type) {
-      case ZegoInvitationType.voiceCall:
-        callConfig?.bottomMenuBarConfig.buttons = const [
-          ZegoMenuBarButtonName.toggleMicrophoneButton,
-          ZegoMenuBarButtonName.hangUpButton,
-          ZegoMenuBarButtonName.switchAudioOutputButton,
-        ];
-        break;
-      case ZegoInvitationType.videoCall:
-        callConfig?.bottomMenuBarConfig.buttons = const [
-          ZegoMenuBarButtonName.toggleCameraButton,
-          ZegoMenuBarButtonName.toggleMicrophoneButton,
-          ZegoMenuBarButtonName.hangUpButton,
-          ZegoMenuBarButtonName.switchAudioOutputButton,
-          ZegoMenuBarButtonName.switchCameraButton,
-        ];
-        break;
-    }
 
     return ZegoUIKitPrebuiltCall(
       appID: pageManager.appID,

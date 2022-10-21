@@ -42,9 +42,6 @@ class ZegoInvitationPageManager {
 
   ZegoCallInvitationData invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> invitingInvitees = []; //  only change by inviter
-  List<ZegoUIKitUser> inviteErrorInvitees = []; //  only change by inviter
-  List<ZegoUIKitUser> refuseInvitees = [];
-  List<ZegoUIKitUser> timeoutInvitees = [];
 
   bool get isGroupCall => invitationData.invitees.length > 1;
 
@@ -150,9 +147,6 @@ class ZegoInvitationPageManager {
   ) {
     debugPrint("local send invitation, call id:$callID, invitees:$invitees, "
         "type: $invitationType, error invitees:$errorInvitees");
-
-    inviteErrorInvitees =
-        errorInvitees.map((userID) => ZegoUIKit().getUser(userID)).toList();
 
     invitingInvitees = List.from(invitees);
     invitingInvitees
@@ -289,20 +283,16 @@ class ZegoInvitationPageManager {
     List<ZegoUIKitUser> invitees = params['invitees']!;
     String data = params['data']!; // extended field
 
-    debugPrint(
-        "on invitation response timeout, data:${invitees.map((e) => e.toString())}, $data");
-
     for (var timeoutInvitee in invitees) {
       invitingInvitees
           .removeWhere((invitee) => timeoutInvitee.id == invitee.id);
     }
+    debugPrint("on invitation response timeout, data: $data, "
+        "invitees:${invitees.map((e) => e.toString())}, "
+        "inviting invitees: ${invitingInvitees.map((e) => e.toString())}");
 
     if (isGroupCall) {
-      timeoutInvitees.addAll(invitees);
-      debugPrint("timeout invitees: $timeoutInvitees");
-      var realInviteeCount =
-          invitationData.invitees.length - inviteErrorInvitees.length;
-      if (timeoutInvitees.length >= realInviteeCount) {
+      if (invitingInvitees.isEmpty) {
         debugPrint("invitation timeout, all invitee timeout");
 
         restoreToIdle();
@@ -316,8 +306,6 @@ class ZegoInvitationPageManager {
     ZegoUIKitUser invitee = params['invitee']!;
     String data = params['data']!; // extended field
 
-    debugPrint("on invitation refused, data:${invitee.toString()}, $data");
-
     var inviteeIndex =
         invitingInvitees.indexWhere((_invitee) => _invitee.id == invitee.id);
     if (-1 == inviteeIndex) {
@@ -326,16 +314,14 @@ class ZegoInvitationPageManager {
           "list:$invitingInvitees");
       return;
     }
-
     invitingInvitees.removeAt(inviteeIndex);
 
+    debugPrint("on invitation refused, data: $data, "
+        "invitee:${invitee.toString()}, "
+        "inviting invitees: ${invitingInvitees.map((e) => e.toString())}");
+
     if (isGroupCall) {
-      refuseInvitees.add(invitee);
-      debugPrint(
-          "invitation refuse, invitee:$invitee, now have:$refuseInvitees");
-      var realInviteeCount =
-          invitationData.invitees.length - inviteErrorInvitees.length;
-      if (refuseInvitees.length >= realInviteeCount) {
+      if (invitingInvitees.isEmpty) {
         debugPrint("invitation refuse, all refuse");
 
         restoreToIdle();
@@ -397,9 +383,6 @@ class ZegoInvitationPageManager {
     }
 
     invitationData = ZegoCallInvitationData.empty();
-    inviteErrorInvitees.clear();
-    refuseInvitees.clear();
-    timeoutInvitees.clear();
   }
 
   void onInvitationTopSheetEmptyClicked() {
