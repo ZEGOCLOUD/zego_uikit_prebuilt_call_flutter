@@ -35,8 +35,9 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
           ),
           buttonSize: Size(120.r, 120.r),
           iconSize: Size(120.r, 120.r),
-          onPressed: () {
-            ZegoInvitationPageManager.instance.onLocalCancelInvitation();
+          onPressed: (String code, String message, List<String> errorInvitees) {
+            ZegoInvitationPageManager.instance
+                .onLocalCancelInvitation(code, message, errorInvitees);
           },
         ),
       ),
@@ -92,8 +93,9 @@ class ZegoInviteeCallingBottomToolBarState
               ),
               buttonSize: Size(120.r, 120.r + 50.r),
               iconSize: Size(120.r, 120.r),
-              onPressed: () {
-                ZegoInvitationPageManager.instance.onLocalRefuseInvitation();
+              onPressed: (String code, String message) {
+                ZegoInvitationPageManager.instance
+                    .onLocalRefuseInvitation(code, message);
               },
             ),
             SizedBox(width: 230.r),
@@ -110,8 +112,9 @@ class ZegoInviteeCallingBottomToolBarState
               text: "Accept",
               buttonSize: Size(120.r, 120.r + 50.r),
               iconSize: Size(120.r, 120.r),
-              onPressed: () {
-                ZegoInvitationPageManager.instance.onLocalAcceptInvitation();
+              onPressed: (String code, String message) {
+                ZegoInvitationPageManager.instance
+                    .onLocalAcceptInvitation(code, message);
               },
             ),
           ],

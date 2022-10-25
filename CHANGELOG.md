@@ -74,3 +74,7 @@
 ## 1.2.3
 
 * fix some bugs
+
+## 1.2.4
+
+* fix some bugs

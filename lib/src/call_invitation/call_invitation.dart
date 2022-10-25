@@ -13,6 +13,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 
 class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
   const ZegoUIKitPrebuiltCallInvitationService({
@@ -21,11 +22,11 @@ class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
     required this.appSign,
     required this.userID,
     required this.userName,
-    this.tokenServerUrl = '',
-    required this.requireConfig,
     required this.child,
-    ZegoRingtoneConfig? ringtoneConfig,
     required this.plugins,
+    this.tokenServerUrl = '',
+    this.requireConfig,
+    ZegoRingtoneConfig? ringtoneConfig,
   })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
         super(key: key);
 
@@ -54,7 +55,7 @@ class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
   final String userName;
 
   ///
-  final ConfigQuery requireConfig;
+  final ConfigQuery? requireConfig;
 
   /// you can customize your ringing bell
   final ZegoRingtoneConfig ringtoneConfig;
@@ -86,12 +87,12 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
 
     ZegoUIKit().installPlugins(widget.plugins);
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.3; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.4; $uikitVersion");
     });
 
     for (var pluginType in ZegoUIKitPluginType.values) {
@@ -178,7 +179,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
       tokenServerUrl: widget.tokenServerUrl,
       userID: widget.userID,
       userName: widget.userName,
-      configQuery: widget.requireConfig,
+      configQuery: widget.requireConfig ?? defaultConfig,
       contextQuery: () {
         return context;
       },
@@ -247,5 +248,17 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
         ZegoUIKitInvitationService().login(widget.userID, widget.userName);
       });
     }
+  }
+
+  ZegoUIKitPrebuiltCallConfig defaultConfig(ZegoCallInvitationData data) {
+    var config = (data.invitees.length > 1)
+        ? ZegoInvitationType.videoCall == data.type
+            ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+            : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
+        : ZegoInvitationType.videoCall == data.type
+            ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+            : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+
+    return config;
   }
 }

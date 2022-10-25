@@ -103,8 +103,9 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
                 ),
                 iconSize: Size(74.r, 74.r),
                 buttonSize: Size(74.r, 74.r),
-                onPressed: () {
-                  ZegoInvitationPageManager.instance.onLocalRefuseInvitation();
+                onPressed: (String code, String message) {
+                  ZegoInvitationPageManager.instance
+                      .onLocalRefuseInvitation(code, message);
                 },
               ),
             ),
@@ -128,8 +129,9 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
                 ),
                 iconSize: Size(74.r, 74.r),
                 buttonSize: Size(74.r, 74.r),
-                onPressed: () {
-                  ZegoInvitationPageManager.instance.onLocalAcceptInvitation();
+                onPressed: (String code, String message) {
+                  ZegoInvitationPageManager.instance
+                      .onLocalAcceptInvitation(code, message);
                 },
               ),
             ),

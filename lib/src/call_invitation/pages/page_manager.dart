@@ -45,6 +45,9 @@ class ZegoInvitationPageManager {
 
   bool get isGroupCall => invitationData.invitees.length > 1;
 
+  /// still ring mean nobody accept this invitation
+  bool get isNobodyAccepted => callerRingtone.isRingTimerRunning;
+
   Future<void> init({
     required int appID,
     String appSign = '',
@@ -79,11 +82,12 @@ class ZegoInvitationPageManager {
   }
 
   void initRing(ZegoRingtoneConfig ringtoneConfig) {
-    if (ringtoneConfig.callerPath != null) {
-      debugPrint("reset caller ring, source path:${ringtoneConfig.callerPath}");
+    if (ringtoneConfig.incomingCallPath != null) {
+      debugPrint(
+          "reset caller ring, source path:${ringtoneConfig.incomingCallPath}");
       callerRingtone.init(
         prefix: "",
-        sourcePath: ringtoneConfig.callerPath!,
+        sourcePath: ringtoneConfig.incomingCallPath!,
         isVibrate: false,
       );
     } else {
@@ -93,11 +97,12 @@ class ZegoInvitationPageManager {
         isVibrate: false,
       );
     }
-    if (ringtoneConfig.calleePath != null) {
-      debugPrint("reset callee ring, source path:${ringtoneConfig.calleePath}");
+    if (ringtoneConfig.outgoingCallPath != null) {
+      debugPrint(
+          "reset callee ring, source path:${ringtoneConfig.outgoingCallPath}");
       calleeRingtone.init(
         prefix: "",
-        sourcePath: ringtoneConfig.calleePath!,
+        sourcePath: ringtoneConfig.outgoingCallPath!,
         isVibrate: true,
       );
     } else {
@@ -143,10 +148,17 @@ class ZegoInvitationPageManager {
     String callID,
     List<ZegoUIKitUser> invitees,
     ZegoInvitationType invitationType,
+    String code,
+    String message,
     List<String> errorInvitees,
   ) {
     debugPrint("local send invitation, call id:$callID, invitees:$invitees, "
-        "type: $invitationType, error invitees:$errorInvitees");
+        "type: $invitationType, code:$code, message:$message, error invitees:$errorInvitees");
+
+    if (code.isNotEmpty) {
+      debugPrint("send invitation error!!! code:$code, message:$message");
+      return;
+    }
 
     invitingInvitees = List.from(invitees);
     invitingInvitees
@@ -183,8 +195,8 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onLocalAcceptInvitation() {
-    debugPrint("local accept invitation");
+  void onLocalAcceptInvitation(String code, String message) {
+    debugPrint("local accept invitation, code:$code, message:$message");
 
     calleeRingtone.stopRing();
 
@@ -194,13 +206,15 @@ class ZegoInvitationPageManager {
     callingMachine.stateOnlineAudioVideo.enter();
   }
 
-  void onLocalRefuseInvitation() {
-    debugPrint("local refuse invitation");
+  void onLocalRefuseInvitation(String code, String message) {
+    debugPrint("local refuse invitation, code:$code, message:$message");
     restoreToIdle();
   }
 
-  void onLocalCancelInvitation() {
-    debugPrint("local cancel invitation");
+  void onLocalCancelInvitation(
+      String code, String message, List<String> errorInvitees) {
+    debugPrint(
+        "local cancel invitation, code:$code, message:$message, error invitees, $errorInvitees");
 
     invitingInvitees.clear();
 
@@ -222,7 +236,11 @@ class ZegoInvitationPageManager {
           "current state: ${callingMachine.getPageState()}");
 
       ZegoUIKitInvitationService()
-          .refuseInvitation(inviter.id, '{"reason":"busy"}');
+          .refuseInvitation(inviter.id, '{"reason":"busy"}')
+          .then((result) {
+        debugPrint(
+            "auto refuse result, code:${result.code}, message:${result.message}");
+      });
 
       return;
     }
@@ -292,7 +310,7 @@ class ZegoInvitationPageManager {
         "inviting invitees: ${invitingInvitees.map((e) => e.toString())}");
 
     if (isGroupCall) {
-      if (invitingInvitees.isEmpty) {
+      if (invitingInvitees.isEmpty && isNobodyAccepted) {
         debugPrint("invitation timeout, all invitee timeout");
 
         restoreToIdle();
@@ -321,7 +339,7 @@ class ZegoInvitationPageManager {
         "inviting invitees: ${invitingInvitees.map((e) => e.toString())}");
 
     if (isGroupCall) {
-      if (invitingInvitees.isEmpty) {
+      if (invitingInvitees.isEmpty && isNobodyAccepted) {
         debugPrint("invitation refuse, all refuse");
 
         restoreToIdle();
@@ -343,10 +361,14 @@ class ZegoInvitationPageManager {
   void onHangUp() {
     debugPrint("on hang up");
 
-    if (callerRingtone.isRingTimerRunning) {
-      /// still ring mean nobody accept this invitation
-      ZegoUIKitInvitationService().cancelInvitation(
-          invitingInvitees.map((user) => user.id).toList(), '');
+    if (isNobodyAccepted) {
+      ZegoUIKitInvitationService()
+          .cancelInvitation(
+              invitingInvitees.map((user) => user.id).toList(), '')
+          .then((result) {
+        debugPrint(
+            "hang up cancel result, code:${result.code}, message:${result.message}");
+      });
     }
 
     restoreToIdle();

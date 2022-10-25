@@ -24,8 +24,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.callID,
     required this.userID,
     required this.userName,
-    this.tokenServerUrl = '',
     required this.config,
+    this.tokenServerUrl = '',
     this.onDispose,
   }) : super(key: key);
 
@@ -79,7 +79,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.3; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.4; $version");
     });
 
     initUIKit();

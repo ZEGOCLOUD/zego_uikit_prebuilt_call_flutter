@@ -9,13 +9,13 @@ typedef ConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
 
 class ZegoRingtoneConfig {
   final String? packageName;
-  final String? callerPath;
-  final String? calleePath;
+  final String? incomingCallPath;
+  final String? outgoingCallPath;
 
   const ZegoRingtoneConfig({
     this.packageName,
-    this.callerPath,
-    this.calleePath,
+    this.incomingCallPath,
+    this.outgoingCallPath,
   });
 }
 
