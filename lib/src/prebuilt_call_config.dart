@@ -76,7 +76,7 @@ class ZegoUIKitPrebuiltCallConfig {
       List<ZegoUIKitUser> audioVideoUsers)? audioVideoContainerBuilder;
 
   /// customize your user's avatar, default we use userID's first character as avatar
-  /// User avatars are generally stored in your server, ZegoUIkitPrebuiltCall does not know each user's avatar, so by default, ZegoUIkitPrebuiltCall will use the first letter of the user name to draw the default user avatar, as shown in the following figure,
+  /// User avatars are generally stored in your server, ZegoUIKitPrebuiltCall does not know each user's avatar, so by default, ZegoUIKitPrebuiltCall will use the first letter of the user name to draw the default user avatar, as shown in the following figure,
   ///
   /// |When the user is not speaking|When the user is speaking|
   /// |--|--|
@@ -104,7 +104,7 @@ class ZegoUIKitPrebuiltCallConfig {
   ///
   /// ```
   ///
-  AvatarBuilder? avatarBuilder;
+  ZegoAvatarBuilder? avatarBuilder;
 
   /// alert dialog information of quit
   /// if confirm info is not null, APP will pop alert dialog when you hang up
@@ -137,10 +137,10 @@ class ZegoPrebuiltAudioVideoViewConfig {
   /// customize your foreground of audio video view, which is the top widget of stack
   /// <br><img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="5%">
   /// you can return any widget, then we will put it on top of audio video view
-  AudioVideoViewForegroundBuilder? foregroundBuilder;
+  ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
 
   /// customize your background of audio video view, which is the bottom widget of stack
-  AudioVideoViewBackgroundBuilder? backgroundBuilder;
+  ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
 
   /// video view mode
   /// if set to true, video view will proportional zoom fills the entire View and may be partially cut
@@ -251,7 +251,7 @@ class ZegoMemberListConfig {
   bool showCameraState;
 
   /// customize your item view of member list
-  MemberListItemBuilder? itemBuilder;
+  ZegoMemberListItemBuilder? itemBuilder;
 
   ZegoMemberListConfig({
     this.showMicroPhoneState = true,

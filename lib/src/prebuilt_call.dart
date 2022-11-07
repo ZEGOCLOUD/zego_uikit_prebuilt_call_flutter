@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:core';
 
 // Flutter imports:
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -76,13 +77,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void initState() {
     super.initState();
 
-    correctConfigValue();
-
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.5; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.6; $version");
     });
 
-    initUIKit();
+    initContext();
 
     userListStreamSubscription =
         ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
@@ -134,21 +133,35 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
   }
 
-  void initUIKit() {
+  Future<void> initPermissions() async {
+    if (widget.config.turnOnCameraWhenJoining) {
+      await requestPermission(Permission.camera);
+    }
+    if (widget.config.turnOnMicrophoneWhenJoining) {
+      await requestPermission(Permission.microphone);
+    }
+  }
+
+  void initContext() {
+    correctConfigValue();
+
     ZegoUIKitPrebuiltCallConfig config = widget.config;
     if (!kIsWeb) {
       assert(widget.appSign.isNotEmpty);
-      ZegoUIKit().login(widget.userID, widget.userName).then((value) {
-        ZegoUIKit()
-            .init(appID: widget.appID, appSign: widget.appSign)
-            .then((value) {
+      initPermissions().then((value) {
+        ZegoUIKit().login(widget.userID, widget.userName).then((value) {
           ZegoUIKit()
-            ..updateVideoViewMode(
-                config.audioVideoViewConfig.useVideoViewAspectFill)
-            ..turnCameraOn(config.turnOnCameraWhenJoining)
-            ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
-            ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining)
-            ..joinRoom(widget.callID);
+              .init(appID: widget.appID, appSign: widget.appSign)
+              .then((value) {
+            ZegoUIKit()
+              ..useFrontFacingCamera(true)
+              ..updateVideoViewMode(
+                  config.audioVideoViewConfig.useVideoViewAspectFill)
+              ..turnCameraOn(config.turnOnCameraWhenJoining)
+              ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
+              ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining)
+              ..joinRoom(widget.callID);
+          });
         });
       });
     } else {
@@ -236,7 +249,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
         var layout = widget.config.layout as ZegoLayoutPictureInPictureConfig;
         layout.smallViewSize = Size(190.0.w, 338.0.h);
-        layout.smallViewSpacing =
+        layout.spacingBetweenSmallViews =
             EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
         widget.config.layout = layout;
       }
@@ -244,6 +257,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         layout: widget.config.layout!,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
+        sortAudioVideo: (List<ZegoUIKitUser> users) {
+          if (users.length > 1) {
+            if (users.first.id == ZegoUIKit().getLocalUser().id) {
+              /// local display small view
+              users.removeAt(0);
+              users.insert(1, ZegoUIKit().getLocalUser());
+            }
+          }
+          return users;
+        },
       );
     }
 
@@ -321,7 +344,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       widget.config.hangUpConfirmDialogInfo!.title,
       widget.config.hangUpConfirmDialogInfo!.message,
       [
-        ElevatedButton(
+        CupertinoDialogAction(
           child: Text(
             widget.config.hangUpConfirmDialogInfo!.cancelButtonName,
             style: TextStyle(fontSize: 26.r, color: const Color(0xff0055FF)),
@@ -330,12 +353,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             //  pop this dialog
             Navigator.of(context).pop(false);
           },
-          // style: ElevatedButton.styleFrom(primary: Colors.white),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          ),
         ),
-        ElevatedButton(
+        CupertinoDialogAction(
           child: Text(
             widget.config.hangUpConfirmDialogInfo!.confirmButtonName,
             style: TextStyle(fontSize: 26.r, color: Colors.white),
@@ -344,10 +363,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             //  pop this dialog
             Navigator.of(context).pop(true);
           },
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xff0055FF)),
-          ),
         ),
       ],
     );
