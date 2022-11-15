@@ -78,7 +78,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.6; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.8; $version");
     });
 
     initContext();
@@ -157,6 +157,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               ..useFrontFacingCamera(true)
               ..updateVideoViewMode(
                   config.audioVideoViewConfig.useVideoViewAspectFill)
+              ..setVideoMirrorMode(true)
               ..turnCameraOn(config.turnOnCameraWhenJoining)
               ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
               ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining)
@@ -206,9 +207,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       onTap: () {
         /// listen only click event in empty space
         if (widget.config.bottomMenuBarConfig.hideByClick) {
-          setState(() {
-            barVisibilityNotifier.value = !barVisibilityNotifier.value;
-          });
+          barVisibilityNotifier.value = !barVisibilityNotifier.value;
         }
       },
       child: Listener(
@@ -248,22 +247,34 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// audio video container
       if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
         var layout = widget.config.layout as ZegoLayoutPictureInPictureConfig;
+        layout.smallViewPosition = ZegoViewPosition.topRight;
         layout.smallViewSize = Size(190.0.w, 338.0.h);
-        layout.spacingBetweenSmallViews =
+        layout.smallViewMargin =
             EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
         widget.config.layout = layout;
       }
+
       container = ZegoAudioVideoContainer(
         layout: widget.config.layout!,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
         sortAudioVideo: (List<ZegoUIKitUser> users) {
-          if (users.length > 1) {
-            if (users.first.id == ZegoUIKit().getLocalUser().id) {
-              /// local display small view
-              users.removeAt(0);
-              users.insert(1, ZegoUIKit().getLocalUser());
+          if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+            if (users.length > 1) {
+              if (users.first.id == ZegoUIKit().getLocalUser().id) {
+                /// local display small view
+                users.removeAt(0);
+                users.insert(1, ZegoUIKit().getLocalUser());
+              }
             }
+          } else {
+            users.removeWhere((user) {
+              return user.id == ZegoUIKit().getLocalUser().id;
+            });
+            users = [
+              ZegoUIKit().getLocalUser(),
+              ...List<ZegoUIKitUser>.from(users.reversed)
+            ];
           }
           return users;
         },

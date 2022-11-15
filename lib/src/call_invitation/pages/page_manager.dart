@@ -118,22 +118,22 @@ class ZegoInvitationPageManager {
     // check plugin installed
 
     streamSubscriptions
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationReceivedStream()
           .listen(onInvitationReceived))
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationAcceptedStream()
           .listen(onInvitationAccepted))
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationTimeoutStream()
           .listen(onInvitationTimeout))
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationResponseTimeoutStream()
           .listen(onInvitationResponseTimeout))
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationRefusedStream()
           .listen(onInvitationRefused))
-      ..add(ZegoUIKitInvitationService()
+      ..add(ZegoUIKitSignalingPluginImp.shared
           .getInvitationCanceledStream()
           .listen(onInvitationCanceled));
   }
@@ -235,7 +235,7 @@ class ZegoInvitationPageManager {
           "is inviting: ${invitationData.callID.isNotEmpty}, "
           "current state: ${callingMachine.getPageState()}");
 
-      ZegoUIKitInvitationService()
+      ZegoUIKitSignalingPluginImp.shared
           .refuseInvitation(inviter.id, '{"reason":"busy"}')
           .then((result) {
         debugPrint(
@@ -362,7 +362,7 @@ class ZegoInvitationPageManager {
     debugPrint("on hang up");
 
     if (isNobodyAccepted) {
-      ZegoUIKitInvitationService()
+      ZegoUIKitSignalingPluginImp.shared
           .cancelInvitation(
               invitingInvitees.map((user) => user.id).toList(), '')
           .then((result) {

@@ -88,7 +88,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
     plugins?.init();
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.6; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.8; $uikitVersion");
     });
 
     initPermissions().then((value) => initContext());

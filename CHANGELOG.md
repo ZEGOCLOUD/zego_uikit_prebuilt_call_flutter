@@ -86,3 +86,11 @@
 ## 1.2.6
 
 * fix some bugs
+
+## 1.2.7
+
+* fix gallery layout
+
+## 1.2.8
+
+* update a dependency to the latest release..
