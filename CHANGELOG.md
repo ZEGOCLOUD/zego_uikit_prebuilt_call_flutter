@@ -99,3 +99,7 @@
 
 * rename ZegoUIKitPrebuiltCallInvitationService to ZegoUIKitPrebuiltInvitationCall
 * update a dependency to the latest release
+
+## 1.2.10
+
+* fix some bugs

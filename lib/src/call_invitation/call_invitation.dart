@@ -88,7 +88,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
     plugins?.init();
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.9; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.10; $uikitVersion");
     });
 
     initPermissions().then((value) => initContext());
@@ -177,6 +177,6 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   }
 }
 
-@Deprecated('Use [ZegoUIKitPrebuiltInvitationCall]')
+@Deprecated('Use [ZegoUIKitPrebuiltCallWithInvitation]')
 typedef ZegoUIKitPrebuiltCallInvitationService
     = ZegoUIKitPrebuiltCallWithInvitation;
