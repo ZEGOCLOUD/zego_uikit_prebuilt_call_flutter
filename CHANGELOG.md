@@ -10,7 +10,7 @@
 
 * fix some bugs
 * remove **serverSecret** in init function
-* update a dependency to the latest release..
+* update a dependency to the latest release
 
 ## 0.0.4
 
@@ -28,7 +28,7 @@
 ## 1.0.1
 
 * fix some bugs
-* update a dependency to the latest release..
+* update a dependency to the latest release
 
 ## 1.0.2
 
@@ -45,7 +45,7 @@
 
 ## 1.1.1
 
-* update a dependency to the latest release..
+* update a dependency to the latest release
 
 ## 1.1.2
 
@@ -69,7 +69,7 @@
 
 ## 1.2.2
 
-* update a dependency to the latest release..
+* update a dependency to the latest release
 
 ## 1.2.3
 
@@ -81,7 +81,7 @@
 
 ## 1.2.5
 
-* update a dependency to the latest release..
+* update a dependency to the latest release
 
 ## 1.2.6
 
@@ -93,4 +93,9 @@
 
 ## 1.2.8
 
-* update a dependency to the latest release..
+* update a dependency to the latest release
+
+## 1.2.9
+
+* rename ZegoUIKitPrebuiltCallInvitationService to ZegoUIKitPrebuiltInvitationCall
+* update a dependency to the latest release

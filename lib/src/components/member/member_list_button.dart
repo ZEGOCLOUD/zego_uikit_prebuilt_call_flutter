@@ -1,6 +1,3 @@
-// Dart imports:
-import 'dart:math' as math;
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -70,8 +67,7 @@ class _ZegoMemberListButtonState extends State<ZegoMemberListButton> {
         decoration: BoxDecoration(
           color: widget.icon?.backgroundColor ??
               const Color(0xff2C2F3E).withOpacity(0.6),
-          borderRadius: BorderRadius.all(Radius.circular(
-              math.min(containerSize.width, containerSize.height) / 2)),
+          shape: BoxShape.circle,
         ),
         child: SizedBox.fromSize(
           size: sizeBoxSize,

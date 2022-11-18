@@ -13,8 +13,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 import 'plugins.dart';
 
-class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
-  const ZegoUIKitPrebuiltCallInvitationService({
+class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
+  const ZegoUIKitPrebuiltCallWithInvitation({
     Key? key,
     required this.appID,
     required this.appSign,
@@ -38,7 +38,7 @@ class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
   /// tokenServerUrl is only for web.
   /// If you have to support Web and Android, iOS, then you can use it like this
   /// ```
-  ///   ZegoUIKitPrebuiltCallInvitationServiceConfig(
+  ///   ZegoUIKitPrebuiltInvitationCall(
   ///     appID: appID,
   ///     userID: userID,
   ///     userName: userName,
@@ -63,12 +63,12 @@ class ZegoUIKitPrebuiltCallInvitationService extends StatefulWidget {
   final List<IZegoUIKitPlugin> plugins;
 
   @override
-  State<ZegoUIKitPrebuiltCallInvitationService> createState() =>
-      _ZegoUIKitPrebuiltCallInvitationServiceState();
+  State<ZegoUIKitPrebuiltCallWithInvitation> createState() =>
+      _ZegoUIKitPrebuiltCallWithInvitationState();
 }
 
-class _ZegoUIKitPrebuiltCallInvitationServiceState
-    extends State<ZegoUIKitPrebuiltCallInvitationService>
+class _ZegoUIKitPrebuiltCallWithInvitationState
+    extends State<ZegoUIKitPrebuiltCallWithInvitation>
     with WidgetsBindingObserver {
   ZegoPrebuiltPlugins? plugins;
 
@@ -88,7 +88,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
     plugins?.init();
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.8; $uikitVersion");
+      debugPrint("versions: zego_uikit_prebuilt_call:1.2.9; $uikitVersion");
     });
 
     initPermissions().then((value) => initContext());
@@ -106,7 +106,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
   }
 
   @override
-  void didUpdateWidget(ZegoUIKitPrebuiltCallInvitationService oldWidget) {
+  void didUpdateWidget(ZegoUIKitPrebuiltCallWithInvitation oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     plugins?.onUserInfoUpdate(widget.userID, widget.userName);
@@ -176,3 +176,7 @@ class _ZegoUIKitPrebuiltCallInvitationServiceState
     return config;
   }
 }
+
+@Deprecated('Use [ZegoUIKitPrebuiltInvitationCall]')
+typedef ZegoUIKitPrebuiltCallInvitationService
+    = ZegoUIKitPrebuiltCallWithInvitation;

@@ -108,8 +108,8 @@ Now, you can make a new call by navigating to this `CallPage`.
 dependencies:
   flutter:
     sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.8 # Add this line
-  zego_uikit_signaling_plugin: ^1.0.13 # Add this line
+  zego_uikit_prebuilt_call: ^1.2.9 # Add this line
+  zego_uikit_signaling_plugin: ^1.0.14 # Add this line
 ```
 
 2. Execute the command as shown below under your project's root folder to install all dependencies
@@ -129,15 +129,15 @@ import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 #### Integrate the call functionality with the invitation feature
 
-##### 1. Warp your widget with ZegoUIKitPrebuiltCallInvitationService
+##### 1. Warp your widget with ZegoUIKitPrebuiltInvitationCall
 
 > You can get the AppID and AppSign from [ZEGOCLOUD&#39;s Console](https://console.zegocloud.com).
-> Users who use the same callID can talk to each other. (ZegoUIKitPrebuiltCallInvitationService supports 1 on 1 call and group call)
+> Users who use the same callID can talk to each other. (ZegoUIKitPrebuiltInvitationCall supports 1 on 1 call and group call)
 
 ```dart
 @override
 Widget build(BuildContext context) {
-   return ZegoUIKitPrebuiltCallInvitationService(
+   return ZegoUIKitPrebuiltInvitationCall(
       appID: yourAppID,
       appSign: yourAppSign,
       userID: userID,
