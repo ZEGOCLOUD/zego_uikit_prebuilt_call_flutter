@@ -78,7 +78,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.10; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.11; $version");
     });
 
     initContext();
@@ -118,6 +118,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               return clickListener(
                 child: Stack(
                   children: [
+                    background(constraints.maxWidth),
                     audioVideoContainer(context, constraints.maxHeight),
                     widget.config.topMenuBarConfig.isVisible
                         ? topMenuBar()
@@ -258,6 +259,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         layout: widget.config.layout!,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
+        avatarConfig: ZegoAvatarConfig(
+          showInAudioMode:
+              widget.config.audioVideoViewConfig.showAvatarInAudioMode,
+          showSoundWavesInAudioMode:
+              widget.config.audioVideoViewConfig.showSoundWavesInAudioMode,
+          builder: widget.config.avatarBuilder,
+        ),
         sortAudioVideo: (List<ZegoUIKitUser> users) {
           if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
             if (users.length > 1) {
@@ -268,13 +276,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               }
             }
           } else {
-            users.removeWhere((user) {
-              return user.id == ZegoUIKit().getLocalUser().id;
-            });
-            users = [
-              ZegoUIKit().getLocalUser(),
-              ...List<ZegoUIKitUser>.from(users.reversed)
-            ];
+            var localUserIndex = users
+                .indexWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
+            if (-1 != localUserIndex) {
+              users.removeAt(localUserIndex);
+              users = [
+                ZegoUIKit().getLocalUser(),
+                ...List<ZegoUIKitUser>.from(users.reversed)
+              ];
+            }
           }
           return users;
         },
@@ -417,15 +427,26 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         widget.config.audioVideoViewConfig.backgroundBuilder
                 ?.call(context, size, user, extraInfo) ??
             Container(color: Colors.transparent),
-        ZegoAudioVideoBackground(
-          size: size,
-          user: user,
-          showAvatar: widget.config.audioVideoViewConfig.showAvatarInAudioMode,
-          showSoundLevel:
-              widget.config.audioVideoViewConfig.showSoundWavesInAudioMode,
-          avatarBuilder: widget.config.avatarBuilder,
-        ),
       ],
+    );
+  }
+
+  Widget background(double maxWidth) {
+    var screenSize = MediaQuery.of(context).size;
+    var isSmallView = (screenSize.width - maxWidth).abs() > 1;
+
+    var backgroundColor =
+        isSmallView ? const Color(0xff333437) : const Color(0xff4A4B4D);
+    if (widget.config.layout is ZegoLayoutGalleryConfig) {
+      backgroundColor = const Color(0xff4A4B4D);
+    }
+
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(color: backgroundColor),
     );
   }
 }

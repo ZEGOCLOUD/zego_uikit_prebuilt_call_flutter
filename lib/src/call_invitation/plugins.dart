@@ -45,7 +45,8 @@ class ZegoPrebuiltPlugins {
       });
     }
 
-    subscriptions.add(ZegoUIKitSignalingPluginImp.shared
+    subscriptions.add(ZegoUIKit()
+        .getSignalingPlugin()
         .getInvitationConnectionStateStream()
         .listen(onInvitationConnectionState));
 
@@ -54,14 +55,14 @@ class ZegoPrebuiltPlugins {
   }
 
   Future<void> init() async {
-    await ZegoUIKitSignalingPluginImp.shared.init(appID, appSign: appSign);
-    await ZegoUIKitSignalingPluginImp.shared.login(userID, userName);
+    await ZegoUIKit().getSignalingPlugin().init(appID, appSign: appSign);
+    await ZegoUIKit().getSignalingPlugin().login(userID, userName);
   }
 
   Future<void> uninit() async {
     // TODO: 这里的生命周期看下是否合理
-    await ZegoUIKitSignalingPluginImp.shared.logout();
-    await ZegoUIKitSignalingPluginImp.shared.uninit();
+    await ZegoUIKit().getSignalingPlugin().logout();
+    await ZegoUIKit().getSignalingPlugin().uninit();
 
     for (var streamSubscription in subscriptions) {
       streamSubscription?.cancel();
@@ -75,8 +76,8 @@ class ZegoPrebuiltPlugins {
       return;
     }
 
-    await ZegoUIKitSignalingPluginImp.shared.logout();
-    await ZegoUIKitSignalingPluginImp.shared.login(userID, userName);
+    await ZegoUIKit().getSignalingPlugin().logout();
+    await ZegoUIKit().getSignalingPlugin().login(userID, userName);
   }
 
   void onInvitationConnectionState(Map params) {
@@ -116,8 +117,8 @@ class ZegoPrebuiltPlugins {
         "[call invitation] reconnectIfDisconnected, state:$pluginConnectionState");
     if (pluginConnectionState == PluginConnectionState.disconnected) {
       debugPrint("[call invitation] reconnect, id:$userID, name:$userName");
-      ZegoUIKitSignalingPluginImp.shared.logout().then((value) {
-        ZegoUIKitSignalingPluginImp.shared.login(userID, userName);
+      ZegoUIKit().getSignalingPlugin().logout().then((value) {
+        ZegoUIKit().getSignalingPlugin().login(userID, userName);
       });
     }
   }

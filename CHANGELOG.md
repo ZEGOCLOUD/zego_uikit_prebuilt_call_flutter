@@ -103,3 +103,7 @@
 ## 1.2.10
 
 * fix some bugs
+
+## 1.2.11
+
+* update a dependency to the latest release
