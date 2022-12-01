@@ -78,7 +78,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.11; $version");
+      debugPrint("version: zego_uikit_prebuilt_call:1.2.12; $version");
     });
 
     initContext();

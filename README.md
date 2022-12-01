@@ -108,8 +108,8 @@ Now, you can make a new call by navigating to this `CallPage`.
 dependencies:
   flutter:
     sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.11 # Add this line
-  zego_uikit_signaling_plugin: ^1.0.15 # Add this line
+  zego_uikit_prebuilt_call: ^1.2.12 # Add this line
+  zego_uikit_signaling_plugin: ^1.0.16 # Add this line
 ```
 
 2. Execute the command as shown below under your project's root folder to install all dependencies
