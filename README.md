@@ -1,15 +1,22 @@
-# Overview
+# Quick Start
+
+
+|One-on-one call|Group call| Call With Invitation|
+|---|---|---|
+|![One-on-one call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![Group call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|![CallWithInvitation](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/invitation_calls.gif)|
 
 - - -
+
+## Prerequisites
+
+- Go to [ZEGOCLOUD Admin Console\|_blank](https://console.zegocloud.com), and do the following:
+  - Create a project, get the **AppID** and **AppSign**.
+  - Activate the **In-app Chat** service (as shown in the following figure).
+![ActivateZIMinConsole2](https://storage.zego.im/sdk-doc/Pics/InappChat/ActivateZIMinConsole2.png)
 
 **Call Kit** is a prebuilt feature-rich call component, which enables you to build **one-on-one and group voice/video calls** into your app with only a few lines of code.
 
 And it includes the business logic with the UI, you can add or remove features accordingly by customizing UI components.
-
-
-|One-on-one call|Group call|
-|---|---|
-|![One-on-one call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![Group call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|
 
 
 ## When do you need the Call Kit
@@ -108,8 +115,8 @@ Now, you can make a new call by navigating to this `CallPage`.
 dependencies:
   flutter:
     sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.12 # Add this line
-  zego_uikit_signaling_plugin: ^1.0.16 # Add this line
+  zego_uikit_prebuilt_call: ^1.2.13 # Add this line
+  zego_uikit_signaling_plugin: ^1.0.18 # Add this line
 ```
 
 2. Execute the command as shown below under your project's root folder to install all dependencies

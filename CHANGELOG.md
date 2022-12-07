@@ -111,3 +111,7 @@
 ## 1.2.12
 
 * update a dependency to the latest release
+
+## 1.2.13
+
+* update a dependency to the latest release
