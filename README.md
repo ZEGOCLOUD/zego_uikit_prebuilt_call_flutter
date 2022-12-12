@@ -1,54 +1,64 @@
-# Quick Start
-
-
-|One-on-one call|Group call| Call With Invitation|
-|---|---|---|
-|![One-on-one call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![Group call](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|![CallWithInvitation](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/invitation_calls.gif)|
-
 - - -
-
-## Prerequisites
-
-- Go to [ZEGOCLOUD Admin Console\|_blank](https://console.zegocloud.com), and do the following:
-  - Create a project, get the **AppID** and **AppSign**.
-  - Activate the **In-app Chat** service (as shown in the following figure).
-![ActivateZIMinConsole2](https://storage.zego.im/sdk-doc/Pics/InappChat/ActivateZIMinConsole2.png)
+# Overview
+- - -
 
 **Call Kit** is a prebuilt feature-rich call component, which enables you to build **one-on-one and group voice/video calls** into your app with only a few lines of code.
 
 And it includes the business logic with the UI, you can add or remove features accordingly by customizing UI components.
 
 
+|One-on-one call|Group call|
+|---|---|
+|![all_close.gif](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![8C_little.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|
+
+
 ## When do you need the Call Kit
 
 - Build apps faster and easier
-  - When you want to prototype 1-on-1 or group voice/video calls **ASAP** 
+  > When you want to prototype 1-on-1 or group voice/video calls **ASAP** 
 
-  - Consider **speed or efficiency** as the first priority
+  > Consider **speed or efficiency** as the first priority
 
-  - Call Kit allows you to integrate **in minutes**
+  > Call Kit allows you to integrate **in minutes**
 
 - Customize UI and features as needed
-  - When you want to customize in-call features **based on actual business needs**
+  > When you want to customize in-call features **based on actual business needs**
 
-  - **Less time wasted** developing basic features
+  > **Less time wasted** developing basic features
 
-  - Call Kit includes the business logic along with the UI, allows you to **customize features accordingly**
+  > Call Kit includes the business logic along with the UI, allows you to **customize features accordingly**
 
+
+To finest-grained build a call app, you may try our [Video Call SDK\|_blank](!ExpressVideoSDK-OverView/OverView) to make full customization.
 
 ## Embedded features
 
-- Ready-to-use one-on-one/group calls
+- Ready-to-use 1-on-1/group calls
 - Customizable UI styles
 - Real-time sound waves display
 - Device management
-- Switch views during a one-on-one call
-- Extendable top/bottom menu bar
+- Switch views during a 1-on-1 call
+- Extendable menu bar
 - Participant list
+- Call invitation
+- Custom call ringtones
 
-# Quick start
+
+## Recommended resources
+
+
+* I want to get started to implement [a basic call](http://doc.oa.zego.im/!Quick_start_basic) swiftly
+* I want to get the [Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
+* I want to get started to implement [a call with call invitation](http://doc.oa.zego.im/article/14826)
+* To [configure prebuilt UI](http://doc.oa.zego.im/!ZEGOUIKIT_Custom_prebuilt_UI) for a custom experience
+
 
 - - -
+# Quick start
+- - -
+
+
+<video poster="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/videos/How_to_build_video_call_using_Flutter.png" src="https://storage.zego.im/sdk-doc/doc/video/ZegoUIKit/How_to_build_video_call_using_Flutter_.mp4" width="80%" preload="auto" controls></video>
 
 
 ## Integrate the SDK
@@ -95,8 +105,8 @@ class CallPage extends StatelessWidget {
       userName: 'user_name',
       callID: callID,
       // You can also use groupVideo/groupVoice/oneOnOneVoice to make more types of calls.
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideo() 
-        ..onOnlySelfInRoom = (context) => Navigator.of(context).pop(),
+      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() 
+        ..onOnlySelfInRoom = () => Navigator.of(context).pop(),
     );
   }
 }
@@ -105,101 +115,10 @@ class CallPage extends StatelessWidget {
 Now, you can make a new call by navigating to this `CallPage`.
 
 
-### Call With Invitation
-
-#### Add as dependencies
-
-1. Edit your project's pubspec.yaml and add local project dependencies
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.13 # Add this line
-  zego_uikit_signaling_plugin: ^1.0.18 # Add this line
-```
-
-2. Execute the command as shown below under your project's root folder to install all dependencies
-
-```dart
-flutter pub get
-```
-
-#### Import SDK
-
-Now in your Dart code, you can import prebuilt.
-
-```dart
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
-```
-
-#### Integrate the call functionality with the invitation feature
-
-##### 1. Warp your widget with ZegoUIKitPrebuiltInvitationCall
-
-> You can get the AppID and AppSign from [ZEGOCLOUD&#39;s Console](https://console.zegocloud.com).
-> Users who use the same callID can talk to each other. (ZegoUIKitPrebuiltInvitationCall supports 1 on 1 call and group call)
-
-```dart
-@override
-Widget build(BuildContext context) {
-   return ZegoUIKitPrebuiltInvitationCall(
-      appID: yourAppID,
-      appSign: yourAppSign,
-      userID: userID,
-      userName: userName,
-      requireConfig: (ZegoCallInvitationData data) {
-         late ZegoUIKitPrebuiltCallConfig config;
-
-         if (data.invitees.length > 1) {
-            ///  group call
-            config = ZegoInvitationType.videoCall == data.type
-                    ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
-                    : ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
-         } else {
-            ///  one on one call
-            config = ZegoInvitationType.videoCall == data.type
-                    ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
-                    : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
-
-            config.onHangUp = () {
-               Navigator.of(context).pop();
-            };
-         }
-
-         return config;
-      },
-      child: YourWidget(),
-   );
-}
-```
-
-##### 2. Add a button for making a call
-
-```dart
-ZegoStartCallCallInvitation(
-   isVideoCall: true,
-   invitees: [
-      ZegoUIKitUser(
-         id: targetUserID,
-         name: targetUserName,
-      ),
-      ...
-      ZegoUIKitUser(
-        id: targetUserID,
-        name: targetUserName,
-      )
-   ],
-)
-```
-
-Now, you can invite someone to the call by simply clicking this button.
-
 ## Configure your project
 
 
-### Android:
+- Android:
 1. If your project is created with Flutter 2.x.x, you will need to open the `your_project/android/app/build.gradle` file, and modify the `compileSdkVersion` to 33.
 
 
@@ -207,51 +126,52 @@ Now, you can invite someone to the call by simply clicking this button.
 
 2. Add app permissions.
 Open the file `your_project/app/src/main/AndroidManifest.xml`, and add the following code:
+   ```xml
+   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+   <uses-permission android:name="android.permission.RECORD_AUDIO" />
+   <uses-permission android:name="android.permission.INTERNET" />
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+   <uses-permission android:name="android.permission.CAMERA" />
+   <uses-permission android:name="android.permission.BLUETOOTH" />
+   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+   <uses-permission android:name="android.permission.WAKE_LOCK" />
+   ```
+![permission_android.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_android.png)
 
-```xml
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-<uses-permission android:name="android.permission.WAKE_LOCK" />
-<uses-permission android:name="android.permission.VIBRATE"/>
-```
 
-![/Pics/ZegoUIKit/Flutter/permission_android.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_android.png)
+3. Prevent code obfuscation.
 
-### iOS: 
+To prevent obfuscation of the SDK public class names, do the following:
+
+a. In your project's `your_project > android > app` folder, create a `proguard-rules.pro` file with the following content as shown below:
+
+ <pre style="background-color: #011627; border-radius: 8px; padding: 25px; color: white"><div>
+-keep class **.zego.** { *; }
+</div></pre>
+
+b. Add the following config code to the `release` part of the `your_project/android/app/build.gradle` file.
+
+<pre style="background-color: #011627; border-radius: 8px; padding: 25px; color: white"><div>
+proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+</div></pre>
+
+![android_class_confusion.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/android_class_confusion.png)
+
+- iOS: 
 
 To add permissions, open `your_project/ios/Runner/Info.plist`, and add the following code to the `dict` part:
 
-```
+```plist
 <key>NSCameraUsageDescription</key>
 <string>We require camera access to connect to a call</string>
 <key>NSMicrophoneUsageDescription</key>
 <string>We require microphone access to connect to a call</string>
 ```
+![permission_ios.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png)
 
-![/Pics/ZegoUIKit/Flutter/permission_ios.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png)
 
-### Turn off some classes's confusion
-
-To prevent the ZEGO SDK public class names from being obfuscated, please complete the following steps:
-
-1. Create `proguard-rules.pro` file under [your_project > android > app] with content as show below:
-```
--keep class **.zego.** { *; }
-```
-
-2. Add the following config code to the release part of the `your_project/android/app/build.gradle` file.
-```
-proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-```
-
-![image](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/android_class_confusion.png)
 
 
 ## Run & Test
@@ -260,14 +180,184 @@ Now you have finished all the steps!
 
 You can simply click the **Run** or **Debug** to run and test your App on your device.
 
-![/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
+![run_flutter_project.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
 
-## Recommended resources
+## Related guide
 
-[Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
+[Custom prebuilt UI](!ZEGOUIKIT_Custom_prebuilt_UI)
 
-[Complete Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
 
-[About Us](https://www.zegocloud.com)
+## Resources
 
-If you have any questions regarding bugs and feature requests, visit the [ZEGOCLOUD community](https://discord.gg/EtNRATttyp) or email us at global_support@zegocloud.com.
+Click to get the complete [sample code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter).
+
+
+
+
+- - -
+# Quick start (with call invitation)
+- - -
+
+![invitation_calls.gif](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/invitation_calls.gif)
+
+
+## Integrate the SDK
+
+### Prerequisites
+
+
+@@@ZIM_BasicPrerequisites@@@
+
+
+### Add ZegoUIKitPrebuiltCallWithInvitation as dependencies
+
+1. Edit your project's `pubspec.yaml` file to add local project dependencies.
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  zego_uikit_prebuilt_call: ^1.2.0 # Add this line
+  zego_uikit_signaling_plugin: ^1.0.7 # Add this line
+```
+
+2. Run the following code in your project root directory to install all dependencies.
+
+```dart
+flutter pub get
+```
+
+## Import the SDK
+
+Now in your Dart code, import the prebuilt Call Kit SDK.
+
+```dart
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+```
+
+## Integrate the SDK with the call invitation feature
+
+1. Wrap your widget with ZegoUIKitPrebuiltCallWithInvitation, and specify the `userID` and `userName` for connecting the Call Kit service. 
+
+
+<div class="mk-hint">
+
+- `userID` can only contain numbers, letters, and underlines (_). 
+
+</div>
+
+```dart
+@override
+Widget build(BuildContext context) {
+   return ZegoUIKitPrebuiltCallWithInvitation(
+      appID: yourAppID,
+      serverSecret: yourServerSecret,
+      appSign: yourAppSign,
+      userID: userID,
+      userName: userName,
+      plugins: [ZegoUIKitSignalingPlugin()],
+      child: YourWidget(),
+   );
+}
+```
+
+2. Add the button for making call invitations, and pass in the ID of the user you want to call.
+
+```dart
+ZegoStartCallInvitationButton(
+   isVideoCall: true,
+   invitees: [
+      ZegoUIKitUser(
+         id: targetUserID,
+         name: targetUserName,
+      ),
+      ...
+      ZegoUIKitUser(
+         id: targetUserID,
+         name: targetUserName,
+      )
+   ],
+)
+```
+
+Now, you can make call invitations by simply clicking on this button.
+
+
+##  Configure your project
+
+- Android
+
+1. If your project is created with Flutter 2.x.x, you will need to open the `your_project/android/app/build.gradle` file, and modify the `compileSdkVersion` to 33.
+
+   ![compileSdkVersion](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/compile_sdk_version.png)
+
+2. Add app permissions.
+
+Open the file `your_project/app/src/main/AndroidManifest.xml`, and add the following code:
+
+   ```xml
+   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+   <uses-permission android:name="android.permission.RECORD_AUDIO" />
+   <uses-permission android:name="android.permission.INTERNET" />
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+   <uses-permission android:name="android.permission.CAMERA" />
+   <uses-permission android:name="android.permission.BLUETOOTH" />
+   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+   <uses-permission android:name="android.permission.WAKE_LOCK" />
+   <uses-permission android:name="android.permission.VIBRATE"/>
+   ```
+
+<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/invitation/permission_android.png" width=800>
+
+3. Prevent code obfuscation.
+
+To prevent obfuscation of the SDK public class names, do the following:
+
+a. In your project's `your_project > android > app` folder, create a `proguard-rules.pro` file with the following content as shown below:
+
+
+```xml
+-keep class **.zego.** { *; }
+```
+
+b. Add the following config code to the `release` part of the `your_project/android/app/build.gradle` file.
+
+```xml
+proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+```
+
+![android_class_confusion.png](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/android_class_confusion.png)
+
+- iOS
+
+    To add permissions, open `your_project/ios/Runner/Info.plist`, and add the following code to the `dict` part:
+
+    ```plist
+    <key>NSCameraUsageDescription</key>
+    <string>We require camera access to connect to a call</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We require microphone access to connect to a call</string>
+    ```
+
+    <img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/permission_ios.png" width=800>
+
+
+
+## Run & Test
+
+Now you have finished all the steps!
+
+You can simply click the **Run** or **Debug** to run and test your App on your device.
+
+![run_flutter_project.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/run_flutter_project.jpg)
+
+## Related guide
+
+[Custom prebuilt UI](!VideoCallKit-ZEGOUIKIT_Custom_prebuilt_UI)
+
+## Resources
+
+Click to get the complete [sample code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter).
