@@ -29,7 +29,7 @@ And it includes the business logic with the UI, you can add or remove features a
   > Call Kit includes the business logic along with the UI, allows you to **customize features accordingly**
 
 
-To finest-grained build a call app, you may try our [Video Call SDK\|_blank](!ExpressVideoSDK-OverView/OverView) to make full customization.
+To finest-grained build a call app, you may try our [Video Call SDK](https://docs.zegocloud.com/article/5603) to make full customization.
 
 ## Embedded features
 
@@ -47,10 +47,10 @@ To finest-grained build a call app, you may try our [Video Call SDK\|_blank](!Ex
 ## Recommended resources
 
 
-* I want to get started to implement [a basic call](http://doc.oa.zego.im/!Quick_start_basic) swiftly
+* I want to get started to implement [a basic call](https://docs.zegocloud.com/article/14821) swiftly
 * I want to get the [Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
-* I want to get started to implement [a call with call invitation](http://doc.oa.zego.im/article/14826)
-* To [configure prebuilt UI](http://doc.oa.zego.im/!ZEGOUIKIT_Custom_prebuilt_UI) for a custom experience
+* I want to get started to implement [a call with call invitation](https://docs.zegocloud.com/article/14826)
+* To [configure prebuilt UI](https://docs.zegocloud.com/article/14748) for a custom experience
 
 
 - - -
@@ -184,7 +184,7 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 
 ## Related guide
 
-[Custom prebuilt UI](!ZEGOUIKIT_Custom_prebuilt_UI)
+[Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
 
 
 ## Resources
@@ -290,7 +290,7 @@ Now, you can make call invitations by simply clicking on this button.
 
 1. If your project is created with Flutter 2.x.x, you will need to open the `your_project/android/app/build.gradle` file, and modify the `compileSdkVersion` to 33.
 
-   ![compileSdkVersion](http://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/compile_sdk_version.png)
+   ![compileSdkVersion](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/compile_sdk_version.png)
 
 2. Add app permissions.
 
@@ -356,7 +356,7 @@ You can simply click the **Run** or **Debug** to run and test your App on your d
 
 ## Related guide
 
-[Custom prebuilt UI](!VideoCallKit-ZEGOUIKIT_Custom_prebuilt_UI)
+[Custom prebuilt UI](https://docs.zegocloud.com/article/14748)
 
 ## Resources
 
