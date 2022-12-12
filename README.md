@@ -9,7 +9,7 @@ And it includes the business logic with the UI, you can add or remove features a
 
 |One-on-one call|Group call|
 |---|---|
-|![all_close.gif](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![8C_little.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|
+|![all_close.gif](images/_all_close.gif)|![8C_little.jpg](images/8C_little.jpeg)|
 
 
 ## When do you need the Call Kit
