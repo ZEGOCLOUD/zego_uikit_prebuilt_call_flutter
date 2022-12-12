@@ -212,7 +212,6 @@ Click to get the complete [sample code](https://github.com/ZEGOCLOUD/zego_uikit_
 
 
 
-
 ### Add ZegoUIKitPrebuiltCallWithInvitation as dependencies
 
 1. Edit your project's `pubspec.yaml` file to add local project dependencies.

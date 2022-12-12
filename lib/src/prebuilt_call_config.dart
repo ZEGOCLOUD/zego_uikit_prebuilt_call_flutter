@@ -80,7 +80,7 @@ class ZegoUIKitPrebuiltCallConfig {
   ///
   /// |When the user is not speaking|When the user is speaking|
   /// |--|--|
-  /// |<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="10%">|<img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar.jpg" width="10%">|
+  /// |<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="10%">|<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_default_avatar.jpg" width="10%">|
   ///
   /// If you need to display the real avatar of your user, you can use the avatarBuilder to set the user avatar builder method (set user avatar widget builder), the usage is as follows:
   ///
@@ -135,7 +135,7 @@ class ZegoPrebuiltAudioVideoViewConfig {
   bool showUserNameOnView;
 
   /// customize your foreground of audio video view, which is the top widget of stack
-  /// <br><img src="https://doc.oa.zego.im/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="5%">
+  /// <br><img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_default_avatar_nowave.jpg" width="5%">
   /// you can return any widget, then we will put it on top of audio video view
   ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
 
