@@ -8,13 +8,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
+import 'events.dart';
+import 'inner_text.dart';
+import 'internal/notification_manager.dart';
 import 'plugins.dart';
 
 class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
-  const ZegoUIKitPrebuiltCallWithInvitation({
+  ZegoUIKitPrebuiltCallWithInvitation({
     Key? key,
     required this.appID,
     required this.appSign,
@@ -24,8 +27,15 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
     required this.plugins,
     this.tokenServerUrl = '',
     this.requireConfig,
+    this.showDeclineButton = true,
+    this.events,
+    this.notifyWhenAppRunningInBackgroundOrQuit = true,
+    this.isIOSSandboxEnvironment = false,
+    this.androidNotificationConfig,
+    ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
   })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
+        innerText = innerText ?? ZegoCallInvitationInnerText(),
         super(key: key);
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -52,15 +62,33 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   final String userID;
   final String userName;
 
-  ///
-  final ConfigQuery? requireConfig;
+  final ZegoUIKitPrebuiltCallInvitationEvents? events;
+
+  /// we need the [ZegoUIKitPrebuiltCallConfig] to show [ZegoUIKitPrebuiltCall]
+  final PrebuiltConfigQuery? requireConfig;
 
   /// you can customize your ringing bell
   final ZegoRingtoneConfig ringtoneConfig;
 
+  /// your Widget that receive
   final Widget child;
 
+  ///
   final List<IZegoUIKitPlugin> plugins;
+
+  /// whether to display the reject button, default is true
+  final bool showDeclineButton;
+
+  /// whether to enable offline notification, default is true
+  final bool notifyWhenAppRunningInBackgroundOrQuit;
+
+  /// iOS only
+  final bool isIOSSandboxEnvironment;
+
+  /// only for Android
+  final ZegoAndroidNotificationConfig? androidNotificationConfig;
+
+  final ZegoCallInvitationInnerText innerText;
 
   @override
   State<ZegoUIKitPrebuiltCallWithInvitation> createState() =>
@@ -78,6 +106,8 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
 
     WidgetsBinding.instance?.addObserver(this);
 
+    ZegoNotificationManager.instance.init(events: widget.events);
+
     plugins = ZegoPrebuiltPlugins(
       appID: widget.appID,
       appSign: widget.appSign,
@@ -85,10 +115,43 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
       userName: widget.userName,
       plugins: widget.plugins,
     );
-    plugins?.init();
+    plugins?.init().then((value) {
+      ZegoLoggerService.logInfo(
+        "[call ] plugin init finished",
+        tag: "call",
+        subTag: "prebuilt invitation",
+      );
+      if (widget.notifyWhenAppRunningInBackgroundOrQuit) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          ZegoLoggerService.logInfo(
+            "try enable notification, isIOSSandboxEnvironment:${widget.isIOSSandboxEnvironment}",
+            tag: "call",
+            subTag: "prebuilt invitation",
+          );
+
+          ZegoUIKit()
+              .getSignalingPlugin()
+              .enableNotifyWhenAppRunningInBackgroundOrQuit(
+                true,
+                isIOSSandboxEnvironment: widget.isIOSSandboxEnvironment,
+              )
+              .then((result) {
+            ZegoLoggerService.logInfo(
+              "enable notification result, ${result.code}, ${result.message}",
+              tag: "call",
+              subTag: "prebuilt invitation",
+            );
+          });
+        });
+      }
+    });
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      debugPrint("versions: zego_uikit_prebuilt_call:1.2.14; $uikitVersion");
+      ZegoLoggerService.logInfo(
+        "versions: zego_uikit_prebuilt_call:1.4.0; $uikitVersion",
+        tag: "call",
+        subTag: "prebuilt invitation",
+      );
     });
 
     initPermissions().then((value) => initContext());
@@ -109,6 +172,12 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   void didUpdateWidget(ZegoUIKitPrebuiltCallWithInvitation oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    ZegoInvitationPageManager.instance.updateInvitationConfig(
+      widget.showDeclineButton,
+      widget.androidNotificationConfig,
+      widget.events,
+      widget.innerText,
+    );
     plugins?.onUserInfoUpdate(widget.userID, widget.userName);
   }
 
@@ -116,11 +185,18 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    debugPrint("[call invitation] didChangeAppLifecycleState $state");
+    ZegoLoggerService.logInfo(
+      "didChangeAppLifecycleState $state",
+      tag: "call",
+      subTag: "prebuilt invitation",
+    );
+
+    ZegoInvitationPageManager.instance
+        .didChangeAppLifecycleState(state != AppLifecycleState.resumed);
 
     switch (state) {
       case AppLifecycleState.resumed:
-        plugins?.reconnectIfDisconnected();
+        plugins?.tryReLogin();
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
@@ -152,10 +228,14 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
       tokenServerUrl: widget.tokenServerUrl,
       userID: widget.userID,
       userName: widget.userName,
-      configQuery: widget.requireConfig ?? defaultConfig,
+      prebuiltConfigQuery: widget.requireConfig ?? defaultConfig,
       contextQuery: () {
         return context;
       },
+      showDeclineButton: widget.showDeclineButton,
+      androidNotificationConfig: widget.androidNotificationConfig,
+      invitationEvents: widget.events,
+      innerText: widget.innerText,
       ringtoneConfig: widget.ringtoneConfig,
     );
   }
@@ -166,10 +246,10 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
 
   ZegoUIKitPrebuiltCallConfig defaultConfig(ZegoCallInvitationData data) {
     var config = (data.invitees.length > 1)
-        ? ZegoInvitationType.videoCall == data.type
+        ? ZegoCallType.videoCall == data.type
             ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
             : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
-        : ZegoInvitationType.videoCall == data.type
+        : ZegoCallType.videoCall == data.type
             ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
             : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
 

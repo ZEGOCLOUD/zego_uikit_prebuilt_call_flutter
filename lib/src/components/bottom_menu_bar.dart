@@ -9,8 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'member/member_list_button.dart';
 
 class ZegoBottomMenuBar extends StatefulWidget {
@@ -106,10 +106,28 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
       displayButtonList =
           buttonList.sublist(0, widget.config.bottomMenuBarConfig.maxCount - 1);
 
-      buttonList.removeRange(0, widget.config.bottomMenuBarConfig.maxCount - 1);
       displayButtonList.add(
         buttonWrapper(
-          child: ZegoMoreButton(menuButtonList: buttonList),
+          child: ZegoMoreButton(menuButtonListFunc: () {
+            List<Widget> buttonList = [
+              ...getDefaultButtons(context, cameraDefaultValueFunc: () {
+                return ZegoUIKit()
+                    .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .value;
+              }, microphoneDefaultValueFunc: () {
+                return ZegoUIKit()
+                    .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .value;
+              }),
+              ...widget.config.bottomMenuBarConfig.extendButtons
+                  .map((extendButton) => buttonWrapper(child: extendButton))
+            ];
+
+            buttonList.removeRange(
+                0, widget.config.bottomMenuBarConfig.maxCount - 1);
+
+            return buttonList;
+          }),
         ),
       );
     } else {
@@ -155,20 +173,33 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     );
   }
 
-  List<Widget> getDefaultButtons(BuildContext context) {
+  List<Widget> getDefaultButtons(
+    BuildContext context, {
+    bool Function()? cameraDefaultValueFunc,
+    bool Function()? microphoneDefaultValueFunc,
+  }) {
     if (widget.config.bottomMenuBarConfig.buttons.isEmpty) {
       return [];
     }
 
     return widget.config.bottomMenuBarConfig.buttons
         .map((type) => buttonWrapper(
-              child: generateDefaultButtonsByEnum(context, type),
+              child: generateDefaultButtonsByEnum(
+                context,
+                type,
+                cameraDefaultValueFunc: cameraDefaultValueFunc,
+                microphoneDefaultValueFunc: microphoneDefaultValueFunc,
+              ),
             ))
         .toList();
   }
 
   Widget generateDefaultButtonsByEnum(
-      BuildContext context, ZegoMenuBarButtonName type) {
+    BuildContext context,
+    ZegoMenuBarButtonName type, {
+    bool Function()? cameraDefaultValueFunc,
+    bool Function()? microphoneDefaultValueFunc,
+  }) {
     final buttonSize = Size(96.r, 96.r);
     final iconSize = Size(56.r, 56.r);
 
@@ -177,7 +208,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: widget.config.turnOnMicrophoneWhenJoining,
+          defaultOn: microphoneDefaultValueFunc?.call() ??
+              widget.config.turnOnMicrophoneWhenJoining,
         );
       case ZegoMenuBarButtonName.switchAudioOutputButton:
         return ZegoSwitchAudioOutputButton(
@@ -189,7 +221,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         return ZegoToggleCameraButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: widget.config.turnOnCameraWhenJoining,
+          defaultOn: cameraDefaultValueFunc?.call() ??
+              widget.config.turnOnCameraWhenJoining,
         );
       case ZegoMenuBarButtonName.switchCameraButton:
         return ZegoSwitchCameraButton(

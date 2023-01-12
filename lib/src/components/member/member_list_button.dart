@@ -6,9 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_sheet.dart';
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
 
 /// switch cameras
 class ZegoMemberListButton extends StatefulWidget {
@@ -54,7 +54,7 @@ class _ZegoMemberListButtonState extends State<ZegoMemberListButton> {
         showMemberListSheet(
           context,
           showCameraState: widget.config?.showCameraState ?? true,
-          showMicrophoneState: widget.config?.showMicroPhoneState ?? true,
+          showMicrophoneState: widget.config?.showMicrophoneState ?? true,
         );
 
         if (widget.afterClicked != null) {

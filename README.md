@@ -220,8 +220,8 @@ Click to get the complete [sample code](https://github.com/ZEGOCLOUD/zego_uikit_
 dependencies:
   flutter:
     sdk: flutter
-  zego_uikit_prebuilt_call: ^1.2.0 # Add this line
-  zego_uikit_signaling_plugin: ^1.0.7 # Add this line
+  zego_uikit_prebuilt_call: ^1.4.0 # Add this line
+  zego_uikit_signaling_plugin: ^1.4.0 # Add this line
 ```
 
 2. Run the following code in your project root directory to install all dependencies.

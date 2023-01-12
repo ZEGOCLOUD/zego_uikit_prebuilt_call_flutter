@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 
 class ZegoUIKitPrebuiltCallConfig {
   factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() =>
@@ -245,7 +245,7 @@ enum ZegoMenuBarStyle {
 
 class ZegoMemberListConfig {
   /// show microphone state or not
-  bool showMicroPhoneState;
+  bool showMicrophoneState;
 
   /// show camera state or not
   bool showCameraState;
@@ -254,7 +254,7 @@ class ZegoMemberListConfig {
   ZegoMemberListItemBuilder? itemBuilder;
 
   ZegoMemberListConfig({
-    this.showMicroPhoneState = true,
+    this.showMicrophoneState = true,
     this.showCameraState = true,
     this.itemBuilder,
   });

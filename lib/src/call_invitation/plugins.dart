@@ -22,45 +22,100 @@ class ZegoPrebuiltPlugins {
 
   final List<IZegoUIKitPlugin> plugins;
 
-  ZegoPrebuiltPlugins({
-    required this.appID,
-    required this.appSign,
-    required this.userID,
-    required this.userName,
-    required this.plugins,
-  }) {
+  final VoidCallback? onPluginReLogin;
+
+  ZegoPrebuiltPlugins(
+      {required this.appID,
+      required this.appSign,
+      required this.userID,
+      required this.userName,
+      required this.plugins,
+      this.onPluginReLogin}) {
     _install();
   }
 
   PluginNetworkState networkState = PluginNetworkState.unknown;
   List<StreamSubscription<dynamic>?> subscriptions = [];
-  PluginConnectionState pluginConnectionState =
-      PluginConnectionState.disconnected;
+  var pluginUserStateNotifier =
+      ValueNotifier<PluginConnectionState>(PluginConnectionState.disconnected);
+  bool tryReLogging = false;
+  bool initialized = false;
+
+  bool get isEnabled => plugins.isNotEmpty;
 
   void _install() {
     ZegoUIKit().installPlugins(plugins);
     for (var pluginType in ZegoUIKitPluginType.values) {
       ZegoUIKit().getPlugin(pluginType)?.getVersion().then((version) {
-        debugPrint("plugin-$pluginType:$version");
+        ZegoLoggerService.logInfo(
+          "plugin-$pluginType:$version",
+          tag: "call",
+          subTag: "plugin",
+        );
       });
     }
 
-    subscriptions.add(ZegoUIKit()
-        .getSignalingPlugin()
-        .getConnectionStateStream()
-        .listen(onConnectionState));
-
     subscriptions
-        .add(ZegoUIKit().getNetworkModeStream().listen(onNetworkModeChanged));
+      ..add(ZegoUIKit()
+          .getSignalingPlugin()
+          .getConnectionStateStream()
+          .listen(onUserConnectionState))
+      ..add(ZegoUIKit().getNetworkModeStream().listen(onNetworkModeChanged));
   }
 
   Future<void> init() async {
-    await ZegoUIKit().getSignalingPlugin().init(appID, appSign: appSign);
-    await ZegoUIKit().getSignalingPlugin().login(userID, userName);
+    ZegoLoggerService.logInfo(
+      "plugins init",
+      tag: "call",
+      subTag: "plugin",
+    );
+
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .init(appID, appSign: appSign)
+        .then((value) {
+      ZegoLoggerService.logInfo(
+        "plugins init done",
+        tag: "call",
+        subTag: "plugin",
+      );
+    });
+
+    ZegoLoggerService.logInfo(
+      "plugins init, login...",
+      tag: "call",
+      subTag: "plugin",
+    );
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .login(userID, userName)
+        .then((value) async {
+      ZegoLoggerService.logInfo(
+        "plugins login done",
+        tag: "call",
+        subTag: "plugin",
+      );
+    });
+
+    initialized = true;
+
+    ZegoLoggerService.logInfo(
+      "plugins init done",
+      tag: "call",
+      subTag: "plugin",
+    );
   }
 
   Future<void> uninit() async {
-    // TODO: 这里的生命周期看下是否合理
+    ZegoLoggerService.logInfo(
+      "uninit",
+      tag: "call",
+      subTag: "plugin",
+    );
+    initialized = false;
+
+    tryReLogging = false;
+
     await ZegoUIKit().getSignalingPlugin().logout();
     await ZegoUIKit().getSignalingPlugin().uninit();
 
@@ -72,7 +127,11 @@ class ZegoPrebuiltPlugins {
   Future<void> onUserInfoUpdate(String userID, String userName) async {
     var localUser = ZegoUIKit().getLocalUser();
     if (localUser.id == userID && localUser.name == userName) {
-      debugPrint("same user, cancel this re-login");
+      ZegoLoggerService.logInfo(
+        "same user, cancel this re-login",
+        tag: "call",
+        subTag: "plugin",
+      );
       return;
     }
 
@@ -80,18 +139,35 @@ class ZegoPrebuiltPlugins {
     await ZegoUIKit().getSignalingPlugin().login(userID, userName);
   }
 
-  void onConnectionState(Map params) {
-    debugPrint("[call invitation] onInvitationConnectionState, param: $params");
+  void onUserConnectionState(Map params) {
+    ZegoLoggerService.logInfo(
+      "onUserConnectionState, param: $params",
+      tag: "call",
+      subTag: "plugin",
+    );
 
-    pluginConnectionState = PluginConnectionState.values[params['state']!];
+    pluginUserStateNotifier.value =
+        PluginConnectionState.values[params['state']!];
 
-    debugPrint(
-        "[call invitation] onInvitationConnectionState, state: $pluginConnectionState");
+    ZegoLoggerService.logInfo(
+      "onUserConnectionState, user state: ${pluginUserStateNotifier.value}",
+      tag: "call",
+      subTag: "plugin",
+    );
+
+    if (tryReLogging &&
+        pluginUserStateNotifier.value == PluginConnectionState.connected) {
+      tryReLogging = false;
+      onPluginReLogin?.call();
+    }
   }
 
   void onNetworkModeChanged(ZegoNetworkMode networkMode) {
-    debugPrint("[call invitation] onNetworkModeChanged $networkMode, "
-        "network state: $networkState");
+    ZegoLoggerService.logInfo(
+      "onNetworkModeChanged $networkMode, previous network state: $networkState",
+      tag: "call",
+      subTag: "plugin",
+    );
 
     switch (networkMode) {
       case ZegoNetworkMode.Offline:
@@ -105,21 +181,47 @@ class ZegoPrebuiltPlugins {
       case ZegoNetworkMode.Mode4G:
       case ZegoNetworkMode.Mode5G:
         if (PluginNetworkState.offline == networkState) {
-          reconnectIfDisconnected();
+          tryReLogin();
         }
+
         networkState = PluginNetworkState.online;
         break;
     }
   }
 
-  void reconnectIfDisconnected() {
-    debugPrint(
-        "[call invitation] reconnectIfDisconnected, state:$pluginConnectionState");
-    if (pluginConnectionState == PluginConnectionState.disconnected) {
-      debugPrint("[call invitation] reconnect, id:$userID, name:$userName");
-      ZegoUIKit().getSignalingPlugin().logout().then((value) {
-        ZegoUIKit().getSignalingPlugin().login(userID, userName);
-      });
+  Future<void> tryReLogin() async {
+    ZegoLoggerService.logInfo(
+      "tryReLogin, initialized:$initialized, state:${pluginUserStateNotifier.value}",
+      tag: "call",
+      subTag: "plugin",
+    );
+
+    if (!initialized) {
+      ZegoLoggerService.logInfo(
+        "tryReLogin, plugin is not init",
+        tag: "call",
+        subTag: "plugin",
+      );
+      return;
     }
+
+    if (pluginUserStateNotifier.value != PluginConnectionState.disconnected) {
+      ZegoLoggerService.logInfo(
+        "tryReLogin, user state is not disconnected",
+        tag: "call",
+        subTag: "plugin",
+      );
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      "re-login, id:$userID, name:$userName",
+      tag: "call",
+      subTag: "plugin",
+    );
+    tryReLogging = true;
+    return await ZegoUIKit().getSignalingPlugin().logout().then((value) async {
+      await ZegoUIKit().getSignalingPlugin().login(userID, userName);
+    });
   }
 }

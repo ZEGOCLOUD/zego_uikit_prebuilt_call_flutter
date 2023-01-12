@@ -1,12 +1,12 @@
 // Dart imports:
 import 'dart:async';
 
-// Flutter imports:
-import 'package:flutter/cupertino.dart';
-
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:zego_uikit/zego_uikit.dart';
+
+// Flutter imports:
 
 class ZegoRingtone {
   bool isRingTimerRunning = false;
@@ -22,7 +22,11 @@ class ZegoRingtone {
     required String sourcePath,
     required bool isVibrate,
   }) {
-    debugPrint('init: prefix:$prefix, source path:$sourcePath');
+    ZegoLoggerService.logInfo(
+      'init: prefix:$prefix, source path:$sourcePath',
+      tag: "call",
+      subTag: "ringtone",
+    );
 
     AudioCache.instance.prefix = prefix;
 
@@ -51,11 +55,19 @@ class ZegoRingtone {
 
   void startRing() async {
     if (isRingTimerRunning) {
-      debugPrint('ring is running');
+      ZegoLoggerService.logInfo(
+        'ring is running',
+        tag: "call",
+        subTag: "ringtone",
+      );
       return;
     }
 
-    debugPrint('start ring, source path:$sourcePath');
+    ZegoLoggerService.logInfo(
+      'start ring, source path:$sourcePath',
+      tag: "call",
+      subTag: "ringtone",
+    );
 
     isRingTimerRunning = true;
 
@@ -66,9 +78,12 @@ class ZegoRingtone {
     }
 
     Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-      // debugPrint('ring timer periodic');
       if (!isRingTimerRunning) {
-        debugPrint('ring timer ended');
+        ZegoLoggerService.logInfo(
+          'ring timer ended',
+          tag: "call",
+          subTag: "ringtone",
+        );
 
         audioPlayer.stop();
 
@@ -82,7 +97,11 @@ class ZegoRingtone {
   }
 
   void stopRing() async {
-    debugPrint('stop ring');
+    ZegoLoggerService.logInfo(
+      'stop ring',
+      tag: "call",
+      subTag: "ringtone",
+    );
 
     isRingTimerRunning = false;
 

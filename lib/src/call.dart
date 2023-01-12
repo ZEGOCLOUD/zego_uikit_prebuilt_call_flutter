@@ -14,8 +14,8 @@ import 'package:http/http.dart' as http;
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'call_config.dart';
 import 'components/components.dart';
-import 'prebuilt_call_config.dart';
 
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
@@ -78,7 +78,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
-      debugPrint("version: zego_uikit_prebuilt_call:1.2.14; $version");
+      ZegoLoggerService.logInfo(
+        "version: zego_uikit_prebuilt_call:1.4.0; $version",
+        tag: "call",
+        subTag: "prebuilt",
+      );
     });
 
     initContext();
@@ -191,8 +195,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void correctConfigValue() {
     if (widget.config.bottomMenuBarConfig.maxCount > 5) {
       widget.config.bottomMenuBarConfig.maxCount = 5;
-      debugPrint('menu bar buttons limited count\'s value  is exceeding the '
-          'maximum limit');
+      ZegoLoggerService.logInfo(
+        'menu bar buttons limited count\'s value  is exceeding the maximum limit',
+        tag: "call",
+        subTag: "prebuilt",
+      );
     }
   }
 
@@ -391,6 +398,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget audioVideoViewForeground(
       BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
+    if (extraInfo[ZegoViewBuilderMapExtraInfoKey.isScreenSharingView.name]
+            as bool? ??
+        false) {
+      return Container();
+    }
+
     return Stack(
       children: [
         widget.config.audioVideoViewConfig.foregroundBuilder

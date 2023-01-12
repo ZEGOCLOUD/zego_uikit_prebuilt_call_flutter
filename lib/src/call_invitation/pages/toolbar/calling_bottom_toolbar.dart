@@ -46,15 +46,17 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
 }
 
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
-  final ZegoInvitationType invitationType;
+  final ZegoCallType invitationType;
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
+  final bool showDeclineButton;
 
   const ZegoInviteeCallingBottomToolBar({
     Key? key,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
+    this.showDeclineButton = true,
   }) : super(key: key);
 
   @override
@@ -78,56 +80,83 @@ class ZegoInviteeCallingBottomToolBarState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ZegoRefuseInvitationButton(
-              inviterID: widget.inviter.id,
-              // data customization is not supported
-              data: '{"reason":"decline"}',
-              text: "Decline",
-              icon: ButtonIcon(
-                icon: Image(
-                  image: PrebuiltCallImage.asset(
-                          InvitationStyleIconUrls.toolbarBottomDecline)
-                      .image,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              buttonSize: Size(120.r, 120.r + 50.r),
-              iconSize: Size(120.r, 120.r),
-              onPressed: (String code, String message) {
-                ZegoInvitationPageManager.instance
-                    .onLocalRefuseInvitation(code, message);
-              },
-            ),
-            SizedBox(width: 230.r),
-            ZegoAcceptInvitationButton(
-              inviterID: widget.inviter.id,
-              icon: ButtonIcon(
-                icon: Image(
-                  image: PrebuiltCallImage.asset(
-                          imageURLByInvitationType(widget.invitationType))
-                      .image,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              text: "Accept",
-              buttonSize: Size(120.r, 120.r + 50.r),
-              iconSize: Size(120.r, 120.r),
-              onPressed: (String code, String message) {
-                ZegoInvitationPageManager.instance
-                    .onLocalAcceptInvitation(code, message);
-              },
-            ),
+            ...(widget.showDeclineButton
+                ? [
+                    declineButton(),
+                    SizedBox(width: 230.r),
+                  ]
+                : []),
+            acceptButton(),
           ],
         ),
       ),
     );
   }
 
-  String imageURLByInvitationType(ZegoInvitationType invitationType) {
+  Widget declineButton() {
+    return ZegoRefuseInvitationButton(
+      inviterID: widget.inviter.id,
+      // data customization is not supported
+      data: '{"reason":"decline"}',
+      text: (ZegoInvitationPageManager
+              .instance.innerText?.incomingCallPageDeclineButton ??
+          "Decline"),
+      textStyle: buttonTextStyle(),
+      icon: ButtonIcon(
+        icon: Image(
+          image: PrebuiltCallImage.asset(
+                  InvitationStyleIconUrls.toolbarBottomDecline)
+              .image,
+          fit: BoxFit.fill,
+        ),
+      ),
+      buttonSize: Size(120.r, 120.r + 50.r),
+      iconSize: Size(120.r, 120.r),
+      onPressed: (String code, String message) {
+        ZegoInvitationPageManager.instance
+            .onLocalRefuseInvitation(code, message);
+      },
+    );
+  }
+
+  Widget acceptButton() {
+    return ZegoAcceptInvitationButton(
+      inviterID: widget.inviter.id,
+      icon: ButtonIcon(
+        icon: Image(
+          image: PrebuiltCallImage.asset(
+                  imageURLByInvitationType(widget.invitationType))
+              .image,
+          fit: BoxFit.fill,
+        ),
+      ),
+      text: (ZegoInvitationPageManager
+              .instance.innerText?.incomingCallPageAcceptButton ??
+          "Accept"),
+      textStyle: buttonTextStyle(),
+      buttonSize: Size(120.r, 120.r + 50.r),
+      iconSize: Size(120.r, 120.r),
+      onPressed: (String code, String message) {
+        ZegoInvitationPageManager.instance
+            .onLocalAcceptInvitation(code, message);
+      },
+    );
+  }
+
+  TextStyle buttonTextStyle() {
+    return TextStyle(
+      color: Colors.white,
+      fontSize: 25.0.r,
+      fontWeight: FontWeight.w400,
+      decoration: TextDecoration.none,
+    );
+  }
+
+  String imageURLByInvitationType(ZegoCallType invitationType) {
     switch (invitationType) {
-      case ZegoInvitationType.voiceCall:
+      case ZegoCallType.voiceCall:
         return InvitationStyleIconUrls.toolbarBottomVoice;
-      case ZegoInvitationType.videoCall:
+      case ZegoCallType.videoCall:
         return InvitationStyleIconUrls.toolbarBottomVideo;
     }
   }

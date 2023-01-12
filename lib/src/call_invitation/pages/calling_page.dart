@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call.dart';
-import 'package:zego_uikit_prebuilt_call/src/prebuilt_call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'calling_machine.dart';
 import 'calling_view.dart';
 import 'page_manager.dart';
@@ -94,7 +94,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
                 invitees: widget.invitees,
                 invitationType: pageManager.invitationData.type,
                 avatarBuilder: pageManager
-                    .configQuery(pageManager.invitationData)
+                    .prebuiltConfigQuery(pageManager.invitationData)
                     .avatarBuilder,
               )
             : ZegoCallingInviteeView(
@@ -102,8 +102,9 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
                 invitees: widget.invitees,
                 invitationType: pageManager.invitationData.type,
                 avatarBuilder: pageManager
-                    .configQuery(pageManager.invitationData)
+                    .prebuiltConfigQuery(pageManager.invitationData)
                     .avatarBuilder,
+                showDeclineButton: pageManager.showDeclineButton,
               );
         view = ScreenUtilInit(
           designSize: const Size(750, 1334),
@@ -134,7 +135,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   }
 
   Widget prebuiltCallPage() {
-    callConfig = pageManager.configQuery(pageManager.invitationData);
+    callConfig = pageManager.prebuiltConfigQuery(pageManager.invitationData);
 
     callConfigHandUp = callConfig?.onHangUp;
     callConfig?.onHangUp = onCallHandUp;

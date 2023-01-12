@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'calling_page.dart';
@@ -38,7 +39,11 @@ class ZegoCallingMachine {
 
   void init() {
     machine.onAfterTransition.listen((event) {
-      debugPrint('calling, from ${event.source} to ${event.target}');
+      ZegoLoggerService.logInfo(
+        'calling, from ${event.source} to ${event.target}',
+        tag: "call",
+        subTag: "machine",
+      );
 
       if (null != onStateChanged) {
         onStateChanged!(machine.current!.identifier);
@@ -48,7 +53,11 @@ class ZegoCallingMachine {
     stateIdle = machine.newState(CallingState.kIdle)
       ..onEntry(
         () {
-          debugPrint("calling machine to be idle");
+          ZegoLoggerService.logInfo(
+            "calling machine to be idle",
+            tag: "call",
+            subTag: "machine",
+          );
         },
       ); // default state
 
@@ -62,7 +71,11 @@ class ZegoCallingMachine {
 
   void onCallingEntry() {
     if (isPagePushed) {
-      debugPrint("page had pushed");
+      ZegoLoggerService.logInfo(
+        "page had pushed",
+        tag: "call",
+        subTag: "machine",
+      );
       return;
     }
 

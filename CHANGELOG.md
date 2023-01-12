@@ -119,3 +119,7 @@
 ## 1.2.14
 
 * update a dependency to the latest release
+
+## 1.4.0
+
+* support offline call
