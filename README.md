@@ -9,7 +9,7 @@ And it includes the business logic with the UI, you can add or remove features a
 
 |One-on-one call|Group call|
 |---|---|
-|![all_close.gif](images/_all_close.gif)|![8C_little.jpg](images/8C_little.jpeg)|
+|![all_close.gif](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/_all_close.gif)|![8C_little.jpg](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/conference/8C_little.jpg)|
 
 
 ## When do you need the Call Kit
@@ -268,7 +268,7 @@ Widget build(BuildContext context) {
 2. Add the button for making call invitations, and pass in the ID of the user you want to call.
 
 ```dart
-ZegoStartCallInvitationButton(
+ZegoSendCallInvitationButton(
    isVideoCall: true,
    invitees: [
       ZegoUIKitUser(

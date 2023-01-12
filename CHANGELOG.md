@@ -123,3 +123,4 @@
 ## 1.4.0
 
 * support offline call
+* support sdk log
