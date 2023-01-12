@@ -125,6 +125,9 @@ class ZegoUIKitPrebuiltCallConfig {
 }
 
 class ZegoPrebuiltAudioVideoViewConfig {
+  /// set video is mirror or not
+  bool isVideoMirror;
+
   /// hide microphone state of audio video view if set false
   bool showMicrophoneStateOnView;
 
@@ -154,6 +157,7 @@ class ZegoPrebuiltAudioVideoViewConfig {
   bool showSoundWavesInAudioMode;
 
   ZegoPrebuiltAudioVideoViewConfig({
+    this.isVideoMirror = true,
     this.showMicrophoneStateOnView = true,
     this.showCameraStateOnView = false,
     this.showUserNameOnView = true,

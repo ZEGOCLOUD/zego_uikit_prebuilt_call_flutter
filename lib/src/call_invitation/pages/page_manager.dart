@@ -39,6 +39,7 @@ class ZegoInvitationPageManager {
   late ContextQuery
       contextQuery; // we need a context object, to push/pop page when receive invitation request
 
+  bool notifyWhenAppRunningInBackgroundOrQuit = true;
   bool showDeclineButton = true;
   ZegoAndroidNotificationConfig? androidNotificationConfig;
   ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
@@ -76,6 +77,7 @@ class ZegoInvitationPageManager {
     required ContextQuery contextQuery,
     required ZegoRingtoneConfig ringtoneConfig,
     bool showDeclineButton = true,
+    bool notifyWhenAppRunningInBackgroundOrQuit = true,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
     ZegoCallInvitationInnerText? innerText,
@@ -88,6 +90,8 @@ class ZegoInvitationPageManager {
     this.tokenServerUrl = tokenServerUrl;
     this.contextQuery = contextQuery;
 
+    this.notifyWhenAppRunningInBackgroundOrQuit =
+        notifyWhenAppRunningInBackgroundOrQuit;
     this.showDeclineButton = showDeclineButton;
     this.androidNotificationConfig = androidNotificationConfig;
     this.invitationEvents = invitationEvents;
@@ -99,7 +103,10 @@ class ZegoInvitationPageManager {
     callingMachine.init();
 
     initRing(ringtoneConfig);
-    initNotification();
+
+    if (notifyWhenAppRunningInBackgroundOrQuit) {
+      initNotification();
+    }
 
     ZegoLoggerService.logInfo(
       'init, appID:$appID, appSign:$appSign, tokenServerUrl:$tokenServerUrl, userID:$userID, userName:$userName',

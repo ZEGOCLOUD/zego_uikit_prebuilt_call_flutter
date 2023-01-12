@@ -17,7 +17,7 @@ dependencies:
   awesome_notifications: ^0.7.4+1
   audioplayers: ^1.0.1
   statemachine: ^3.2.0
-  zego_uikit: '>=1.9.0 <2.0.0'
+  zego_uikit: ^1.9.0
 
 dev_dependencies:
   flutter_test:

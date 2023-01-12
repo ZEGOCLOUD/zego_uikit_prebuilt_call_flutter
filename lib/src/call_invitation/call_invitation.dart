@@ -232,6 +232,8 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
       contextQuery: () {
         return context;
       },
+      notifyWhenAppRunningInBackgroundOrQuit:
+          widget.notifyWhenAppRunningInBackgroundOrQuit,
       showDeclineButton: widget.showDeclineButton,
       androidNotificationConfig: widget.androidNotificationConfig,
       invitationEvents: widget.events,
