@@ -124,3 +124,11 @@
 
 * support offline call
 * support sdk log
+
+## 1.4.1
+
+* fix some bugs
+
+## 1.4.2
+
+* fix some bugs
