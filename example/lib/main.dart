@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'secret.dart';
 
 /// Note that the userID needs to be globally unique,
 final String localUserID = math.Random().nextInt(10000).toString();
@@ -77,8 +78,8 @@ class CallPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ZegoUIKitPrebuiltCall(
-        appID: /*input your AppID*/,
-        appSign: /*input your AppSign*/,
+        appID: YourSecret.appID /*input your AppID*/,
+        appSign: YourSecret.appSign /*input your AppSign*/,
         userID: localUserID,
         userName: "user_$localUserID",
         callID: callID,

@@ -1,3 +1,7 @@
+## 2.0.0
+
+Architecture upgrade based on adapter.
+
 ## 0.0.1
 
 * Upload Initial release.
@@ -132,3 +136,7 @@
 ## 1.4.2
 
 * fix some bugs
+
+## 1.4.3
+
+* downgrade flutter_screenutil to ">=5.5.3+2 <5.6.1"

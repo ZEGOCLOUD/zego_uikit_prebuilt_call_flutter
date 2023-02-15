@@ -11,10 +11,10 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'events.dart';
-import 'inner_text.dart';
-import 'internal/notification_manager.dart';
-import 'plugins.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
 
 class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   ZegoUIKitPrebuiltCallWithInvitation({
@@ -104,7 +104,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     ZegoNotificationManager.instance.init(events: widget.events);
 
@@ -117,16 +117,18 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
     );
     plugins?.init().then((value) {
       ZegoLoggerService.logInfo(
-        "[call ] plugin init finished",
-        tag: "call",
-        subTag: "prebuilt invitation",
+        '[call ] plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
+        '${widget.notifyWhenAppRunningInBackgroundOrQuit}',
+        tag: 'call',
+        subTag: 'prebuilt invitation',
       );
       if (widget.notifyWhenAppRunningInBackgroundOrQuit) {
         Future.delayed(const Duration(milliseconds: 500), () {
           ZegoLoggerService.logInfo(
-            "try enable notification, isIOSSandboxEnvironment:${widget.isIOSSandboxEnvironment}",
-            tag: "call",
-            subTag: "prebuilt invitation",
+            'try enable notification, '
+            'isIOSSandboxEnvironment:${widget.isIOSSandboxEnvironment}',
+            tag: 'call',
+            subTag: 'prebuilt invitation',
           );
 
           ZegoUIKit()
@@ -137,9 +139,9 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
               )
               .then((result) {
             ZegoLoggerService.logInfo(
-              "enable notification result, ${result.code}, ${result.message}",
-              tag: "call",
-              subTag: "prebuilt invitation",
+              'enable notification result: $result',
+              tag: 'call',
+              subTag: 'prebuilt invitation',
             );
           });
         });
@@ -148,9 +150,9 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        "versions: zego_uikit_prebuilt_call:1.4.2; $uikitVersion",
-        tag: "call",
-        subTag: "prebuilt invitation",
+        'versions: zego_uikit_prebuilt_call:1.4.2; $uikitVersion',
+        tag: 'call',
+        subTag: 'prebuilt invitation',
       );
     });
 
@@ -161,7 +163,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   void dispose() async {
     super.dispose();
 
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     plugins?.uninit();
 
@@ -186,9 +188,9 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
     super.didChangeAppLifecycleState(state);
 
     ZegoLoggerService.logInfo(
-      "didChangeAppLifecycleState $state",
-      tag: "call",
-      subTag: "prebuilt invitation",
+      'didChangeAppLifecycleState $state',
+      tag: 'call',
+      subTag: 'prebuilt invitation',
     );
 
     ZegoInvitationPageManager.instance
@@ -247,7 +249,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   }
 
   ZegoUIKitPrebuiltCallConfig defaultConfig(ZegoCallInvitationData data) {
-    var config = (data.invitees.length > 1)
+    final config = (data.invitees.length > 1)
         ? ZegoCallType.videoCall == data.type
             ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
             : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
