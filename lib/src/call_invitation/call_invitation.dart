@@ -5,15 +5,16 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
 
 class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
@@ -25,13 +26,13 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
     required this.userName,
     required this.child,
     required this.plugins,
-    this.tokenServerUrl = '',
     this.requireConfig,
     this.showDeclineButton = true,
     this.events,
     this.notifyWhenAppRunningInBackgroundOrQuit = true,
     this.isIOSSandboxEnvironment = false,
     this.androidNotificationConfig,
+    this.appDesignSize,
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
   })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
@@ -44,19 +45,6 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   /// for Android/iOS
   /// you need to fill in the appSign you obtained from console.zegocloud.com
   final String appSign;
-
-  /// tokenServerUrl is only for web.
-  /// If you have to support Web and Android, iOS, then you can use it like this
-  /// ```
-  ///   ZegoUIKitPrebuiltInvitationCall(
-  ///     appID: appID,
-  ///     userID: userID,
-  ///     userName: userName,
-  ///     appSign: kIsWeb ? '' : appSign,
-  ///     tokenServerUrl: kIsWeb ? tokenServerUrl：'',
-  ///   );
-  /// ```
-  final String tokenServerUrl;
 
   /// local user info
   final String userID;
@@ -90,6 +78,9 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
 
   final ZegoCallInvitationInnerText innerText;
 
+  ///
+  final Size? appDesignSize;
+
   @override
   State<ZegoUIKitPrebuiltCallWithInvitation> createState() =>
       _ZegoUIKitPrebuiltCallWithInvitationState();
@@ -104,7 +95,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
 
     ZegoNotificationManager.instance.init(events: widget.events);
 
@@ -150,7 +141,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:1.4.2; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:2.0.1; $uikitVersion',
         tag: 'call',
         subTag: 'prebuilt invitation',
       );
@@ -160,14 +151,18 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     super.dispose();
 
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
 
     plugins?.uninit();
 
     uninitContext();
+
+    if (widget.appDesignSize != null) {
+      ScreenUtil.init(context, designSize: widget.appDesignSize!);
+    }
   }
 
   @override
@@ -218,16 +213,14 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
   }
 
   Future<void> initContext() async {
-    ZegoUIKit().login(widget.userID, widget.userName).then((value) {
-      ZegoUIKit().init(appID: widget.appID, appSign: widget.appSign);
+    ZegoUIKit().login(widget.userID, widget.userName);
+    await ZegoUIKit().init(appID: widget.appID, appSign: widget.appSign);
 
-      ZegoUIKit.instance.turnCameraOn(false);
-    });
+    ZegoUIKit.instance.turnCameraOn(false);
 
     ZegoInvitationPageManager.instance.init(
       appID: widget.appID,
       appSign: widget.appSign,
-      tokenServerUrl: widget.tokenServerUrl,
       userID: widget.userID,
       userName: widget.userName,
       prebuiltConfigQuery: widget.requireConfig ?? defaultConfig,
@@ -241,10 +234,11 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
       invitationEvents: widget.events,
       innerText: widget.innerText,
       ringtoneConfig: widget.ringtoneConfig,
+      appDesignSize: widget.appDesignSize,
     );
   }
 
-  void uninitContext() async {
+  void uninitContext() {
     ZegoInvitationPageManager.instance.uninit();
   }
 

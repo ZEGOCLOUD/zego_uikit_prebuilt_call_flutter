@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import '../../internal/internal.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 
 class ZegoCallingTopToolBarButton extends StatelessWidget {
   final String iconURL;

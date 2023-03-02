@@ -35,7 +35,7 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: ((context, constraints) {
+    return LayoutBuilder(builder: (context, constraints) {
       return Column(
         children: [
           header(98.h),
@@ -49,7 +49,7 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
           ),
         ],
       );
-    }));
+    });
   }
 
   Widget header(double height) {
@@ -69,7 +69,7 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
           ),
           SizedBox(width: 10.r),
           Text(
-            "Member",
+            'Member',
             style: TextStyle(
               fontSize: 36.0.r,
               color: const Color(0xffffffff),

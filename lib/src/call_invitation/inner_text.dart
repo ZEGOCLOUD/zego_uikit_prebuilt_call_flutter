@@ -1,6 +1,6 @@
 /// %0: is a string placeholder, represents the first parameter of prompt,
 /// in here, default is user name
-const String param_1 = "%0";
+const String param_1 = '%0';
 
 class ZegoCallInvitationInnerText {
   String incomingVideoCallDialogTitle;
@@ -63,49 +63,49 @@ class ZegoCallInvitationInnerText {
     String? outgoingGroupVoiceCallPageMessage,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
-            incomingVideoCallDialogMessage ?? "Incoming video call...",
+            incomingVideoCallDialogMessage ?? 'Incoming video call...',
         incomingVoiceCallDialogTitle = incomingVoiceCallDialogTitle ?? param_1,
         incomingVoiceCallDialogMessage =
-            incomingVoiceCallDialogMessage ?? "Incoming voice call...",
+            incomingVoiceCallDialogMessage ?? 'Incoming voice call...',
         incomingVideoCallPageTitle = incomingVideoCallPageTitle ?? param_1,
         incomingVideoCallPageMessage =
-            incomingVideoCallPageMessage ?? "Incoming video call...",
+            incomingVideoCallPageMessage ?? 'Incoming video call...',
         incomingVoiceCallPageTitle = incomingVoiceCallPageTitle ?? param_1,
         incomingVoiceCallPageMessage =
-            incomingVoiceCallPageMessage ?? "Incoming voice call...",
+            incomingVoiceCallPageMessage ?? 'Incoming voice call...',
         incomingCallPageDeclineButton =
-            incomingCallPageDeclineButton ?? "Decline",
-        incomingCallPageAcceptButton = incomingCallPageAcceptButton ?? "Accept",
+            incomingCallPageDeclineButton ?? 'Decline',
+        incomingCallPageAcceptButton = incomingCallPageAcceptButton ?? 'Accept',
         outgoingVideoCallPageTitle = outgoingVideoCallPageTitle ?? param_1,
         outgoingVideoCallPageMessage =
-            outgoingVideoCallPageMessage ?? "Calling...",
+            outgoingVideoCallPageMessage ?? 'Calling...',
         outgoingVoiceCallPageTitle = outgoingVoiceCallPageTitle ?? param_1,
         outgoingVoiceCallPageMessage =
-            outgoingVoiceCallPageMessage ?? "Calling...",
+            outgoingVoiceCallPageMessage ?? 'Calling...',
         incomingGroupVideoCallDialogTitle =
             incomingGroupVideoCallDialogTitle ?? param_1,
         incomingGroupVideoCallDialogMessage =
             incomingGroupVideoCallDialogMessage ??
-                "Incoming group video call...",
+                'Incoming group video call...',
         incomingGroupVoiceCallDialogTitle =
             incomingGroupVoiceCallDialogTitle ?? param_1,
         incomingGroupVoiceCallDialogMessage =
             incomingGroupVoiceCallDialogMessage ??
-                "Incoming group voice call...",
+                'Incoming group voice call...',
         incomingGroupVideoCallPageTitle =
             incomingGroupVideoCallPageTitle ?? param_1,
         incomingGroupVideoCallPageMessage =
-            incomingGroupVideoCallPageMessage ?? "Incoming group video call...",
+            incomingGroupVideoCallPageMessage ?? 'Incoming group video call...',
         incomingGroupVoiceCallPageTitle =
             incomingGroupVoiceCallPageTitle ?? param_1,
         incomingGroupVoiceCallPageMessage =
-            incomingGroupVoiceCallPageMessage ?? "Incoming group voice call...",
+            incomingGroupVoiceCallPageMessage ?? 'Incoming group voice call...',
         outgoingGroupVideoCallPageTitle =
             outgoingGroupVideoCallPageTitle ?? param_1,
         outgoingGroupVideoCallPageMessage =
-            outgoingGroupVideoCallPageMessage ?? "Calling...",
+            outgoingGroupVideoCallPageMessage ?? 'Calling...',
         outgoingGroupVoiceCallPageTitle =
             outgoingGroupVoiceCallPageTitle ?? param_1,
         outgoingGroupVoiceCallPageMessage =
-            outgoingGroupVoiceCallPageMessage ?? "Calling...";
+            outgoingGroupVoiceCallPageMessage ?? 'Calling...';
 }

@@ -60,7 +60,7 @@ class ZegoCallUser {
 
   @override
   String toString() {
-    return "{id:$id, name:$name}";
+    return '{id:$id, name:$name}';
   }
 }
 
@@ -75,8 +75,8 @@ class ZegoAndroidNotificationConfig {
   String? sound;
 
   ZegoAndroidNotificationConfig({
-    this.channelID = "CallInvitation",
-    this.channelName = "Call Invitation",
-    this.sound = "",
+    this.channelID = 'CallInvitation',
+    this.channelName = 'Call Invitation',
+    this.sound = '',
   });
 }

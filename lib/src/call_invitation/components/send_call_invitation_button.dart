@@ -1,15 +1,14 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-// Package imports:
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+
+// Package imports:
 
 class ZegoSendCallInvitationButton extends StatefulWidget {
   const ZegoSendCallInvitationButton({
@@ -92,17 +91,10 @@ class _ZegoSendCallInvitationButtonState
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(750, 1334),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return ValueListenableBuilder<String>(
-          valueListenable: callIDNotifier,
-          builder: (context, callID, _) {
-            return button();
-          },
-        );
+    return ValueListenableBuilder<String>(
+      valueListenable: callIDNotifier,
+      builder: (context, callID, _) {
+        return button();
       },
     );
   }

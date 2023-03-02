@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -23,7 +24,9 @@ typedef ContextQuery = BuildContext Function();
 
 class ZegoInvitationPageManager {
   factory ZegoInvitationPageManager() => instance;
+
   ZegoInvitationPageManager._internal();
+
   static final ZegoInvitationPageManager instance =
       ZegoInvitationPageManager._internal();
 
@@ -33,7 +36,7 @@ class ZegoInvitationPageManager {
   late String appSign;
   late String userID;
   late String userName;
-  late String tokenServerUrl;
+  Size? appDesignSize;
   late PrebuiltConfigQuery prebuiltConfigQuery;
   late ContextQuery
       contextQuery; // we need a context object, to push/pop page when receive invitation request
@@ -69,12 +72,12 @@ class ZegoInvitationPageManager {
   Future<void> init({
     required int appID,
     String appSign = '',
-    String tokenServerUrl = '',
     required String userID,
     required String userName,
     required PrebuiltConfigQuery prebuiltConfigQuery,
     required ContextQuery contextQuery,
     required ZegoRingtoneConfig ringtoneConfig,
+    Size? appDesignSize,
     bool showDeclineButton = true,
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
@@ -86,8 +89,9 @@ class ZegoInvitationPageManager {
     this.userID = userID;
     this.userName = userName;
     this.prebuiltConfigQuery = prebuiltConfigQuery;
-    this.tokenServerUrl = tokenServerUrl;
     this.contextQuery = contextQuery;
+
+    this.appDesignSize = appDesignSize;
 
     this.notifyWhenAppRunningInBackgroundOrQuit =
         notifyWhenAppRunningInBackgroundOrQuit;
@@ -108,7 +112,7 @@ class ZegoInvitationPageManager {
     }
 
     ZegoLoggerService.logInfo(
-      'init, appID:$appID, appSign:$appSign, tokenServerUrl:$tokenServerUrl, userID:$userID, userName:$userName',
+      'init, appID:$appID, appSign:$appSign, userID:$userID, userName:$userName',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -308,11 +312,12 @@ class ZegoInvitationPageManager {
     invitingInvitees
         .removeWhere((invitee) => errorInvitees.contains(invitee.id));
 
-    invitationData.callID = callID;
-    invitationData.invitationID = invitationID;
-    invitationData.inviter = ZegoUIKit().getLocalUser();
-    invitationData.invitees = List.from(invitees);
-    invitationData.type = invitationType;
+    invitationData
+      ..callID = callID
+      ..invitationID = invitationID
+      ..inviter = ZegoUIKit().getLocalUser()
+      ..invitees = List.from(invitees)
+      ..type = invitationType;
 
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
@@ -391,7 +396,7 @@ class ZegoInvitationPageManager {
   }
 
   ///
-  void onInvitationReceived(Map params) {
+  void onInvitationReceived(Map<String, dynamic> params) {
     final ZegoUIKitUser inviter = params['inviter']!;
     final int type = params['type']!; // call type
     final String data = params['data']!; // extended field
@@ -435,12 +440,13 @@ class ZegoInvitationPageManager {
     }
 
     final invitationInternalData = InvitationInternalData.fromJson(data);
-    invitationData.customData = invitationInternalData.customData;
-    invitationData.callID = invitationInternalData.callID;
-    invitationData.invitationID = invitationID;
-    invitationData.invitees = List.from(invitationInternalData.invitees);
-    invitationData.inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name);
-    invitationData.type = ZegoCallTypeExtension.mapValue[type] as ZegoCallType;
+    invitationData
+      ..customData = invitationInternalData.customData
+      ..callID = invitationInternalData.callID
+      ..invitationID = invitationID
+      ..invitees = List.from(invitationInternalData.invitees)
+      ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
+      ..type = ZegoCallTypeExtension.mapValue[type] as ZegoCallType;
 
     if (appInBackground) {
       ZegoLoggerService.logInfo(
@@ -503,7 +509,7 @@ class ZegoInvitationPageManager {
     showInvitationTopSheet();
   }
 
-  void onInvitationAccepted(Map params) {
+  void onInvitationAccepted(Map<String, dynamic> params) {
     final ZegoUIKitUser invitee = params['invitee']!;
     final String data = params['data']!; // extended field
 
@@ -539,7 +545,7 @@ class ZegoInvitationPageManager {
     callingMachine.stateOnlineAudioVideo.enter();
   }
 
-  void onInvitationTimeout(Map params) {
+  void onInvitationTimeout(Map<String, dynamic> params) {
     final ZegoUIKitUser inviter = params['inviter']!;
     final String data = params['data']!; // extended field
 
@@ -557,7 +563,7 @@ class ZegoInvitationPageManager {
     restoreToIdle();
   }
 
-  void onInvitationResponseTimeout(Map params) {
+  void onInvitationResponseTimeout(Map<String, dynamic> params) {
     final List<ZegoUIKitUser> invitees = params['invitees']!;
     final String data = params['data']!; // extended field
 
@@ -592,7 +598,7 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onInvitationRefused(Map params) {
+  void onInvitationRefused(Map<String, dynamic> params) {
     final ZegoUIKitUser invitee = params['invitee']!;
     final String data = params['data']!; // extended field
 
@@ -659,7 +665,7 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onInvitationCanceled(Map params) {
+  void onInvitationCanceled(Map<String, dynamic> params) {
     final ZegoUIKitUser inviter = params['inviter']!;
     final String data = params['data']!; // extended field
 
@@ -747,6 +753,10 @@ class ZegoInvitationPageManager {
     }
 
     invitationData = ZegoCallInvitationData.empty();
+
+    if (appDesignSize != null) {
+      ScreenUtil.init(contextQuery(), designSize: appDesignSize!);
+    }
   }
 
   void onInvitationTopSheetEmptyClicked() {

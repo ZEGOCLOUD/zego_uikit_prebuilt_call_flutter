@@ -1,5 +1,5 @@
 // Project imports:
-import 'defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 
 class ZegoUIKitPrebuiltCallInvitationEvents {
   /// receive this callback when decline button pressed in incoming call

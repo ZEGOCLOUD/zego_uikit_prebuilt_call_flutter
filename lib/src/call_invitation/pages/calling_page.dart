@@ -9,9 +9,9 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
-import 'calling_machine.dart';
-import 'calling_view.dart';
-import 'page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_view.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 class ZegoCallingPage extends StatefulWidget {
   final ZegoUIKitUser inviter;
@@ -76,7 +76,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
   @override
   Widget build(BuildContext context) {
-    var localUserInfo = ZegoUIKit().getLocalUser();
+    final localUserInfo = ZegoUIKit().getLocalUser();
 
     late Widget view;
     switch (currentState) {
@@ -87,8 +87,8 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       case CallingState.kCallingWithVideo:
         callConfig = null;
 
-        var localUserIsInviter = localUserInfo.id == widget.inviter.id;
-        var callingView = localUserIsInviter
+        final localUserIsInviter = localUserInfo.id == widget.inviter.id;
+        final callingView = localUserIsInviter
             ? ZegoCallingInviterView(
                 inviter: widget.inviter,
                 invitees: widget.invitees,
@@ -146,8 +146,8 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       callID: pageManager.invitationData.callID,
       userID: pageManager.userID,
       userName: pageManager.userName,
-      tokenServerUrl: pageManager.tokenServerUrl,
       config: callConfig!,
+      appDesignSize: pageManager.appDesignSize,
       onDispose: () {
         pageManager.onPrebuiltCallPageDispose();
       },

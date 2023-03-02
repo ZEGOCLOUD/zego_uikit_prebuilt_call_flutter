@@ -14,13 +14,13 @@ class InvitationInternalData {
   InvitationInternalData(this.callID, this.invitees, this.customData);
 
   InvitationInternalData.fromJson(String json) {
-    var dict = jsonDecode(json) as Map<String, dynamic>;
+    final dict = jsonDecode(json) as Map<String, dynamic>;
     callID = dict['call_id'] as String;
     customData = dict['custom_data'] as String;
 
-    for (var invitee in dict['invitees'] as List) {
-      var inviteeDict = invitee as Map<String, dynamic>;
-      var user = ZegoUIKitUser(
+    for (final invitee in dict['invitees'] as List) {
+      final inviteeDict = invitee as Map<String, dynamic>;
+      final user = ZegoUIKitUser(
         id: inviteeDict['user_id'] as String,
         name: inviteeDict['user_name'] as String,
       );
@@ -29,7 +29,7 @@ class InvitationInternalData {
   }
 
   String toJson() {
-    var dict = {
+    final dict = {
       'call_id': callID,
       'invitees': invitees
           .map((user) => {

@@ -11,12 +11,16 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
-import 'page_manager.dart';
-import 'toolbar/calling_bottom_toolbar.dart';
-import 'toolbar/calling_top_toolbar.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_bottom_toolbar.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_top_toolbar.dart';
 
 typedef AvatarBuilder = Widget Function(
-    BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo);
+  BuildContext context,
+  Size size,
+  ZegoUIKitUser? user,
+  Map<String, dynamic> extraInfo,
+);
 
 class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
@@ -51,16 +55,16 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    var isVideo = ZegoCallType.videoCall == invitationType;
+    final isVideo = ZegoCallType.videoCall == invitationType;
 
-    var firstInvitee =
+    final firstInvitee =
         invitees.isNotEmpty ? invitees.first : ZegoUIKitUser.empty();
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        isVideo ? const ZegoInviterCallingVideoTopToolBar() : Container(),
-        isVideo ? SizedBox(height: 140.h) : SizedBox(height: 228.h),
+        if (isVideo) const ZegoInviterCallingVideoTopToolBar() else Container(),
+        if (isVideo) SizedBox(height: 140.h) else SizedBox(height: 228.h),
         SizedBox(
           width: 200.r,
           height: 200.r,
@@ -90,13 +94,13 @@ class ZegoCallingInviterView extends StatelessWidget {
                         .instance.innerText?.outgoingGroupVideoCallPageMessage
                     : ZegoInvitationPageManager
                         .instance.innerText?.outgoingVideoCallPageMessage) ??
-                "Calling...")
+                'Calling...')
             : ((invitees.length > 1
                     ? ZegoInvitationPageManager
                         .instance.innerText?.outgoingGroupVoiceCallPageMessage
                     : ZegoInvitationPageManager
                         .instance.innerText?.outgoingVoiceCallPageMessage) ??
-                "Calling...")),
+                'Calling...')),
         const Expanded(child: SizedBox()),
         ZegoInviterCallingBottomToolBar(invitees: invitees),
         SizedBox(height: 105.r),
@@ -132,7 +136,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    var isVideo = ZegoCallType.videoCall == invitationType;
+    final isVideo = ZegoCallType.videoCall == invitationType;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -166,17 +170,17 @@ class ZegoCallingInviteeView extends StatelessWidget {
             ? (invitees.length > 1
                 ? (ZegoInvitationPageManager.instance.innerText
                         ?.incomingGroupVideoCallPageMessage ??
-                    "Incoming group video call...")
+                    'Incoming group video call...')
                 : (ZegoInvitationPageManager
                         .instance.innerText?.incomingVideoCallPageMessage ??
-                    "Incoming video call..."))
+                    'Incoming video call...'))
             : (invitees.length > 1
                 ? (ZegoInvitationPageManager.instance.innerText
                         ?.incomingGroupVoiceCallPageMessage ??
-                    "Incoming group voice call...")
+                    'Incoming group voice call...')
                 : (ZegoInvitationPageManager
                         .instance.innerText?.incomingVoiceCallPageMessage ??
-                    "Incoming voice call..."))),
+                    'Incoming voice call...'))),
         const Expanded(child: SizedBox()),
         ZegoInviteeCallingBottomToolBar(
           inviter: inviter,
@@ -239,7 +243,7 @@ Widget circleAvatar(String name) {
     ),
     child: Center(
       child: Text(
-        name.isNotEmpty ? name.characters.first : "",
+        name.isNotEmpty ? name.characters.first : '',
         style: TextStyle(
           fontSize: 96.0.r,
           color: const Color(0xff222222),

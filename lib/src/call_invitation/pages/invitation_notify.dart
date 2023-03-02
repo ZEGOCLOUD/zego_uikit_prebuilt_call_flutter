@@ -14,7 +14,11 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 // Project imports:
 
 typedef AvatarBuilder = Widget Function(
-    BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo);
+  BuildContext context,
+  Size size,
+  ZegoUIKitUser? user,
+  Map<String, dynamic> extraInfo,
+);
 
 /// top sheet, popup when invitee receive a invitation
 class ZegoCallInvitationDialog extends StatefulWidget {
@@ -50,7 +54,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
         children: [
           widget.avatarBuilder?.call(context, Size(84.r, 84.r),
                   widget.invitationData.inviter, {}) ??
-              circleName(widget.invitationData.inviter?.name ?? ""),
+              circleName(widget.invitationData.inviter?.name ?? ''),
           SizedBox(width: 26.w),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -62,12 +66,12 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
             ],
           ),
           const Expanded(child: SizedBox()),
-          ...(widget.showDeclineButton
+          ...widget.showDeclineButton
               ? [
                   declineButton(),
                   SizedBox(width: 40.w),
                 ]
-              : []),
+              : [],
           acceptButton(),
         ],
       ),
@@ -82,7 +86,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
           const BoxDecoration(color: Color(0xffDBDDE3), shape: BoxShape.circle),
       child: Center(
         child: Text(
-          name.isNotEmpty ? name.characters.first : "",
+          name.isNotEmpty ? name.characters.first : '',
           style: TextStyle(
             fontSize: 60.0.r,
             color: const Color(0xff222222),
@@ -110,7 +114,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
                         : ZegoInvitationPageManager.instance.innerText
                             ?.incomingVoiceCallDialogTitle) ??
                     param_1))
-            .replaceFirst(param_1, widget.invitationData.inviter?.name ?? ""),
+            .replaceFirst(param_1, widget.invitationData.inviter?.name ?? ''),
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.left,
         style: TextStyle(
@@ -151,7 +155,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       child: AbsorbPointer(
         absorbing: false,
         child: ZegoRefuseInvitationButton(
-          inviterID: widget.invitationData.inviter?.id ?? "",
+          inviterID: widget.invitationData.inviter?.id ?? '',
           // customization is not supported
           data: '{"reason":"decline"}',
           icon: ButtonIcon(
@@ -181,7 +185,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       child: AbsorbPointer(
         absorbing: false,
         child: ZegoAcceptInvitationButton(
-          inviterID: widget.invitationData.inviter?.id ?? "",
+          inviterID: widget.invitationData.inviter?.id ?? '',
           icon: ButtonIcon(
             icon: Image(
               image: PrebuiltCallImage.asset(
@@ -217,18 +221,18 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
         return invitees.length > 1
             ? (ZegoInvitationPageManager
                     .instance.innerText?.incomingGroupVoiceCallDialogMessage ??
-                "Incoming group voice call...")
+                'Incoming group voice call...')
             : (ZegoInvitationPageManager
                     .instance.innerText?.incomingVoiceCallDialogMessage ??
-                "Incoming voice call...");
+                'Incoming voice call...');
       case ZegoCallType.videoCall:
         return invitees.length > 1
             ? (ZegoInvitationPageManager
                     .instance.innerText?.incomingGroupVideoCallDialogMessage ??
-                "Incoming group video call...")
+                'Incoming group video call...')
             : (ZegoInvitationPageManager
                     .instance.innerText?.incomingVideoCallDialogMessage ??
-                "Incoming video call...");
+                'Incoming video call...');
     }
   }
 }

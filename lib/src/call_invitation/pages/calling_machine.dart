@@ -6,8 +6,8 @@ import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'calling_page.dart';
-import 'page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_page.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 // Project imports:
 
@@ -41,8 +41,8 @@ class ZegoCallingMachine {
     machine.onAfterTransition.listen((event) {
       ZegoLoggerService.logInfo(
         'calling, from ${event.source} to ${event.target}',
-        tag: "call",
-        subTag: "machine",
+        tag: 'call',
+        subTag: 'machine',
       );
 
       if (null != onStateChanged) {
@@ -54,9 +54,9 @@ class ZegoCallingMachine {
       ..onEntry(
         () {
           ZegoLoggerService.logInfo(
-            "calling machine to be idle",
-            tag: "call",
-            subTag: "machine",
+            'calling machine to be idle',
+            tag: 'call',
+            subTag: 'machine',
           );
         },
       ); // default state
@@ -72,9 +72,9 @@ class ZegoCallingMachine {
   void onCallingEntry() {
     if (isPagePushed) {
       ZegoLoggerService.logInfo(
-        "page had pushed",
-        tag: "call",
-        subTag: "machine",
+        'page had pushed',
+        tag: 'call',
+        subTag: 'machine',
       );
       return;
     }

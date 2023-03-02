@@ -80,12 +80,12 @@ class ZegoInviteeCallingBottomToolBarState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ...(widget.showDeclineButton
+            ...widget.showDeclineButton
                 ? [
                     declineButton(),
                     SizedBox(width: 230.r),
                   ]
-                : []),
+                : [],
             acceptButton(),
           ],
         ),
@@ -98,9 +98,9 @@ class ZegoInviteeCallingBottomToolBarState
       inviterID: widget.inviter.id,
       // data customization is not supported
       data: '{"reason":"decline"}',
-      text: (ZegoInvitationPageManager
+      text: ZegoInvitationPageManager
               .instance.innerText?.incomingCallPageDeclineButton ??
-          "Decline"),
+          'Decline',
       textStyle: buttonTextStyle(),
       icon: ButtonIcon(
         icon: Image(
@@ -130,9 +130,9 @@ class ZegoInviteeCallingBottomToolBarState
           fit: BoxFit.fill,
         ),
       ),
-      text: (ZegoInvitationPageManager
+      text: ZegoInvitationPageManager
               .instance.innerText?.incomingCallPageAcceptButton ??
-          "Accept"),
+          'Accept',
       textStyle: buttonTextStyle(),
       buttonSize: Size(120.r, 120.r + 50.r),
       iconSize: Size(120.r, 120.r),

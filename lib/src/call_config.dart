@@ -200,7 +200,7 @@ class ZegoTopMenuBarConfig {
     this.buttons = const [],
     this.style = ZegoMenuBarStyle.light,
     this.extendButtons = const [],
-    this.title = "",
+    this.title = '',
   });
 }
 
@@ -271,10 +271,10 @@ class ZegoHangUpConfirmDialogInfo {
   String confirmButtonName;
 
   ZegoHangUpConfirmDialogInfo({
-    this.title = "Hangup Confirmation",
-    this.message = "Do you want to hangup?",
-    this.cancelButtonName = "Cancel",
-    this.confirmButtonName = "OK",
+    this.title = 'Hangup Confirmation',
+    this.message = 'Do you want to hangup?',
+    this.cancelButtonName = 'Cancel',
+    this.confirmButtonName = 'OK',
   });
 }
 
@@ -286,7 +286,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
     return ZegoUIKitPrebuiltCallConfig(
         turnOnCameraWhenJoining: isVideo,
         turnOnMicrophoneWhenJoining: true,
-        useSpeakerWhenJoining: (!isGroup && !isVideo) ? false : true,
+        useSpeakerWhenJoining: isGroup || isVideo,
         layout: isGroup ? ZegoLayout.gallery() : ZegoLayout.pictureInPicture(),
         topMenuBarConfig: isGroup
             ? ZegoTopMenuBarConfig(
@@ -331,7 +331,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                       ],
               ),
         audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(
-          useVideoViewAspectFill: isGroup ? false : true,
+          useVideoViewAspectFill: !isGroup,
         ),
         memberListConfig: ZegoMemberListConfig(),
         onOnlySelfInRoom:

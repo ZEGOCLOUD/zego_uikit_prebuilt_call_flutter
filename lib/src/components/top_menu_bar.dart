@@ -11,8 +11,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
-import 'assets.dart';
-import 'member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 
 class ZegoTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
@@ -118,7 +118,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
   }
 
   List<Widget> getDisplayButtons(BuildContext context) {
-    var buttons = [
+    final buttons = [
       ...getDefaultButtons(context),
       ...widget.config.topMenuBarConfig.extendButtons
           .map((extendButton) => buttonWrapper(child: extendButton))
@@ -126,7 +126,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
 
     /// limited item count display on menu bar,
     /// if this count is exceeded, Trim down the extra buttons
-    const int maxCount = 3;
+    const maxCount = 3;
     if (buttons.length > maxCount) {
       return buttons.sublist(0, maxCount);
     }
@@ -226,7 +226,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           iconSize: iconSize,
           icon: ButtonIcon(backgroundColor: Colors.transparent),
           onLeaveConfirmation: (context) async {
-            return await widget.config.onHangUpConfirmation!(context);
+            return widget.config.onHangUpConfirmation!(context);
           },
           onPress: () {
             if (widget.config.onHangUp != null) {

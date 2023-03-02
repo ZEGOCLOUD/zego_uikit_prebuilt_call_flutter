@@ -13,7 +13,7 @@ class ZegoRingtone {
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
-  String sourcePath = "";
+  String sourcePath = '';
 
   ZegoRingtone();
 
@@ -24,8 +24,8 @@ class ZegoRingtone {
   }) {
     ZegoLoggerService.logInfo(
       'init: prefix:$prefix, source path:$sourcePath',
-      tag: "call",
-      subTag: "ringtone",
+      tag: 'call',
+      subTag: 'ringtone',
     );
 
     AudioCache.instance.prefix = prefix;
@@ -33,7 +33,7 @@ class ZegoRingtone {
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 
-    final AudioContext audioContext = AudioContext(
+    final audioContext = AudioContext(
       iOS: AudioContextIOS(
         defaultToSpeaker: true,
         category: AVAudioSessionCategory.ambient,
@@ -53,20 +53,20 @@ class ZegoRingtone {
     AudioPlayer.global.setGlobalAudioContext(audioContext);
   }
 
-  void startRing() async {
+  Future<void> startRing() async {
     if (isRingTimerRunning) {
       ZegoLoggerService.logInfo(
         'ring is running',
-        tag: "call",
-        subTag: "ringtone",
+        tag: 'call',
+        subTag: 'ringtone',
       );
       return;
     }
 
     ZegoLoggerService.logInfo(
       'start ring, source path:$sourcePath',
-      tag: "call",
-      subTag: "ringtone",
+      tag: 'call',
+      subTag: 'ringtone',
     );
 
     isRingTimerRunning = true;
@@ -81,8 +81,8 @@ class ZegoRingtone {
       if (!isRingTimerRunning) {
         ZegoLoggerService.logInfo(
           'ring timer ended',
-          tag: "call",
-          subTag: "ringtone",
+          tag: 'call',
+          subTag: 'ringtone',
         );
 
         audioPlayer.stop();
@@ -96,15 +96,15 @@ class ZegoRingtone {
     });
   }
 
-  void stopRing() async {
+  Future<void> stopRing() async {
     ZegoLoggerService.logInfo(
       'stop ring',
-      tag: "call",
-      subTag: "ringtone",
+      tag: 'call',
+      subTag: 'ringtone',
     );
 
     isRingTimerRunning = false;
 
-    audioPlayer.stop();
+    return audioPlayer.stop();
   }
 }

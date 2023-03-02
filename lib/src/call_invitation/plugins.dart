@@ -23,6 +23,7 @@ class ZegoPrebuiltPlugins {
       this.onPluginReLogin}) {
     _install();
   }
+
   final int appID;
   final String appSign;
 
@@ -70,6 +71,7 @@ class ZegoPrebuiltPlugins {
       subTag: 'plugin',
     );
     await ZegoUIKit().getSignalingPlugin().init(appID, appSign: appSign);
+
     ZegoLoggerService.logInfo(
       'plugins init done, login...',
       tag: 'call',
@@ -110,6 +112,36 @@ class ZegoPrebuiltPlugins {
 
   Future<void> onUserInfoUpdate(String userID, String userName) async {
     final localUser = ZegoUIKit().getLocalUser();
+
+    ZegoLoggerService.logInfo(
+      'on user info update, '
+      'target user($userID, $userName), '
+      'local user:(${localUser.toString()})'
+      'initialized:$initialized, '
+      'user state:${pluginUserStateNotifier.value}',
+      tag: 'live streaming',
+      subTag: 'plugin',
+    );
+
+    if (!initialized) {
+      ZegoLoggerService.logInfo(
+        'onUserInfoUpdate, plugin is not init',
+        tag: 'call',
+        subTag: 'plugin',
+      );
+      return;
+    }
+
+    if (pluginUserStateNotifier.value !=
+        ZegoSignalingPluginConnectionState.connected) {
+      ZegoLoggerService.logInfo(
+        'onUserInfoUpdate, user state is not connected',
+        tag: 'call',
+        subTag: 'plugin',
+      );
+      return;
+    }
+
     if (localUser.id == userID && localUser.name == userName) {
       ZegoLoggerService.logInfo(
         'same user, cancel this re-login',

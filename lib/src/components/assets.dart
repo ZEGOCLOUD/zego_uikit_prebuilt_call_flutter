@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PrebuiltCallImage {
   static Image asset(String name) {
-    return Image.asset(name, package: "zego_uikit_prebuilt_call");
+    return Image.asset(name, package: 'zego_uikit_prebuilt_call');
   }
 }
 

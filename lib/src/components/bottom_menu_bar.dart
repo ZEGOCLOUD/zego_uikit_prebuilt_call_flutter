@@ -11,7 +11,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
-import 'member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 
 class ZegoBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
@@ -93,43 +93,42 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
   }
 
   List<Widget> getDisplayButtons(BuildContext context) {
-    List<Widget> buttonList = [
+    final buttonList = <Widget>[
       ...getDefaultButtons(context),
       ...widget.config.bottomMenuBarConfig.extendButtons
           .map((extendButton) => buttonWrapper(child: extendButton))
     ];
 
-    List<Widget> displayButtonList = [];
+    var displayButtonList = <Widget>[];
     if (buttonList.length > widget.config.bottomMenuBarConfig.maxCount) {
       /// the list count exceeds the limit, so divided into two parts,
       /// one part display in the Menu bar, the other part display in the menu with more buttons
-      displayButtonList =
-          buttonList.sublist(0, widget.config.bottomMenuBarConfig.maxCount - 1);
+      displayButtonList = buttonList.sublist(
+          0, widget.config.bottomMenuBarConfig.maxCount - 1)
+        ..add(
+          buttonWrapper(
+            child: ZegoMoreButton(menuButtonListFunc: () {
+              final buttonList = <Widget>[
+                ...getDefaultButtons(context, cameraDefaultValueFunc: () {
+                  return ZegoUIKit()
+                      .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+                      .value;
+                }, microphoneDefaultValueFunc: () {
+                  return ZegoUIKit()
+                      .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+                      .value;
+                }),
+                ...widget.config.bottomMenuBarConfig.extendButtons
+                    .map((extendButton) => buttonWrapper(child: extendButton))
+              ]..removeRange(
+                  0,
+                  widget.config.bottomMenuBarConfig.maxCount - 1,
+                );
 
-      displayButtonList.add(
-        buttonWrapper(
-          child: ZegoMoreButton(menuButtonListFunc: () {
-            List<Widget> buttonList = [
-              ...getDefaultButtons(context, cameraDefaultValueFunc: () {
-                return ZegoUIKit()
-                    .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
-                    .value;
-              }, microphoneDefaultValueFunc: () {
-                return ZegoUIKit()
-                    .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
-                    .value;
-              }),
-              ...widget.config.bottomMenuBarConfig.extendButtons
-                  .map((extendButton) => buttonWrapper(child: extendButton))
-            ];
-
-            buttonList.removeRange(
-                0, widget.config.bottomMenuBarConfig.maxCount - 1);
-
-            return buttonList;
-          }),
-        ),
-      );
+              return buttonList;
+            }),
+          ),
+        );
     } else {
       displayButtonList = buttonList;
     }
@@ -238,7 +237,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           buttonSize: buttonSize,
           iconSize: iconSize,
           onLeaveConfirmation: (context) async {
-            return await widget.config.onHangUpConfirmation!(context);
+            return widget.config.onHangUpConfirmation!(context);
           },
           onPress: () {
             if (widget.config.onHangUp != null) {
