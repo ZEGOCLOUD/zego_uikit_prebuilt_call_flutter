@@ -17,13 +17,13 @@ import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     Key? key,
+    this.appDesignSize,
     required this.appID,
     required this.appSign,
     required this.callID,
     required this.userID,
     required this.userName,
     required this.config,
-    this.appDesignSize,
     this.onDispose,
   }) : super(key: key);
 
