@@ -13,13 +13,6 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 
 // Project imports:
 
-typedef AvatarBuilder = Widget Function(
-  BuildContext context,
-  Size size,
-  ZegoUIKitUser? user,
-  Map<String, dynamic> extraInfo,
-);
-
 /// top sheet, popup when invitee receive a invitation
 class ZegoCallInvitationDialog extends StatefulWidget {
   const ZegoCallInvitationDialog({
@@ -31,7 +24,7 @@ class ZegoCallInvitationDialog extends StatefulWidget {
 
   final bool showDeclineButton;
   final ZegoCallInvitationData invitationData;
-  final AvatarBuilder? avatarBuilder;
+  final ZegoAvatarBuilder? avatarBuilder;
 
   @override
   ZegoCallInvitationDialogState createState() =>

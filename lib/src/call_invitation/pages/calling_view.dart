@@ -15,13 +15,6 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_bottom_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_top_toolbar.dart';
 
-typedef AvatarBuilder = Widget Function(
-  BuildContext context,
-  Size size,
-  ZegoUIKitUser? user,
-  Map<String, dynamic> extraInfo,
-);
-
 class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
     Key? key,
@@ -34,7 +27,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
   final ZegoCallType invitationType;
-  final AvatarBuilder? avatarBuilder;
+  final ZegoAvatarBuilder? avatarBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +115,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
   final ZegoCallType invitationType;
-  final AvatarBuilder? avatarBuilder;
+  final ZegoAvatarBuilder? avatarBuilder;
   final bool showDeclineButton;
 
   @override
