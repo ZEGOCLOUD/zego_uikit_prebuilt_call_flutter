@@ -19,6 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 typedef ContextQuery = BuildContext Function();
 
@@ -46,6 +47,8 @@ class ZegoInvitationPageManager {
   ZegoAndroidNotificationConfig? androidNotificationConfig;
   ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
   ZegoCallInvitationInnerText? innerText;
+
+  ZegoUIKitPrebuiltCallController? controller;
 
   ZegoRingtone callerRingtone = ZegoRingtone();
   ZegoRingtone calleeRingtone = ZegoRingtone();
@@ -83,6 +86,7 @@ class ZegoInvitationPageManager {
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
     ZegoCallInvitationInnerText? innerText,
+    ZegoUIKitPrebuiltCallController? controller,
   }) async {
     this.appID = appID;
     this.appSign = appSign;
@@ -99,6 +103,7 @@ class ZegoInvitationPageManager {
     this.androidNotificationConfig = androidNotificationConfig;
     this.invitationEvents = invitationEvents;
     this.innerText = innerText;
+    this.controller = controller;
 
     listenStream();
 

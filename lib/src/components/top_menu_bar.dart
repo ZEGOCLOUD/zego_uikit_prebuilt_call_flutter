@@ -247,6 +247,12 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
             backgroundColor: Colors.transparent,
           ),
         );
+      case ZegoMenuBarButtonName.toggleScreenSharingButton:
+        return ZegoScreenSharingToggleButton(
+          buttonSize: buttonSize,
+          iconSize: iconSize,
+          onPressed: (isScreenSharing) {},
+        );
     }
   }
 }

@@ -16,6 +16,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   ZegoUIKitPrebuiltCallWithInvitation({
@@ -32,6 +33,7 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
     this.notifyWhenAppRunningInBackgroundOrQuit = true,
     this.isIOSSandboxEnvironment = false,
     this.androidNotificationConfig,
+    this.controller,
     this.appDesignSize,
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
@@ -77,6 +79,8 @@ class ZegoUIKitPrebuiltCallWithInvitation extends StatefulWidget {
   final ZegoAndroidNotificationConfig? androidNotificationConfig;
 
   final ZegoCallInvitationInnerText innerText;
+
+  final ZegoUIKitPrebuiltCallController? controller;
 
   ///
   final Size? appDesignSize;
@@ -141,7 +145,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:2.0.1; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:2.1.0; $uikitVersion',
         tag: 'call',
         subTag: 'prebuilt invitation',
       );
@@ -234,6 +238,7 @@ class _ZegoUIKitPrebuiltCallWithInvitationState
       invitationEvents: widget.events,
       innerText: widget.innerText,
       ringtoneConfig: widget.ringtoneConfig,
+      controller: widget.controller,
       appDesignSize: widget.appDesignSize,
     );
   }

@@ -6,6 +6,7 @@ enum ZegoMenuBarButtonName {
   switchCameraButton,
   switchAudioOutputButton,
   showMemberListButton,
+  toggleScreenSharingButton,
 }
 
 /// the style of sound waves

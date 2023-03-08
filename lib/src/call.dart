@@ -13,6 +13,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
@@ -25,6 +26,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.userName,
     required this.config,
     this.onDispose,
+    this.controller,
   }) : super(key: key);
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -49,6 +51,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
   final VoidCallback? onDispose;
 
+  final ZegoUIKitPrebuiltCallController? controller;
+
   @override
   State<ZegoUIKitPrebuiltCall> createState() => _ZegoUIKitPrebuiltCallState();
 }
@@ -66,7 +70,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:2.0.1; $version',
+        'version: zego_uikit_prebuilt_call:2.1.0; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -237,6 +241,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         layout: widget.config.layout!,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
+        screenSharingViewController:
+            widget.controller?.screenSharingViewController,
         avatarConfig: ZegoAvatarConfig(
           showInAudioMode:
               widget.config.audioVideoViewConfig.showAvatarInAudioMode,

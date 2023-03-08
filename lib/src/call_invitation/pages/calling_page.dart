@@ -151,6 +151,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       onDispose: () {
         pageManager.onPrebuiltCallPageDispose();
       },
+      controller: pageManager.controller,
     );
   }
 }

@@ -253,6 +253,12 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           buttonSize: buttonSize,
           iconSize: iconSize,
         );
+      case ZegoMenuBarButtonName.toggleScreenSharingButton:
+        return ZegoScreenSharingToggleButton(
+          buttonSize: buttonSize,
+          iconSize: iconSize,
+          onPressed: (isScreenSharing) {},
+        );
     }
   }
 }

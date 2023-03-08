@@ -1,3 +1,7 @@
+## 2.1.0
+
+- support screen share
+
 ## 2.0.1
 
 * add appDesignSize for ScreenUtil in prebuilt param, if you use ScreenUtil, prebuilt will restore the param when dispose
