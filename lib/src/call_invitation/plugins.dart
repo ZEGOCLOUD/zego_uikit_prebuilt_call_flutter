@@ -116,7 +116,7 @@ class ZegoPrebuiltPlugins {
     ZegoLoggerService.logInfo(
       'on user info update, '
       'target user($userID, $userName), '
-      'local user:(${localUser.toString()})'
+      'local user:(${localUser.toString()}) '
       'initialized:$initialized, '
       'user state:${pluginUserStateNotifier.value}',
       tag: 'live streaming',
@@ -234,8 +234,8 @@ class ZegoPrebuiltPlugins {
       subTag: 'plugin',
     );
     tryReLogging = true;
-    return ZegoUIKit().getSignalingPlugin().logout().then((value) async {
-      return ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
+    await ZegoUIKit().getSignalingPlugin().logout().then((value) async {
+      await ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
     });
   }
 }

@@ -70,7 +70,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:2.1.1; $version',
+        'version: zego_uikit_prebuilt_call:2.1.2; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -118,7 +118,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                 child: Stack(
                   children: [
                     background(constraints.maxWidth),
-                    audioVideoContainer(context, constraints.maxHeight),
+                    audioVideoContainer(
+                      context,
+                      constraints.maxWidth,
+                      constraints.maxHeight,
+                    ),
                     if (widget.config.topMenuBarConfig.isVisible)
                       topMenuBar()
                     else
@@ -207,11 +211,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
   }
 
-  Widget audioVideoContainer(BuildContext context, double height) {
-    late Widget container;
+  Widget audioVideoContainer(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
+    late Widget avContainer;
     if (widget.config.audioVideoContainerBuilder != null) {
       /// custom
-      container = StreamBuilder<List<ZegoUIKitUser>>(
+      avContainer = StreamBuilder<List<ZegoUIKitUser>>(
         stream: ZegoUIKit().getUserListStream(),
         builder: (context, snapshot) {
           final allUsers = ZegoUIKit().getAllUsers();
@@ -237,7 +245,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         widget.config.layout = layout;
       }
 
-      container = ZegoAudioVideoContainer(
+      avContainer = ZegoAudioVideoContainer(
         layout: widget.config.layout!,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
@@ -280,9 +288,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       top: 0,
       left: 0,
       child: SizedBox(
-        width: 750.w,
+        width: width,
         height: height,
-        child: container,
+        child: avContainer,
       ),
     );
   }
