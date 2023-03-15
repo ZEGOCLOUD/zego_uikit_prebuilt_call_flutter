@@ -70,7 +70,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:2.1.2; $version',
+        'version: zego_uikit_prebuilt_call:2.1.3; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -150,10 +150,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void initContext() {
     correctConfigValue();
 
-    final config = widget.config;
+    assert(widget.userID.isNotEmpty);
+    assert(widget.userName.isNotEmpty);
+    assert(widget.appID > 0);
     assert(widget.appSign.isNotEmpty);
+
+    final config = widget.config;
     initPermissions().then((value) {
       ZegoUIKit().login(widget.userID, widget.userName);
+
       ZegoUIKit()
           .init(appID: widget.appID, appSign: widget.appSign)
           .then((value) {
@@ -164,8 +169,19 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ..enableVideoMirroring(config.audioVideoViewConfig.isVideoMirror)
           ..turnCameraOn(config.turnOnCameraWhenJoining)
           ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
-          ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining)
-          ..joinRoom(widget.callID);
+          ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
+
+        ZegoUIKit().joinRoom(widget.callID).then((result) async {
+          assert(result.errorCode == 0);
+
+          if (result.errorCode != 0) {
+            ZegoLoggerService.logInfo(
+              'failed to login room:${result.errorCode},${result.extendedData}',
+              tag: 'call',
+              subTag: 'prebuilt',
+            );
+          }
+        });
       });
     });
   }

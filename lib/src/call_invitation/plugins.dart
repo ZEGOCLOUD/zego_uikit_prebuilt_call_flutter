@@ -49,7 +49,7 @@ class ZegoPrebuiltPlugins {
     for (final pluginType in ZegoUIKitPluginType.values) {
       ZegoUIKit().getPlugin(pluginType)?.getVersion().then((version) {
         ZegoLoggerService.logInfo(
-          'plugin-$pluginType:$version',
+          'plugin-$pluginType version: $version',
           tag: 'call',
           subTag: 'plugin',
         );

@@ -1,3 +1,6 @@
+## 2.1.3 
+- add assert to key parameters to ensure prebuilt run normally
+
 ## 2.1.2
 - Fixed landscape not displaying full web screen sharing content
 
