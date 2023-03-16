@@ -102,6 +102,7 @@ class ZegoPrebuiltPlugins {
 
     tryReLogging = false;
 
+    /// todo use with ZIM Kit
     await ZegoUIKit().getSignalingPlugin().logout();
     await ZegoUIKit().getSignalingPlugin().uninit();
 

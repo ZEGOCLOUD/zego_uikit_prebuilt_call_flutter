@@ -10,6 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_bottom_toolbar.dart';
@@ -18,11 +19,16 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calli
 class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
     Key? key,
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
     this.avatarBuilder,
   }) : super(key: key);
+
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -68,34 +74,38 @@ class ZegoCallingInviterView extends StatelessWidget {
         SizedBox(height: 10.r),
         centralName((isVideo
                 ? ((invitees.length > 1
-                        ? ZegoInvitationPageManager
-                            .instance.innerText?.outgoingGroupVideoCallPageTitle
-                        : ZegoInvitationPageManager
-                            .instance.innerText?.outgoingVideoCallPageTitle) ??
+                        ? callInvitationConfig
+                            .innerText?.outgoingGroupVideoCallPageTitle
+                        : callInvitationConfig
+                            .innerText?.outgoingVideoCallPageTitle) ??
                     param_1)
                 : ((invitees.length > 1
-                        ? ZegoInvitationPageManager
-                            .instance.innerText?.outgoingGroupVoiceCallPageTitle
-                        : ZegoInvitationPageManager
-                            .instance.innerText?.outgoingVoiceCallPageTitle) ??
+                        ? callInvitationConfig
+                            .innerText?.outgoingGroupVoiceCallPageTitle
+                        : callInvitationConfig
+                            .innerText?.outgoingVoiceCallPageTitle) ??
                     param_1))
             .replaceFirst(param_1, firstInvitee.name)),
         SizedBox(height: 47.r),
         callingText(isVideo
             ? ((invitees.length > 1
-                    ? ZegoInvitationPageManager
-                        .instance.innerText?.outgoingGroupVideoCallPageMessage
-                    : ZegoInvitationPageManager
-                        .instance.innerText?.outgoingVideoCallPageMessage) ??
+                    ? callInvitationConfig
+                        .innerText?.outgoingGroupVideoCallPageMessage
+                    : callInvitationConfig
+                        .innerText?.outgoingVideoCallPageMessage) ??
                 'Calling...')
             : ((invitees.length > 1
-                    ? ZegoInvitationPageManager
-                        .instance.innerText?.outgoingGroupVoiceCallPageMessage
-                    : ZegoInvitationPageManager
-                        .instance.innerText?.outgoingVoiceCallPageMessage) ??
+                    ? callInvitationConfig
+                        .innerText?.outgoingGroupVoiceCallPageMessage
+                    : callInvitationConfig
+                        .innerText?.outgoingVoiceCallPageMessage) ??
                 'Calling...')),
         const Expanded(child: SizedBox()),
-        ZegoInviterCallingBottomToolBar(invitees: invitees),
+        ZegoInviterCallingBottomToolBar(
+          pageManager: pageManager,
+          callInvitationConfig: callInvitationConfig,
+          invitees: invitees,
+        ),
         SizedBox(height: 105.r),
       ],
     );
@@ -104,6 +114,8 @@ class ZegoCallingInviterView extends StatelessWidget {
 
 class ZegoCallingInviteeView extends StatelessWidget {
   const ZegoCallingInviteeView({
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
@@ -111,6 +123,9 @@ class ZegoCallingInviteeView extends StatelessWidget {
     this.showDeclineButton = true,
     Key? key,
   }) : super(key: key);
+
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -146,36 +161,38 @@ class ZegoCallingInviteeView extends StatelessWidget {
         SizedBox(height: 10.r),
         centralName((isVideo
                 ? ((invitees.length > 1
-                        ? ZegoInvitationPageManager
-                            .instance.innerText?.incomingGroupVideoCallPageTitle
-                        : ZegoInvitationPageManager
-                            .instance.innerText?.incomingVideoCallPageTitle) ??
+                        ? callInvitationConfig
+                            .innerText?.incomingGroupVideoCallPageTitle
+                        : callInvitationConfig
+                            .innerText?.incomingVideoCallPageTitle) ??
                     param_1)
                 : ((invitees.length > 1
-                        ? ZegoInvitationPageManager
-                            .instance.innerText?.incomingGroupVoiceCallPageTitle
-                        : ZegoInvitationPageManager
-                            .instance.innerText?.incomingVoiceCallPageTitle) ??
+                        ? callInvitationConfig
+                            .innerText?.incomingGroupVoiceCallPageTitle
+                        : callInvitationConfig
+                            .innerText?.incomingVoiceCallPageTitle) ??
                     param_1))
             .replaceFirst(param_1, inviter.name)),
         SizedBox(height: 47.r),
         callingText(isVideo
             ? (invitees.length > 1
-                ? (ZegoInvitationPageManager.instance.innerText
-                        ?.incomingGroupVideoCallPageMessage ??
+                ? (callInvitationConfig
+                        .innerText?.incomingGroupVideoCallPageMessage ??
                     'Incoming group video call...')
-                : (ZegoInvitationPageManager
-                        .instance.innerText?.incomingVideoCallPageMessage ??
+                : (callInvitationConfig
+                        .innerText?.incomingVideoCallPageMessage ??
                     'Incoming video call...'))
             : (invitees.length > 1
-                ? (ZegoInvitationPageManager.instance.innerText
-                        ?.incomingGroupVoiceCallPageMessage ??
+                ? (callInvitationConfig
+                        .innerText?.incomingGroupVoiceCallPageMessage ??
                     'Incoming group voice call...')
-                : (ZegoInvitationPageManager
-                        .instance.innerText?.incomingVoiceCallPageMessage ??
+                : (callInvitationConfig
+                        .innerText?.incomingVoiceCallPageMessage ??
                     'Incoming voice call...'))),
         const Expanded(child: SizedBox()),
         ZegoInviteeCallingBottomToolBar(
+          pageManager: pageManager,
+          callInvitationConfig: callInvitationConfig,
           inviter: inviter,
           invitees: invitees,
           invitationType: invitationType,

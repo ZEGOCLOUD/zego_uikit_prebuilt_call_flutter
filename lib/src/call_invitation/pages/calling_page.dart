@@ -9,11 +9,15 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_view.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 class ZegoCallingPage extends StatefulWidget {
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
+
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
 
@@ -22,6 +26,8 @@ class ZegoCallingPage extends StatefulWidget {
 
   const ZegoCallingPage({
     Key? key,
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.inviter,
     required this.invitees,
     required this.onInitState,
@@ -38,11 +44,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   VoidCallback? callConfigHandUp;
   ZegoUIKitPrebuiltCallConfig? callConfig;
 
-  final ZegoCallingMachine machine =
-      ZegoInvitationPageManager.instance.callingMachine;
-
-  ZegoInvitationPageManager get pageManager =>
-      ZegoInvitationPageManager.instance;
+  ZegoCallingMachine get machine => widget.pageManager.callingMachine;
 
   @override
   void initState() {
@@ -90,21 +92,26 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
         final localUserIsInviter = localUserInfo.id == widget.inviter.id;
         final callingView = localUserIsInviter
             ? ZegoCallingInviterView(
+                pageManager: widget.pageManager,
+                callInvitationConfig: widget.callInvitationConfig,
                 inviter: widget.inviter,
                 invitees: widget.invitees,
-                invitationType: pageManager.invitationData.type,
-                avatarBuilder: pageManager
-                    .prebuiltConfigQuery(pageManager.invitationData)
+                invitationType: widget.pageManager.invitationData.type,
+                avatarBuilder: widget.callInvitationConfig
+                    .prebuiltConfigQuery(widget.pageManager.invitationData)
                     .avatarBuilder,
               )
             : ZegoCallingInviteeView(
+                pageManager: widget.pageManager,
+                callInvitationConfig: widget.callInvitationConfig,
                 inviter: widget.inviter,
                 invitees: widget.invitees,
-                invitationType: pageManager.invitationData.type,
-                avatarBuilder: pageManager
-                    .prebuiltConfigQuery(pageManager.invitationData)
+                invitationType: widget.pageManager.invitationData.type,
+                avatarBuilder: widget.callInvitationConfig
+                    .prebuiltConfigQuery(widget.pageManager.invitationData)
                     .avatarBuilder,
-                showDeclineButton: pageManager.showDeclineButton,
+                showDeclineButton:
+                    widget.callInvitationConfig.showDeclineButton,
               );
         view = ScreenUtilInit(
           designSize: const Size(750, 1334),
@@ -131,27 +138,28 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
   void onCallHandUp() {
     callConfigHandUp?.call();
-    pageManager.onHangUp();
+    widget.pageManager.onHangUp();
   }
 
   Widget prebuiltCallPage() {
-    callConfig = pageManager.prebuiltConfigQuery(pageManager.invitationData);
+    callConfig = widget.callInvitationConfig
+        .prebuiltConfigQuery(widget.pageManager.invitationData);
 
     callConfigHandUp = callConfig?.onHangUp;
     callConfig?.onHangUp = onCallHandUp;
 
     return ZegoUIKitPrebuiltCall(
-      appID: pageManager.appID,
-      appSign: pageManager.appSign,
-      callID: pageManager.invitationData.callID,
-      userID: pageManager.userID,
-      userName: pageManager.userName,
+      appID: widget.callInvitationConfig.appID,
+      appSign: widget.callInvitationConfig.appSign,
+      callID: widget.pageManager.invitationData.callID,
+      userID: widget.callInvitationConfig.userID,
+      userName: widget.callInvitationConfig.userName,
       config: callConfig!,
-      appDesignSize: pageManager.appDesignSize,
+      appDesignSize: widget.callInvitationConfig.appDesignSize,
       onDispose: () {
-        pageManager.onPrebuiltCallPageDispose();
+        widget.pageManager.onPrebuiltCallPageDispose();
       },
-      controller: pageManager.controller,
+      controller: widget.callInvitationConfig.controller,
     );
   }
 }

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -33,6 +35,7 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.clickableBackgroundColor = Colors.transparent,
     this.unclickableBackgroundColor = Colors.transparent,
   }) : super(key: key);
+
   final List<ZegoUIKitUser> invitees;
   final bool isVideoCall;
   final String customData;
@@ -74,8 +77,13 @@ class _ZegoSendCallInvitationButtonState
   bool requesting = false;
   ValueNotifier<String> callIDNotifier = ValueNotifier<String>('');
 
-  ZegoCallInvitationInnerText? get innerText =>
-      ZegoInvitationPageManager.instance.innerText;
+  ZegoInvitationPageManager? get pageManager =>
+      ZegoCallInvitationInternalInstance.instance.pageManager;
+
+  ZegoCallInvitationConfig? get callInvitationConfig =>
+      ZegoCallInvitationInternalInstance.instance.callInvitationConfig;
+
+  ZegoCallInvitationInnerText? get innerText => callInvitationConfig?.innerText;
 
   @override
   void initState() {
@@ -102,7 +110,11 @@ class _ZegoSendCallInvitationButtonState
   void updateCallID() {
     callIDNotifier.value =
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-    debugPrint('update call id, ${callIDNotifier.value}');
+    ZegoLoggerService.logInfo(
+      'update call id, ${callIDNotifier.value}',
+      tag: 'call',
+      subTag: 'start call button',
+    );
   }
 
   Widget button() {
@@ -154,20 +166,32 @@ class _ZegoSendCallInvitationButtonState
       timeoutSeconds: widget.timeoutSeconds,
       onWillPressed: () {
         if (requesting) {
-          debugPrint('still in request');
+          ZegoLoggerService.logInfo(
+            'still in request',
+            tag: 'call',
+            subTag: 'start call button',
+          );
           return false;
         }
 
-        final currentState = ZegoInvitationPageManager
-                .instance.callingMachine.machine.current?.identifier ??
-            CallingState.kIdle;
+        final currentState =
+            pageManager?.callingMachine.machine.current?.identifier ??
+                CallingState.kIdle;
         if (CallingState.kIdle != currentState) {
-          debugPrint('still in calling, $currentState');
+          ZegoLoggerService.logInfo(
+            'still in calling, $currentState',
+            tag: 'call',
+            subTag: 'start call button',
+          );
           return false;
         }
 
         requesting = true;
-        debugPrint('start request');
+        ZegoLoggerService.logInfo(
+          'start request',
+          tag: 'call',
+          subTag: 'start call button',
+        );
 
         return true;
       },
@@ -185,7 +209,14 @@ class _ZegoSendCallInvitationButtonState
     String invitationID,
     List<String> errorInvitees,
   ) {
-    ZegoInvitationPageManager.instance.onLocalSendInvitation(
+    ZegoLoggerService.logInfo(
+      'start call button pressed, code:$code, message:$message, '
+      'invitation id:$invitationID, error invitees:$errorInvitees',
+      tag: 'call',
+      subTag: 'start call button',
+    );
+
+    pageManager?.onLocalSendInvitation(
       callIDNotifier.value,
       List.from(widget.invitees),
       widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
@@ -202,6 +233,11 @@ class _ZegoSendCallInvitationButtonState
     updateCallID();
 
     requesting = false;
-    debugPrint('finish request');
+
+    ZegoLoggerService.logInfo(
+      'start call button pressed, finish request',
+      tag: 'call',
+      subTag: 'start call button',
+    );
   }
 }

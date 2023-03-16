@@ -8,6 +8,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
@@ -17,14 +18,22 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 class ZegoCallInvitationDialog extends StatefulWidget {
   const ZegoCallInvitationDialog({
     Key? key,
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.invitationData,
     this.showDeclineButton = true,
     this.avatarBuilder,
+    this.appDesignSize,
   }) : super(key: key);
+
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
 
   final bool showDeclineButton;
   final ZegoCallInvitationData invitationData;
   final ZegoAvatarBuilder? avatarBuilder;
+
+  final Size? appDesignSize;
 
   @override
   ZegoCallInvitationDialogState createState() =>
@@ -32,6 +41,15 @@ class ZegoCallInvitationDialog extends StatefulWidget {
 }
 
 class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
+  @override
+  void dispose() {
+    super.dispose();
+
+    if (widget.appDesignSize != null) {
+      ScreenUtil.init(context, designSize: widget.appDesignSize!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,15 +114,15 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       child: Text(
         (ZegoCallType.videoCall == widget.invitationData.type
                 ? ((widget.invitationData.invitees.length > 1
-                        ? ZegoInvitationPageManager.instance.innerText
+                        ? widget.callInvitationConfig.innerText
                             ?.incomingGroupVideoCallDialogTitle
-                        : ZegoInvitationPageManager.instance.innerText
+                        : widget.callInvitationConfig.innerText
                             ?.incomingVideoCallDialogTitle) ??
                     param_1)
                 : ((widget.invitationData.invitees.length > 1
-                        ? ZegoInvitationPageManager.instance.innerText
+                        ? widget.callInvitationConfig.innerText
                             ?.incomingGroupVoiceCallDialogTitle
-                        : ZegoInvitationPageManager.instance.innerText
+                        : widget.callInvitationConfig.innerText
                             ?.incomingVoiceCallDialogTitle) ??
                     param_1))
             .replaceFirst(param_1, widget.invitationData.inviter?.name ?? ''),
@@ -143,7 +161,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   Widget declineButton() {
     return Listener(
       onPointerDown: (e) {
-        ZegoInvitationPageManager.instance.hideInvitationTopSheet();
+        widget.pageManager.hideInvitationTopSheet();
       },
       child: AbsorbPointer(
         absorbing: false,
@@ -162,8 +180,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
           iconSize: Size(74.r, 74.r),
           buttonSize: Size(74.r, 74.r),
           onPressed: (String code, String message) {
-            ZegoInvitationPageManager.instance
-                .onLocalRefuseInvitation(code, message);
+            widget.pageManager.onLocalRefuseInvitation(code, message);
           },
         ),
       ),
@@ -173,7 +190,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   Widget acceptButton() {
     return Listener(
       onPointerDown: (e) {
-        ZegoInvitationPageManager.instance.hideInvitationTopSheet();
+        widget.pageManager.hideInvitationTopSheet();
       },
       child: AbsorbPointer(
         absorbing: false,
@@ -190,8 +207,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
           iconSize: Size(74.r, 74.r),
           buttonSize: Size(74.r, 74.r),
           onPressed: (String code, String message) {
-            ZegoInvitationPageManager.instance
-                .onLocalAcceptInvitation(code, message);
+            widget.pageManager.onLocalAcceptInvitation(code, message);
           },
         ),
       ),
@@ -212,19 +228,19 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
     switch (invitationType) {
       case ZegoCallType.voiceCall:
         return invitees.length > 1
-            ? (ZegoInvitationPageManager
-                    .instance.innerText?.incomingGroupVoiceCallDialogMessage ??
+            ? (widget.callInvitationConfig.innerText
+                    ?.incomingGroupVoiceCallDialogMessage ??
                 'Incoming group voice call...')
-            : (ZegoInvitationPageManager
-                    .instance.innerText?.incomingVoiceCallDialogMessage ??
+            : (widget.callInvitationConfig.innerText
+                    ?.incomingVoiceCallDialogMessage ??
                 'Incoming voice call...');
       case ZegoCallType.videoCall:
         return invitees.length > 1
-            ? (ZegoInvitationPageManager
-                    .instance.innerText?.incomingGroupVideoCallDialogMessage ??
+            ? (widget.callInvitationConfig.innerText
+                    ?.incomingGroupVideoCallDialogMessage ??
                 'Incoming group video call...')
-            : (ZegoInvitationPageManager
-                    .instance.innerText?.incomingVideoCallDialogMessage ??
+            : (widget.callInvitationConfig.innerText
+                    ?.incomingVideoCallDialogMessage ??
                 'Incoming video call...');
     }
   }

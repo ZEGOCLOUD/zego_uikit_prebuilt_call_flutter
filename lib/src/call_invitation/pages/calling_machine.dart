@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_page.dart';
@@ -25,6 +26,14 @@ typedef CallingMachineStateChanged = void Function(CallingState);
 
 /// State machine in the call
 class ZegoCallingMachine {
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
+
+  ZegoCallingMachine({
+    required this.pageManager,
+    required this.callInvitationConfig,
+  });
+
   final machine = sm.Machine<CallingState>();
   CallingMachineStateChanged? onStateChanged;
 
@@ -35,7 +44,7 @@ class ZegoCallingMachine {
 
   bool isPagePushed = false;
 
-  BuildContext get context => ZegoInvitationPageManager.instance.contextQuery();
+  BuildContext get context => callInvitationConfig.contextQuery!.call();
 
   void init() {
     machine.onAfterTransition.listen((event) {
@@ -67,6 +76,8 @@ class ZegoCallingMachine {
       ..onEntry(onCallingEntry);
     stateOnlineAudioVideo = machine.newState(CallingState.kOnlineAudioVideo)
       ..onEntry(onCallingEntry);
+
+    machine.current = stateIdle;
   }
 
   void onCallingEntry() {
@@ -83,8 +94,10 @@ class ZegoCallingMachine {
       context,
       MaterialPageRoute(
         builder: (context) => ZegoCallingPage(
-          inviter: ZegoInvitationPageManager.instance.invitationData.inviter!,
-          invitees: ZegoInvitationPageManager.instance.invitationData.invitees,
+          pageManager: pageManager,
+          callInvitationConfig: callInvitationConfig,
+          inviter: pageManager.invitationData.inviter!,
+          invitees: pageManager.invitationData.invitees,
           onInitState: () {
             isPagePushed = true;
           },

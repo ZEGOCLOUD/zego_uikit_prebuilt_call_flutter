@@ -7,14 +7,20 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 class ZegoInviterCallingBottomToolBar extends StatelessWidget {
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
+
   final List<ZegoUIKitUser> invitees;
 
   const ZegoInviterCallingBottomToolBar({
     Key? key,
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.invitees,
   }) : super(key: key);
 
@@ -36,8 +42,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
           buttonSize: Size(120.r, 120.r),
           iconSize: Size(120.r, 120.r),
           onPressed: (String code, String message, List<String> errorInvitees) {
-            ZegoInvitationPageManager.instance
-                .onLocalCancelInvitation(code, message, errorInvitees);
+            pageManager.onLocalCancelInvitation(code, message, errorInvitees);
           },
         ),
       ),
@@ -46,6 +51,9 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
 }
 
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
+  final ZegoInvitationPageManager pageManager;
+  final ZegoCallInvitationConfig callInvitationConfig;
+
   final ZegoCallType invitationType;
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -53,6 +61,8 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
 
   const ZegoInviteeCallingBottomToolBar({
     Key? key,
+    required this.pageManager,
+    required this.callInvitationConfig,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
@@ -98,8 +108,8 @@ class ZegoInviteeCallingBottomToolBarState
       inviterID: widget.inviter.id,
       // data customization is not supported
       data: '{"reason":"decline"}',
-      text: ZegoInvitationPageManager
-              .instance.innerText?.incomingCallPageDeclineButton ??
+      text: widget
+              .callInvitationConfig.innerText?.incomingCallPageDeclineButton ??
           'Decline',
       textStyle: buttonTextStyle(),
       icon: ButtonIcon(
@@ -113,8 +123,7 @@ class ZegoInviteeCallingBottomToolBarState
       buttonSize: Size(120.r, 120.r + 50.r),
       iconSize: Size(120.r, 120.r),
       onPressed: (String code, String message) {
-        ZegoInvitationPageManager.instance
-            .onLocalRefuseInvitation(code, message);
+        widget.pageManager.onLocalRefuseInvitation(code, message);
       },
     );
   }
@@ -130,15 +139,14 @@ class ZegoInviteeCallingBottomToolBarState
           fit: BoxFit.fill,
         ),
       ),
-      text: ZegoInvitationPageManager
-              .instance.innerText?.incomingCallPageAcceptButton ??
-          'Accept',
+      text:
+          widget.callInvitationConfig.innerText?.incomingCallPageAcceptButton ??
+              'Accept',
       textStyle: buttonTextStyle(),
       buttonSize: Size(120.r, 120.r + 50.r),
       iconSize: Size(120.r, 120.r),
       onPressed: (String code, String message) {
-        ZegoInvitationPageManager.instance
-            .onLocalAcceptInvitation(code, message);
+        widget.pageManager.onLocalAcceptInvitation(code, message);
       },
     );
   }

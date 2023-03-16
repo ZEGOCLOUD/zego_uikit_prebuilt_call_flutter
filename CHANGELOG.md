@@ -1,3 +1,7 @@
+## 3.0.0
+- ZegoUIKitPrebuiltCallWithInvitation Widget class is deprecated, replace by a singleton instance ZegoUIKitPrebuiltCallInvitationService 
+
+
 ## 2.1.3 
 - add assert to key parameters to ensure prebuilt run normally
 

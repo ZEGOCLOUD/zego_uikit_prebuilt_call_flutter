@@ -2,9 +2,9 @@ export 'package:zego_uikit/zego_uikit.dart';
 
 export 'src/call.dart';
 export 'src/call_config.dart';
-export 'src/call_defines.dart';
 export 'src/call_controller.dart';
-export 'src/call_invitation/call_invitation.dart';
+export 'src/call_defines.dart';
+export 'src/call_invitation/call_invitation_service.dart';
 export 'src/call_invitation/components/components.dart';
 export 'src/call_invitation/defines.dart';
 export 'src/call_invitation/events.dart';
