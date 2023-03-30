@@ -37,11 +37,18 @@ class ZegoCallingInviterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        backgroundView(),
-        surface(context),
-      ],
+    return ScreenUtilInit(
+      designSize: const Size(750, 1334),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            backgroundView(),
+            surface(context),
+          ],
+        );
+      },
     );
   }
 
@@ -135,11 +142,18 @@ class ZegoCallingInviteeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        backgroundImage(),
-        surface(context),
-      ],
+    return ScreenUtilInit(
+      designSize: const Size(750, 1334),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            backgroundImage(),
+            surface(context),
+          ],
+        );
+      },
     );
   }
 

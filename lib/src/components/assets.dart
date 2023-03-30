@@ -9,6 +9,7 @@ class PrebuiltCallImage {
 
 class PrebuiltCallIconUrls {
   static const String back = 'assets/icons/back.png';
+  static const String minimizing = 'assets/icons/minimizing.png';
 
   static const String topMemberNormal = 'assets/icons/top_member_normal.png';
   static const String topCameraOverturn =

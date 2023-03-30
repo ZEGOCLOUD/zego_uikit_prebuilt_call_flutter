@@ -85,7 +85,7 @@ class ZegoInviteeCallingBottomToolBarState
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 170.h,
+      height: 170.r,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +121,7 @@ class ZegoInviteeCallingBottomToolBarState
         ),
       ),
       buttonSize: Size(120.r, 120.r + 50.r),
-      iconSize: Size(120.r, 120.r),
+      iconSize: Size(108.r, 108.r),
       onPressed: (String code, String message) {
         widget.pageManager.onLocalRefuseInvitation(code, message);
       },
@@ -144,7 +144,7 @@ class ZegoInviteeCallingBottomToolBarState
               'Accept',
       textStyle: buttonTextStyle(),
       buttonSize: Size(120.r, 120.r + 50.r),
-      iconSize: Size(120.r, 120.r),
+      iconSize: Size(108.r, 108.r),
       onPressed: (String code, String message) {
         widget.pageManager.onLocalAcceptInvitation(code, message);
       },

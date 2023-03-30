@@ -126,30 +126,35 @@ class _ZegoSendCallInvitationButtonState
       invitees: widget.invitees.map((user) {
         return user.id;
       }).toList(),
-      data: InvitationInternalData(callIDNotifier.value,
-              List.from(widget.invitees), widget.customData)
-          .toJson(),
+      timeoutSeconds: widget.timeoutSeconds,
+      data: InvitationInternalData(
+        callIDNotifier.value,
+        List.from(widget.invitees),
+        widget.customData,
+      ).toJson(),
       notificationConfig: ZegoNotificationConfig(
         resourceID: widget.resourceID ?? '',
-        title: (widget.isVideoCall
+        title: widget.notificationTitle ??
+            (widget.isVideoCall
+                    ? ((widget.invitees.length > 1
+                            ? innerText?.incomingGroupVideoCallDialogTitle
+                            : innerText?.incomingVideoCallDialogTitle) ??
+                        param_1)
+                    : ((widget.invitees.length > 1
+                            ? innerText?.incomingGroupVoiceCallDialogTitle
+                            : innerText?.incomingVoiceCallDialogTitle) ??
+                        param_1))
+                .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
+        message: widget.notificationMessage ??
+            (widget.isVideoCall
                 ? ((widget.invitees.length > 1
-                        ? innerText?.incomingGroupVideoCallDialogTitle
-                        : innerText?.incomingVideoCallDialogTitle) ??
-                    param_1)
+                        ? innerText?.incomingGroupVideoCallDialogMessage
+                        : innerText?.incomingVideoCallDialogMessage) ??
+                    'Incoming video call...')
                 : ((widget.invitees.length > 1
-                        ? innerText?.incomingGroupVoiceCallDialogTitle
-                        : innerText?.incomingVoiceCallDialogTitle) ??
-                    param_1))
-            .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
-        message: widget.isVideoCall
-            ? ((widget.invitees.length > 1
-                    ? innerText?.incomingGroupVideoCallDialogMessage
-                    : innerText?.incomingVideoCallDialogMessage) ??
-                'Incoming video call...')
-            : ((widget.invitees.length > 1
-                    ? innerText?.incomingGroupVoiceCallDialogMessage
-                    : innerText?.incomingVoiceCallDialogMessage) ??
-                'Incoming voice call...'),
+                        ? innerText?.incomingGroupVoiceCallDialogMessage
+                        : innerText?.incomingVoiceCallDialogMessage) ??
+                    'Incoming voice call...')),
       ),
       icon: widget.icon ??
           ButtonIcon(
@@ -163,7 +168,6 @@ class _ZegoSendCallInvitationButtonState
       iconTextSpacing: widget.iconTextSpacing,
       verticalLayout: widget.verticalLayout,
       buttonSize: widget.buttonSize,
-      timeoutSeconds: widget.timeoutSeconds,
       onWillPressed: () {
         if (requesting) {
           ZegoLoggerService.logInfo(

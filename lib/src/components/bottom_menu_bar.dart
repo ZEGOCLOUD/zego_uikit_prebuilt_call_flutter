@@ -12,6 +12,9 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
 
 class ZegoBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
@@ -24,11 +27,14 @@ class ZegoBottomMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
+  final ZegoUIKitPrebuiltCallData prebuiltCallData;
+
   const ZegoBottomMenuBar({
     Key? key,
     required this.config,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
+    required this.prebuiltCallData,
     this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
@@ -94,7 +100,26 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
 
   List<Widget> getDisplayButtons(BuildContext context) {
     final buttonList = <Widget>[
-      ...getDefaultButtons(context),
+      ...getDefaultButtons(
+        context,
+        cameraDefaultValueFunc: widget.prebuiltCallData.isPrebuiltFromMinimizing
+            ? () {
+                /// if is minimizing, take the local device state
+                return ZegoUIKit()
+                    .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .value;
+              }
+            : null,
+        microphoneDefaultValueFunc: widget
+                .prebuiltCallData.isPrebuiltFromMinimizing
+            ? () {
+                /// if is minimizing, take the local device state
+                return ZegoUIKit()
+                    .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .value;
+              }
+            : null,
+      ),
       ...widget.config.bottomMenuBarConfig.extendButtons
           .map((extendButton) => buttonWrapper(child: extendButton))
     ];
@@ -240,6 +265,13 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             return widget.config.onHangUpConfirmation!(context);
           },
           onPress: () {
+            ZegoLoggerService.logInfo(
+              'restore mini state by hang up',
+              tag: 'call',
+              subTag: 'bottom bar',
+            );
+            ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+
             if (widget.config.onHangUp != null) {
               widget.config.onHangUp!.call();
             } else {
@@ -259,6 +291,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           iconSize: iconSize,
           onPressed: (isScreenSharing) {},
         );
+      case ZegoMenuBarButtonName.minimizingButton:
+        return ZegoMinimizingButton(prebuiltCallData: widget.prebuiltCallData);
     }
   }
 }

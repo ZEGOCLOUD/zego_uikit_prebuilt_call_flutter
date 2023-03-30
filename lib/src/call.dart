@@ -11,12 +11,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     Key? key,
-    this.appDesignSize,
     required this.appID,
     required this.appSign,
     required this.callID,
@@ -25,6 +26,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.config,
     this.onDispose,
     this.controller,
+    this.appDesignSize,
   }) : super(key: key);
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -62,19 +64,51 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   StreamSubscription<dynamic>? userListStreamSubscription;
 
+  late ZegoUIKitPrebuiltCallData prebuiltCallData;
+  late NavigatorState navigatorState;
+
   @override
   void initState() {
     super.initState();
 
+    prebuiltCallData = ZegoUIKitPrebuiltCallData(
+      appDesignSize: widget.appDesignSize,
+      appID: widget.appID,
+      appSign: widget.appSign,
+      callID: widget.callID,
+      userID: widget.userID,
+      userName: widget.userName,
+      config: widget.config,
+      onDispose: widget.onDispose,
+      controller: widget.controller,
+      isPrebuiltFromMinimizing:
+          MiniOverlayPageState.idle != ZegoMiniOverlayMachine().state(),
+    );
+
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:2.1.3; $version',
+        'version: zego_uikit_prebuilt_call:3.1.0; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
     });
 
-    initContext();
+    ZegoLoggerService.logInfo(
+      'mini machine state is ${ZegoMiniOverlayMachine().state()}',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+    if (MiniOverlayPageState.idle == ZegoMiniOverlayMachine().state()) {
+      /// not wake from mini page
+      initContext();
+    } else {
+      ZegoLoggerService.logInfo(
+        'mini machine state is not idle, context will not be init',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+    }
+    ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
 
     userListStreamSubscription =
         ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
@@ -85,15 +119,31 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.dispose();
 
     userListStreamSubscription?.cancel();
-
-    ZegoUIKit().leaveRoom();
-    // await ZegoUIKit().uninit();
-
     widget.onDispose?.call();
 
-    if (widget.appDesignSize != null) {
-      ScreenUtil.init(context, designSize: widget.appDesignSize!);
+    if (MiniOverlayPageState.minimizing != ZegoMiniOverlayMachine().state()) {
+      ZegoUIKit().leaveRoom();
+      // await ZegoUIKit().uninit();
+    } else {
+      ZegoLoggerService.logInfo(
+        'mini machine state is minimizing, room will not be leave',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
     }
+
+    if (widget.appDesignSize != null) {
+      ScreenUtil.init(
+        navigatorState.context,
+        designSize: widget.appDesignSize!,
+      );
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    navigatorState = Navigator.of(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -322,6 +372,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
+        prebuiltCallData: prebuiltCallData,
         height: 88.r,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
@@ -342,6 +393,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
+        prebuiltCallData: prebuiltCallData,
         height: isLightStyle ? null : 208.r,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,

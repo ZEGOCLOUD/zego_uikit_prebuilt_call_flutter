@@ -6,9 +6,9 @@ import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
@@ -62,7 +62,7 @@ class ZegoUIKitPrebuiltCallInvitationService {
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:2.1.1; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.1.0; $uikitVersion',
         tag: 'call',
         subTag: 'prebuilt invitation',
       );
@@ -87,7 +87,6 @@ class ZegoUIKitPrebuiltCallInvitationService {
       isIOSSandboxEnvironment: isIOSSandboxEnvironment,
       androidNotificationConfig: androidNotificationConfig,
       controller: controller,
-      appDesignSize: appDesignSize,
       innerText: innerText,
       ringtoneConfig: ringtoneConfig,
     );
@@ -105,7 +104,7 @@ class ZegoUIKitPrebuiltCallInvitationService {
       invitationEvents: _data.events,
       innerText: _data.innerText,
       controller: _data.controller,
-      appDesignSize: _data.appDesignSize,
+      appDesignSize: appDesignSize,
     );
     if (null != _contextQuery) {
       _callInvitationConfig.contextQuery = _contextQuery;
@@ -178,15 +177,6 @@ class ZegoUIKitPrebuiltCallInvitationService {
     _isInit = false;
 
     await _uninitContext();
-
-    if (null != _data.appDesignSize) {
-      assert(_callInvitationConfig.contextQuery != null);
-
-      ScreenUtil.init(
-        _callInvitationConfig.contextQuery!.call(),
-        designSize: _data.appDesignSize!,
-      );
-    }
   }
 
   Future<void> _initPermissions() async {
@@ -253,7 +243,6 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
     this.isIOSSandboxEnvironment = false,
     this.androidNotificationConfig,
     this.controller,
-    this.appDesignSize,
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
   })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
@@ -296,7 +285,4 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
   final ZegoCallInvitationInnerText innerText;
 
   final ZegoUIKitPrebuiltCallController? controller;
-
-  ///
-  final Size? appDesignSize;
 }

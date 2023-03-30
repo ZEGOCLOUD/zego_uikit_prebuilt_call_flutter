@@ -25,7 +25,11 @@ class CallPage extends StatelessWidget {
         callID: callID,
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
           ..onOnlySelfInRoom = (context) {
-            Navigator.of(context).pop();
+            if (MiniOverlayPageState.idle != ZegoMiniOverlayMachine().state()) {
+              ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+            } else {
+              Navigator.of(context).pop();
+            }
           },
       ),
     );

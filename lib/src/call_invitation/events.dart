@@ -31,7 +31,11 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   Function(String callID, ZegoCallUser callee)? onOutgoingCallDeclined;
 
   /// The caller will receive a notification through this callback when the call invitation didn't get responses after a timeout duration.
-  Function(String callID, List<ZegoCallUser> callees)? onOutgoingCallTimeout;
+  Function(
+    String callID,
+    List<ZegoCallUser> callees,
+    bool isVideoCall,
+  )? onOutgoingCallTimeout;
 
   ZegoUIKitPrebuiltCallInvitationEvents({
     this.onIncomingCallDeclineButtonPressed,

@@ -3,19 +3,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
-// Package imports:
-import 'package:awesome_notifications/awesome_notifications.dart';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoInvitationPageManager {
@@ -59,6 +60,9 @@ class ZegoInvitationPageManager {
 
     initRing(ringtoneConfig);
 
+    ZegoMiniOverlayMachine()
+        .listenStateChanged(onMiniOverlayMachineStateChanged);
+
     ZegoLoggerService.logInfo(
       'init, appID:${callInvitationConfig.appID}, '
       'appSign:${callInvitationConfig.appSign},'
@@ -70,6 +74,9 @@ class ZegoInvitationPageManager {
   }
 
   void uninit() {
+    ZegoMiniOverlayMachine()
+        .removeListenStateChanged(onMiniOverlayMachineStateChanged);
+
     removeStreamListener();
   }
 
@@ -433,9 +440,10 @@ class ZegoInvitationPageManager {
       subTag: 'page manager',
     );
 
-    callInvitationConfig.invitationEvents?.onOutgoingCallTimeout?.call(
-        _invitationData.callID,
-        invitees.map((user) => ZegoCallUser(user.id, user.name)).toList());
+    final currentInvitationCallID = _invitationData.callID;
+    final currentInvitationCallType = _invitationData.type;
+    final currentInvitees =
+        invitees.map((user) => ZegoCallUser(user.id, user.name)).toList();
 
     if (isGroupCall) {
       if (_invitingInvitees.isEmpty && isNobodyAccepted) {
@@ -450,6 +458,12 @@ class ZegoInvitationPageManager {
     } else {
       restoreToIdle();
     }
+
+    callInvitationConfig.invitationEvents?.onOutgoingCallTimeout?.call(
+      currentInvitationCallID,
+      currentInvitees,
+      ZegoCallType.videoCall == currentInvitationCallType,
+    );
   }
 
   void onInvitationRefused(Map<String, dynamic> params) {
@@ -484,13 +498,13 @@ class ZegoInvitationPageManager {
     }
 
     if ('busy' == (dict['reason'] as String)) {
-      callInvitationConfig.invitationEvents?.onOutgoingCallDeclined?.call(
-          _invitationData.callID, ZegoCallUser(invitee.id, invitee.name));
-    } else {
-      /// "decline"
       callInvitationConfig.invitationEvents?.onOutgoingCallRejectedCauseBusy
           ?.call(
               _invitationData.callID, ZegoCallUser(invitee.id, invitee.name));
+    } else {
+      /// "decline"
+      callInvitationConfig.invitationEvents?.onOutgoingCallDeclined?.call(
+          _invitationData.callID, ZegoCallUser(invitee.id, invitee.name));
     }
 
     _invitingInvitees.removeAt(inviteeIndex);
@@ -586,7 +600,9 @@ class ZegoInvitationPageManager {
     _callerRingtone.stopRing();
     _calleeRingtone.stopRing();
 
-    ZegoUIKit.instance.turnCameraOn(false);
+    if (MiniOverlayPageState.minimizing != ZegoMiniOverlayMachine().state()) {
+      ZegoUIKit.instance.turnCameraOn(false);
+    }
 
     hideInvitationTopSheet();
 
@@ -607,14 +623,6 @@ class ZegoInvitationPageManager {
     }
 
     _invitationData = ZegoCallInvitationData.empty();
-
-    if (callInvitationConfig.appDesignSize != null) {
-      assert(callInvitationConfig.contextQuery != null);
-      ScreenUtil.init(
-        callInvitationConfig.contextQuery!.call(),
-        designSize: callInvitationConfig.appDesignSize!,
-      );
-    }
   }
 
   void onInvitationTopSheetEmptyClicked() {
@@ -646,6 +654,7 @@ class ZegoInvitationPageManager {
               .prebuiltConfigQuery(_invitationData)
               .avatarBuilder,
           showDeclineButton: callInvitationConfig.showDeclineButton,
+          appDesignSize: callInvitationConfig.appDesignSize,
         ),
       ),
       barrierDismissible: false,
@@ -691,5 +700,11 @@ class ZegoInvitationPageManager {
     }
 
     _appInBackground = isAppInBackground;
+  }
+
+  void onMiniOverlayMachineStateChanged(MiniOverlayPageState state) {
+    if (MiniOverlayPageState.calling == state) {
+      callingMachine.stateOnlineAudioVideo.enter();
+    }
   }
 }

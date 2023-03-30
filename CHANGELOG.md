@@ -1,6 +1,17 @@
-## 3.0.0
-- ZegoUIKitPrebuiltCallWithInvitation Widget class is deprecated, replace by a singleton instance ZegoUIKitPrebuiltCallInvitationService 
+## 3.1.0
+- supports in-app minimization.
 
+## 3.0.3
+- fixed appDesignSize for ScreenUtil that didn't work
+
+## 3.0.2-dev.1
+- add sendCallInvitation function in ZegoUIKitPrebuiltCallController
+
+## 3.0.1-dev.1
+- onOutgoingCallRejectedCauseBusy and onOutgoingCallDeclined, these two event are trigger wrong
+
+## 3.0.0-dev.1
+- ZegoUIKitPrebuiltCallWithInvitation Widget class is deprecated, replace by a singleton instance ZegoUIKitPrebuiltCallInvitationService
 
 ## 2.1.3 
 - add assert to key parameters to ensure prebuilt run normally

@@ -13,6 +13,9 @@ import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
 
 class ZegoTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
@@ -25,11 +28,14 @@ class ZegoTopMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
+  final ZegoUIKitPrebuiltCallData prebuiltCallData;
+
   const ZegoTopMenuBar({
     Key? key,
     required this.config,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
+    required this.prebuiltCallData,
     this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
@@ -229,6 +235,13 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
             return widget.config.onHangUpConfirmation!(context);
           },
           onPress: () {
+            ZegoLoggerService.logInfo(
+              'restore mini state by hang up',
+              tag: 'call',
+              subTag: 'top bar',
+            );
+            ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+
             if (widget.config.onHangUp != null) {
               widget.config.onHangUp!.call();
             } else {
@@ -253,6 +266,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           iconSize: iconSize,
           onPressed: (isScreenSharing) {},
         );
+      case ZegoMenuBarButtonName.minimizingButton:
+        return ZegoMinimizingButton(prebuiltCallData: widget.prebuiltCallData);
     }
   }
 }

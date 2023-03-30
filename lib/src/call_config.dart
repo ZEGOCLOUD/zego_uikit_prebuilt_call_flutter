@@ -7,6 +7,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 
+import 'components/minimizing/mini_overlay_machine.dart';
+
 class ZegoUIKitPrebuiltCallConfig {
   factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() =>
       ZegoUIKitPrebuiltCallConfigExtension.generate(
@@ -194,7 +196,7 @@ class ZegoTopMenuBarConfig {
   List<Widget> extendButtons;
 
   ZegoTopMenuBarConfig({
-    this.isVisible = false,
+    this.isVisible = true,
     this.hideAutomatically = true,
     this.hideByClick = true,
     this.buttons = const [],
@@ -296,7 +298,10 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                   ZegoMenuBarButtonName.showMemberListButton,
                 ],
               )
-            : ZegoTopMenuBarConfig(isVisible: false, buttons: []),
+            : ZegoTopMenuBarConfig(
+                isVisible: false,
+                buttons: [],
+              ),
         bottomMenuBarConfig: isGroup
             ? ZegoBottomMenuBarConfig(
                 style: ZegoMenuBarStyle.dark,
@@ -334,7 +339,16 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
           useVideoViewAspectFill: !isGroup,
         ),
         memberListConfig: ZegoMemberListConfig(),
-        onOnlySelfInRoom:
-            isGroup ? null : (context) => Navigator.of(context).pop());
+        onOnlySelfInRoom: isGroup
+            ? null
+            : (context) {
+                if (MiniOverlayPageState.idle !=
+                    ZegoMiniOverlayMachine().state()) {
+                  ZegoMiniOverlayMachine()
+                      .changeState(MiniOverlayPageState.idle);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              });
   }
 }

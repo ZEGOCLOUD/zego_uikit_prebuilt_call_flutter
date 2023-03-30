@@ -44,6 +44,8 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   VoidCallback? callConfigHandUp;
   ZegoUIKitPrebuiltCallConfig? callConfig;
 
+  late NavigatorState navigatorState;
+
   ZegoCallingMachine get machine => widget.pageManager.callingMachine;
 
   @override
@@ -74,6 +76,19 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     callConfig = null;
 
     super.dispose();
+
+    if (widget.callInvitationConfig.appDesignSize != null) {
+      ScreenUtil.init(
+        navigatorState.context,
+        designSize: widget.callInvitationConfig.appDesignSize!,
+      );
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    navigatorState = Navigator.of(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -90,7 +105,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
         callConfig = null;
 
         final localUserIsInviter = localUserInfo.id == widget.inviter.id;
-        final callingView = localUserIsInviter
+        view = localUserIsInviter
             ? ZegoCallingInviterView(
                 pageManager: widget.pageManager,
                 callInvitationConfig: widget.callInvitationConfig,
@@ -113,14 +128,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
                 showDeclineButton:
                     widget.callInvitationConfig.showDeclineButton,
               );
-        view = ScreenUtilInit(
-          designSize: const Size(750, 1334),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return callingView;
-          },
-        );
         break;
       case CallingState.kOnlineAudioVideo:
         view = prebuiltCallPage();
@@ -128,12 +135,11 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     }
 
     return WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
-        child: SafeArea(
-          child: view,
-        ));
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(child: view),
+    );
   }
 
   void onCallHandUp() {

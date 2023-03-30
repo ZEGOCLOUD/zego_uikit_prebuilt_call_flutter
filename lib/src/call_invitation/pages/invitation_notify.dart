@@ -41,13 +41,24 @@ class ZegoCallInvitationDialog extends StatefulWidget {
 }
 
 class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
+  late NavigatorState navigatorState;
+
   @override
   void dispose() {
     super.dispose();
 
     if (widget.appDesignSize != null) {
-      ScreenUtil.init(context, designSize: widget.appDesignSize!);
+      ScreenUtil.init(
+        navigatorState.context,
+        designSize: widget.appDesignSize!,
+      );
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    navigatorState = Navigator.of(context);
+    super.didChangeDependencies();
   }
 
   @override

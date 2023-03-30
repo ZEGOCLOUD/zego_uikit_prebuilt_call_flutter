@@ -3,14 +3,14 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
 // Package imports:
 import 'package:awesome_notifications/awesome_notifications.dart';
 
-// Flutter imports:
-import 'package:flutter/material.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
-
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoNotificationManager {
