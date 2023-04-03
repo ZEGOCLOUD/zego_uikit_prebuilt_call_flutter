@@ -178,6 +178,15 @@ class _ZegoSendCallInvitationButtonState
           return false;
         }
 
+        if (ZegoUIKitPrebuiltCallMiniOverlayMachine().isMinimizing) {
+          ZegoLoggerService.logInfo(
+            'still in minimizing',
+            tag: 'call',
+            subTag: 'start call button',
+          );
+          return false;
+        }
+
         final currentState =
             pageManager?.callingMachine.machine.current?.identifier ??
                 CallingState.kIdle;

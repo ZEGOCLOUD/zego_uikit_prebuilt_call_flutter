@@ -25,12 +25,22 @@ class CallPage extends StatelessWidget {
         callID: callID,
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
           ..onOnlySelfInRoom = (context) {
-            if (MiniOverlayPageState.idle != ZegoMiniOverlayMachine().state()) {
-              ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+            if (PrebuiltCallMiniOverlayPageState.idle !=
+                ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+              /// in minimizing
+              ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                  .changeState(PrebuiltCallMiniOverlayPageState.idle);
             } else {
               Navigator.of(context).pop();
             }
-          },
+          }
+
+          /// support minimizing
+          ..topMenuBarConfig.isVisible = true
+          ..topMenuBarConfig.buttons = [
+            ZegoMenuBarButtonName.minimizingButton,
+            ZegoMenuBarButtonName.showMemberListButton,
+          ],
       ),
     );
   }

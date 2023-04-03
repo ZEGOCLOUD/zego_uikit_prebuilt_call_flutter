@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
@@ -71,6 +71,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void initState() {
     super.initState();
 
+    correctConfigValue();
+
     prebuiltCallData = ZegoUIKitPrebuiltCallData(
       appDesignSize: widget.appDesignSize,
       appID: widget.appID,
@@ -81,24 +83,25 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       config: widget.config,
       onDispose: widget.onDispose,
       controller: widget.controller,
-      isPrebuiltFromMinimizing:
-          MiniOverlayPageState.idle != ZegoMiniOverlayMachine().state(),
+      isPrebuiltFromMinimizing: PrebuiltCallMiniOverlayPageState.idle !=
+          ZegoUIKitPrebuiltCallMiniOverlayMachine().state(),
     );
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.1.0; $version',
+        'version: zego_uikit_prebuilt_call:3.1.1; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
     });
 
     ZegoLoggerService.logInfo(
-      'mini machine state is ${ZegoMiniOverlayMachine().state()}',
+      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayMachine().state()}',
       tag: 'call',
       subTag: 'prebuilt',
     );
-    if (MiniOverlayPageState.idle == ZegoMiniOverlayMachine().state()) {
+    if (PrebuiltCallMiniOverlayPageState.idle ==
+        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
       /// not wake from mini page
       initContext();
     } else {
@@ -108,7 +111,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
     }
-    ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+        .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
     userListStreamSubscription =
         ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
@@ -121,7 +125,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     userListStreamSubscription?.cancel();
     widget.onDispose?.call();
 
-    if (MiniOverlayPageState.minimizing != ZegoMiniOverlayMachine().state()) {
+    if (PrebuiltCallMiniOverlayPageState.minimizing !=
+        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
       ZegoUIKit().leaveRoom();
       // await ZegoUIKit().uninit();
     } else {
@@ -196,8 +201,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   void initContext() {
-    correctConfigValue();
-
     assert(widget.userID.isNotEmpty);
     assert(widget.userName.isNotEmpty);
     assert(widget.appID > 0);

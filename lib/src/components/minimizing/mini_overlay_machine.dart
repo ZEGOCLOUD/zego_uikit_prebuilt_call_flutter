@@ -1,30 +1,41 @@
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+
 // Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
-
 import 'package:zego_uikit/zego_uikit.dart';
 
-import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
+// Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 
-enum MiniOverlayPageState {
+enum PrebuiltCallMiniOverlayPageState {
   idle,
   calling,
   minimizing,
 }
 
-typedef MiniOverlayMachineStateChanged = void Function(MiniOverlayPageState);
+typedef PrebuiltCallMiniOverlayMachineStateChanged = void Function(
+    PrebuiltCallMiniOverlayPageState);
 
-class ZegoMiniOverlayMachine {
-  factory ZegoMiniOverlayMachine() => _instance;
+/// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayMachine
+typedef ZegoMiniOverlayMachine = ZegoUIKitPrebuiltCallMiniOverlayMachine;
+
+class ZegoUIKitPrebuiltCallMiniOverlayMachine {
+  factory ZegoUIKitPrebuiltCallMiniOverlayMachine() => _instance;
 
   ZegoUIKitPrebuiltCallData? get prebuiltCallData => _prebuiltCallData;
 
-  sm.Machine<MiniOverlayPageState> get machine => _machine;
+  sm.Machine<PrebuiltCallMiniOverlayPageState> get machine => _machine;
 
-  void listenStateChanged(MiniOverlayMachineStateChanged listener) {
+  bool get isMinimizing =>
+      PrebuiltCallMiniOverlayPageState.minimizing == state();
+
+  void listenStateChanged(PrebuiltCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.add(listener);
   }
 
-  void removeListenStateChanged(MiniOverlayMachineStateChanged listener) {
+  void removeListenStateChanged(
+      PrebuiltCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.remove(listener);
   }
 
@@ -41,14 +52,15 @@ class ZegoMiniOverlayMachine {
       }
     });
 
-    _stateIdle =
-        _machine.newState(MiniOverlayPageState.idle); //  default state;
-    _stateCalling = _machine.newState(MiniOverlayPageState.calling);
-    _stateMinimizing = _machine.newState(MiniOverlayPageState.minimizing);
+    _stateIdle = _machine
+        .newState(PrebuiltCallMiniOverlayPageState.idle); //  default state;
+    _stateCalling = _machine.newState(PrebuiltCallMiniOverlayPageState.calling);
+    _stateMinimizing =
+        _machine.newState(PrebuiltCallMiniOverlayPageState.minimizing);
   }
 
   void changeState(
-    MiniOverlayPageState state, {
+    PrebuiltCallMiniOverlayPageState state, {
     ZegoUIKitPrebuiltCallData? prebuiltCallData,
   }) {
     ZegoLoggerService.logInfo(
@@ -58,15 +70,15 @@ class ZegoMiniOverlayMachine {
     );
 
     switch (state) {
-      case MiniOverlayPageState.idle:
+      case PrebuiltCallMiniOverlayPageState.idle:
         _prebuiltCallData = null;
         _stateIdle.enter();
         break;
-      case MiniOverlayPageState.calling:
+      case PrebuiltCallMiniOverlayPageState.calling:
         _prebuiltCallData = null;
         _stateCalling.enter();
         break;
-      case MiniOverlayPageState.minimizing:
+      case PrebuiltCallMiniOverlayPageState.minimizing:
         ZegoLoggerService.logInfo(
           'data: ${_prebuiltCallData?.toString()}',
           tag: 'call',
@@ -80,25 +92,27 @@ class ZegoMiniOverlayMachine {
     }
   }
 
-  MiniOverlayPageState state() {
-    return _machine.current?.identifier ?? MiniOverlayPageState.idle;
+  PrebuiltCallMiniOverlayPageState state() {
+    return _machine.current?.identifier ??
+        PrebuiltCallMiniOverlayPageState.idle;
   }
 
   /// private variables
 
-  ZegoMiniOverlayMachine._internal() {
+  ZegoUIKitPrebuiltCallMiniOverlayMachine._internal() {
     init();
   }
 
-  static final ZegoMiniOverlayMachine _instance =
-      ZegoMiniOverlayMachine._internal();
+  static final ZegoUIKitPrebuiltCallMiniOverlayMachine _instance =
+      ZegoUIKitPrebuiltCallMiniOverlayMachine._internal();
 
-  final _machine = sm.Machine<MiniOverlayPageState>();
-  final List<MiniOverlayMachineStateChanged> _onStateChangedListeners = [];
+  final _machine = sm.Machine<PrebuiltCallMiniOverlayPageState>();
+  final List<PrebuiltCallMiniOverlayMachineStateChanged>
+      _onStateChangedListeners = [];
 
-  late sm.State<MiniOverlayPageState> _stateIdle;
-  late sm.State<MiniOverlayPageState> _stateCalling;
-  late sm.State<MiniOverlayPageState> _stateMinimizing;
+  late sm.State<PrebuiltCallMiniOverlayPageState> _stateIdle;
+  late sm.State<PrebuiltCallMiniOverlayPageState> _stateCalling;
+  late sm.State<PrebuiltCallMiniOverlayPageState> _stateMinimizing;
 
   ZegoUIKitPrebuiltCallData? _prebuiltCallData;
 }

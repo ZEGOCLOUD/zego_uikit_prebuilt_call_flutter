@@ -6,24 +6,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 
-import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
-
-class ZegoMinimizingButton extends StatefulWidget {
-  const ZegoMinimizingButton({
+class ZegoUIKitPrebuiltCallMinimizingButton extends StatefulWidget {
+  const ZegoUIKitPrebuiltCallMinimizingButton({
     Key? key,
     required this.prebuiltCallData,
     this.afterClicked,
     this.icon,
     this.iconSize,
     this.buttonSize,
-    this.config,
   }) : super(key: key);
-
-  final ZegoMemberListConfig? config;
 
   final ButtonIcon? icon;
 
@@ -39,10 +34,12 @@ class ZegoMinimizingButton extends StatefulWidget {
   final ZegoUIKitPrebuiltCallData prebuiltCallData;
 
   @override
-  State<ZegoMinimizingButton> createState() => _ZegoMinimizingButtonState();
+  State<ZegoUIKitPrebuiltCallMinimizingButton> createState() =>
+      _ZegoUIKitPrebuiltCallMinimizingButtonState();
 }
 
-class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
+class _ZegoUIKitPrebuiltCallMinimizingButtonState
+    extends State<ZegoUIKitPrebuiltCallMinimizingButton> {
   @override
   void initState() {
     super.initState();
@@ -55,8 +52,8 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
 
     return GestureDetector(
       onTap: () {
-        if (MiniOverlayPageState.minimizing ==
-            ZegoMiniOverlayMachine().state()) {
+        if (PrebuiltCallMiniOverlayPageState.minimizing ==
+            ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
           ZegoLoggerService.logInfo(
             'is minimizing, ignore',
             tag: 'call',
@@ -66,8 +63,8 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
           return;
         }
 
-        ZegoMiniOverlayMachine().changeState(
-          MiniOverlayPageState.minimizing,
+        ZegoUIKitPrebuiltCallMiniOverlayMachine().changeState(
+          PrebuiltCallMiniOverlayPageState.minimizing,
           prebuiltCallData: widget.prebuiltCallData,
         );
 

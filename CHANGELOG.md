@@ -1,3 +1,6 @@
+## 3.1.1 
+- Optimize the in-app minimization feature and add control for local camera and microphone; display the camera and microphone status of others; display user names.
+
 ## 3.1.0
 - supports in-app minimization.
 

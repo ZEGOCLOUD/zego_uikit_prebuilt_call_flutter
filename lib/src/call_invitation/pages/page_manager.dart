@@ -60,7 +60,7 @@ class ZegoInvitationPageManager {
 
     initRing(ringtoneConfig);
 
-    ZegoMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .listenStateChanged(onMiniOverlayMachineStateChanged);
 
     ZegoLoggerService.logInfo(
@@ -74,7 +74,7 @@ class ZegoInvitationPageManager {
   }
 
   void uninit() {
-    ZegoMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
 
     removeStreamListener();
@@ -600,7 +600,8 @@ class ZegoInvitationPageManager {
     _callerRingtone.stopRing();
     _calleeRingtone.stopRing();
 
-    if (MiniOverlayPageState.minimizing != ZegoMiniOverlayMachine().state()) {
+    if (PrebuiltCallMiniOverlayPageState.minimizing !=
+        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
@@ -702,8 +703,9 @@ class ZegoInvitationPageManager {
     _appInBackground = isAppInBackground;
   }
 
-  void onMiniOverlayMachineStateChanged(MiniOverlayPageState state) {
-    if (MiniOverlayPageState.calling == state) {
+  void onMiniOverlayMachineStateChanged(
+      PrebuiltCallMiniOverlayPageState state) {
+    if (PrebuiltCallMiniOverlayPageState.calling == state) {
       callingMachine.stateOnlineAudioVideo.enter();
     }
   }

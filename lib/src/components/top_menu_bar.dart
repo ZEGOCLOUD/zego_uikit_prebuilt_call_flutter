@@ -15,7 +15,7 @@ import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 
 class ZegoTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
@@ -240,7 +240,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
               tag: 'call',
               subTag: 'top bar',
             );
-            ZegoMiniOverlayMachine().changeState(MiniOverlayPageState.idle);
+            ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
             if (widget.config.onHangUp != null) {
               widget.config.onHangUp!.call();
@@ -267,7 +268,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           onPressed: (isScreenSharing) {},
         );
       case ZegoMenuBarButtonName.minimizingButton:
-        return ZegoMinimizingButton(prebuiltCallData: widget.prebuiltCallData);
+        return ZegoUIKitPrebuiltCallMinimizingButton(
+            prebuiltCallData: widget.prebuiltCallData);
     }
   }
 }

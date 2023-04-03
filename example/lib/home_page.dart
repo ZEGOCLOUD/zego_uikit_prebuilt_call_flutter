@@ -1,5 +1,6 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 import 'call_page.dart';
 
@@ -28,6 +29,12 @@ class HomePage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
+                  if (ZegoUIKitPrebuiltCallMiniOverlayMachine().isMinimizing) {
+                    /// when the application is minimized (in a minimized state),
+                    /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                    return;
+                  }
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
@@ -36,7 +43,7 @@ class HomePage extends StatelessWidget {
                   );
                 },
                 child: const Text("join"),
-              )
+              ),
             ],
           ),
         ),

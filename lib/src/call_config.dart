@@ -6,7 +6,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
-
 import 'components/minimizing/mini_overlay_machine.dart';
 
 class ZegoUIKitPrebuiltCallConfig {
@@ -342,10 +341,10 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
         onOnlySelfInRoom: isGroup
             ? null
             : (context) {
-                if (MiniOverlayPageState.idle !=
-                    ZegoMiniOverlayMachine().state()) {
-                  ZegoMiniOverlayMachine()
-                      .changeState(MiniOverlayPageState.idle);
+                if (PrebuiltCallMiniOverlayPageState.idle !=
+                    ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+                  ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                      .changeState(PrebuiltCallMiniOverlayPageState.idle);
                 } else {
                   Navigator.of(context).pop();
                 }
