@@ -20,7 +20,7 @@ dependencies:
   flutter_vibrate: ^1.3.0
   audioplayers: ^1.0.1
   statemachine: ^3.2.0
-  shared_preferences: 2.0.8
+  shared_preferences: ^2.1.0
   flutter_callkit_incoming: ^1.0.3+3
 
 dev_dependencies:
