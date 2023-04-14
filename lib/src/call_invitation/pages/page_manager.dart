@@ -1,22 +1,18 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-
-// Package imports:
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoInvitationPageManager {
@@ -32,10 +28,12 @@ class ZegoInvitationPageManager {
   final _callerRingtone = ZegoRingtone();
   final _calleeRingtone = ZegoRingtone();
 
+  bool _init = false;
   late ZegoCallingMachine callingMachine;
   bool _invitationTopSheetVisibility = false;
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
   bool _appInBackground = false;
+  bool _hasCallkitIncomingCauseAppInBackground = false;
 
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> _invitingInvitees = []; //  only change by inviter
@@ -47,9 +45,20 @@ class ZegoInvitationPageManager {
   /// still ring mean nobody accept this invitation
   bool get isNobodyAccepted => _callerRingtone.isRingTimerRunning;
 
+  bool get hasCallkitIncomingCauseAppInBackground =>
+      _hasCallkitIncomingCauseAppInBackground;
+
+  set hasCallkitIncomingCauseAppInBackground(value) =>
+      _hasCallkitIncomingCauseAppInBackground = value;
+
   Future<void> init({
     required ZegoRingtoneConfig ringtoneConfig,
   }) async {
+    if (_init) {
+      return;
+    }
+
+    _init = true;
     listenStream();
 
     callingMachine = ZegoCallingMachine(
@@ -74,6 +83,11 @@ class ZegoInvitationPageManager {
   }
 
   void uninit() {
+    if (!_init) {
+      return;
+    }
+
+    _init = false;
     ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
 
@@ -331,22 +345,63 @@ class ZegoInvitationPageManager {
       ..invitationID = invitationID
       ..invitees = List.from(invitationInternalData.invitees)
       ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
-      ..type = ZegoCallTypeExtension.mapValue[type] as ZegoCallType;
+      ..type = ZegoCallTypeExtension.mapValue[type] ?? ZegoCallType.voiceCall;
 
-    if (_appInBackground) {
+    final callKitParams =
+        ZegoUIKitPrebuiltCallInvitationService().callKitParams;
+    ZegoLoggerService.logInfo(
+      'callkit params:${callKitParams?.toJson()}',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+    if (callKitParams != null && callKitParams.id == _invitationData.callID) {
       ZegoLoggerService.logInfo(
-        'app in background, create notification',
+        'auto agree, cause exist callkit params same as current call',
         tag: 'call',
         subTag: 'page manager',
       );
 
-      if (Platform.isAndroid) {
-        _calleeRingtone.startRing(); //  ios will crash
-      }
+      clearAllCallKitCalls();
 
-      notificationManager.createNotification(_invitationData);
+      ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .acceptInvitation(
+              inviterID: _invitationData.inviter?.id ?? '', data: '')
+          .then((result) {
+        onLocalAcceptInvitation(
+          result.error?.code ?? '',
+          result.error?.message ?? '',
+        );
+      });
     } else {
-      showNotificationOnInvitationReceived();
+      if (_appInBackground) {
+        ZegoLoggerService.logInfo(
+          'app in background, create notification',
+          tag: 'call',
+          subTag: 'page manager',
+        );
+
+        // if (Platform.isAndroid) {
+        //   _calleeRingtone.startRing(); //  ios will crash
+        // }
+
+        /// todo@yuyj 1. 响铃
+        _hasCallkitIncomingCauseAppInBackground = true;
+        showCallkitIncoming(
+          caller: inviter,
+          callType: _invitationData.type,
+          invitationInternalData: invitationInternalData,
+          ringtonePath: _calleeRingtone.sourcePath,
+        );
+        //  todo@yuyj android 大界面结束界面没跳转
+        // Future.delayed(Duration(seconds: 5), () {
+        //   // clearAllCallKitCalls();
+        //   FlutterCallkitIncoming.endCall(invitationInternalData.callID);
+        // });
+      } else {
+        showNotificationOnInvitationReceived();
+      }
     }
   }
 
@@ -545,11 +600,6 @@ class ZegoInvitationPageManager {
     callInvitationConfig.invitationEvents?.onIncomingCallCanceled
         ?.call(_invitationData.callID, ZegoCallUser(inviter.id, inviter.name));
 
-    if (_appInBackground) {
-      /// clear notifications
-      AwesomeNotifications().cancelAll();
-    }
-
     restoreToIdle();
   }
 
@@ -623,6 +673,8 @@ class ZegoInvitationPageManager {
       callingMachine.stateIdle.enter();
     }
 
+    clearAllCallKitCalls();
+
     _invitationData = ZegoCallInvitationData.empty();
   }
 
@@ -672,6 +724,10 @@ class ZegoInvitationPageManager {
   }
 
   void didChangeAppLifecycleState(bool isAppInBackground) {
+    if (!_init) {
+      return;
+    }
+
     ZegoLoggerService.logInfo(
       'didChangeAppLifecycleState, '
       'is app in background: previous:$_appInBackground, current: $isAppInBackground, '
@@ -688,16 +744,24 @@ class ZegoInvitationPageManager {
         !isAppInBackground &&
         hasReceivedInvitation) {
       ZegoLoggerService.logInfo(
-        'had invitation in background before, show notification now',
+        'had invitation in background before',
         tag: 'call',
         subTag: 'page manager',
       );
-      showNotificationOnInvitationReceived();
-    }
-
-    if (!isAppInBackground) {
-      /// clear notifications
-      AwesomeNotifications().cancelAll();
+      if (_hasCallkitIncomingCauseAppInBackground) {
+        ZegoLoggerService.logInfo(
+          'not show notification, will be auto agree until callkit accept event received',
+          tag: 'call',
+          subTag: 'page manager',
+        );
+      } else {
+        ZegoLoggerService.logInfo(
+          'show notification now',
+          tag: 'call',
+          subTag: 'page manager',
+        );
+        showNotificationOnInvitationReceived();
+      }
     }
 
     _appInBackground = isAppInBackground;

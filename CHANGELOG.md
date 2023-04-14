@@ -1,3 +1,6 @@
+## 3.2.0
+- For the offline calling feature, Android supports a silent push mode, while iOS supports VoIP mode.
+
 ## 3.1.1 
 - Optimize the in-app minimization feature and add control for local camera and microphone; display the camera and microphone status of others; display user names.
 

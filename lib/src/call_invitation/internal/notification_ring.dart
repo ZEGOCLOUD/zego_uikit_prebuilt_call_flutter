@@ -13,6 +13,7 @@ class ZegoRingtone {
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
+  String prefix = '';
   String sourcePath = '';
 
   ZegoRingtone();
@@ -30,6 +31,7 @@ class ZegoRingtone {
 
     AudioCache.instance.prefix = prefix;
 
+    this.prefix = prefix;
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 

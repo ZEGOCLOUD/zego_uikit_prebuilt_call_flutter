@@ -6,11 +6,8 @@ import 'dart:math';
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-// Package imports:
-import 'package:awesome_notifications/awesome_notifications.dart';
-
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_inviataion_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoNotificationManager {
@@ -61,87 +58,9 @@ class ZegoNotificationManager {
         subTag: 'page manager',
       );
     }
-
-    AwesomeNotifications()
-        .initialize(
-            // set the icon to null if you want to use the default app icon
-            '', //'''resource://drawable/res_app_icon',
-            [
-              NotificationChannel(
-                channelGroupKey: 'zego_prebuilt_call_channel_group',
-                channelKey: channelKey,
-                channelName: channelName,
-                channelDescription: 'Notification channel for call',
-                defaultColor: const Color(0xFF9D50DD),
-                soundSource: soundSource,
-                ledColor: Colors.white,
-              )
-            ],
-            // Channel groups are only visual and are not required
-            channelGroups: [
-              NotificationChannelGroup(
-                channelGroupKey: 'zego_prebuilt_call_channel_group',
-                channelGroupName: 'Call Notifications Channel Group',
-              )
-            ],
-            debug: true)
-        .then((value) {
-      ZegoLoggerService.logInfo(
-        'init finished',
-        tag: 'notification',
-        subTag: 'page manager',
-      );
-
-      /// clear notifications
-      AwesomeNotifications().cancelAll();
-
-      AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-        ZegoLoggerService.logInfo(
-          'is allowed: $isAllowed',
-          tag: 'notification',
-          subTag: 'page manager',
-        );
-
-        if (!isAllowed) {
-          AwesomeNotifications().requestPermissionToSendNotifications();
-        }
-      });
-    });
   }
 
   void uninit() {
     events = null;
-  }
-
-  void createNotification(ZegoCallInvitationData invitationData) {
-    AwesomeNotifications()
-        .createNotification(
-            content: NotificationContent(
-                id: Random().nextInt(2147483647),
-                channelKey: channelKey,
-                title: invitationData.inviter?.name ?? 'inviter',
-                wakeUpScreen: true,
-                body: ZegoCallType.videoCall == invitationData.type
-                    ? ((invitationData.invitees.length > 1
-                            ? callInvitationConfig
-                                .innerText?.incomingGroupVideoCallDialogMessage
-                            : callInvitationConfig
-                                .innerText?.incomingVideoCallDialogMessage) ??
-                        'Incoming video call...')
-                    : ((invitationData.invitees.length > 1
-                            ? callInvitationConfig
-                                .innerText?.incomingGroupVoiceCallDialogMessage
-                            : callInvitationConfig
-                                .innerText?.incomingVoiceCallDialogMessage) ??
-                        'Incoming voice call...'),
-                actionType: ActionType.Default))
-        .onError((error, stackTrace) {
-      ZegoLoggerService.logError(
-        error.toString(),
-        tag: 'create notification',
-        subTag: 'page manager',
-      );
-      return true;
-    });
   }
 }

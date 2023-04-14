@@ -204,10 +204,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               foregroundBuilder: widget.foregroundBuilder,
               backgroundBuilder: widget.backgroundBuilder,
               avatarConfig: ZegoAvatarConfig(
-                builder: ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                    .prebuiltCallData
-                    ?.config
-                    .avatarBuilder,
+                builder: widget.avatarBuilder ??
+                    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                        .prebuiltCallData
+                        ?.config
+                        .avatarBuilder,
                 soundWaveColor: widget.soundWaveColor,
               ),
             ),
@@ -223,9 +224,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             right: 5,
             top: 5,
             child: Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
                 color: Colors.black.withOpacity(0.2),
               ),
               width: itemSize.width / 3 * 2,

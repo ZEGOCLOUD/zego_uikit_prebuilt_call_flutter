@@ -1,6 +1,3 @@
-// Flutter imports:
-import 'package:flutter/cupertino.dart';
-
 // Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
@@ -30,16 +27,39 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   bool get isMinimizing =>
       PrebuiltCallMiniOverlayPageState.minimizing == state();
 
+  PrebuiltCallMiniOverlayPageState state() {
+    return _machine.current?.identifier ??
+        PrebuiltCallMiniOverlayPageState.idle;
+  }
+
   void listenStateChanged(PrebuiltCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.add(listener);
+
+    ZegoLoggerService.logInfo(
+      'add listener:$listener, size:${_onStateChangedListeners.length}',
+      tag: 'call',
+      subTag: 'overlay machine',
+    );
   }
 
   void removeListenStateChanged(
       PrebuiltCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.remove(listener);
+
+    ZegoLoggerService.logInfo(
+      'remove listener:$listener, size:${_onStateChangedListeners.length}',
+      tag: 'call',
+      subTag: 'overlay machine',
+    );
   }
 
   void init() {
+    ZegoLoggerService.logInfo(
+      'init',
+      tag: 'call',
+      subTag: 'overlay machine',
+    );
+
     _machine.onAfterTransition.listen((event) {
       ZegoLoggerService.logInfo(
         'mini overlay, from ${event.source} to ${event.target}',
@@ -90,11 +110,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
         _stateMinimizing.enter();
         break;
     }
-  }
-
-  PrebuiltCallMiniOverlayPageState state() {
-    return _machine.current?.identifier ??
-        PrebuiltCallMiniOverlayPageState.idle;
   }
 
   /// private variables
