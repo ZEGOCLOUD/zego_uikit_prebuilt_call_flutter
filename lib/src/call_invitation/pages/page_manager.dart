@@ -707,7 +707,6 @@ class ZegoInvitationPageManager {
               .prebuiltConfigQuery(_invitationData)
               .avatarBuilder,
           showDeclineButton: callInvitationConfig.showDeclineButton,
-          appDesignSize: callInvitationConfig.appDesignSize,
         ),
       ),
       barrierDismissible: false,

@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
@@ -26,7 +26,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.config,
     this.onDispose,
     this.controller,
-    this.appDesignSize,
+    @Deprecated('Since 3.3.1') this.appDesignSize,
   }) : super(key: key);
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -44,14 +44,13 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   final String userID;
   final String userName;
 
-  ///
-  final Size? appDesignSize;
-
   final ZegoUIKitPrebuiltCallConfig config;
 
   final VoidCallback? onDispose;
 
   final ZegoUIKitPrebuiltCallController? controller;
+
+  final Size? appDesignSize;
 
   @override
   State<ZegoUIKitPrebuiltCall> createState() => _ZegoUIKitPrebuiltCallState();
@@ -65,7 +64,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   StreamSubscription<dynamic>? userListStreamSubscription;
 
   late ZegoUIKitPrebuiltCallData prebuiltCallData;
-  late NavigatorState navigatorState;
 
   @override
   void initState() {
@@ -74,7 +72,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
 
     prebuiltCallData = ZegoUIKitPrebuiltCallData(
-      appDesignSize: widget.appDesignSize,
       appID: widget.appID,
       appSign: widget.appSign,
       callID: widget.callID,
@@ -89,7 +86,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.2.0; $version',
+        'version: zego_uikit_prebuilt_call:3.3.2; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -136,19 +133,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
     }
-
-    if (widget.appDesignSize != null) {
-      ScreenUtil.init(
-        navigatorState.context,
-        designSize: widget.appDesignSize!,
-      );
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    navigatorState = Navigator.of(context);
-    super.didChangeDependencies();
   }
 
   @override

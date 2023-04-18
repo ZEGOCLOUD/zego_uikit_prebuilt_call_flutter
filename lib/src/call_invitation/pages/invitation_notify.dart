@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -23,7 +23,6 @@ class ZegoCallInvitationDialog extends StatefulWidget {
     required this.invitationData,
     this.showDeclineButton = true,
     this.avatarBuilder,
-    this.appDesignSize,
   }) : super(key: key);
 
   final ZegoInvitationPageManager pageManager;
@@ -33,32 +32,15 @@ class ZegoCallInvitationDialog extends StatefulWidget {
   final ZegoCallInvitationData invitationData;
   final ZegoAvatarBuilder? avatarBuilder;
 
-  final Size? appDesignSize;
-
   @override
   ZegoCallInvitationDialogState createState() =>
       ZegoCallInvitationDialogState();
 }
 
 class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
-  late NavigatorState navigatorState;
-
   @override
   void dispose() {
     super.dispose();
-
-    if (widget.appDesignSize != null) {
-      ScreenUtil.init(
-        navigatorState.context,
-        designSize: widget.appDesignSize!,
-      );
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    navigatorState = Navigator.of(context);
-    super.didChangeDependencies();
   }
 
   @override

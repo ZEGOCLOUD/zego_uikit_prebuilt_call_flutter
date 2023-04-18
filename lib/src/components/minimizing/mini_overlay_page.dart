@@ -176,7 +176,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
                     config: prebuiltCallData.config,
                     onDispose: prebuiltCallData.onDispose,
                     controller: prebuiltCallData.controller,
-                    appDesignSize: prebuiltCallData.appDesignSize,
                   ),
                 );
               }),

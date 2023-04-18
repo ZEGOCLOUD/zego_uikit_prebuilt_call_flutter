@@ -1,3 +1,16 @@
+## 3.3.3
+- Fix the issue of missed call notifications not popping up when the app is in the background.
+
+## 3.3.2
+- mark 'appDesignSize' as Deprecated
+
+## 3.3.1
+- Update dependencies
+
+## 3.3.0
+- To differentiate the 'appDesignSize' between the App and ZegoUIKitPrebuiltCall, we introduced the 'flutter_screenutil_zego' library and removed the 'appDesignSize' parameter from the 
+  ZegoUIKitPrebuiltCall that was previously present.
+
 ## 3.2.0
 - For the offline calling feature, Android supports a silent push mode, while iOS supports VoIP mode.
 

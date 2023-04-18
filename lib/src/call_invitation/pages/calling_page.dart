@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 // Package imports:
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -44,8 +43,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   VoidCallback? callConfigHandUp;
   ZegoUIKitPrebuiltCallConfig? callConfig;
 
-  late NavigatorState navigatorState;
-
   ZegoCallingMachine get machine => widget.pageManager.callingMachine;
 
   @override
@@ -76,19 +73,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     callConfig = null;
 
     super.dispose();
-
-    if (widget.callInvitationConfig.appDesignSize != null) {
-      ScreenUtil.init(
-        navigatorState.context,
-        designSize: widget.callInvitationConfig.appDesignSize!,
-      );
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    navigatorState = Navigator.of(context);
-    super.didChangeDependencies();
   }
 
   @override
@@ -161,7 +145,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       userID: widget.callInvitationConfig.userID,
       userName: widget.callInvitationConfig.userName,
       config: callConfig!,
-      appDesignSize: widget.callInvitationConfig.appDesignSize,
       onDispose: () {
         widget.pageManager.onPrebuiltCallPageDispose();
       },

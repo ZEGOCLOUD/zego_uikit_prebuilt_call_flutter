@@ -5,9 +5,10 @@ import 'dart:io' show Platform;
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter/services.dart';
 
 // Package imports:
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,13 +94,12 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     String appName = '',
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallController? controller,
-    Size? appDesignSize,
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.2.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.2; $uikitVersion',
         tag: 'call',
         subTag: 'invitation service',
       );
@@ -108,6 +108,17 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     if (_isInit) {
       await uninit();
     }
+
+    /// sync app background state
+    SystemChannels.lifecycle.setMessageHandler((state) async {
+      if (!_isInit) {
+        return;
+      }
+
+      _pageManager.didChangeAppLifecycleState(
+        state != AppLifecycleState.resumed.toString(),
+      );
+    });
 
     _callKitParams = await getCurrentCallKitCall();
     ZegoLoggerService.logInfo(
@@ -149,7 +160,6 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
       invitationEvents: _data.events,
       innerText: _data.innerText,
       controller: _data.controller,
-      appDesignSize: appDesignSize,
     );
     if (null != _contextQuery) {
       _callInvitationConfig.contextQuery = _contextQuery;
@@ -255,13 +265,8 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     });
   }
 
-  void didChangeAppLifecycleState(bool isAppInBackground) {
-    if (!_isInit) {
-      return;
-    }
-
-    _pageManager.didChangeAppLifecycleState(isAppInBackground);
-  }
+  @Deprecated('Since 3.3.3')
+  void didChangeAppLifecycleState(bool isAppInBackground) {}
 
   /// for popup if app in background
   void _initCallKitIncomingEvent(CallEvent? event) {

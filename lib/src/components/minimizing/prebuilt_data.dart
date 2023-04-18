@@ -10,7 +10,6 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCallData {
   const ZegoUIKitPrebuiltCallData({
-    this.appDesignSize,
     required this.appID,
     required this.appSign,
     required this.callID,
@@ -37,9 +36,6 @@ class ZegoUIKitPrebuiltCallData {
   final String userID;
   final String userName;
 
-  ///
-  final Size? appDesignSize;
-
   final ZegoUIKitPrebuiltCallConfig config;
 
   final VoidCallback? onDispose;
@@ -52,7 +48,7 @@ class ZegoUIKitPrebuiltCallData {
   String toString() {
     return 'app id:$appID, app sign:$appSign, call id:$callID, '
         'isPrebuiltFromMinimizing: $isPrebuiltFromMinimizing, '
-        'user id:$userID, user name:$userName, app design size:$appDesignSize, '
+        'user id:$userID, user name:$userName, '
         'config:${config.toString()}';
   }
 }

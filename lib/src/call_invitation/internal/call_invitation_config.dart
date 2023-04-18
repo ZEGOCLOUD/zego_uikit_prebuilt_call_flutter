@@ -13,7 +13,6 @@ class ZegoCallInvitationConfig {
   String appSign;
   String userID;
   String userName;
-  Size? appDesignSize;
   PrebuiltConfigQuery prebuiltConfigQuery;
 
   /// we need a context object, to push/pop page when receive invitation request
@@ -32,7 +31,6 @@ class ZegoCallInvitationConfig {
     required this.appSign,
     required this.userID,
     required this.userName,
-    required this.appDesignSize,
     required this.prebuiltConfigQuery,
     this.contextQuery,
     this.showDeclineButton = true,
