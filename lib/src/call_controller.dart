@@ -60,7 +60,7 @@ class ZegoUIKitPrebuiltCallController {
     );
 
     if (_pageManager?.callingMachine.isPagePushed ?? false) {
-      return waitUntil(() {
+      return _waitUntil(() {
         return !_pageManager!.callingMachine.isPagePushed;
       }).then((value) {
         return _sendInvitation(
@@ -164,7 +164,7 @@ class ZegoUIKitPrebuiltCallController {
     });
   }
 
-  Future<int> waitUntil(
+  Future<int> _waitUntil(
     bool Function() test, {
     final int maxIterations = 100,
     final Duration step = const Duration(milliseconds: 10),

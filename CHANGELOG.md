@@ -1,3 +1,9 @@
+## 3.3.5
+- Fix some issues about iOS supports VoIP mode.
+
+## 3.3.4
+- Fix the issue with show notification box crashing when received a call background in iOS
+
 ## 3.3.3
 - Fix the issue of missed call notifications not popping up when the app is in the background.
 

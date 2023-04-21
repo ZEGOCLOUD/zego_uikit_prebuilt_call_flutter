@@ -1,5 +1,5 @@
 enum CallKitInnerVariable {
-  /// double, Incoming call/Outgoing call display time (second). If the time is over, the call will be missed.
+  /// double, Incoming call/Outgoing call display time (millisecond). If the time is over, the call will be missed.
   duration,
 
   /// string, Text Accept used in Android
@@ -61,7 +61,7 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
   dynamic get defaultValue {
     switch (this) {
       case CallKitInnerVariable.duration:
-        return 30.0; //  seconds
+        return 30000.0; //  30 seconds
       case CallKitInnerVariable.textAccept:
         return 'Accept';
       case CallKitInnerVariable.textDecline:

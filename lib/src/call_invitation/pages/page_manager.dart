@@ -1,6 +1,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/material.dart';
@@ -35,6 +36,11 @@ class ZegoInvitationPageManager {
   bool _appInBackground = false;
   bool _hasCallkitIncomingCauseAppInBackground = false;
 
+  /// iOS的bug, 锁屏下接受呼叫，有时候会先收到CallKit的performAnswerCallAction, 后才收到ZIM的onCallInvitationReceived
+  /// 这时候需要在onCallInvitationReceived直接同意
+  /// todo wait zim sdk fix bug
+  bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> _invitingInvitees = []; //  only change by inviter
 
@@ -50,6 +56,15 @@ class ZegoInvitationPageManager {
 
   set hasCallkitIncomingCauseAppInBackground(value) =>
       _hasCallkitIncomingCauseAppInBackground = value;
+
+  bool get waitingCallInvitationReceivedAfterCallKitIncomingAccepted =>
+      _waitingCallInvitationReceivedAfterCallKitIncomingAccepted;
+
+  set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(value) =>
+      _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = value;
+
+  bool get isInCalling =>
+      CallingState.kOnlineAudioVideo == callingMachine.getPageState();
 
   Future<void> init({
     required ZegoRingtoneConfig ringtoneConfig,
@@ -350,30 +365,52 @@ class ZegoInvitationPageManager {
     final callKitParams =
         ZegoUIKitPrebuiltCallInvitationService().callKitParams;
     ZegoLoggerService.logInfo(
+      '_waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$_waitingCallInvitationReceivedAfterCallKitIncomingAccepted, '
       'callkit params:${callKitParams?.toJson()}',
       tag: 'call',
       subTag: 'page manager',
     );
-    if (callKitParams != null && callKitParams.id == _invitationData.callID) {
-      ZegoLoggerService.logInfo(
-        'auto agree, cause exist callkit params same as current call',
-        tag: 'call',
-        subTag: 'page manager',
-      );
-
-      clearAllCallKitCalls();
-
-      ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
-              inviterID: _invitationData.inviter?.id ?? '', data: '')
-          .then((result) {
-        onLocalAcceptInvitation(
-          result.error?.code ?? '',
-          result.error?.message ?? '',
+    if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
+        (callKitParams != null &&
+            callKitParams.handle == _invitationData.callID)) {
+      if (Platform.isAndroid ||
+          _waitingCallInvitationReceivedAfterCallKitIncomingAccepted) {
+        ZegoLoggerService.logInfo(
+          'auto agree, cause exist callkit params same as current call or '
+          ' waiting invitation received after callkit accept',
+          tag: 'call',
+          subTag: 'page manager',
         );
-      });
+
+        /// todo wait zim sdk fix bug
+        if (Platform.isAndroid) {
+          clearAllCallKitCalls();
+        }
+
+        _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+        ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
+
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .acceptInvitation(
+                inviterID: _invitationData.inviter?.id ?? '', data: '')
+            .then((result) {
+          onLocalAcceptInvitation(
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+          );
+        });
+      } else {
+        /// in iOS's callkit, will [onIncomingPushReceived] first,
+        /// then [onInvitationReceived] latter
+        /// so, deal auto agree login in VoIP Event
+        ZegoLoggerService.logInfo(
+          'iOS, wait user decide to answer or end in popup window',
+          tag: 'call',
+          subTag: 'page manager',
+        );
+        hasCallkitIncomingCauseAppInBackground = true;
+      }
     } else {
       if (_appInBackground) {
         ZegoLoggerService.logInfo(
@@ -382,11 +419,10 @@ class ZegoInvitationPageManager {
           subTag: 'page manager',
         );
 
+        /// todo@yuyj 1. ringtone && callkit
         // if (Platform.isAndroid) {
         //   _calleeRingtone.startRing(); //  ios will crash
         // }
-
-        /// todo@yuyj 1. 响铃
         _hasCallkitIncomingCauseAppInBackground = true;
         showCallkitIncoming(
           caller: inviter,
@@ -394,6 +430,7 @@ class ZegoInvitationPageManager {
           invitationInternalData: invitationInternalData,
           ringtonePath: _calleeRingtone.sourcePath,
         );
+
         //  todo@yuyj android 大界面结束界面没跳转
         // Future.delayed(Duration(seconds: 5), () {
         //   // clearAllCallKitCalls();

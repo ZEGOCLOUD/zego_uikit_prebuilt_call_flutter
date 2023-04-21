@@ -283,6 +283,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
       case ZegoMenuBarButtonName.showMemberListButton:
         return ZegoMemberListButton(
           config: widget.config.memberListConfig,
+          avatarBuilder: widget.config.avatarBuilder,
           buttonSize: buttonSize,
           iconSize: iconSize,
         );

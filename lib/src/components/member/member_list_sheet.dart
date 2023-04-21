@@ -13,10 +13,14 @@ class ZegoMemberListSheet extends StatefulWidget {
     Key? key,
     this.showMicrophoneState = true,
     this.showCameraState = true,
+    this.itemBuilder,
+    this.avatarBuilder,
   }) : super(key: key);
 
   final bool showMicrophoneState;
   final bool showCameraState;
+  final ZegoMemberListItemBuilder? itemBuilder;
+  final ZegoAvatarBuilder? avatarBuilder;
 
   @override
   State<ZegoMemberListSheet> createState() => _ZegoMemberListSheetState();
@@ -45,6 +49,8 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
             child: ZegoMemberList(
               showCameraState: widget.showCameraState,
               showMicrophoneState: widget.showMicrophoneState,
+              avatarBuilder: widget.avatarBuilder,
+              itemBuilder: widget.itemBuilder,
             ),
           ),
         ],
@@ -86,6 +92,8 @@ void showMemberListSheet(
   BuildContext context, {
   showMicrophoneState = true,
   showCameraState = true,
+  ZegoMemberListItemBuilder? itemBuilder,
+  ZegoAvatarBuilder? avatarBuilder,
 }) {
   showModalBottomSheet(
     barrierColor: ZegoUIKitDefaultTheme.viewBarrierColor,
@@ -110,6 +118,8 @@ void showMemberListSheet(
             child: ZegoMemberListSheet(
               showCameraState: showCameraState,
               showMicrophoneState: showMicrophoneState,
+              itemBuilder: itemBuilder,
+              avatarBuilder: avatarBuilder,
             ),
           ),
         ),

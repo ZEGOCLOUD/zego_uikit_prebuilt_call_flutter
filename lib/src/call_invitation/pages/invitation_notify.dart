@@ -56,9 +56,20 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          widget.avatarBuilder?.call(context, Size(84.r, 84.r),
-                  widget.invitationData.inviter, {}) ??
-              circleName(widget.invitationData.inviter?.name ?? ''),
+          ValueListenableBuilder(
+            valueListenable: ZegoUIKitUserPropertiesNotifier(
+              widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
+            ),
+            builder: (context, _, __) {
+              return widget.avatarBuilder?.call(
+                    context,
+                    Size(84.r, 84.r),
+                    widget.invitationData.inviter,
+                    {},
+                  ) ??
+                  circleName(widget.invitationData.inviter?.name ?? '');
+            },
+          ),
           SizedBox(width: 26.w),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,

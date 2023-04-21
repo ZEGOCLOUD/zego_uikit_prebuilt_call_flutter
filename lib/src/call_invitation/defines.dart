@@ -50,6 +50,16 @@ class ZegoCallInvitationData {
   String customData = '';
 
   ZegoCallInvitationData.empty();
+
+  @override
+  String toString() {
+    return 'callID: $callID, '
+        'invitationID: $invitationID, '
+        'type: $type, '
+        'invitees: ${invitees.map((invitee) => invitee.toString())}, '
+        'inviter: $inviter, '
+        'customData: $customData.';
+  }
 }
 
 class ZegoCallUser {

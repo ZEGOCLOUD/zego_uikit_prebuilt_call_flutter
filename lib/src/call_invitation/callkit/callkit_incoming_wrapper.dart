@@ -7,7 +7,7 @@ import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zego_zpns/zego_zpns.dart';
+import 'package:uuid/uuid.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dart';
@@ -37,19 +37,21 @@ Future<CallKitParams> makeCallKitParam({
   required InvitationInternalData invitationInternalData,
   String ringtonePath = 'system_ringtone_default',
 }) async {
-  final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
-          int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
-      .toString();
+  // final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
+  //         int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
+  //     .toString();
 
   final prefs = await SharedPreferences.getInstance();
 
   return CallKitParams(
-    id: invitationInternalData.callID,
+    id: const Uuid().v4(),
+    //invitationInternalData.callID
     nameCaller: caller?.name ?? '',
     appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
         CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
-    handle: timestampFormat.substring(0, timestampFormat.length - 4),
+    handle: invitationInternalData.callID,
+    //timestampFormat.substring(0, timestampFormat.length - 4),
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index.toDouble(),
     duration: prefs.getDouble(CallKitInnerVariable.duration.cacheKey) ??
@@ -106,16 +108,18 @@ CallKitParams makeSimpleCallKitParam({
   required InvitationInternalData invitationInternalData,
   String ringtonePath = 'system_ringtone_default',
 }) {
-  final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
-          int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
-      .toString();
+  // final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
+  //         int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
+  //     .toString();
 
   return CallKitParams(
-    id: invitationInternalData.callID,
+    id: const Uuid().v4(),
+    //invitationInternalData.callID
     nameCaller: caller?.name ?? '',
     appName: CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
-    handle: timestampFormat.substring(0, timestampFormat.length - 4),
+    //timestampFormat.substring(0, timestampFormat.length - 4),
+    handle: invitationInternalData.callID,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index.toDouble(),
     duration: CallKitInnerVariable.duration.defaultValue,
@@ -228,9 +232,22 @@ CallKitParams? convertCallKitCallToParam(Map<dynamic, dynamic> targetCall) {
       activeCallRawParam[key as String] = value;
     }
   });
+
+  //  sdk bug
+  if (activeCallRawParam.containsKey('number') &&
+      !activeCallRawParam.containsKey('handle')) {
+    activeCallRawParam['handle'] = activeCallRawParam['number'];
+  }
+
   return CallKitParams.fromJson(activeCallRawParam);
 }
 
 Future<void> clearAllCallKitCalls() async {
+  ZegoLoggerService.logInfo(
+    'clear all callKit calls',
+    tag: 'call',
+    subTag: 'background message',
+  );
+
   return FlutterCallkitIncoming.endAllCalls();
 }

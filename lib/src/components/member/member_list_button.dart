@@ -19,7 +19,10 @@ class ZegoMemberListButton extends StatefulWidget {
     this.iconSize,
     this.buttonSize,
     this.config,
+    this.avatarBuilder,
   }) : super(key: key);
+
+  final ZegoAvatarBuilder? avatarBuilder;
 
   final ZegoMemberListConfig? config;
 
@@ -55,6 +58,8 @@ class _ZegoMemberListButtonState extends State<ZegoMemberListButton> {
           context,
           showCameraState: widget.config?.showCameraState ?? true,
           showMicrophoneState: widget.config?.showMicrophoneState ?? true,
+          itemBuilder: widget.config?.itemBuilder,
+          avatarBuilder: widget.avatarBuilder,
         );
 
         if (widget.afterClicked != null) {

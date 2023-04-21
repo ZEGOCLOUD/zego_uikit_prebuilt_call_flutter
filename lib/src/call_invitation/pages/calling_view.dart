@@ -74,9 +74,14 @@ class ZegoCallingInviterView extends StatelessWidget {
         SizedBox(
           width: 200.r,
           height: 200.r,
-          child: avatarBuilder
-                  ?.call(context, Size(200.r, 200.r), firstInvitee, {}) ??
-              circleAvatar(firstInvitee.name),
+          child: ValueListenableBuilder(
+            valueListenable: ZegoUIKitUserPropertiesNotifier(firstInvitee),
+            builder: (context, _, __) {
+              return avatarBuilder
+                      ?.call(context, Size(200.r, 200.r), firstInvitee, {}) ??
+                  circleAvatar(firstInvitee.name);
+            },
+          ),
         ),
         SizedBox(height: 10.r),
         centralName((isVideo
@@ -168,9 +173,14 @@ class ZegoCallingInviteeView extends StatelessWidget {
         SizedBox(
           width: 200.r,
           height: 200.r,
-          child:
-              avatarBuilder?.call(context, Size(200.r, 200.r), inviter, {}) ??
-                  circleAvatar(inviter.name),
+          child: ValueListenableBuilder(
+            valueListenable: ZegoUIKitUserPropertiesNotifier(inviter),
+            builder: (context, _, __) {
+              return avatarBuilder
+                      ?.call(context, Size(200.r, 200.r), inviter, {}) ??
+                  circleAvatar(inviter.name);
+            },
+          ),
         ),
         SizedBox(height: 10.r),
         centralName((isVideo

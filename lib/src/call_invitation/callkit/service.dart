@@ -3,6 +3,7 @@ import 'dart:async';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 
 mixin ZegoPrebuiltCallKitService {
   bool _callkitServiceInited = false;
@@ -106,6 +107,8 @@ mixin ZegoPrebuiltCallKitService {
       tag: 'call',
       subTag: 'callkit service',
     );
+
+    ZegoUIKit().getSignalingPlugin().configureAudioSession();
   }
 
   void _onCallkitActivateAudioEvent(
@@ -149,6 +152,8 @@ mixin ZegoPrebuiltCallKitService {
       subTag: 'callkit service',
     );
 
+    ZegoUIKit().getSignalingPlugin().configureAudioSession();
+
     event.action.fulfill();
   }
 
@@ -161,10 +166,14 @@ mixin ZegoPrebuiltCallKitService {
       subTag: 'callkit service',
     );
 
+    ZegoUIKit().getSignalingPlugin().configureAudioSession();
+
     event.action.fulfill();
 
-    /// todo@yuyj
-    /// read cache
+    ZegoUIKitPrebuiltCallInvitationService()
+        .acceptCallKitIncomingCauseInBackground(
+            ZegoUIKitPrebuiltCallInvitationService().callKitParams);
+    ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
   }
 
   void _onCallkitPerformEndCallActionEvent(
@@ -177,6 +186,15 @@ mixin ZegoPrebuiltCallKitService {
     );
 
     event.action.fulfill();
+
+    if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
+      /// exit call
+      ZegoUIKitPrebuiltCallInvitationService().handUpCurrentCallByCallKit();
+    } else {
+      /// refuse call request
+      ZegoUIKitPrebuiltCallInvitationService()
+          .refuseCallKitIncomingCauseInBackground();
+    }
   }
 
   void _onCallkitPerformSetHeldCallActionEvent(
@@ -192,7 +210,7 @@ mixin ZegoPrebuiltCallKitService {
   }
 
   void _onCallkitPerformSetMutedCallActionEvent(
-    ZegoSignalingPluginCallKitActionEvent event,
+    ZegoSignalingPluginCallKitSetMutedCallActionEvent event,
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform set muted call action',
@@ -201,6 +219,8 @@ mixin ZegoPrebuiltCallKitService {
     );
 
     event.action.fulfill();
+
+    ZegoUIKit().turnMicrophoneOn(!event.action.muted);
   }
 
   void _onCallkitPerformSetGroupCallActionEvent(
