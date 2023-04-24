@@ -108,7 +108,7 @@ mixin ZegoPrebuiltCallKitService {
       subTag: 'callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().configureAudioSession();
+    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
   }
 
   void _onCallkitActivateAudioEvent(
@@ -152,7 +152,7 @@ mixin ZegoPrebuiltCallKitService {
       subTag: 'callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().configureAudioSession();
+    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
 
     event.action.fulfill();
   }
@@ -166,14 +166,14 @@ mixin ZegoPrebuiltCallKitService {
       subTag: 'callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().configureAudioSession();
+    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
 
     event.action.fulfill();
 
     ZegoUIKitPrebuiltCallInvitationService()
         .acceptCallKitIncomingCauseInBackground(
-            ZegoUIKitPrebuiltCallInvitationService().callKitParams);
-    ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
+            ZegoUIKitPrebuiltCallInvitationService().callKitCallID);
+    ZegoUIKitPrebuiltCallInvitationService().callKitCallID = null;
   }
 
   void _onCallkitPerformEndCallActionEvent(

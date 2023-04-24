@@ -7,6 +7,7 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart';
 
 // Package imports:
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
@@ -104,6 +105,11 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
         break;
     }
   });
+
+  /// cache
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(CallKitCalIDCacheKey, invitationInternalData.callID);
+
   await showCallkitIncoming(
     caller: ZegoUIKitUser(id: '', name: inviterName),
     callType: callType,
@@ -134,7 +140,7 @@ void onIncomingPushReceived(Map extras, UUID uuid) {
     callType: callType,
     invitationInternalData: invitationInternalData,
   );
-  ZegoUIKitPrebuiltCallInvitationService().callKitParams = callKitParam;
+  ZegoUIKitPrebuiltCallInvitationService().callKitCallID = callKitParam.handle;
 
-  ZegoUIKit().getSignalingPlugin().configureAudioSession();
+  ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
 }

@@ -62,9 +62,9 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
 
   ZegoUIKitPrebuiltCallController? get controller => _data.controller;
 
-  CallKitParams? get callKitParams => _callKitParams;
+  String? get callKitCallID => _callKitCallID;
 
-  set callKitParams(value) => _callKitParams = value;
+  set callKitCallID(value) => _callKitCallID = value;
 
   bool get isInCalling => _pageManager.isInCalling;
 
@@ -101,7 +101,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.5; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.6; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -122,9 +122,9 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
       );
     });
 
-    _callKitParams = await getCurrentCallKitCall();
+    _callKitCallID = await getCurrentCallKitCallID();
     ZegoLoggerService.logInfo(
-      'callkit param: ${_callKitParams?.toJson()}',
+      'callkit call id: $_callKitCallID',
       tag: 'call',
       subTag: 'call invitation service',
     );
@@ -289,9 +289,10 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
       case Event.ACTION_CALL_START:
         break;
       case Event.ACTION_CALL_ACCEPT:
-        final callKitParams =
-            convertCallKitCallToParam(event.body as Map<dynamic, dynamic>);
-        acceptCallKitIncomingCauseInBackground(callKitParams);
+        final callKitCallID =
+            convertCallKitCallToParam(event.body as Map<dynamic, dynamic>)
+                ?.handle;
+        acceptCallKitIncomingCauseInBackground(callKitCallID);
         break;
       case Event.ACTION_CALL_DECLINE:
       case Event.ACTION_CALL_TIMEOUT:
@@ -315,7 +316,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
   }
 
   void acceptCallKitIncomingCauseInBackground(
-    CallKitParams? targetCallKitParams,
+    String? callKitCallID,
   ) {
     if (!_pageManager.hasCallkitIncomingCauseAppInBackground) {
       ZegoLoggerService.logInfo(
@@ -332,13 +333,13 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
 
     _pageManager.hasCallkitIncomingCauseAppInBackground = false;
     ZegoLoggerService.logInfo(
-      'callkit param: ${targetCallKitParams?.toJson()}',
+      'callkit call id: $callKitCallID',
       tag: 'call',
       subTag: 'call invitation service',
     );
 
-    if (targetCallKitParams != null &&
-        targetCallKitParams.handle == _pageManager.invitationData.callID) {
+    if (callKitCallID != null &&
+        callKitCallID == _pageManager.invitationData.callID) {
       ZegoLoggerService.logInfo(
         'auto agree, cause exist callkit params same as current call',
         tag: 'call',
@@ -459,7 +460,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
 
   /// callkit
   bool _enableIOSVoIP = false;
-  CallKitParams? _callKitParams;
+  String? _callKitCallID;
 }
 
 class ZegoUIKitPrebuiltCallInvitationServiceData {

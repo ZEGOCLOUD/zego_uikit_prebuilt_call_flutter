@@ -362,17 +362,16 @@ class ZegoInvitationPageManager {
       ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
       ..type = ZegoCallTypeExtension.mapValue[type] ?? ZegoCallType.voiceCall;
 
-    final callKitParams =
-        ZegoUIKitPrebuiltCallInvitationService().callKitParams;
+    final callKitCallID =
+        ZegoUIKitPrebuiltCallInvitationService().callKitCallID;
     ZegoLoggerService.logInfo(
       '_waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$_waitingCallInvitationReceivedAfterCallKitIncomingAccepted, '
-      'callkit params:${callKitParams?.toJson()}',
+      'callkit call id:$callKitCallID',
       tag: 'call',
       subTag: 'page manager',
     );
     if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
-        (callKitParams != null &&
-            callKitParams.handle == _invitationData.callID)) {
+        (callKitCallID != null && callKitCallID == _invitationData.callID)) {
       if (Platform.isAndroid ||
           _waitingCallInvitationReceivedAfterCallKitIncomingAccepted) {
         ZegoLoggerService.logInfo(
@@ -388,7 +387,7 @@ class ZegoInvitationPageManager {
         }
 
         _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
-        ZegoUIKitPrebuiltCallInvitationService().callKitParams = null;
+        ZegoUIKitPrebuiltCallInvitationService().callKitCallID = null;
 
         ZegoUIKit()
             .getSignalingPlugin()

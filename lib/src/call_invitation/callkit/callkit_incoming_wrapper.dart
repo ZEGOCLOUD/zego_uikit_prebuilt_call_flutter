@@ -14,6 +14,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dar
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+const String CallKitCalIDCacheKey = 'callkit_call_id';
+
 /// extras:
 /// {
 /// 	body: Incoming video call...,
@@ -217,6 +219,11 @@ Future<CallKitParams?> getCurrentCallKitCall() async {
   }
 
   return null;
+}
+
+Future<String?> getCurrentCallKitCallID() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(CallKitCalIDCacheKey);
 }
 
 CallKitParams? convertCallKitCallToParam(Map<dynamic, dynamic> targetCall) {

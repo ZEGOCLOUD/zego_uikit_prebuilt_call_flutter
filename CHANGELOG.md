@@ -1,3 +1,7 @@
+
+## 3.3.6
+- Update dependencies
+
 ## 3.3.5
 - Fix some issues about iOS supports VoIP mode.
 
