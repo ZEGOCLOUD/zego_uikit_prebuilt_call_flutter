@@ -8,10 +8,11 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
@@ -86,7 +87,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.3.6; $version',
+        'version: zego_uikit_prebuilt_call:3.3.7; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );

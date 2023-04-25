@@ -1,3 +1,5 @@
+library zego_uikit_prebuilt_call;
+
 export 'package:zego_uikit/zego_uikit.dart';
 
 export 'src/call.dart';

@@ -1,4 +1,7 @@
 
+## 3.3.7
+- Update dependencies
+
 ## 3.3.6
 - Update dependencies
 

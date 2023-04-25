@@ -9,9 +9,11 @@ import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
-import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
@@ -101,7 +103,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.6; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.7; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
