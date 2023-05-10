@@ -22,6 +22,7 @@ class ZegoBottomMenuBar extends StatefulWidget {
   final ValueNotifier<bool> visibilityNotifier;
   final int autoHideSeconds;
   final ValueNotifier<int> restartHideTimerNotifier;
+  final ValueNotifier<bool>? isHangUpRequestingNotifier;
 
   final double? height;
   final double? borderRadius;
@@ -35,6 +36,7 @@ class ZegoBottomMenuBar extends StatefulWidget {
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
     required this.prebuiltCallData,
+    required this.isHangUpRequestingNotifier,
     this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
@@ -49,6 +51,8 @@ class ZegoBottomMenuBar extends StatefulWidget {
 class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
   Timer? hideTimerOfMenuBar;
 
+  final hangupButtonClickableNotifier = ValueNotifier<bool>(true);
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +61,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     widget.restartHideTimerNotifier.addListener(onHideTimerRestartNotify);
 
     widget.visibilityNotifier.addListener(onVisibilityNotifierChanged);
+
+    widget.isHangUpRequestingNotifier?.addListener(oHangUpRequestingChanged);
   }
 
   @override
@@ -65,6 +71,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     widget.restartHideTimerNotifier.removeListener(onHideTimerRestartNotify);
 
     widget.visibilityNotifier.removeListener(onVisibilityNotifierChanged);
+
+    widget.isHangUpRequestingNotifier?.removeListener(oHangUpRequestingChanged);
 
     super.dispose();
   }
@@ -261,8 +269,18 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         return ZegoLeaveButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
+          clickableNotifier: hangupButtonClickableNotifier,
           onLeaveConfirmation: (context) async {
-            return widget.config.onHangUpConfirmation!(context);
+            /// prevent controller's hangUp function call after leave button click
+            widget.isHangUpRequestingNotifier?.value = true;
+
+            final canHangUp =
+                await widget.config.onHangUpConfirmation?.call(context) ?? true;
+            if (!canHangUp) {
+              /// restore controller's leave status
+              widget.isHangUpRequestingNotifier?.value = false;
+            }
+            return canHangUp;
           },
           onPress: () {
             ZegoLoggerService.logInfo(
@@ -278,6 +296,9 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             } else {
               Navigator.of(context).pop();
             }
+
+            /// restore controller's leave status
+            widget.isHangUpRequestingNotifier?.value = false;
           },
         );
       case ZegoMenuBarButtonName.showMemberListButton:
@@ -297,5 +318,10 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         return ZegoUIKitPrebuiltCallMinimizingButton(
             prebuiltCallData: widget.prebuiltCallData);
     }
+  }
+
+  void oHangUpRequestingChanged() {
+    hangupButtonClickableNotifier.value =
+        !(widget.isHangUpRequestingNotifier?.value ?? false);
   }
 }

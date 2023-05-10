@@ -27,30 +27,12 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
-  void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
-    ZegoLoggerService.logInfo(
-      'using system calling ui, plugins size: ${plugins.length}',
-      tag: 'call',
-      subTag: 'call invitation service',
-    );
+part 'internal/call_invitation_service_p.dart';
 
-    ZegoUIKit().installPlugins(plugins);
-    if (Platform.isAndroid) {
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .setBackgroundMessageHandler(onBackgroundMessageReceived);
-    } else {
-      _enableIOSVoIP = true;
-
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .setIncomingPushReceivedHandler(onIncomingPushReceived);
-
-      initCallkitService();
-    }
-  }
-
+class ZegoUIKitPrebuiltCallInvitationService
+    with
+        ZegoPrebuiltCallKitService,
+        ZegoUIKitPrebuiltCallInvitationServicePrivate {
   factory ZegoUIKitPrebuiltCallInvitationService() => _instance;
 
   ZegoCallInvitationInnerText get innerText => _data.innerText;
@@ -94,8 +76,9 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     bool showDeclineButton = true,
     ZegoUIKitPrebuiltCallInvitationEvents? events,
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
-    bool isIOSSandboxEnvironment = false,
+    bool? isIOSSandboxEnvironment,
     String appName = '',
+    // ZegoIOSNotificationConfig? iOSNotificationConfig,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallController? controller,
     ZegoCallInvitationInnerText? innerText,
@@ -103,7 +86,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.7; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.11; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -112,6 +95,12 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     if (_isInit) {
       await uninit();
     }
+
+    ZegoLoggerService.logInfo(
+      'service init',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
 
     /// sync app background state
     SystemChannels.lifecycle.setMessageHandler((state) async {
@@ -145,6 +134,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
       notifyWhenAppRunningInBackgroundOrQuit:
           notifyWhenAppRunningInBackgroundOrQuit,
       isIOSSandboxEnvironment: isIOSSandboxEnvironment,
+      // iOSNotificationConfig: iOSNotificationConfig,
       androidNotificationConfig: androidNotificationConfig,
       controller: controller,
       innerText: innerText,
@@ -194,7 +184,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     );
     await _plugins.init().then((value) {
       ZegoLoggerService.logInfo(
-        '[call ] plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
+        'plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
         '${_data.notifyWhenAppRunningInBackgroundOrQuit}',
         tag: 'call',
         subTag: 'call invitation service',
@@ -205,20 +195,43 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
           ZegoLoggerService.logInfo(
             'try enable notification, '
             'isIOSSandboxEnvironment:${_data.isIOSSandboxEnvironment}, '
+            // 'iOSNotificationConfig:${_data.iOSNotificationConfig.toString()}, '
             'enableIOSVoIP:$_enableIOSVoIP ',
             tag: 'call',
             subTag: 'call invitation service',
           );
+          // if (_data.isIOSSandboxEnvironment != null) {
+          //   assert(false);
+          //   ZegoLoggerService.logInfo(
+          //     'isIOSSandboxEnvironment is deprecated, use iOSNotificationConfig.isIOSSandboxEnvironment instead',
+          //     tag: 'call',
+          //     subTag: 'call invitation service',
+          //   );
+          // }
 
           ZegoUIKit()
               .getSignalingPlugin()
               .enableNotifyWhenAppRunningInBackgroundOrQuit(
                 true,
-                isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment,
+                isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
                 enableIOSVoIP: _enableIOSVoIP,
                 appName: appName,
               )
               .then((result) {
+            if (_enableIOSVoIP) {
+              ZegoUIKit().getSignalingPlugin().setInitConfiguration(
+                    ZegoSignalingPluginProviderConfiguration(
+                      localizedName: appName,
+                      iconTemplateImageName:
+                          // _data.iOSNotificationConfig?.systemCallingIconName ??
+                          'AppIcon',
+                      supportsVideo: false,
+                      maximumCallsPerCallGroup: 1,
+                      maximumCallGroups: 1,
+                    ),
+                  );
+            }
+
             ZegoLoggerService.logInfo(
               'enable notification result: $result',
               tag: 'call',
@@ -244,14 +257,63 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
       return;
     }
 
+    ZegoLoggerService.logInfo(
+      'un-init',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
+
     _isInit = false;
 
-    uninitCallkitService();
+    if (Platform.isIOS) {
+      uninitCallkitService();
+    }
 
     await _uninitContext();
   }
 
+  void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
+    ZegoLoggerService.logInfo(
+      'using system calling ui, plugins size: ${plugins.length}',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
+
+    ZegoUIKit().installPlugins(plugins);
+    if (Platform.isAndroid) {
+      ZegoLoggerService.logInfo(
+        'register background message handler',
+        tag: 'call',
+        subTag: 'call invitation service',
+      );
+
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .setBackgroundMessageHandler(onBackgroundMessageReceived);
+    } else if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'register incoming push receive handler',
+        tag: 'call',
+        subTag: 'call invitation service',
+      );
+
+      _enableIOSVoIP = true;
+
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .setIncomingPushReceivedHandler(onIncomingPushReceived);
+
+      initCallkitService();
+    }
+  }
+
   void setCallKitVariables(Map<CallKitInnerVariable, dynamic> variables) {
+    ZegoLoggerService.logInfo(
+      'set callkit variables:$variables',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
+
     SharedPreferences.getInstance().then((prefs) {
       variables.forEach((key, value) {
         switch (key) {
@@ -411,114 +473,8 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoPrebuiltCallKitService {
     });
   }
 
-  Future<void> _initPermissions() async {
-    await requestPermission(Permission.camera);
-    await requestPermission(Permission.microphone);
-  }
-
-  Future<void> _initContext() async {
-    ZegoUIKit().login(_data.userID, _data.userName);
-    await ZegoUIKit().init(appID: _data.appID, appSign: _data.appSign);
-
-    ZegoUIKit.instance.turnCameraOn(false);
-
-    _pageManager.init(
-      ringtoneConfig: _data.ringtoneConfig,
-    );
-  }
-
-  Future<void> _uninitContext() async {
-    _notificationManager.uninit();
-    _pageManager.uninit();
-    await _plugins.uninit();
-  }
-
-  ZegoUIKitPrebuiltCallConfig _defaultConfig(ZegoCallInvitationData data) {
-    final config = (data.invitees.length > 1)
-        ? ZegoCallType.videoCall == data.type
-            ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
-            : ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
-        : ZegoCallType.videoCall == data.type
-            ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
-            : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
-
-    return config;
-  }
-
-  /// private variables
-
   ZegoUIKitPrebuiltCallInvitationService._internal();
 
   static final ZegoUIKitPrebuiltCallInvitationService _instance =
       ZegoUIKitPrebuiltCallInvitationService._internal();
-
-  bool _isInit = false;
-  ContextQuery? _contextQuery;
-  late ZegoUIKitPrebuiltCallInvitationServiceData _data;
-  late ZegoInvitationPageManager _pageManager;
-  late ZegoNotificationManager _notificationManager;
-  late ZegoCallInvitationConfig _callInvitationConfig;
-  late ZegoPrebuiltPlugins _plugins;
-
-  /// callkit
-  bool _enableIOSVoIP = false;
-  String? _callKitCallID;
-}
-
-class ZegoUIKitPrebuiltCallInvitationServiceData {
-  ZegoUIKitPrebuiltCallInvitationServiceData({
-    required this.appID,
-    required this.appSign,
-    required this.userID,
-    required this.userName,
-    required this.plugins,
-    this.requireConfig,
-    this.showDeclineButton = true,
-    this.events,
-    this.notifyWhenAppRunningInBackgroundOrQuit = true,
-    this.isIOSSandboxEnvironment = false,
-    this.androidNotificationConfig,
-    this.controller,
-    ZegoCallInvitationInnerText? innerText,
-    ZegoRingtoneConfig? ringtoneConfig,
-  })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
-        innerText = innerText ?? ZegoCallInvitationInnerText();
-
-  /// you need to fill in the appID you obtained from console.zegocloud.com
-  final int appID;
-
-  /// for Android/iOS
-  /// you need to fill in the appSign you obtained from console.zegocloud.com
-  final String appSign;
-
-  /// local user info
-  final String userID;
-  final String userName;
-
-  final ZegoUIKitPrebuiltCallInvitationEvents? events;
-
-  /// we need the [ZegoUIKitPrebuiltCallConfig] to show [ZegoUIKitPrebuiltCall]
-  final PrebuiltConfigQuery? requireConfig;
-
-  /// you can customize your ringing bell
-  final ZegoRingtoneConfig ringtoneConfig;
-
-  ///
-  final List<IZegoUIKitPlugin> plugins;
-
-  /// whether to display the reject button, default is true
-  final bool showDeclineButton;
-
-  /// whether to enable offline notification, default is true
-  final bool notifyWhenAppRunningInBackgroundOrQuit;
-
-  /// iOS only
-  final bool isIOSSandboxEnvironment;
-
-  /// only for Android
-  final ZegoAndroidNotificationConfig? androidNotificationConfig;
-
-  final ZegoCallInvitationInnerText innerText;
-
-  final ZegoUIKitPrebuiltCallController? controller;
 }

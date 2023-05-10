@@ -17,6 +17,7 @@ class ZegoUIKitPrebuiltCallData {
     required this.userName,
     required this.config,
     required this.isPrebuiltFromMinimizing,
+    this.durationStartTime,
     this.onDispose,
     this.controller,
   });
@@ -44,11 +45,15 @@ class ZegoUIKitPrebuiltCallData {
 
   final bool isPrebuiltFromMinimizing;
 
+  /// call duration
+  final DateTime? durationStartTime;
+
   @override
   String toString() {
     return 'app id:$appID, app sign:$appSign, call id:$callID, '
         'isPrebuiltFromMinimizing: $isPrebuiltFromMinimizing, '
         'user id:$userID, user name:$userName, '
-        'config:${config.toString()}';
+        'duration start time:$durationStartTime, '
+        'config:$config ';
   }
 }

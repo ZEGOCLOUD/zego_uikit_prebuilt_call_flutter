@@ -17,7 +17,7 @@ mixin ZegoPrebuiltCallKitService {
       ZegoLoggerService.logInfo(
         'callkit service had been inited',
         tag: 'call',
-        subTag: 'callkit service',
+        subTag: 'iOS callkit service',
       );
 
       return;
@@ -73,6 +73,12 @@ mixin ZegoPrebuiltCallKitService {
           .getSignalingPlugin()
           .getCallkitPerformPlayDTMFCallActionEventStream()
           .listen(_onCallkitPerformPlayDTMFCallActionEvent));
+
+    ZegoLoggerService.logInfo(
+      'service has been inited',
+      tag: 'call',
+      subTag: 'iOS callkit service',
+    );
   }
 
   void uninitCallkitService() {
@@ -80,7 +86,7 @@ mixin ZegoPrebuiltCallKitService {
       ZegoLoggerService.logInfo(
         'callkit service had not been inited',
         tag: 'call',
-        subTag: 'callkit service',
+        subTag: 'iOS callkit service',
       );
 
       return;
@@ -90,6 +96,12 @@ mixin ZegoPrebuiltCallKitService {
     for (final subscription in callkitServiceSubscriptions) {
       subscription.cancel();
     }
+
+    ZegoLoggerService.logInfo(
+      'service has been uninited',
+      tag: 'call',
+      subTag: 'iOS callkit service',
+    );
   }
 
   void _onCallkitProviderDidResetEvent(
@@ -98,7 +110,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit provider did reset',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
   }
 
@@ -108,7 +120,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit provider did begin',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
@@ -120,7 +132,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit activate audio',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
   }
 
@@ -130,7 +142,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit deactivate audio',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
   }
 
@@ -140,7 +152,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit timeout performing action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();
@@ -152,7 +164,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform start call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
@@ -166,7 +178,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform answer call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
@@ -185,7 +197,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform end call call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();
@@ -206,7 +218,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform set held call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();
@@ -218,7 +230,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform set muted call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();
@@ -232,7 +244,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform set group call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();
@@ -244,7 +256,7 @@ mixin ZegoPrebuiltCallKitService {
     ZegoLoggerService.logInfo(
       'on callkit perform play DTMF call action',
       tag: 'call',
-      subTag: 'callkit service',
+      subTag: 'iOS callkit service',
     );
 
     event.action.fulfill();

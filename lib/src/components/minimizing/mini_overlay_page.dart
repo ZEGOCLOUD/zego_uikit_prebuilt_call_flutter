@@ -3,9 +3,7 @@ import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-
-// Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -216,6 +214,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             ),
             devices(activeUser),
             userName(activeUser),
+            durationTimeBoard(),
           ],
         );
   }
@@ -224,9 +223,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     return widget.showUserName
         ? Positioned(
             right: 5,
-            top: 5,
+            top: 8,
             child: Container(
-              padding: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
                 color: Colors.black.withOpacity(0.2),
@@ -237,7 +236,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: itemSize.width * 0.1,
+                  fontSize: itemSize.width * 0.08,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.none,
@@ -265,6 +264,28 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     );
   }
 
+  Widget durationTimeBoard() {
+    if (!(ZegoUIKitPrebuiltCallMiniOverlayMachine()
+            .prebuiltCallData
+            ?.config
+            .durationConfig
+            .isVisible ??
+        true)) {
+      return Container();
+    }
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 1,
+      child: CallDurationTimeBoard(
+        durationNotifier:
+            ZegoUIKitPrebuiltCallMiniOverlayMachine().durationNotifier(),
+        fontSize: 8,
+      ),
+    );
+  }
+
   Widget devices(ZegoUIKitUser? activeUser) {
     if (null == activeUser) {
       return Container();
@@ -274,10 +295,20 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return Container();
     }
 
-    const toolbarCameraNormal = 'assets/icons/s1_ctrl_bar_camera_normal.png';
-    const toolbarCameraOff = 'assets/icons/s1_ctrl_bar_camera_off.png';
-    const toolbarMicNormal = 'assets/icons/s1_ctrl_bar_mic_normal.png';
-    const toolbarMicOff = 'assets/icons/s1_ctrl_bar_mic_off.png';
+    final cameraEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
+            .prebuiltCallData
+            ?.config
+            .bottomMenuBarConfig
+            .buttons
+            .contains(ZegoMenuBarButtonName.toggleCameraButton) ??
+        true;
+    final microphoneEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
+            .prebuiltCallData
+            ?.config
+            .bottomMenuBarConfig
+            .buttons
+            .contains(ZegoMenuBarButtonName.toggleMicrophoneButton) ??
+        true;
     return Positioned(
       left: 0,
       right: 0,
@@ -285,77 +316,88 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ValueListenableBuilder<bool>(
-            valueListenable: ZegoUIKit().getCameraStateNotifier(activeUser.id),
-            builder: (context, isCameraEnabled, _) {
-              return GestureDetector(
-                onTap: activeUser.id == ZegoUIKit().getLocalUser().id
-                    ? () {
-                        ZegoUIKit().turnCameraOn(!isCameraEnabled,
-                            userID: activeUser.id);
-                      }
-                    : null,
-                child: Container(
-                  width: itemSize.width * 0.3,
-                  height: itemSize.width * 0.3,
-                  decoration: BoxDecoration(
-                    color: isCameraEnabled
-                        ? controlBarButtonCheckedBackgroundColor
-                        : controlBarButtonBackgroundColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: itemSize.width * 0.2,
-                      height: itemSize.width * 0.2,
-                      child: uikitImage(
-                        isCameraEnabled
-                            ? toolbarCameraNormal
-                            : toolbarCameraOff,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          ValueListenableBuilder<bool>(
-            valueListenable:
-                ZegoUIKit().getMicrophoneStateNotifier(activeUser.id),
-            builder: (context, isMicrophoneEnabled, _) {
-              return GestureDetector(
-                onTap: activeUser.id == ZegoUIKit().getLocalUser().id
-                    ? () {
-                        ZegoUIKit().turnMicrophoneOn(!isMicrophoneEnabled,
-                            userID: activeUser.id);
-                      }
-                    : null,
-                child: Container(
-                  width: itemSize.width * 0.3,
-                  height: itemSize.width * 0.3,
-                  decoration: BoxDecoration(
-                    color: isMicrophoneEnabled
-                        ? controlBarButtonCheckedBackgroundColor
-                        : controlBarButtonBackgroundColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: itemSize.width * 0.2,
-                      height: itemSize.width * 0.2,
-                      child: uikitImage(
-                        isMicrophoneEnabled ? toolbarMicNormal : toolbarMicOff,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          )
+          if (cameraEnabled) cameraControl(activeUser),
+          if (microphoneEnabled) microphoneControl(activeUser),
         ],
       ),
+    );
+  }
+
+  Widget cameraControl(ZegoUIKitUser activeUser) {
+    const toolbarCameraNormal = 'assets/icons/s1_ctrl_bar_camera_normal.png';
+    const toolbarCameraOff = 'assets/icons/s1_ctrl_bar_camera_off.png';
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: ZegoUIKit().getCameraStateNotifier(activeUser.id),
+      builder: (context, isCameraEnabled, _) {
+        return GestureDetector(
+          onTap: activeUser.id == ZegoUIKit().getLocalUser().id
+              ? () {
+                  ZegoUIKit()
+                      .turnCameraOn(!isCameraEnabled, userID: activeUser.id);
+                }
+              : null,
+          child: Container(
+            width: itemSize.width * 0.3,
+            height: itemSize.width * 0.3,
+            decoration: BoxDecoration(
+              color: isCameraEnabled
+                  ? controlBarButtonCheckedBackgroundColor
+                  : controlBarButtonBackgroundColor,
+              shape: BoxShape.circle,
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: itemSize.width * 0.2,
+                height: itemSize.width * 0.2,
+                child: uikitImage(
+                  isCameraEnabled ? toolbarCameraNormal : toolbarCameraOff,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget microphoneControl(ZegoUIKitUser activeUser) {
+    const toolbarMicNormal = 'assets/icons/s1_ctrl_bar_mic_normal.png';
+    const toolbarMicOff = 'assets/icons/s1_ctrl_bar_mic_off.png';
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: ZegoUIKit().getMicrophoneStateNotifier(activeUser.id),
+      builder: (context, isMicrophoneEnabled, _) {
+        return GestureDetector(
+          onTap: activeUser.id == ZegoUIKit().getLocalUser().id
+              ? () {
+                  ZegoUIKit().turnMicrophoneOn(!isMicrophoneEnabled,
+                      userID: activeUser.id);
+                }
+              : null,
+          child: Container(
+            width: itemSize.width * 0.3,
+            height: itemSize.width * 0.3,
+            decoration: BoxDecoration(
+              color: isMicrophoneEnabled
+                  ? controlBarButtonCheckedBackgroundColor
+                  : controlBarButtonBackgroundColor,
+              shape: BoxShape.circle,
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: itemSize.width * 0.2,
+                height: itemSize.width * 0.2,
+                child: uikitImage(
+                  isMicrophoneEnabled ? toolbarMicNormal : toolbarMicOff,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

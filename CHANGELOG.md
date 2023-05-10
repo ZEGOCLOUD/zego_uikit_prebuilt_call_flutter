@@ -1,3 +1,15 @@
+## 3.3.11
+- Fixing the issue of inability to open notification permissions on Android OS version 13+.
+
+## 3.3.10
+- fix the issue where the video button is displayed incorrectly when minimizing the app during a voice call.
+
+## 3.3.9
+- support close duration in config
+
+## 3.3.8
+- add a "hangUp" method to the controller that allows for actively ending the current call.
+- support tracking the duration of the call locally.
 
 ## 3.3.7
 - Update dependencies

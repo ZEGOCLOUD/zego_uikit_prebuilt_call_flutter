@@ -16,7 +16,11 @@ class ZegoCallInvitationInternalInstance {
   ZegoInvitationPageManager? _pageManager;
   ZegoCallInvitationConfig? _callInvitationConfig;
 
-  ZegoInvitationPageManager? get pageManager => _pageManager;
+  ZegoInvitationPageManager? get pageManager {
+    assert(_pageManager != null,
+        'pageManager is null, plugins call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
+    return _pageManager;
+  }
 
   ZegoCallInvitationConfig? get callInvitationConfig => _callInvitationConfig;
 

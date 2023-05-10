@@ -1,4 +1,7 @@
 // Package imports:
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
 
@@ -30,6 +33,14 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   PrebuiltCallMiniOverlayPageState state() {
     return _machine.current?.identifier ??
         PrebuiltCallMiniOverlayPageState.idle;
+  }
+
+  DateTime durationStartTime() {
+    return _durationStartTime ?? DateTime.now();
+  }
+
+  ValueNotifier<Duration> durationNotifier() {
+    return _durationNotifier;
   }
 
   void listenStateChanged(PrebuiltCallMiniOverlayMachineStateChanged listener) {
@@ -93,6 +104,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
       case PrebuiltCallMiniOverlayPageState.idle:
         _prebuiltCallData = null;
         _stateIdle.enter();
+
+        stopDurationTimer();
         break;
       case PrebuiltCallMiniOverlayPageState.calling:
         _prebuiltCallData = null;
@@ -108,8 +121,31 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
         _prebuiltCallData = prebuiltCallData;
 
         _stateMinimizing.enter();
+
+        startDurationTimer();
         break;
     }
+  }
+
+  void startDurationTimer() {
+    if (!(prebuiltCallData?.config.durationConfig.isVisible ?? true)) {
+      return;
+    }
+
+    _durationStartTime = prebuiltCallData?.durationStartTime ?? DateTime.now();
+    _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
+
+    _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
+      prebuiltCallData?.config.durationConfig.onDurationUpdate
+          ?.call(_durationNotifier.value);
+    });
+  }
+
+  void stopDurationTimer() {
+    _durationTimer?.cancel();
+
+    _durationTimer = null;
   }
 
   /// private variables
@@ -130,4 +166,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   late sm.State<PrebuiltCallMiniOverlayPageState> _stateMinimizing;
 
   ZegoUIKitPrebuiltCallData? _prebuiltCallData;
+
+  DateTime? _durationStartTime;
+  Timer? _durationTimer;
+  final _durationNotifier = ValueNotifier<Duration>(Duration.zero);
 }

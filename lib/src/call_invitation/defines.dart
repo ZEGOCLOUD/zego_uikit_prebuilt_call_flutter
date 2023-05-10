@@ -74,6 +74,22 @@ class ZegoCallUser {
   }
 }
 
+class ZegoIOSNotificationConfig {
+  bool isIOSSandboxEnvironment;
+  String systemCallingIconName;
+
+  ZegoIOSNotificationConfig({
+    this.isIOSSandboxEnvironment = false,
+    this.systemCallingIconName = '',
+  });
+
+  @override
+  String toString() {
+    return 'isIOSSandboxEnvironment:$isIOSSandboxEnvironment, '
+        'systemCallingIconName:$systemCallingIconName ';
+  }
+}
+
 class ZegoAndroidNotificationConfig {
   /// specify the channel id of notification, which is same in 'Zego Console'
   String channelID;

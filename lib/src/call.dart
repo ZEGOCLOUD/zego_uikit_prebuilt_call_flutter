@@ -10,11 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
@@ -51,6 +54,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
   final ZegoUIKitPrebuiltCallController? controller;
 
+  @Deprecated('Since 3.3.1')
   final Size? appDesignSize;
 
   @override
@@ -66,11 +70,29 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   late ZegoUIKitPrebuiltCallData prebuiltCallData;
 
+  Timer? durationTimer;
+  DateTime? durationStartTime;
+  var durationNotifier = ValueNotifier<Duration>(Duration.zero);
+
   @override
   void initState() {
     super.initState();
 
+    ZegoLoggerService.logInfo(
+      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayMachine().state()}',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    final isPrebuiltFromMinimizing = PrebuiltCallMiniOverlayPageState.idle !=
+        ZegoUIKitPrebuiltCallMiniOverlayMachine().state();
+
+    initDurationTimer(
+      isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
+    );
+
     correctConfigValue();
+    widget.controller?.initByPrebuilt(prebuiltConfig: widget.config);
 
     prebuiltCallData = ZegoUIKitPrebuiltCallData(
       appID: widget.appID,
@@ -81,33 +103,27 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       config: widget.config,
       onDispose: widget.onDispose,
       controller: widget.controller,
-      isPrebuiltFromMinimizing: PrebuiltCallMiniOverlayPageState.idle !=
-          ZegoUIKitPrebuiltCallMiniOverlayMachine().state(),
+      isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
+      durationStartTime: durationStartTime,
     );
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.3.7; $version',
+        'version: zego_uikit_prebuilt_call:3.3.11; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
     });
 
-    ZegoLoggerService.logInfo(
-      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayMachine().state()}',
-      tag: 'call',
-      subTag: 'prebuilt',
-    );
-    if (PrebuiltCallMiniOverlayPageState.idle ==
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-      /// not wake from mini page
-      initContext();
-    } else {
+    if (isPrebuiltFromMinimizing) {
       ZegoLoggerService.logInfo(
         'mini machine state is not idle, context will not be init',
         tag: 'call',
         subTag: 'prebuilt',
       );
+    } else {
+      /// not wake from mini page
+      initContext();
     }
     ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .changeState(PrebuiltCallMiniOverlayPageState.idle);
@@ -122,6 +138,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     userListStreamSubscription?.cancel();
     widget.onDispose?.call();
+
+    durationTimer?.cancel();
+
+    widget.controller?.uninitByPrebuilt();
 
     if (PrebuiltCallMiniOverlayPageState.minimizing !=
         ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
@@ -166,6 +186,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                     else
                       Container(),
                     bottomMenuBar(),
+                    durationTimeBoard(),
                   ],
                 ),
               );
@@ -174,6 +195,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ),
       ),
     );
+  }
+
+  void initDurationTimer({required bool isPrebuiltFromMinimizing}) {
+    if (!widget.config.durationConfig.isVisible) {
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'init duration',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    durationStartTime = isPrebuiltFromMinimizing
+        ? ZegoUIKitPrebuiltCallMiniOverlayMachine().durationStartTime()
+        : DateTime.now();
+    durationNotifier.value = DateTime.now().difference(durationStartTime!);
+    durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      durationNotifier.value = DateTime.now().difference(durationStartTime!);
+      widget.config.durationConfig.onDurationUpdate
+          ?.call(durationNotifier.value);
+    });
   }
 
   Future<void> initPermissions() async {
@@ -242,6 +285,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget clickListener({required Widget child}) {
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         /// listen only click event in empty space
         if (widget.config.bottomMenuBarConfig.hideByClick) {
@@ -361,6 +405,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         prebuiltCallData: prebuiltCallData,
+        isHangUpRequestingNotifier:
+            widget.controller?.isHangUpRequestingNotifier,
         height: 88.r,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
@@ -382,10 +428,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         prebuiltCallData: prebuiltCallData,
+        isHangUpRequestingNotifier:
+            widget.controller?.isHangUpRequestingNotifier,
         height: isLightStyle ? null : 208.r,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
         borderRadius: isLightStyle ? null : 32.r,
+      ),
+    );
+  }
+
+  Widget durationTimeBoard() {
+    if (!widget.config.durationConfig.isVisible) {
+      return Container();
+    }
+
+    return Positioned(
+      top: 10,
+      left: 0,
+      right: 0,
+      child: CallDurationTimeBoard(
+        durationNotifier: durationNotifier,
+        fontSize: 25.r,
       ),
     );
   }

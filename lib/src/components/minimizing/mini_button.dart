@@ -78,7 +78,8 @@ class _ZegoUIKitPrebuiltCallMinimizingButtonState
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ?? Colors.transparent,
+          color: widget.icon?.backgroundColor ??
+              ZegoUIKitDefaultTheme.buttonBackgroundColor,
           shape: BoxShape.circle,
         ),
         child: SizedBox.fromSize(

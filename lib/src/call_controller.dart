@@ -1,21 +1,104 @@
 // Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
+import 'package:flutter/cupertino.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-class ZegoUIKitPrebuiltCallController {
-  final screenSharingViewController = ZegoScreenSharingViewController();
+part 'package:zego_uikit_prebuilt_call/src/internal/controller_p.dart';
 
+class ZegoUIKitPrebuiltCallController
+    with ZegoUIKitPrebuiltCallControllerPrivate {
   void showScreenSharingViewInFullscreenMode(String userID, bool isFullscreen) {
     screenSharingViewController.showScreenSharingViewInFullscreenMode(
         userID, isFullscreen);
+  }
+
+  ///  actively ending the current call.
+  Future<bool> hangUp(
+    BuildContext context, {
+    bool showConfirmation = false,
+  }) async {
+    if (null == prebuiltConfig) {
+      ZegoLoggerService.logInfo(
+        'hang up, config is null',
+        tag: 'call',
+        subTag: 'controller',
+      );
+
+      return false;
+    }
+
+    if (isHangUpRequestingNotifier.value) {
+      ZegoLoggerService.logInfo(
+        'hang up, is hang up requesting...',
+        tag: 'call',
+        subTag: 'controller',
+      );
+
+      return false;
+    }
+
+    ZegoLoggerService.logInfo(
+      'hang up, show confirmation:$showConfirmation',
+      tag: 'call',
+      subTag: 'controller',
+    );
+    isHangUpRequestingNotifier.value = true;
+
+    if (showConfirmation) {
+      ///  if there is a user-defined event before the click,
+      ///  wait the synchronize execution result
+      final canHangUp =
+          await prebuiltConfig?.onHangUpConfirmation?.call(context) ?? true;
+      if (!canHangUp) {
+        ZegoLoggerService.logInfo(
+          'hang up, reject',
+          tag: 'call',
+          subTag: 'controller',
+        );
+
+        isHangUpRequestingNotifier.value = false;
+
+        return false;
+      }
+    }
+
+    final result = await ZegoUIKit().leaveRoom().then((result) {
+      ZegoLoggerService.logInfo(
+        'hang up, leave room result, ${result.errorCode} ${result.extendedData}',
+        tag: 'call',
+        subTag: 'controller',
+      );
+      return 0 == result.errorCode;
+    });
+
+    ZegoLoggerService.logInfo(
+      'hang up, restore mini state by hang up',
+      tag: 'call',
+      subTag: 'controller',
+    );
+    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+        .changeState(PrebuiltCallMiniOverlayPageState.idle);
+
+    if (prebuiltConfig?.onHangUp != null) {
+      prebuiltConfig?.onHangUp?.call();
+    } else {
+      /// default behaviour if hand up is null, back to previous page
+      Navigator.of(context).pop();
+    }
+
+    ZegoLoggerService.logInfo(
+      'hang up, finished',
+      tag: 'call',
+      subTag: 'controller',
+    );
+
+    return result;
   }
 
   Future<bool> sendCallInvitation({
@@ -28,9 +111,9 @@ class ZegoUIKitPrebuiltCallController {
     String? notificationMessage,
     int timeoutSeconds = 60,
   }) async {
-    if (!isValid()) {
+    if (null == _pageManager || null == _callInvitationConfig) {
       ZegoLoggerService.logInfo(
-        'controller is not valid',
+        'send call invitation, param is invalid, page manager:$_pageManager, invitation config:$_callInvitationConfig',
         tag: 'call',
         subTag: 'controller',
       );
@@ -46,7 +129,7 @@ class ZegoUIKitPrebuiltCallController {
             CallingState.kIdle;
     if (CallingState.kIdle != currentState) {
       ZegoLoggerService.logInfo(
-        'still in calling, $currentState',
+        'send call invitation, still in calling, $currentState',
         tag: 'call',
         subTag: 'controller',
       );
@@ -54,7 +137,7 @@ class ZegoUIKitPrebuiltCallController {
     }
 
     ZegoLoggerService.logInfo(
-      'start request',
+      'send call invitation, start request',
       tag: 'call',
       subTag: 'controller',
     );
@@ -86,112 +169,5 @@ class ZegoUIKitPrebuiltCallController {
       notificationTitle: notificationTitle,
       notificationMessage: notificationMessage,
     );
-  }
-
-  Future<bool> _sendInvitation({
-    required List<ZegoCallUser> invitees,
-    required bool isVideoCall,
-    required String callID,
-    String customData = '',
-    String? resourceID,
-    String? notificationTitle,
-    String? notificationMessage,
-    int timeoutSeconds = 60,
-  }) {
-    return ZegoUIKit()
-        .getSignalingPlugin()
-        .sendInvitation(
-          inviterName: ZegoUIKit().getLocalUser().name,
-          invitees: invitees.map((user) {
-            return user.id;
-          }).toList(),
-          timeout: timeoutSeconds,
-          type: ZegoCallTypeExtension(
-            isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
-          ).value,
-          data: InvitationInternalData(
-            callID,
-            invitees
-                .map((invitee) => ZegoUIKitUser(
-                      id: invitee.id,
-                      name: invitee.name,
-                    ))
-                .toList(),
-            customData,
-          ).toJson(),
-          zegoNotificationConfig: ZegoNotificationConfig(
-            resourceID: resourceID ?? '',
-            title: notificationTitle ??
-                (isVideoCall
-                        ? ((invitees.length > 1
-                                ? _innerText?.incomingGroupVideoCallDialogTitle
-                                : _innerText?.incomingVideoCallDialogTitle) ??
-                            param_1)
-                        : ((invitees.length > 1
-                                ? _innerText?.incomingGroupVoiceCallDialogTitle
-                                : _innerText?.incomingVoiceCallDialogTitle) ??
-                            param_1))
-                    .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
-            message: notificationMessage ??
-                (isVideoCall
-                    ? ((invitees.length > 1
-                            ? _innerText?.incomingGroupVideoCallDialogMessage
-                            : _innerText?.incomingVideoCallDialogMessage) ??
-                        'Incoming video call...')
-                    : ((invitees.length > 1
-                            ? _innerText?.incomingGroupVoiceCallDialogMessage
-                            : _innerText?.incomingVoiceCallDialogMessage) ??
-                        'Incoming voice call...')),
-          ),
-        )
-        .then((result) {
-      _pageManager?.onLocalSendInvitation(
-        callID,
-        invitees
-            .map((invitee) => ZegoUIKitUser(
-                  id: invitee.id,
-                  name: invitee.name,
-                ))
-            .toList(),
-        isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
-        result.error?.code ?? '',
-        result.error?.message ?? '',
-        result.invitationID,
-        result.errorInvitees.keys.toList(),
-      );
-
-      return result.error?.code.isNotEmpty ?? true;
-    });
-  }
-
-  Future<int> _waitUntil(
-    bool Function() test, {
-    final int maxIterations = 100,
-    final Duration step = const Duration(milliseconds: 10),
-  }) async {
-    var iterations = 0;
-    for (; iterations < maxIterations; iterations++) {
-      await Future.delayed(step);
-      if (test()) {
-        break;
-      }
-    }
-    if (iterations >= maxIterations) {
-      return iterations;
-    }
-    return iterations;
-  }
-
-  ZegoInvitationPageManager? get _pageManager =>
-      ZegoCallInvitationInternalInstance.instance.pageManager;
-
-  ZegoCallInvitationConfig? get _callInvitationConfig =>
-      ZegoCallInvitationInternalInstance.instance.callInvitationConfig;
-
-  ZegoCallInvitationInnerText? get _innerText =>
-      _callInvitationConfig?.innerText;
-
-  bool isValid() {
-    return null != _pageManager && null != _callInvitationConfig;
   }
 }

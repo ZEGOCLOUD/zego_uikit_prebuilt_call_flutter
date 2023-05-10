@@ -33,6 +33,7 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoTopMenuBarConfig? topMenuBarConfig,
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoMemberListConfig? memberListConfig,
+    ZegoCallDurationConfig? durationConfig,
     this.layout,
     this.hangUpConfirmDialogInfo,
     this.onHangUpConfirmation,
@@ -44,7 +45,8 @@ class ZegoUIKitPrebuiltCallConfig {
             audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
         bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
-        memberListConfig = memberListConfig ?? ZegoMemberListConfig() {
+        memberListConfig = memberListConfig ?? ZegoMemberListConfig(),
+        durationConfig = durationConfig ?? ZegoCallDurationConfig() {
     layout ??= ZegoLayout.pictureInPicture();
   }
 
@@ -123,6 +125,9 @@ class ZegoUIKitPrebuiltCallConfig {
   /// A callback triggered when you're alone in the room.
   /// you can destroy Prebuilt based on this callback and return to the previous page.
   void Function(BuildContext context)? onOnlySelfInRoom;
+
+  /// duration config
+  ZegoCallDurationConfig durationConfig;
 }
 
 class ZegoPrebuiltAudioVideoViewConfig {
@@ -350,4 +355,26 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                 }
               });
   }
+}
+
+///
+class ZegoCallDurationConfig {
+  ///
+  bool isVisible;
+
+  /// countdown during a call, throwing out once per second.
+  ///
+  /// example: auto hang up after 5 minutes
+  /// ..durationConfig.isVisible = true
+  /// ..durationConfig.onDurationUpdate = (Duration duration) {
+  ///   if (duration.inSeconds >= 5 * 60) {
+  ///     callController?.hangUp(context);
+  ///   }
+  /// }
+  void Function(Duration)? onDurationUpdate;
+
+  ZegoCallDurationConfig({
+    this.isVisible = true,
+    this.onDurationUpdate,
+  });
 }

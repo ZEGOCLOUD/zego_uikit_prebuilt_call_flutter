@@ -72,6 +72,11 @@ class ZegoInvitationPageManager {
     required ZegoRingtoneConfig ringtoneConfig,
   }) async {
     if (_init) {
+      ZegoLoggerService.logInfo(
+        'is init before',
+        tag: 'call',
+        subTag: 'page manager',
+      );
       return;
     }
 
@@ -103,6 +108,12 @@ class ZegoInvitationPageManager {
     if (!_init) {
       return;
     }
+
+    ZegoLoggerService.logInfo(
+      'uninit',
+      tag: 'call',
+      subTag: 'page manager',
+    );
 
     _init = false;
     ZegoUIKitPrebuiltCallMiniOverlayMachine()
