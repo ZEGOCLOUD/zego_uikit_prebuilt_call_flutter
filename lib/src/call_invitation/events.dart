@@ -1,6 +1,11 @@
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 
+/// Invitation-related event notifications and callbacks.
+/// You can listen to events that you are interested in here.
+///
+/// "incoming" represents an incoming call, indicating that someone is calling you.
+/// "outgoing" represents an outgoing call, indicating that you are calling someone else.
 class ZegoUIKitPrebuiltCallInvitationEvents {
   /// receive this callback when decline button pressed in incoming call
   Function()? onIncomingCallDeclineButtonPressed;

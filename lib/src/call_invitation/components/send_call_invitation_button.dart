@@ -5,16 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 
-// Package imports:
-
+/// This button is used to send a call invitation to one or more specified users.
+///
+/// You can provide a target user list [invitees] and specify whether it is a video call [isVideoCall]. If it is not a video call, it defaults to an audio call.
+/// You can also pass additional custom data [customData] to the invitees.
+/// If you want to set a custom ringtone for the offline call invitation, set [resourceID] to a value that matches the push resource ID in the ZEGOCLOUD management console.
+/// Please note that the [resourceID] will only take effect when [ZegoUIKitPrebuiltCallInvitationService].[init].[notifyWhenAppRunningInBackgroundOrQuit] is set to true.
+/// You can also set the notification title [notificationTitle] and message [notificationMessage].
+/// If the call times out, the call will automatically hang up after the specified timeout period [timeoutSeconds] (in seconds).
 class ZegoSendCallInvitationButton extends StatefulWidget {
   const ZegoSendCallInvitationButton({
     Key? key,
@@ -39,35 +47,61 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.unclickableBackgroundColor = Colors.transparent,
   }) : super(key: key);
 
+  /// The list of invitees to send the call invitation to.
   final List<ZegoUIKitUser> invitees;
+
+  /// Determines whether the call is a video call. If false, it is an audio call by default.
   final bool isVideoCall;
+
+  /// Custom data to be passed to the invitee.
   final String customData;
 
-  ///  You can do what you want after pressed.
+  /// Callback function that is executed when the button is pressed.
   final void Function(String code, String message, List<String>)? onPressed;
 
-  /// notification parameter, [resource id] of Zego Console
+  /// The [resource id] for notification which same as [Zego Console](https://console.zegocloud.com/)
   final String? resourceID;
 
-  /// notification parameter, title
+  /// The title for the notification.
   final String? notificationTitle;
 
-  /// notification parameter, message
+  /// The message for the notification.
   final String? notificationMessage;
 
+  /// The timeout duration in seconds for the call invitation.
   final int timeoutSeconds;
 
-  /// style
+  /// The size of the button.
   final Size? buttonSize;
+
+  /// The icon widget for the button.
   final ButtonIcon? icon;
+
+  /// The size of the icon.
   final Size? iconSize;
+
+  /// The text displayed on the button.
   final String? text;
+
+  /// The text style for the button text.
   final TextStyle? textStyle;
+
+  /// The spacing between the icon and text.
   final double? iconTextSpacing;
+
+  /// Determines whether the layout is vertical or horizontal.
   final bool verticalLayout;
+
+  /// The text color when the button is clickable.
   final Color? clickableTextColor;
+
+  /// The text color when the button is unclickable.
   final Color? unclickableTextColor;
+
+  /// The background color when the button is clickable.
   final Color? clickableBackgroundColor;
+
+  /// The background color when the button is unclickable.
   final Color? unclickableBackgroundColor;
 
   @override
@@ -75,6 +109,7 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
       _ZegoSendCallInvitationButtonState();
 }
 
+/// @nodoc
 class _ZegoSendCallInvitationButtonState
     extends State<ZegoSendCallInvitationButton> {
   bool requesting = false;

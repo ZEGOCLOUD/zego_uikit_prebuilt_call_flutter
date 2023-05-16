@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -16,6 +15,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_bottom_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_top_toolbar.dart';
 
+/// @nodoc
 class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
     Key? key,

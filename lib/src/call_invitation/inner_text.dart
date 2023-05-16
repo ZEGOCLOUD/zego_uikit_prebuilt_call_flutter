@@ -1,7 +1,15 @@
-/// %0: is a string placeholder, represents the first parameter of prompt,
-/// in here, default is user name
+/// @nodoc
+/// %0: is a string placeholder, represents the first parameter of prompt
 const String param_1 = '%0';
 
+/// Control the text on the UI.
+///
+/// Modify the values of the corresponding properties to modify the text on the UI.
+/// You can also change it to other languages.
+///
+/// This class is used for the ZegoUIKitPrebuiltLiveAudioRoomConfig.innerText property.
+///
+/// **Note that the placeholder %0 in the text will be replaced with the corresponding username.**
 class ZegoCallInvitationInnerText {
   String incomingVideoCallDialogTitle;
   String incomingVideoCallDialogMessage;

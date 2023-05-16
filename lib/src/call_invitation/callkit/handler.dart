@@ -10,10 +10,13 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+/// @nodoc
+///
 /// [Android] Silent Notification event notify
 ///
 /// Note: @pragma('vm:entry-point') must be placed on a function to indicate that it can be parsed, allocated, or called directly from native or VM code in AOT mode.
@@ -116,6 +119,8 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   );
 }
 
+/// @nodoc
+///
 /// [iOS] VoIP event callback
 void onIncomingPushReceived(Map extras, UUID uuid) {
   ZegoLoggerService.logInfo(

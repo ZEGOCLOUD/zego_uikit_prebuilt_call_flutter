@@ -9,11 +9,16 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+/// @nodoc
 const String CallKitCalIDCacheKey = 'callkit_call_id';
 
+/// @nodoc
+///
+/// Generate parameters required for third-party CallKit package.
+///
 /// extras:
 /// {
 /// 	body: Incoming video call...,
@@ -102,6 +107,13 @@ Future<CallKitParams> makeCallKitParam({
   );
 }
 
+/// @nodoc
+///
+/// Generate parameters required for third-party CallKit package.
+/// - caller
+/// - callType
+/// - invitationInternalData
+/// - ringtonePath
 CallKitParams makeSimpleCallKitParam({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
@@ -158,6 +170,13 @@ CallKitParams makeSimpleCallKitParam({
   );
 }
 
+/// @nodoc
+///
+/// Display the call interface of a third-party CallKit.
+/// - caller
+/// - callType
+/// - invitationInternalData
+/// - ringtonePath
 Future<void> showCallkitIncoming({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
@@ -181,6 +200,13 @@ Future<void> showCallkitIncoming({
   return FlutterCallkitIncoming.showCallkitIncoming(callKitParam);
 }
 
+///
+
+/// @nodoc
+///
+/// Retrieve the current call from a third-party CallKit library.
+///
+/// 参数格式如下:
 /// {
 /// 	id: $uuid,
 /// 	nameCaller: $inviter_name,
@@ -219,11 +245,17 @@ Future<CallKitParams?> getCurrentCallKitCall() async {
   return null;
 }
 
+/// @nodoc
+///
+/// Retrieve the cached ID of the current call, which is stored in the handler received from ZPNS.
 Future<String?> getCurrentCallKitCallID() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString(CallKitCalIDCacheKey);
 }
 
+/// @nodoc
+///
+/// Convert an internal map into the required parameters for a third-party CallKit.
 CallKitParams? convertCallKitCallToParam(Map<dynamic, dynamic> targetCall) {
   final activeCallRawParam = <String, dynamic>{};
   targetCall.forEach((key, value) {
@@ -247,6 +279,9 @@ CallKitParams? convertCallKitCallToParam(Map<dynamic, dynamic> targetCall) {
   return CallKitParams.fromJson(activeCallRawParam);
 }
 
+/// @nodoc
+///
+/// Clear the call cache of a third-party CallKit.
 Future<void> clearAllCallKitCalls() async {
   ZegoLoggerService.logInfo(
     'clear all callKit calls',

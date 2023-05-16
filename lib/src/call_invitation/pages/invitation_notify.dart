@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -14,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.
 
 // Project imports:
 
+/// @nodoc
 /// top sheet, popup when invitee receive a invitation
 class ZegoCallInvitationDialog extends StatefulWidget {
   const ZegoCallInvitationDialog({
@@ -37,6 +37,7 @@ class ZegoCallInvitationDialog extends StatefulWidget {
       ZegoCallInvitationDialogState();
 }
 
+/// @nodoc
 class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   @override
   void dispose() {

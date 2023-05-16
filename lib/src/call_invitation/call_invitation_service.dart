@@ -16,19 +16,102 @@ import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/service.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 part 'internal/call_invitation_service_p.dart';
 
+/// To receive the call invites from others and let the calling notification show on the top bar when receiving it, you will need to initialize the call invitation service (ZegoUIKitPrebuiltCallInvitationService) first.
+///
+/// 1.1 Set up the context.
+///   To make the UI show when receiving a call invite, you will need to get the Context. To do so, do the following 3 steps:
+///   1.1.1 Define a navigator key.
+///   1.1.2 Set the navigatorKey to ZegoUIKitPrebuiltCallInvitationService.
+///   1.1.3 Register the navigatorKey to MaterialApp.
+///
+/// 1.2 Initialize/Deinitialize the call invitation service.
+///   1.2.1 Initialize the service when your app users logged in successfully or re-logged in after an exit.
+///   1.2.2 Deinitialize the service after your app users logged out.
+///
+/// Example:
+/// ``` dart
+/// void main() async {
+///   WidgetsFlutterBinding.ensureInitialized();
+///
+///   /// 1.1.1 define a navigator key
+///   final navigatorKey = GlobalKey<NavigatorState>();
+///
+///   /// 1.1.2: set navigator key to ZegoUIKitPrebuiltCallInvitationService
+///   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+///
+///   runApp(MyApp(navigatorKey: navigatorKey));
+/// }
+///
+/// class MyApp extends StatefulWidget {
+///   final GlobalKey<NavigatorState> navigatorKey;
+///
+///   const MyApp({
+///     required this.navigatorKey,
+///     Key? key,
+///   }) : super(key: key);
+///
+///   @override
+///   State<StatefulWidget> createState() => MyAppState();
+/// }
+///
+/// class MyAppState extends State<MyApp> {
+///   @override
+///   void initState() {
+///     super.initState();
+///
+///     if (/*the user of the app is logged in*/) {
+///       onUserLogin();
+///     }
+///   }
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return MaterialApp(
+///       /// 1.1.3: register the navigator key to MaterialApp
+///       navigatorKey: widget.navigatorKey,
+///       ...
+///     );
+///   }
+/// }
+///
+/// /// on App's user login
+/// void onUserLogin() {
+///   /// 1.2.1. initialized ZegoUIKitPrebuiltCallInvitationService
+///   /// when app's user is logged in or re-logged in
+///   /// We recommend calling this method as soon as the user logs in to your app.
+///   ZegoUIKitPrebuiltCallInvitationService().init(
+///     appID: yourAppID /*input your AppID*/,
+///     appSign: yourAppSign /*input your AppSign*/,
+///     userID: currentUser.id,
+///     userName: currentUser.name,
+///     plugins: [ZegoUIKitSignalingPlugin()],
+///   );
+/// }
+///
+/// /// on App's user logout
+/// void onUserLogout() {
+///   /// 1.2.2. de-initialization ZegoUIKitPrebuiltCallInvitationService
+///   /// when app's user is logged out
+///   ZegoUIKitPrebuiltCallInvitationService().uninit();
+/// }
+/// ```
 class ZegoUIKitPrebuiltCallInvitationService
     with
         ZegoPrebuiltCallKitService,
@@ -37,6 +120,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   ZegoCallInvitationInnerText get innerText => _data.innerText;
 
+  /// Invitation-related event notifications and callbacks.
   ZegoUIKitPrebuiltCallInvitationEvents? get events => _data.events;
 
   ZegoRingtoneConfig get ringtoneConfig => _data.ringtoneConfig;
@@ -86,7 +170,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.11; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.15; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -111,6 +195,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       _pageManager.didChangeAppLifecycleState(
         state != AppLifecycleState.resumed.toString(),
       );
+      return null;
     });
 
     _callKitCallID = await getCurrentCallKitCallID();
@@ -456,7 +541,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     _pageManager.hasCallkitIncomingCauseAppInBackground = false;
 
     ZegoLoggerService.logInfo(
-      'refuse invitation(${_pageManager.invitationData.toString()}) by callkit',
+      'refuse invitation(${_pageManager.invitationData}) by callkit',
       tag: 'call',
       subTag: 'call invitation service',
     );

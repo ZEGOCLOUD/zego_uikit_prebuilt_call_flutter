@@ -1,3 +1,15 @@
+## 3.3.15
+- Update dependencies
+
+## 3.3.14
+- Update comments
+
+## 3.3.13
+- Update dependencies
+
+## 3.3.12
+- deprecate flutter_screenutil_zego package
+
 ## 3.3.11
 - Fixing the issue of inability to open notification permissions on Android OS version 13+.
 

@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machi
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_view.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
+/// @nodoc
 class ZegoCallingPage extends StatefulWidget {
   final ZegoInvitationPageManager pageManager;
   final ZegoCallInvitationConfig callInvitationConfig;
@@ -37,6 +38,7 @@ class ZegoCallingPage extends StatefulWidget {
   ZegoCallingPageState createState() => ZegoCallingPageState();
 }
 
+/// @nodoc
 class ZegoCallingPageState extends State<ZegoCallingPage> {
   CallingState currentState = CallingState.kIdle;
 

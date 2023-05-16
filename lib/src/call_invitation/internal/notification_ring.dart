@@ -8,6 +8,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Flutter imports:
 
+/// @nodoc
 class ZegoRingtone {
   bool isRingTimerRunning = false;
   var audioPlayer = AudioPlayer();

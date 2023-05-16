@@ -4,6 +4,7 @@ import 'dart:convert';
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
+/// @nodoc
 class InvitationInternalData {
   String callID = '';
   List<ZegoUIKitUser> invitees = [];

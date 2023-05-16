@@ -5,9 +5,10 @@ import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// Project imports:
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 
+/// @nodoc
 class ZegoUIKitPrebuiltCallData {
   const ZegoUIKitPrebuiltCallData({
     required this.appID,

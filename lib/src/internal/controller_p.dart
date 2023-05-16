@@ -1,9 +1,15 @@
 part of 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 
+/// @nodoc
 mixin ZegoUIKitPrebuiltCallControllerPrivate {
+  /// Screen sharing related interfaces.
   final screenSharingViewController = ZegoScreenSharingViewController();
+
   ZegoUIKitPrebuiltCallConfig? _prebuiltConfig;
 
+  /// Whether the call hang-up operation is in progress
+  /// such as clicking the close button in the upper right corner or calling the `hangUp` function of the controller.
+  /// If it is not handled completely, it is considered as in progress.
   final ValueNotifier<bool> isHangUpRequestingNotifier =
       ValueNotifier<bool>(false);
 
@@ -16,6 +22,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
   ZegoCallInvitationInnerText? get _innerText =>
       _callInvitationConfig?.innerText;
 
+  /// ZegoUIKitPrebuiltCall的配置
   ZegoUIKitPrebuiltCallConfig? get prebuiltConfig => _prebuiltConfig;
 
   Future<bool> _sendInvitation({
@@ -50,6 +57,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
             customData,
           ).toJson(),
           zegoNotificationConfig: ZegoNotificationConfig(
+            notifyWhenAppIsInTheBackgroundOrQuit: true,
             resourceID: resourceID ?? '',
             title: notificationTitle ??
                 (isVideoCall
@@ -94,6 +102,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     });
   }
 
+  /// Waits until the specified condition is met.
   Future<int> _waitUntil(
     bool Function() test, {
     final int maxIterations = 100,
@@ -112,9 +121,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     return iterations;
   }
 
-  /// DO NOT CALL
-  /// Call Inside By Prebuilt
-  /// prebuilt assign value to internal variables
+  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void initByPrebuilt({required ZegoUIKitPrebuiltCallConfig prebuiltConfig}) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',
@@ -125,12 +132,10 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     _prebuiltConfig = prebuiltConfig;
   }
 
-  /// DO NOT CALL
-  /// Call Inside By Prebuilt
-  /// prebuilt assign value to internal variables
+  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void uninitByPrebuilt() {
     ZegoLoggerService.logInfo(
-      'uninit by prebuilt',
+      'un-init by prebuilt',
       tag: 'call',
       subTag: 'controller_p',
     );

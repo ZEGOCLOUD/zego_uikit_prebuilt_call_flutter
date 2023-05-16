@@ -1,14 +1,14 @@
 // Dart imports:
-import 'dart:async';
 import 'dart:io' show Platform;
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+/// @nodoc
 class ZegoNotificationManager {
   final ZegoCallInvitationConfig callInvitationConfig;
   ZegoUIKitPrebuiltCallInvitationEvents? events;
@@ -37,7 +37,7 @@ class ZegoNotificationManager {
       subTag: 'notification manager',
     );
 
-    String? soundSource;
+    // String? soundSource;
 
     if (Platform.isAndroid &&
         (callInvitationConfig.androidNotificationConfig?.sound?.isNotEmpty ??
@@ -49,7 +49,7 @@ class ZegoNotificationManager {
         soundFileName = soundFileName.substring(0, postfixIndex);
       }
 
-      soundSource = 'resource://raw/$soundFileName';
+      // soundSource = 'resource://raw/$soundFileName';
 
       ZegoLoggerService.logInfo(
         "sound file, config name:${callInvitationConfig.androidNotificationConfig?.sound ?? ""}, file name:$soundFileName",

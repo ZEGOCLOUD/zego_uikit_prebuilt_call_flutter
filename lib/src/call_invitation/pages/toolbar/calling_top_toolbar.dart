@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 
+/// @nodoc
 class ZegoCallingTopToolBarButton extends StatelessWidget {
   final String iconURL;
   final VoidCallback onTap;
@@ -28,6 +28,7 @@ class ZegoCallingTopToolBarButton extends StatelessWidget {
   }
 }
 
+/// @nodoc
 class ZegoInviterCallingVideoTopToolBar extends StatelessWidget {
   const ZegoInviterCallingVideoTopToolBar({Key? key}) : super(key: key);
 

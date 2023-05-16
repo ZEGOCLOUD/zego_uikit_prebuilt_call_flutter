@@ -8,10 +8,15 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 
+/// @nodoc
 mixin ZegoPrebuiltCallKitService {
+  ///
   bool _callkitServiceInited = false;
+
+  /// callkit event subscriptions
   final List<StreamSubscription<dynamic>> callkitServiceSubscriptions = [];
 
+  /// init callkit service
   void initCallkitService() {
     if (_callkitServiceInited) {
       ZegoLoggerService.logInfo(
@@ -81,6 +86,7 @@ mixin ZegoPrebuiltCallKitService {
     );
   }
 
+  /// un-init callkit service
   void uninitCallkitService() {
     if (!_callkitServiceInited) {
       ZegoLoggerService.logInfo(

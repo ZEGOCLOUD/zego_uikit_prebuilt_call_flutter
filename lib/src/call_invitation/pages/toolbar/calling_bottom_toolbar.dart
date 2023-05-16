@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -11,6 +10,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invit
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
+/// @nodoc
 class ZegoInviterCallingBottomToolBar extends StatelessWidget {
   final ZegoInvitationPageManager pageManager;
   final ZegoCallInvitationConfig callInvitationConfig;
@@ -50,6 +50,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
   }
 }
 
+/// @nodoc
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoInvitationPageManager pageManager;
   final ZegoCallInvitationConfig callInvitationConfig;
@@ -75,6 +76,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   }
 }
 
+/// @nodoc
 class ZegoInviteeCallingBottomToolBarState
     extends State<ZegoInviteeCallingBottomToolBar> {
   @override

@@ -3,14 +3,20 @@ import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
+
+// Package imports:
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+/// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
 typedef ZegoMiniOverlayPage = ZegoUIKitPrebuiltCallMiniOverlayPage;
 
+
+/// @nodoc
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
     Key? key,
@@ -49,6 +55,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
       ZegoUIKitPrebuiltCallMiniOverlayPageState();
 }
 
+/// @nodoc
 class ZegoUIKitPrebuiltCallMiniOverlayPageState
     extends State<ZegoUIKitPrebuiltCallMiniOverlayPage> {
   late Size itemSize;

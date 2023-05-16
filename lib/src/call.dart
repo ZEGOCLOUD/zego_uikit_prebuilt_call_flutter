@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
@@ -19,6 +18,13 @@ import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 
+/// Call Widget.
+/// You can embed this widget into any page of your project to integrate the functionality of a call.
+/// You can refer to our [documentation](https://docs.zegocloud.com/article/14826),
+/// or our [sample code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter).
+///
+/// If you need the function of `call invitation`, please use [ZegoUIKitPrebuiltCallInvitationService] together.
+/// And refer to the [sample code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/tree/master/call_with_offline_invitation).
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     Key? key,
@@ -33,34 +39,46 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     @Deprecated('Since 3.3.1') this.appDesignSize,
   }) : super(key: key);
 
-  /// you need to fill in the appID you obtained from console.zegocloud.com
+  /// You can create a project and obtain an appID from the [ZEGOCLOUD Admin Console](https://console.zegocloud.com).
   final int appID;
 
-  /// You can customize the callID arbitrarily,
-  /// just need to know: users who use the same callID can talk with each other.
-  final String callID;
-
-  /// for Android/iOS
-  /// you need to fill in the appID you obtained from console.zegocloud.com
+  /// You can create a project and obtain an appSign from the [ZEGOCLOUD Admin Console](https://console.zegocloud.com).
   final String appSign;
 
-  /// local user info
+  /// The ID of the currently logged-in user.
+  /// It can be any valid string.
+  /// Typically, you would use the ID from your own user system, such as Firebase.
   final String userID;
+
+  /// The name of the currently logged-in user.
+  /// It can be any valid string.
+  /// Typically, you would use the name from your own user system, such as Firebase.
   final String userName;
 
+  /// 通话的id。
+  /// 这个id是这次通话的唯一标识所以你需要确保唯一性。可以是任意有效字符串。
+  /// 填写了同一个`callID`的用户都会登录到同一个房间进行通话。
+  final String callID;
+
+  /// Initialize the configuration for the call.
   final ZegoUIKitPrebuiltCallConfig config;
 
-  final VoidCallback? onDispose;
-
+  /// You can invoke the methods provided by [ZegoUIKitPrebuiltCall] through the [controller].
   final ZegoUIKitPrebuiltCallController? controller;
 
+  /// Callback when the page is destroyed.
+  final VoidCallback? onDispose;
+
+  /// @nodoc
   @Deprecated('Since 3.3.1')
   final Size? appDesignSize;
 
+  /// @nodoc
   @override
   State<ZegoUIKitPrebuiltCall> createState() => _ZegoUIKitPrebuiltCallState();
 }
 
+/// @nodoc
 class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     with SingleTickerProviderStateMixin {
   var barVisibilityNotifier = ValueNotifier<bool>(true);
@@ -109,7 +127,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.3.11; $version',
+        'version: zego_uikit_prebuilt_call:3.3.15; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );

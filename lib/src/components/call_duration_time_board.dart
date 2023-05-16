@@ -1,5 +1,7 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
 
+/// @nodoc
 class CallDurationTimeBoard extends StatefulWidget {
   final ValueNotifier<Duration> durationNotifier;
   final double fontSize;
@@ -14,6 +16,7 @@ class CallDurationTimeBoard extends StatefulWidget {
   State<StatefulWidget> createState() => CallDurationTimeBoardState();
 }
 
+/// @nodoc
 class CallDurationTimeBoardState extends State<CallDurationTimeBoard> {
   @override
   Widget build(BuildContext context) {

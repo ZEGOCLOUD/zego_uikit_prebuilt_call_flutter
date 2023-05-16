@@ -5,6 +5,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
+/// @nodoc
 class ZegoCallInvitationInternalInstance {
   factory ZegoCallInvitationInternalInstance() => instance;
 

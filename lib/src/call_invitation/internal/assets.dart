@@ -1,5 +1,6 @@
 export '../../components/assets.dart';
 
+/// @nodoc
 class InvitationStyleIconUrls {
   static const String inviteVoice = 'assets/invitation/icons/invite_voice.png';
   static const String inviteVideo = 'assets/invitation/icons/invite_video.png';

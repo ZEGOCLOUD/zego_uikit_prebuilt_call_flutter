@@ -4,10 +4,15 @@
 import 'package:flutter/material.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 
+/// @nodoc
 typedef ContextQuery = BuildContext Function();
 
+/// @nodoc
 class ZegoCallInvitationConfig {
   int appID;
   String appSign;

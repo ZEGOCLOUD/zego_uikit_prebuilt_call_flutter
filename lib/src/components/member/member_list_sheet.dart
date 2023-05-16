@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_screenutil_zego/flutter_screenutil_zego.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
+/// @nodoc
 class ZegoMemberListSheet extends StatefulWidget {
   const ZegoMemberListSheet({
     Key? key,
@@ -26,6 +26,7 @@ class ZegoMemberListSheet extends StatefulWidget {
   State<ZegoMemberListSheet> createState() => _ZegoMemberListSheetState();
 }
 
+/// @nodoc
 class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
   @override
   void initState() {

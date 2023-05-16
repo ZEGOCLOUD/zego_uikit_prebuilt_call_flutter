@@ -8,12 +8,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
+/// @nodoc
 enum PluginNetworkState {
   unknown,
   offline,
   online,
 }
 
+/// @nodoc
 class ZegoPrebuiltPlugins {
   ZegoPrebuiltPlugins(
       {required this.appID,
@@ -118,7 +120,7 @@ class ZegoPrebuiltPlugins {
     ZegoLoggerService.logInfo(
       'on user info update, '
       'target user($userID, $userName), '
-      'local user:(${localUser.toString()}) '
+      'local user:($localUser) '
       'initialized:$initialized, '
       'user state:${pluginUserStateNotifier.value}',
       tag: 'live streaming',

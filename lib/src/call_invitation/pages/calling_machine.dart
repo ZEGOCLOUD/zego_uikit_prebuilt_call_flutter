@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_
 
 // Project imports:
 
+/// @nodoc
 enum CallingState {
   kIdle,
   //  voice call request
@@ -23,8 +24,10 @@ enum CallingState {
   kOnlineAudioVideo,
 }
 
+/// @nodoc
 typedef CallingMachineStateChanged = void Function(CallingState);
 
+/// @nodoc
 /// State machine in the call
 class ZegoCallingMachine {
   final ZegoInvitationPageManager pageManager;

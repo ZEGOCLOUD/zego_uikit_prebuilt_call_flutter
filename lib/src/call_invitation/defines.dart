@@ -4,9 +4,11 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 
+/// @nodoc
 typedef PrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
     ZegoCallInvitationData);
 
+/// @nodoc
 class ZegoRingtoneConfig {
   final String? packageName;
   final String? incomingCallPath;
@@ -19,14 +21,17 @@ class ZegoRingtoneConfig {
   });
 }
 
+/// @nodoc
 enum ZegoCallType {
   voiceCall,
   videoCall,
 }
 
+/// @nodoc
 @Deprecated('Use [ZegoCallType]')
 typedef ZegoInvitationType = ZegoCallType;
 
+/// @nodoc
 extension ZegoCallTypeExtension on ZegoCallType {
   static const valueMap = {
     ZegoCallType.voiceCall: 0,
@@ -41,6 +46,7 @@ extension ZegoCallTypeExtension on ZegoCallType {
   };
 }
 
+/// @nodoc
 class ZegoCallInvitationData {
   String callID = '';
   String invitationID = ''; //zim call id
@@ -62,6 +68,7 @@ class ZegoCallInvitationData {
   }
 }
 
+/// @nodoc
 class ZegoCallUser {
   String id;
   String name;
@@ -74,7 +81,9 @@ class ZegoCallUser {
   }
 }
 
+/// @nodoc
 class ZegoIOSNotificationConfig {
+  /// is iOS sandbox or not
   bool isIOSSandboxEnvironment;
   String systemCallingIconName;
 
@@ -90,6 +99,7 @@ class ZegoIOSNotificationConfig {
   }
 }
 
+/// @nodoc
 class ZegoAndroidNotificationConfig {
   /// specify the channel id of notification, which is same in 'Zego Console'
   String channelID;

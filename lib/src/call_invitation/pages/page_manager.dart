@@ -8,16 +8,21 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
 
+/// @nodoc
 class ZegoInvitationPageManager {
   ZegoCallInvitationConfig callInvitationConfig;
   ZegoNotificationManager notificationManager;
@@ -332,7 +337,7 @@ class ZegoInvitationPageManager {
     final invitationID = params['invitation_id'] as String? ?? '';
 
     ZegoLoggerService.logInfo(
-      'on invitation received, data:${inviter.toString()}, $type $data',
+      'on invitation received, inviter:$inviter, type:$type, data:$data',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -479,7 +484,7 @@ class ZegoInvitationPageManager {
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
-      'on invitation accepted, data:${invitee.toString()}, $data',
+      'on invitation accepted, invitee:$invitee, data:$data',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -515,7 +520,7 @@ class ZegoInvitationPageManager {
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
-      'on invitation timeout, data:${inviter.toString()}, $data',
+      'on invitation timeout, inviter:$inviter, data:$data',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -615,7 +620,7 @@ class ZegoInvitationPageManager {
 
     ZegoLoggerService.logInfo(
       'on invitation refused, data: $data, '
-      'invitee:${invitee.toString()}, '
+      'invitee:$invitee, '
       'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}',
       tag: 'call',
       subTag: 'page manager',
@@ -641,7 +646,7 @@ class ZegoInvitationPageManager {
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
-      'on invitation canceled, data:${inviter.toString()}, $data',
+      'on invitation canceled, inviter:$inviter, data:$data',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -780,7 +785,7 @@ class ZegoInvitationPageManager {
       'didChangeAppLifecycleState, '
       'is app in background: previous:$_appInBackground, current: $isAppInBackground, '
       'call machine page state:${callingMachine.getPageState()}, '
-      'invitation data:${_invitationData.toString()}',
+      'invitation data:$_invitationData',
       tag: 'call',
       subTag: 'page manager',
     );

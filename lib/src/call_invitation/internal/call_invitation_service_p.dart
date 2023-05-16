@@ -1,5 +1,6 @@
 part of '../call_invitation_service.dart';
 
+/// @nodoc
 mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
   bool _isInit = false;
   ContextQuery? _contextQuery;
@@ -67,6 +68,7 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
   }
 }
 
+/// @nodoc
 class ZegoUIKitPrebuiltCallInvitationServiceData {
   ZegoUIKitPrebuiltCallInvitationServiceData({
     required this.appID,
@@ -117,6 +119,7 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
 
   /// iOS only
   final bool? isIOSSandboxEnvironment;
+
   // final ZegoIOSNotificationConfig? iOSNotificationConfig;
 
   /// only for Android

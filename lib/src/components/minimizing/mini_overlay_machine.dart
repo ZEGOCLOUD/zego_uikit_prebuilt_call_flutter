@@ -1,25 +1,32 @@
-// Package imports:
+// Dart imports:
 import 'dart:async';
 
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
+
+// Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
 
+/// @nodoc
 enum PrebuiltCallMiniOverlayPageState {
   idle,
   calling,
   minimizing,
 }
 
+/// @nodoc
 typedef PrebuiltCallMiniOverlayMachineStateChanged = void Function(
     PrebuiltCallMiniOverlayPageState);
 
+/// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayMachine
 typedef ZegoMiniOverlayMachine = ZegoUIKitPrebuiltCallMiniOverlayMachine;
 
+/// @nodoc
 class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   factory ZegoUIKitPrebuiltCallMiniOverlayMachine() => _instance;
 
@@ -113,7 +120,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
         break;
       case PrebuiltCallMiniOverlayPageState.minimizing:
         ZegoLoggerService.logInfo(
-          'data: ${_prebuiltCallData?.toString()}',
+          'data: $_prebuiltCallData',
           tag: 'call',
           subTag: 'overlay machine',
         );
