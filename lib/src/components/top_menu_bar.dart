@@ -12,9 +12,9 @@ import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
 class ZegoTopMenuBar extends StatefulWidget {
@@ -29,14 +29,14 @@ class ZegoTopMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
-  final ZegoUIKitPrebuiltCallData prebuiltCallData;
+  final ZegoUIKitPrebuiltCallData prebuiltData;
 
   const ZegoTopMenuBar({
     Key? key,
     required this.config,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
-    required this.prebuiltCallData,
+    required this.prebuiltData,
     required this.isHangUpRequestingNotifier,
     this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
@@ -291,8 +291,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           onPressed: (isScreenSharing) {},
         );
       case ZegoMenuBarButtonName.minimizingButton:
-        return ZegoUIKitPrebuiltCallMinimizingButton(
-          prebuiltCallData: widget.prebuiltCallData,
+        return ZegoMinimizingButton(
+          prebuiltData: widget.prebuiltData,
         );
     }
   }

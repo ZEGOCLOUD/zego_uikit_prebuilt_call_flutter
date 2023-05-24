@@ -6,14 +6,14 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
-class ZegoUIKitPrebuiltCallMinimizingButton extends StatefulWidget {
-  const ZegoUIKitPrebuiltCallMinimizingButton({
+class ZegoMinimizingButton extends StatefulWidget {
+  const ZegoMinimizingButton({
     Key? key,
-    required this.prebuiltCallData,
+    required this.prebuiltData,
     this.afterClicked,
     this.icon,
     this.iconSize,
@@ -31,16 +31,16 @@ class ZegoUIKitPrebuiltCallMinimizingButton extends StatefulWidget {
   /// the size of button
   final Size? buttonSize;
 
-  final ZegoUIKitPrebuiltCallData prebuiltCallData;
+  final ZegoUIKitPrebuiltCallData prebuiltData;
 
   @override
-  State<ZegoUIKitPrebuiltCallMinimizingButton> createState() =>
-      _ZegoUIKitPrebuiltCallMinimizingButtonState();
+  State<ZegoMinimizingButton> createState() =>
+      _ZegoMinimizingButtonState();
 }
 
 /// @nodoc
-class _ZegoUIKitPrebuiltCallMinimizingButtonState
-    extends State<ZegoUIKitPrebuiltCallMinimizingButton> {
+class _ZegoMinimizingButtonState
+    extends State<ZegoMinimizingButton> {
   @override
   void initState() {
     super.initState();
@@ -66,7 +66,7 @@ class _ZegoUIKitPrebuiltCallMinimizingButtonState
 
         ZegoUIKitPrebuiltCallMiniOverlayMachine().changeState(
           PrebuiltCallMiniOverlayPageState.minimizing,
-          prebuiltCallData: widget.prebuiltCallData,
+          prebuiltData: widget.prebuiltData,
         );
 
         Navigator.of(context).pop();

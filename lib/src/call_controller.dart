@@ -13,7 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.da
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 
 part 'package:zego_uikit_prebuilt_call/src/internal/controller_p.dart';
 

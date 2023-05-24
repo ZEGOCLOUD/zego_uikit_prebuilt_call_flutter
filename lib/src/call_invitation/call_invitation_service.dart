@@ -170,7 +170,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.15; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.16; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );

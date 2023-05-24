@@ -9,7 +9,7 @@ import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
 enum PrebuiltCallMiniOverlayPageState {
@@ -30,7 +30,7 @@ typedef ZegoMiniOverlayMachine = ZegoUIKitPrebuiltCallMiniOverlayMachine;
 class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   factory ZegoUIKitPrebuiltCallMiniOverlayMachine() => _instance;
 
-  ZegoUIKitPrebuiltCallData? get prebuiltCallData => _prebuiltCallData;
+  ZegoUIKitPrebuiltCallData? get prebuiltData => _prebuiltCallData;
 
   sm.Machine<PrebuiltCallMiniOverlayPageState> get machine => _machine;
 
@@ -99,7 +99,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
 
   void changeState(
     PrebuiltCallMiniOverlayPageState state, {
-    ZegoUIKitPrebuiltCallData? prebuiltCallData,
+    ZegoUIKitPrebuiltCallData? prebuiltData,
   }) {
     ZegoLoggerService.logInfo(
       'change state outside to $state',
@@ -124,8 +124,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
           tag: 'call',
           subTag: 'overlay machine',
         );
-        assert(null != prebuiltCallData);
-        _prebuiltCallData = prebuiltCallData;
+        assert(null != prebuiltData);
+        _prebuiltCallData = prebuiltData;
 
         _stateMinimizing.enter();
 
@@ -135,16 +135,16 @@ class ZegoUIKitPrebuiltCallMiniOverlayMachine {
   }
 
   void startDurationTimer() {
-    if (!(prebuiltCallData?.config.durationConfig.isVisible ?? true)) {
+    if (!(prebuiltData?.config.durationConfig.isVisible ?? true)) {
       return;
     }
 
-    _durationStartTime = prebuiltCallData?.durationStartTime ?? DateTime.now();
+    _durationStartTime = prebuiltData?.durationStartTime ?? DateTime.now();
     _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
 
     _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
-      prebuiltCallData?.config.durationConfig.onDurationUpdate
+      prebuiltData?.config.durationConfig.onDurationUpdate
           ?.call(_durationNotifier.value);
     });
   }

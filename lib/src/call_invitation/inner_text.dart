@@ -3,43 +3,113 @@
 const String param_1 = '%0';
 
 /// Control the text on the UI.
-///
 /// Modify the values of the corresponding properties to modify the text on the UI.
 /// You can also change it to other languages.
-///
 /// This class is used for the ZegoUIKitPrebuiltLiveAudioRoomConfig.innerText property.
-///
 /// **Note that the placeholder %0 in the text will be replaced with the corresponding username.**
 class ZegoCallInvitationInnerText {
+  /// The title of the incoming video call dialog,
+  /// The **default value** is **inviter\'s name**.
   String incomingVideoCallDialogTitle;
+
+  /// The message of the incoming video call dialog,
+  /// The **default value** is *"Incoming video call..."*.
   String incomingVideoCallDialogMessage;
+
+  /// The title of the incoming voice call dialog,
+  /// The **default value** is **inviter\'s name**.
   String incomingVoiceCallDialogTitle;
+
+  /// The message of the incoming voice call dialog,
+  /// The **default value** is *"Incoming voice call..."*.
   String incomingVoiceCallDialogMessage;
+
+  /// The title of the incoming video call page,
+  /// The **default value** is **inviter\'s name**.
   String incomingVideoCallPageTitle;
+
+  /// The message of the incoming video call page,
+  /// The **default value** is *"Incoming video call..."*.
   String incomingVideoCallPageMessage;
+
+  /// The title of the incoming voice call page,
+  /// The **default value** is **inviter\'s name**.
   String incomingVoiceCallPageTitle;
+
+  /// The message of the incoming voice call page,
+  /// The **default value** is *"Incoming voice call..."*.
   String incomingVoiceCallPageMessage;
 
+  /// The title of the outgoing video call page,
+  /// The **default value** is **first invitee's name**.
   String outgoingVideoCallPageTitle;
+
+  /// The message of the outgoing video call page,
+  /// The **default value** is *"Calling..."*
   String outgoingVideoCallPageMessage;
+
+  /// The title of the outgoing voice call page,
+  /// The **default value** is **first invitee's name**.
   String outgoingVoiceCallPageTitle;
+
+  /// The message of the outgoing voice call page,
+  /// The **default value** is *"Calling..."*
   String outgoingVoiceCallPageMessage;
 
+  /// The title of the incoming group video call dialog,
+  /// The **default value** is **inviter\'s name**.
   String incomingGroupVideoCallDialogTitle;
+
+  /// The message of the incoming group video call dialog,
+  /// The **default value** is *"Incoming group video call..."*.
   String incomingGroupVideoCallDialogMessage;
+
+  /// The title of the incoming group voice call dialog,
+  /// The **default value** is **inviter\'s name**.
   String incomingGroupVoiceCallDialogTitle;
+
+  /// The message of the incoming group voice call dialog,
+  /// The **default value** is *"Incoming group voice call..."*.
   String incomingGroupVoiceCallDialogMessage;
+
+  /// The title of the incoming group video call page,
+  /// The **default value** is **inviter\'s name**.
   String incomingGroupVideoCallPageTitle;
+
+  /// The message of the incoming group video call page,
+  /// The **default value** is *"Incoming group video call..."*.
   String incomingGroupVideoCallPageMessage;
+
+  /// The title of the incoming group voice call page,
+  /// The **default value** is **inviter\'s name**.
   String incomingGroupVoiceCallPageTitle;
+
+  /// The message of the incoming group voice call page,
+  /// The **default value** is *"Incoming group voice call..."*.
   String incomingGroupVoiceCallPageMessage;
 
+  /// The title of the outgoing group video call page,
+  /// The **default value** is **first invitee's name**.
   String outgoingGroupVideoCallPageTitle;
+
+  /// The message of the outgoing group video call page,
+  /// The **default value** is *"Calling..."*.
   String outgoingGroupVideoCallPageMessage;
+
+  /// The title of the outgoing group voice call page,
+  /// The **default value** is **first invitee's name**.
   String outgoingGroupVoiceCallPageTitle;
+
+  /// The message of the outgoing group voice call page,
+  /// The **default value** is *"Calling..."*.
   String outgoingGroupVoiceCallPageMessage;
 
+  /// The button on the call bottom bar to decline current incoming call.
+  /// The **default value** is *"Decline"*.
   String incomingCallPageDeclineButton;
+
+  /// The button on the call bottom bar to aceept current incoming call.
+  /// The **default value** is *"Accept"*.
   String incomingCallPageAcceptButton;
 
   ZegoCallInvitationInnerText({
@@ -69,7 +139,8 @@ class ZegoCallInvitationInnerText {
     String? outgoingGroupVideoCallPageMessage,
     String? outgoingGroupVoiceCallPageTitle,
     String? outgoingGroupVoiceCallPageMessage,
-  })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
+  })
+      : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
         incomingVoiceCallDialogTitle = incomingVoiceCallDialogTitle ?? param_1,

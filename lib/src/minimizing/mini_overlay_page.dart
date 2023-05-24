@@ -4,17 +4,14 @@ import 'dart:async';
 // Flutter imports:
 import 'package:flutter/material.dart';
 
-// Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
-
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 /// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
 typedef ZegoMiniOverlayPage = ZegoUIKitPrebuiltCallMiniOverlayPage;
-
 
 /// @nodoc
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
@@ -164,9 +161,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       case PrebuiltCallMiniOverlayPageState.minimizing:
         return GestureDetector(
           onTap: () {
-            final prebuiltCallData =
-                ZegoUIKitPrebuiltCallMiniOverlayMachine().prebuiltCallData;
-            assert(null != prebuiltCallData);
+            final prebuiltData =
+                ZegoUIKitPrebuiltCallMiniOverlayMachine().prebuiltData;
+            assert(null != prebuiltData);
 
             /// re-enter prebuilt call
             ZegoUIKitPrebuiltCallMiniOverlayMachine()
@@ -176,14 +173,14 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               MaterialPageRoute(builder: (context) {
                 return SafeArea(
                   child: ZegoUIKitPrebuiltCall(
-                    appID: prebuiltCallData!.appID,
-                    appSign: prebuiltCallData.appSign,
-                    userID: prebuiltCallData.userID,
-                    userName: prebuiltCallData.userName,
-                    callID: prebuiltCallData.callID,
-                    config: prebuiltCallData.config,
-                    onDispose: prebuiltCallData.onDispose,
-                    controller: prebuiltCallData.controller,
+                    appID: prebuiltData!.appID,
+                    appSign: prebuiltData.appSign,
+                    userID: prebuiltData.userID,
+                    userName: prebuiltData.userName,
+                    callID: prebuiltData.callID,
+                    config: prebuiltData.config,
+                    onDispose: prebuiltData.onDispose,
+                    controller: prebuiltData.controller,
                   ),
                 );
               }),
@@ -213,7 +210,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               avatarConfig: ZegoAvatarConfig(
                 builder: widget.avatarBuilder ??
                     ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                        .prebuiltCallData
+                        .prebuiltData
                         ?.config
                         .avatarBuilder,
                 soundWaveColor: widget.soundWaveColor,
@@ -273,7 +270,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   Widget durationTimeBoard() {
     if (!(ZegoUIKitPrebuiltCallMiniOverlayMachine()
-            .prebuiltCallData
+            .prebuiltData
             ?.config
             .durationConfig
             .isVisible ??
@@ -303,14 +300,14 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     }
 
     final cameraEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
-            .prebuiltCallData
+            .prebuiltData
             ?.config
             .bottomMenuBarConfig
             .buttons
             .contains(ZegoMenuBarButtonName.toggleCameraButton) ??
         true;
     final microphoneEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
-            .prebuiltCallData
+            .prebuiltData
             ?.config
             .bottomMenuBarConfig
             .buttons
@@ -490,7 +487,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       //  remote users is empty
 
       ZegoUIKitPrebuiltCallMiniOverlayMachine()
-          .prebuiltCallData
+          .prebuiltData
           ?.config
           .onOnlySelfInRoom
           ?.call(context);

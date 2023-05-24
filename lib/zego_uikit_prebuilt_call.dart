@@ -11,5 +11,5 @@ export 'src/call_invitation/components/components.dart';
 export 'src/call_invitation/defines.dart';
 export 'src/call_invitation/events.dart';
 export 'src/call_invitation/inner_text.dart';
-export 'src/components/minimizing/mini_overlay_machine.dart';
-export 'src/components/minimizing/mini_overlay_page.dart';
+export 'src/minimizing/mini_overlay_machine.dart';
+export 'src/minimizing/mini_overlay_page.dart';

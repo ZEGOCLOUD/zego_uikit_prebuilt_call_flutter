@@ -6,7 +6,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 
 /// Configuration for initializing the Call
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].

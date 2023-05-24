@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/call_duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/minimizing/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -55,9 +55,10 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   /// Typically, you would use the name from your own user system, such as Firebase.
   final String userName;
 
-  /// 通话的id。
-  /// 这个id是这次通话的唯一标识所以你需要确保唯一性。可以是任意有效字符串。
-  /// 填写了同一个`callID`的用户都会登录到同一个房间进行通话。
+  /// The ID of the call.
+  /// This ID is a unique identifier for the current call, so you need to ensure its uniqueness.
+  /// It can be any valid string.
+  /// Users who provide the same callID will be logged into the same room for the call.
   final String callID;
 
   /// Initialize the configuration for the call.
@@ -86,7 +87,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   StreamSubscription<dynamic>? userListStreamSubscription;
 
-  late ZegoUIKitPrebuiltCallData prebuiltCallData;
+  late ZegoUIKitPrebuiltCallData prebuiltData;
 
   Timer? durationTimer;
   DateTime? durationStartTime;
@@ -112,7 +113,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
     widget.controller?.initByPrebuilt(prebuiltConfig: widget.config);
 
-    prebuiltCallData = ZegoUIKitPrebuiltCallData(
+    prebuiltData = ZegoUIKitPrebuiltCallData(
       appID: widget.appID,
       appSign: widget.appSign,
       callID: widget.callID,
@@ -127,7 +128,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.3.15; $version',
+        'version: zego_uikit_prebuilt_call:3.3.16; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -422,7 +423,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
-        prebuiltCallData: prebuiltCallData,
+        prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
         height: 88.r,
@@ -445,7 +446,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
-        prebuiltCallData: prebuiltCallData,
+        prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
         height: isLightStyle ? null : 208.r,
