@@ -170,7 +170,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.16; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.17; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -192,9 +192,9 @@ class ZegoUIKitPrebuiltCallInvitationService
         return;
       }
 
-      _pageManager.didChangeAppLifecycleState(
-        state != AppLifecycleState.resumed.toString(),
-      );
+      final isAppInBackground = state != AppLifecycleState.resumed.toString();
+      _pageManager.didChangeAppLifecycleState(isAppInBackground);
+      _plugins.didChangeAppLifecycleState(isAppInBackground);
       return null;
     });
 

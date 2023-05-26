@@ -108,7 +108,7 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is *"Decline"*.
   String incomingCallPageDeclineButton;
 
-  /// The button on the call bottom bar to aceept current incoming call.
+  /// The button on the call bottom bar to accept current incoming call.
   /// The **default value** is *"Accept"*.
   String incomingCallPageAcceptButton;
 

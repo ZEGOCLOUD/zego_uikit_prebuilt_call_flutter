@@ -1,20 +1,24 @@
+## 3.3.17
+- fix the issue that the user does not log in caused by the app staying in the background for a long time
+- fix some user login status issues when used `zego_uikit_prebuilt_call` with `zego_zimkit`
+
 ## 3.3.16
-- Update comments
+- update comments
 
 ## 3.3.15
-- Update dependencies
+- update dependencies
 
 ## 3.3.14
-- Update comments
+- update comments
 
 ## 3.3.13
-- Update dependencies
+- update dependencies
 
 ## 3.3.12
 - deprecate flutter_screenutil_zego package
 
 ## 3.3.11
-- Fixing the issue of inability to open notification permissions on Android OS version 13+.
+- fix the issue of inability to open notification permissions on Android OS version 13+.
 
 ## 3.3.10
 - fix the issue where the video button is displayed incorrectly when minimizing the app during a voice call.

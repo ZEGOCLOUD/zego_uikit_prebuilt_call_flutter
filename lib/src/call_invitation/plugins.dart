@@ -59,6 +59,9 @@ class ZegoPrebuiltPlugins {
       });
     }
 
+    pluginUserStateNotifier.value =
+        ZegoUIKit().getSignalingPlugin().getConnectionState();
+
     subscriptions
       ..add(ZegoUIKit()
           .getSignalingPlugin()
@@ -174,6 +177,24 @@ class ZegoPrebuiltPlugins {
             ZegoSignalingPluginConnectionState.connected) {
       tryReLogging = false;
       onPluginReLogin?.call();
+    }
+  }
+
+  void didChangeAppLifecycleState(bool isAppInBackground) {
+    ZegoLoggerService.logInfo(
+      'didChangeAppLifecycleState, isAppInBackground:$isAppInBackground',
+      tag: 'call',
+      subTag: 'plugin',
+    );
+
+    if (!isAppInBackground) {
+      ZegoLoggerService.logInfo(
+        'app active from background, try re-login',
+        tag: 'call',
+        subTag: 'plugin',
+      );
+
+      tryReLogin();
     }
   }
 
