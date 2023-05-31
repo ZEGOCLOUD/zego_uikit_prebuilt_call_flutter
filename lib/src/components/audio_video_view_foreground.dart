@@ -72,7 +72,7 @@ class ZegoAudioVideoForeground extends StatelessWidget {
               user?.name ?? '',
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 24.0.r,
+                fontSize: 24.0.zR,
                 color: const Color(0xffffffff),
                 decoration: TextDecoration.none,
               ),

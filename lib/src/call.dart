@@ -128,7 +128,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.3.17; $version',
+        'version: zego_uikit_prebuilt_call:3.3.21; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -185,7 +185,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         onWillPop: () async {
           return await widget.config.onHangUpConfirmation!(context) ?? false;
         },
-        child: ScreenUtilInit(
+        child: ZegoScreenUtilInit(
           designSize: const Size(750, 1334),
           minTextAdapt: true,
           splitScreenMode: true,
@@ -354,9 +354,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         final layout = (widget.config.layout
             as ZegoLayoutPictureInPictureConfig)
           ..smallViewPosition = ZegoViewPosition.topRight
-          ..smallViewSize = Size(190.0.w, 338.0.h)
+          ..smallViewSize = Size(190.0.zW, 338.0.zH)
           ..smallViewMargin =
-              EdgeInsets.only(left: 20.r, top: 50.r, right: 20.r, bottom: 30.r);
+              EdgeInsets.only(left: 20.zR, top: 50.zR, right: 20.zR, bottom: 30.zR);
         widget.config.layout = layout;
       }
 
@@ -419,14 +419,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       top: 0,
       child: ZegoTopMenuBar(
-        buttonSize: Size(96.r, 96.r),
+        buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
-        height: 88.r,
+        height: 88.zR,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
       ),
@@ -442,17 +442,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       bottom: isLightStyle ? 10 : 0,
       child: ZegoBottomMenuBar(
-        buttonSize: Size(96.r, 96.r),
+        buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
-        height: isLightStyle ? null : 208.r,
+        height: isLightStyle ? null : 208.zR,
         backgroundColor:
             isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
-        borderRadius: isLightStyle ? null : 32.r,
+        borderRadius: isLightStyle ? null : 32.zR,
       ),
     );
   }
@@ -468,7 +468,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       child: CallDurationTimeBoard(
         durationNotifier: durationNotifier,
-        fontSize: 25.r,
+        fontSize: 25.zR,
       ),
     );
   }
@@ -486,7 +486,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         CupertinoDialogAction(
           child: Text(
             widget.config.hangUpConfirmDialogInfo!.cancelButtonName,
-            style: TextStyle(fontSize: 26.r, color: const Color(0xff0055FF)),
+            style: TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
           ),
           onPressed: () {
             //  pop this dialog
@@ -496,7 +496,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         CupertinoDialogAction(
           child: Text(
             widget.config.hangUpConfirmDialogInfo!.confirmButtonName,
-            style: TextStyle(fontSize: 26.r, color: Colors.white),
+            style: TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
             //  pop this dialog

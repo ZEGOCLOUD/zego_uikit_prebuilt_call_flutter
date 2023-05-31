@@ -43,10 +43,10 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
     return LayoutBuilder(builder: (context, constraints) {
       return Column(
         children: [
-          header(98.h),
-          Container(height: 1.r, color: Colors.white.withOpacity(0.15)),
+          header(98.zH),
+          Container(height: 1.zR, color: Colors.white.withOpacity(0.15)),
           SizedBox(
-            height: constraints.maxHeight - 1.r - 98.h,
+            height: constraints.maxHeight - 1.zR - 98.zH,
             child: ZegoMemberList(
               showCameraState: widget.showCameraState,
               showMicrophoneState: widget.showMicrophoneState,
@@ -69,16 +69,16 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
               Navigator.of(context).pop();
             },
             child: SizedBox(
-              width: 70.r,
-              height: 70.r,
+              width: 70.zR,
+              height: 70.zR,
               child: PrebuiltCallImage.asset(PrebuiltCallIconUrls.back),
             ),
           ),
-          SizedBox(width: 10.r),
+          SizedBox(width: 10.zR),
           Text(
             'Member',
             style: TextStyle(
-              fontSize: 36.0.r,
+              fontSize: 36.0.zR,
               color: const Color(0xffffffff),
               decoration: TextDecoration.none,
             ),

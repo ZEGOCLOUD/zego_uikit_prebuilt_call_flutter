@@ -21,7 +21,7 @@ class ZegoCallingTopToolBarButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 44.w,
+        width: 44.zW,
         child: PrebuiltCallImage.asset(iconURL),
       ),
     );
@@ -40,8 +40,8 @@ class ZegoInviterCallingVideoTopToolBar extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.05),
         ),
-        padding: EdgeInsets.only(left: 36.r, right: 36.r),
-        height: 88.h,
+        padding: EdgeInsets.only(left: 36.zR, right: 36.zR),
+        height: 88.zH,
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,

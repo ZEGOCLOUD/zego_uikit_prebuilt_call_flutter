@@ -65,7 +65,7 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
   dynamic get defaultValue {
     switch (this) {
       case CallKitInnerVariable.duration:
-        return 30000.0; //  30 seconds
+        return 30 * 1000; //  30 seconds
       case CallKitInnerVariable.textAccept:
         return 'Accept';
       case CallKitInnerVariable.textDecline:

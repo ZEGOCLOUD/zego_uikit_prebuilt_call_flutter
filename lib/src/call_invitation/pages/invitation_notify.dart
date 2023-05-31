@@ -47,9 +47,9 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      width: 718.w,
-      height: 160.h,
+      padding: EdgeInsets.symmetric(horizontal: 24.zW),
+      width: 718.zW,
+      height: 160.zH,
       decoration: BoxDecoration(
         color: const Color(0xff333333).withOpacity(0.8),
         borderRadius: BorderRadius.circular(16.0),
@@ -62,22 +62,28 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
             ),
             builder: (context, _, __) {
-              return widget.avatarBuilder?.call(
-                    context,
-                    Size(84.r, 84.r),
-                    widget.invitationData.inviter,
-                    {},
-                  ) ??
-                  circleName(widget.invitationData.inviter?.name ?? '');
+              return Container(
+                width: 84.zR,
+                height: 84.zR,
+                decoration: const BoxDecoration(
+                    color: Color(0xffDBDDE3), shape: BoxShape.circle),
+                child: widget.avatarBuilder?.call(
+                      context,
+                      Size(84.zR, 84.zR),
+                      widget.invitationData.inviter,
+                      {},
+                    ) ??
+                    circleName(widget.invitationData.inviter?.name ?? ''),
+              );
             },
           ),
-          SizedBox(width: 26.w),
+          SizedBox(width: 26.zW),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               userName(),
-              SizedBox(height: 7.h),
+              SizedBox(height: 7.zH),
               subtitle(),
             ],
           ),
@@ -85,7 +91,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
           ...widget.showDeclineButton
               ? [
                   declineButton(),
-                  SizedBox(width: 40.w),
+                  SizedBox(width: 40.zW),
                 ]
               : [],
           acceptButton(),
@@ -95,19 +101,13 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   }
 
   Widget circleName(String name) {
-    return Container(
-      width: 84.r,
-      height: 84.r,
-      decoration:
-          const BoxDecoration(color: Color(0xffDBDDE3), shape: BoxShape.circle),
-      child: Center(
-        child: Text(
-          name.isNotEmpty ? name.characters.first : '',
-          style: TextStyle(
-            fontSize: 60.0.r,
-            color: const Color(0xff222222),
-            decoration: TextDecoration.none,
-          ),
+    return Center(
+      child: Text(
+        name.isNotEmpty ? name.characters.first : '',
+        style: TextStyle(
+          fontSize: 60.0.zR,
+          color: const Color(0xff222222),
+          decoration: TextDecoration.none,
         ),
       ),
     );
@@ -115,7 +115,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
 
   Widget userName() {
     return SizedBox(
-      width: 350.w,
+      width: 350.zW,
       child: Text(
         (ZegoCallType.videoCall == widget.invitationData.type
                 ? ((widget.invitationData.invitees.length > 1
@@ -135,7 +135,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
         textAlign: TextAlign.left,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 36.0.r,
+          fontSize: 36.0.zR,
           fontWeight: FontWeight.w500,
           decoration: TextDecoration.none,
         ),
@@ -145,7 +145,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
 
   Widget subtitle() {
     return SizedBox(
-      width: 360.w,
+      width: 360.zW,
       child: Text(
         invitationTypeString(
           widget.invitationData.type,
@@ -155,7 +155,7 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 20.0.r,
+          fontSize: 20.0.zR,
           fontWeight: FontWeight.w400,
           decoration: TextDecoration.none,
         ),
@@ -182,8 +182,8 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               fit: BoxFit.fill,
             ),
           ),
-          iconSize: Size(74.r, 74.r),
-          buttonSize: Size(74.r, 74.r),
+          iconSize: Size(74.zR, 74.zR),
+          buttonSize: Size(74.zR, 74.zR),
           onPressed: (String code, String message) {
             widget.pageManager.onLocalRefuseInvitation(code, message);
           },
@@ -209,8 +209,8 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
               fit: BoxFit.fill,
             ),
           ),
-          iconSize: Size(74.r, 74.r),
-          buttonSize: Size(74.r, 74.r),
+          iconSize: Size(74.zR, 74.zR),
+          buttonSize: Size(74.zR, 74.zR),
           onPressed: (String code, String message) {
             widget.pageManager.onLocalAcceptInvitation(code, message);
           },

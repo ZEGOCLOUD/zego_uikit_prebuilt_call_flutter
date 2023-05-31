@@ -37,7 +37,7 @@ class ZegoCallingInviterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
+    return ZegoScreenUtilInit(
       designSize: const Size(750, 1334),
       minTextAdapt: true,
       splitScreenMode: true,
@@ -70,20 +70,20 @@ class ZegoCallingInviterView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (isVideo) const ZegoInviterCallingVideoTopToolBar() else Container(),
-        if (isVideo) SizedBox(height: 140.h) else SizedBox(height: 228.h),
+        if (isVideo) SizedBox(height: 140.zH) else SizedBox(height: 228.zH),
         SizedBox(
-          width: 200.r,
-          height: 200.r,
+          width: 200.zR,
+          height: 200.zR,
           child: ValueListenableBuilder(
             valueListenable: ZegoUIKitUserPropertiesNotifier(firstInvitee),
             builder: (context, _, __) {
               return avatarBuilder
-                      ?.call(context, Size(200.r, 200.r), firstInvitee, {}) ??
+                      ?.call(context, Size(200.zR, 200.zR), firstInvitee, {}) ??
                   circleAvatar(firstInvitee.name);
             },
           ),
         ),
-        SizedBox(height: 10.r),
+        SizedBox(height: 10.zR),
         centralName((isVideo
                 ? ((invitees.length > 1
                         ? callInvitationConfig
@@ -98,7 +98,7 @@ class ZegoCallingInviterView extends StatelessWidget {
                             .innerText?.outgoingVoiceCallPageTitle) ??
                     param_1))
             .replaceFirst(param_1, firstInvitee.name)),
-        SizedBox(height: 47.r),
+        SizedBox(height: 47.zR),
         callingText(isVideo
             ? ((invitees.length > 1
                     ? callInvitationConfig
@@ -118,7 +118,7 @@ class ZegoCallingInviterView extends StatelessWidget {
           callInvitationConfig: callInvitationConfig,
           invitees: invitees,
         ),
-        SizedBox(height: 105.r),
+        SizedBox(height: 105.zR),
       ],
     );
   }
@@ -147,7 +147,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
+    return ZegoScreenUtilInit(
       designSize: const Size(750, 1334),
       minTextAdapt: true,
       splitScreenMode: true,
@@ -169,20 +169,20 @@ class ZegoCallingInviteeView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 280.r),
+        SizedBox(height: 280.zR),
         SizedBox(
-          width: 200.r,
-          height: 200.r,
+          width: 200.zR,
+          height: 200.zR,
           child: ValueListenableBuilder(
             valueListenable: ZegoUIKitUserPropertiesNotifier(inviter),
             builder: (context, _, __) {
               return avatarBuilder
-                      ?.call(context, Size(200.r, 200.r), inviter, {}) ??
+                      ?.call(context, Size(200.zR, 200.zR), inviter, {}) ??
                   circleAvatar(inviter.name);
             },
           ),
         ),
-        SizedBox(height: 10.r),
+        SizedBox(height: 10.zR),
         centralName((isVideo
                 ? ((invitees.length > 1
                         ? callInvitationConfig
@@ -197,7 +197,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
                             .innerText?.incomingVoiceCallPageTitle) ??
                     param_1))
             .replaceFirst(param_1, inviter.name)),
-        SizedBox(height: 47.r),
+        SizedBox(height: 47.zR),
         callingText(isVideo
             ? (invitees.length > 1
                 ? (callInvitationConfig
@@ -222,7 +222,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
           invitationType: invitationType,
           showDeclineButton: showDeclineButton,
         ),
-        SizedBox(height: 105.r),
+        SizedBox(height: 105.zR),
       ],
     );
   }
@@ -244,12 +244,12 @@ Widget backgroundImage() {
 
 Widget centralName(String name) {
   return SizedBox(
-    height: 59.h,
+    height: 59.zH,
     child: Text(
       name,
       style: TextStyle(
         color: Colors.white,
-        fontSize: 42.0.r,
+        fontSize: 42.0.zR,
         decoration: TextDecoration.none,
         fontWeight: FontWeight.w500,
       ),
@@ -262,7 +262,7 @@ Widget callingText(String text) {
     text,
     style: TextStyle(
       color: Colors.white,
-      fontSize: 32.0.r,
+      fontSize: 32.0.zR,
       fontWeight: FontWeight.w400,
       decoration: TextDecoration.none,
     ),
@@ -279,7 +279,7 @@ Widget circleAvatar(String name) {
       child: Text(
         name.isNotEmpty ? name.characters.first : '',
         style: TextStyle(
-          fontSize: 96.0.r,
+          fontSize: 96.0.zR,
           color: const Color(0xff222222),
           decoration: TextDecoration.none,
         ),

@@ -69,19 +69,19 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     );
 
     switch (event!.event) {
-      case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+      case Event.actionDidUpdateDevicePushTokenVoip:
         break;
-      case Event.ACTION_CALL_INCOMING:
+      case Event.actionCallIncoming:
         break;
-      case Event.ACTION_CALL_START:
+      case Event.actionCallStart:
         break;
-      case Event.ACTION_CALL_ACCEPT:
+      case Event.actionCallAccept:
 
         /// android only receive onBackgroundMessageReceived if App BE KILLED,
         /// so [ACTION_CALL_ACCEPT] event should be ignore,
         /// deal in [onInvitationReceived] supply again by ZIM when app re-start
         break;
-      case Event.ACTION_CALL_DECLINE:
+      case Event.actionCallDecline:
 
         /// todo@yuyj [onBackgroundMessageReceived] lack of invitationID
         // ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
@@ -89,21 +89,24 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
         //       data: '{"reason":"decline"}',
         //     );
         break;
-      case Event.ACTION_CALL_ENDED:
+      case Event.actionCallEnded:
         break;
-      case Event.ACTION_CALL_TIMEOUT:
+      case Event.actionCallTimeout:
         break;
-      case Event.ACTION_CALL_CALLBACK:
+      case Event.actionCallCallback:
         break;
-      case Event.ACTION_CALL_TOGGLE_HOLD:
+      case Event.actionCallToggleHold:
         break;
-      case Event.ACTION_CALL_TOGGLE_MUTE:
+      case Event.actionCallToggleMute:
         break;
-      case Event.ACTION_CALL_TOGGLE_DMTF:
+      case Event.actionCallToggleDmtf:
         break;
-      case Event.ACTION_CALL_TOGGLE_GROUP:
+      case Event.actionCallToggleGroup:
         break;
-      case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+      case Event.actionCallToggleAudioSession:
+        break;
+      case Event.actionCallCustom:
+        // TODO: Handle this case.
         break;
     }
   });

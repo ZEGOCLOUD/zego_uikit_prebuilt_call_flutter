@@ -2,6 +2,7 @@
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/entities/notification_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -58,32 +59,34 @@ Future<CallKitParams> makeCallKitParam({
     handle: invitationInternalData.callID,
     //timestampFormat.substring(0, timestampFormat.length - 4),
     //  callkit type: 0 - Audio Call, 1 - Video Call
-    type: callType.index.toDouble(),
-    duration: prefs.getDouble(CallKitInnerVariable.duration.cacheKey) ??
+    type: callType.index,
+    duration: prefs.getInt(CallKitInnerVariable.duration.cacheKey) ??
         CallKitInnerVariable.duration.defaultValue,
     textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
         CallKitInnerVariable.textAccept.defaultValue,
     textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
         CallKitInnerVariable.textDecline.defaultValue,
-    textMissedCall:
-        prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
-            CallKitInnerVariable.textMissedCall.defaultValue,
-    textCallback: prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
-        CallKitInnerVariable.textCallback.defaultValue,
     extra: <String, dynamic>{},
     headers: <String, dynamic>{},
+    missedCallNotification: NotificationParams(
+      showNotification: false,
+      isShowCallback: true,
+      subtitle: prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
+          CallKitInnerVariable.textMissedCall.defaultValue,
+      callbackText:
+      prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
+          CallKitInnerVariable.textCallback.defaultValue,
+    ),
     android: AndroidParams(
       isCustomNotification: true,
       isShowLogo: false,
-      isShowCallback: true,
-      isShowMissedCallNotification: false,
       ringtonePath: ringtonePath,
       backgroundColor:
-          prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
-              CallKitInnerVariable.backgroundColor.defaultValue,
+      prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
+          CallKitInnerVariable.backgroundColor.defaultValue,
       backgroundUrl:
-          prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
-              CallKitInnerVariable.backgroundUrl.defaultValue,
+      prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
+          CallKitInnerVariable.backgroundUrl.defaultValue,
       actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
           CallKitInnerVariable.actionColor.defaultValue,
     ),
@@ -133,19 +136,21 @@ CallKitParams makeSimpleCallKitParam({
     //timestampFormat.substring(0, timestampFormat.length - 4),
     handle: invitationInternalData.callID,
     //  callkit type: 0 - Audio Call, 1 - Video Call
-    type: callType.index.toDouble(),
+    type: callType.index,
     duration: CallKitInnerVariable.duration.defaultValue,
     textAccept: CallKitInnerVariable.textAccept.defaultValue,
     textDecline: CallKitInnerVariable.textDecline.defaultValue,
-    textMissedCall: CallKitInnerVariable.textMissedCall.defaultValue,
-    textCallback: CallKitInnerVariable.textCallback.defaultValue,
     extra: <String, dynamic>{},
     headers: <String, dynamic>{},
+    missedCallNotification: NotificationParams(
+      showNotification: false,
+      isShowCallback: true,
+      subtitle: CallKitInnerVariable.textMissedCall.defaultValue,
+      callbackText: CallKitInnerVariable.textCallback.defaultValue,
+    ),
     android: AndroidParams(
       isCustomNotification: true,
       isShowLogo: false,
-      isShowCallback: true,
-      isShowMissedCallNotification: false,
       ringtonePath: ringtonePath,
       backgroundColor: CallKitInnerVariable.backgroundColor.defaultValue,
       backgroundUrl: CallKitInnerVariable.backgroundUrl.defaultValue,
@@ -191,8 +196,8 @@ Future<void> showCallkitIncoming({
 
   ZegoLoggerService.logInfo(
     'show callkit incoming, inviter name:${caller?.name}, call type:$callType, '
-    'data:${invitationInternalData.toJson()}, '
-    'callKitParam:${callKitParam.toJson()}',
+        'data:${invitationInternalData.toJson()}, '
+        'callKitParam:${callKitParam.toJson()}',
     tag: 'call',
     subTag: 'background message',
   );

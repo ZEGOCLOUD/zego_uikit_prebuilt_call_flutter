@@ -233,8 +233,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     bool Function()? cameraDefaultValueFunc,
     bool Function()? microphoneDefaultValueFunc,
   }) {
-    final buttonSize = Size(96.r, 96.r);
-    final iconSize = Size(56.r, 56.r);
+    final buttonSize = Size(96.zR, 96.zR);
+    final iconSize = Size(56.zR, 56.zR);
 
     switch (type) {
       case ZegoMenuBarButtonName.toggleMicrophoneButton:

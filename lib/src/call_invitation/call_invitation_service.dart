@@ -31,6 +31,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notificati
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
 
+import 'internal/app_state.dart';
+
 part 'internal/call_invitation_service_p.dart';
 
 /// To receive the call invites from others and let the calling notification show on the top bar when receiving it, you will need to initialize the call invitation service (ZegoUIKitPrebuiltCallInvitationService) first.
@@ -170,7 +172,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.17; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.3.21; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -187,12 +189,15 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
 
     /// sync app background state
-    SystemChannels.lifecycle.setMessageHandler((state) async {
+    SystemChannels.lifecycle.setMessageHandler((stateString) async {
+      final state = parseStateFromString(stateString!);
+      WidgetsBinding.instance?.handleAppLifecycleStateChanged(state);
+
       if (!_isInit) {
         return;
       }
 
-      final isAppInBackground = state != AppLifecycleState.resumed.toString();
+      final isAppInBackground = state != AppLifecycleState.resumed;
       _pageManager.didChangeAppLifecycleState(isAppInBackground);
       _plugins.didChangeAppLifecycleState(isAppInBackground);
       return null;
@@ -433,33 +438,36 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
 
     switch (event!.event) {
-      case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
-      case Event.ACTION_CALL_INCOMING:
-      case Event.ACTION_CALL_START:
+      case Event.actionDidUpdateDevicePushTokenVoip:
+      case Event.actionCallIncoming:
+      case Event.actionCallStart:
         break;
-      case Event.ACTION_CALL_ACCEPT:
+      case Event.actionCallAccept:
         final callKitCallID =
             convertCallKitCallToParam(event.body as Map<dynamic, dynamic>)
                 ?.handle;
         acceptCallKitIncomingCauseInBackground(callKitCallID);
         break;
-      case Event.ACTION_CALL_DECLINE:
-      case Event.ACTION_CALL_TIMEOUT:
+      case Event.actionCallDecline:
+      case Event.actionCallTimeout:
         refuseCallKitIncomingCauseInBackground();
         break;
-      case Event.ACTION_CALL_ENDED:
+      case Event.actionCallEnded:
         _pageManager.hasCallkitIncomingCauseAppInBackground = false;
 
         if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
           handUpCurrentCallByCallKit();
         }
         break;
-      case Event.ACTION_CALL_CALLBACK:
-      case Event.ACTION_CALL_TOGGLE_HOLD:
-      case Event.ACTION_CALL_TOGGLE_MUTE:
-      case Event.ACTION_CALL_TOGGLE_DMTF:
-      case Event.ACTION_CALL_TOGGLE_GROUP:
-      case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+      case Event.actionCallCallback:
+      case Event.actionCallToggleHold:
+      case Event.actionCallToggleMute:
+      case Event.actionCallToggleDmtf:
+      case Event.actionCallToggleGroup:
+      case Event.actionCallToggleAudioSession:
+        break;
+      case Event.actionCallCustom:
+        // TODO: Handle this case.
         break;
     }
   }

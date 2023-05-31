@@ -27,7 +27,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120.h,
+      height: 120.zH,
       child: Center(
         child: ZegoCancelInvitationButton(
           invitees: invitees.map((e) => e.id).toList(),
@@ -39,8 +39,8 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           ),
-          buttonSize: Size(120.r, 120.r),
-          iconSize: Size(120.r, 120.r),
+          buttonSize: Size(120.zR, 120.zR),
+          iconSize: Size(120.zR, 120.zR),
           onPressed: (String code, String message, List<String> errorInvitees) {
             pageManager.onLocalCancelInvitation(code, message, errorInvitees);
           },
@@ -87,7 +87,7 @@ class ZegoInviteeCallingBottomToolBarState
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 170.r,
+      height: 170.zR,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +95,7 @@ class ZegoInviteeCallingBottomToolBarState
             ...widget.showDeclineButton
                 ? [
                     declineButton(),
-                    SizedBox(width: 230.r),
+                    SizedBox(width: 230.zR),
                   ]
                 : [],
             acceptButton(),
@@ -122,8 +122,8 @@ class ZegoInviteeCallingBottomToolBarState
           fit: BoxFit.fill,
         ),
       ),
-      buttonSize: Size(120.r, 120.r + 50.r),
-      iconSize: Size(108.r, 108.r),
+      buttonSize: Size(120.zR, 120.zR + 50.zR),
+      iconSize: Size(108.zR, 108.zR),
       onPressed: (String code, String message) {
         widget.pageManager.onLocalRefuseInvitation(code, message);
       },
@@ -145,8 +145,8 @@ class ZegoInviteeCallingBottomToolBarState
           widget.callInvitationConfig.innerText?.incomingCallPageAcceptButton ??
               'Accept',
       textStyle: buttonTextStyle(),
-      buttonSize: Size(120.r, 120.r + 50.r),
-      iconSize: Size(108.r, 108.r),
+      buttonSize: Size(120.zR, 120.zR + 50.zR),
+      iconSize: Size(108.zR, 108.zR),
       onPressed: (String code, String message) {
         widget.pageManager.onLocalAcceptInvitation(code, message);
       },
@@ -156,7 +156,7 @@ class ZegoInviteeCallingBottomToolBarState
   TextStyle buttonTextStyle() {
     return TextStyle(
       color: Colors.white,
-      fontSize: 25.0.r,
+      fontSize: 25.0.zR,
       fontWeight: FontWeight.w400,
       decoration: TextDecoration.none,
     );

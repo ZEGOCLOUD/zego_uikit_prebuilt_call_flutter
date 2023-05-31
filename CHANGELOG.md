@@ -1,3 +1,15 @@
+## 3.3.21
+- Fixed an issue where the avatar was not displayed in the call invitation pop-up.
+
+## 3.3.20
+- update dependency
+
+## 3.3.19
+- fix the issue of conflict with extension key of the `flutter_screenutil` package.
+
+## 3.3.18
+- fix for the issue caused by SystemChannels.lifecycle.setMessageHandler leading to the failure of app-side didChangeAppLifecycleState.
+
 ## 3.3.17
 - fix the issue that the user does not log in caused by the app staying in the background for a long time
 - fix some user login status issues when used `zego_uikit_prebuilt_call` with `zego_zimkit`

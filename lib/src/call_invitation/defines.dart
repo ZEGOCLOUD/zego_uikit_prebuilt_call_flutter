@@ -68,7 +68,7 @@ class ZegoCallInvitationData {
   }
 }
 
-/// @nodoc
+///
 class ZegoCallUser {
   String id;
   String name;
