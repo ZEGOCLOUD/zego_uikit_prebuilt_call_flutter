@@ -22,8 +22,6 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
     );
 
     await requestPermission(Permission.notification);
-    await requestPermission(Permission.camera);
-    await requestPermission(Permission.microphone);
   }
 
   Future<void> _initContext() async {

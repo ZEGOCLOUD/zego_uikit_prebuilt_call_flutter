@@ -176,6 +176,7 @@ class ZegoUIKitPrebuiltCallConfig {
   Future<bool?> Function(BuildContext context)? onHangUpConfirmation;
 
   /// This callback is triggered after hang up the call.
+  /// The default behavior is to return to the previous page. If you override this callback, you must perform the page navigation yourself, otherwise the user will remain on the call page.
   /// You can perform business-related prompts or other actions in this callback.
   /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
   VoidCallback? onHangUp;

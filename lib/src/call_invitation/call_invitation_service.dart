@@ -172,7 +172,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.3.21; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.5.2; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -306,6 +306,13 @@ class ZegoUIKitPrebuiltCallInvitationService
                 isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
                 enableIOSVoIP: _enableIOSVoIP,
                 appName: appName,
+                androidChannelID: _data.androidNotificationConfig?.channelID ??
+                    'CallInvitation',
+                androidChannelName:
+                    _data.androidNotificationConfig?.channelName ??
+                        'Call Invitation',
+                androidSound:
+                    '/raw/${_data.androidNotificationConfig?.sound ?? '/raw/zego_incoming'}',
               )
               .then((result) {
             if (_enableIOSVoIP) {

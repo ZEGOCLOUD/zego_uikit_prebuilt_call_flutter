@@ -14,8 +14,13 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   Function()? onIncomingCallAcceptButtonPressed;
 
   /// receive this callback when receive a call
-  Function(String callID, ZegoCallUser caller, ZegoCallType callType,
-      List<ZegoCallUser> callees)? onIncomingCallReceived;
+  Function(
+    String callID,
+    ZegoCallUser caller,
+    ZegoCallType callType,
+    List<ZegoCallUser> callees,
+    String customData,
+  )? onIncomingCallReceived;
 
   /// This callback will be triggered when the caller cancels the call invitation.
   Function(String callID, ZegoCallUser caller)? onIncomingCallCanceled;

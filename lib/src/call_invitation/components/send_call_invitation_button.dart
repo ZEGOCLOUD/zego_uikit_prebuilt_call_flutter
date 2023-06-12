@@ -28,7 +28,9 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     Key? key,
     required this.invitees,
     required this.isVideoCall,
+    this.callID,
     this.customData = '',
+    this.onWillPressed,
     this.onPressed,
     this.resourceID,
     this.notificationTitle,
@@ -50,11 +52,18 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
   /// The list of invitees to send the call invitation to.
   final List<ZegoUIKitUser> invitees;
 
+  /// you can specify the call ID.
+  /// If not provided, the system will generate one automatically based on certain rules.
+  final String? callID;
+
   /// Determines whether the call is a video call. If false, it is an audio call by default.
   final bool isVideoCall;
 
   /// Custom data to be passed to the invitee.
   final String customData;
+
+  /// send call invitation if return true, false will do nothing
+  final Future<bool> Function()? onWillPressed;
 
   /// Callback function that is executed when the button is pressed.
   final void Function(String code, String message, List<String>)? onPressed;
@@ -146,7 +155,7 @@ class _ZegoSendCallInvitationButtonState
   }
 
   void updateCallID() {
-    callIDNotifier.value =
+    callIDNotifier.value = widget.callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
     ZegoLoggerService.logInfo(
       'update call id, ${callIDNotifier.value}',
@@ -206,52 +215,65 @@ class _ZegoSendCallInvitationButtonState
       iconTextSpacing: widget.iconTextSpacing,
       verticalLayout: widget.verticalLayout,
       buttonSize: widget.buttonSize,
-      onWillPressed: () {
-        if (requesting) {
-          ZegoLoggerService.logInfo(
-            'still in request',
-            tag: 'call',
-            subTag: 'start call button',
-          );
-          return false;
-        }
-
-        if (ZegoUIKitPrebuiltCallMiniOverlayMachine().isMinimizing) {
-          ZegoLoggerService.logInfo(
-            'still in minimizing',
-            tag: 'call',
-            subTag: 'start call button',
-          );
-          return false;
-        }
-
-        final currentState =
-            pageManager?.callingMachine.machine.current?.identifier ??
-                CallingState.kIdle;
-        if (CallingState.kIdle != currentState) {
-          ZegoLoggerService.logInfo(
-            'still in calling, $currentState',
-            tag: 'call',
-            subTag: 'start call button',
-          );
-          return false;
-        }
-
-        requesting = true;
-        ZegoLoggerService.logInfo(
-          'start request',
-          tag: 'call',
-          subTag: 'start call button',
-        );
-
-        return true;
-      },
+      onWillPressed: onWillPressed,
       onPressed: onPressed,
       clickableTextColor: widget.clickableTextColor,
       unclickableTextColor: widget.unclickableTextColor,
       clickableBackgroundColor: widget.clickableBackgroundColor,
       unclickableBackgroundColor: widget.unclickableBackgroundColor,
     );
+  }
+
+  Future<bool> onWillPressed() async {
+    if (requesting) {
+      ZegoLoggerService.logInfo(
+        'still in request',
+        tag: 'call',
+        subTag: 'start call button',
+      );
+      return false;
+    }
+
+    if (ZegoUIKitPrebuiltCallMiniOverlayMachine().isMinimizing) {
+      ZegoLoggerService.logInfo(
+        'still in minimizing',
+        tag: 'call',
+        subTag: 'start call button',
+      );
+      return false;
+    }
+
+    final currentState =
+        pageManager?.callingMachine.machine.current?.identifier ??
+            CallingState.kIdle;
+    if (CallingState.kIdle != currentState) {
+      ZegoLoggerService.logInfo(
+        'still in calling, $currentState',
+        tag: 'call',
+        subTag: 'start call button',
+      );
+      return false;
+    }
+
+    final canRequest = await widget.onWillPressed?.call() ?? true;
+    if (!canRequest) {
+      ZegoLoggerService.logInfo(
+        'onWillPressed stop click process',
+        tag: 'call',
+        subTag: 'start call button',
+      );
+
+      return false;
+    }
+
+    requesting = true;
+    ZegoLoggerService.logInfo(
+      'start request',
+      tag: 'call',
+      subTag: 'start call button',
+    );
+
+    return true;
   }
 
   void onPressed(

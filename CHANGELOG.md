@@ -1,3 +1,15 @@
+## 3.5.2
+- update dependency
+
+## 3.5.1
+- Fix the issue of custom sound not working for offline push notifications.
+
+## 3.5.0
+- `ZegoSendCallInvitationButton` supports custom `call ID`, and `onWillPressed` is added to support custom processing before calling.
+
+## 3.4.0
+- Add a `customData` parameter to `ZegoUIKitPrebuiltCallInvitationEvents`.`onIncomingCallReceived` function. The `customData` is sourced from the additional data attached when initiating a call invitation using `ZegoSendCallInvitationButton` or `ZegoUIKitPrebuiltCallController`.`sendCallInvitation`.
+
 ## 3.3.21
 - Fixed an issue where the avatar was not displayed in the call invitation pop-up.
 

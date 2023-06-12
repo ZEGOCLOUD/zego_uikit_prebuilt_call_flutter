@@ -121,6 +121,15 @@ class ZegoInvitationPageManager {
     );
 
     _init = false;
+
+    _invitationTopSheetVisibility = false;
+    _appInBackground = false;
+    _hasCallkitIncomingCauseAppInBackground = false;
+    _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+
+    _invitationData = ZegoCallInvitationData.empty();
+    _invitingInvitees.clear();
+
     ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
 
@@ -466,15 +475,17 @@ class ZegoInvitationPageManager {
     _calleeRingtone.startRing();
 
     callInvitationConfig.invitationEvents?.onIncomingCallReceived?.call(
-        _invitationData.callID,
-        ZegoCallUser(
-          _invitationData.inviter?.id ?? '',
-          _invitationData.inviter?.name ?? '',
-        ),
-        _invitationData.type,
-        _invitationData.invitees
-            .map((user) => ZegoCallUser(user.id, user.name))
-            .toList());
+      _invitationData.callID,
+      ZegoCallUser(
+        _invitationData.inviter?.id ?? '',
+        _invitationData.inviter?.name ?? '',
+      ),
+      _invitationData.type,
+      _invitationData.invitees
+          .map((user) => ZegoCallUser(user.id, user.name))
+          .toList(),
+      _invitationData.customData,
+    );
 
     showInvitationTopSheet();
   }
