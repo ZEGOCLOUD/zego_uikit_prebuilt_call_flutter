@@ -1,3 +1,12 @@
+## 3.6.2
+- Optimize the methods exposed by ZegoUIKitPrebuiltCallInvitationService.
+
+## 3.6.1
+- Use awesome notification to display call pop-ups in Android's background mode, fixing the issue where Android devices couldn't enter a call after clicking on the notification in the background mode.
+
+## 3.6.0
+- Added logic for being kicked out of the call, which will automatically exit and return to the previous page.
+
 ## 3.5.2
 - update dependency
 

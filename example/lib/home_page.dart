@@ -35,8 +35,7 @@ class HomePage extends StatelessWidget {
                     return;
                   }
 
-                  Navigator.push(
-                    context,
+                  Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
                       return CallPage(callID: callIDTextCtrl.text);
                     }),

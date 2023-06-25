@@ -6,13 +6,11 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
   ContextQuery? _contextQuery;
   late ZegoUIKitPrebuiltCallInvitationServiceData _data;
   late ZegoInvitationPageManager _pageManager;
-  late ZegoNotificationManager _notificationManager;
   late ZegoCallInvitationConfig _callInvitationConfig;
   late ZegoPrebuiltPlugins _plugins;
 
   /// callkit
   bool _enableIOSVoIP = false;
-  String? _callKitCallID;
 
   Future<void> _initPermissions() async {
     ZegoLoggerService.logInfo(
@@ -48,7 +46,6 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
       subTag: 'call invitation service',
     );
 
-    _notificationManager.uninit();
     _pageManager.uninit();
     await _plugins.uninit();
   }

@@ -18,7 +18,10 @@ class ZegoMinimizingButton extends StatefulWidget {
     this.icon,
     this.iconSize,
     this.buttonSize,
+    this.rootNavigator = false,
   }) : super(key: key);
+
+  final bool rootNavigator;
 
   final ButtonIcon? icon;
 
@@ -34,13 +37,11 @@ class ZegoMinimizingButton extends StatefulWidget {
   final ZegoUIKitPrebuiltCallData prebuiltData;
 
   @override
-  State<ZegoMinimizingButton> createState() =>
-      _ZegoMinimizingButtonState();
+  State<ZegoMinimizingButton> createState() => _ZegoMinimizingButtonState();
 }
 
 /// @nodoc
-class _ZegoMinimizingButtonState
-    extends State<ZegoMinimizingButton> {
+class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
   @override
   void initState() {
     super.initState();
@@ -69,7 +70,10 @@ class _ZegoMinimizingButtonState
           prebuiltData: widget.prebuiltData,
         );
 
-        Navigator.of(context).pop();
+        Navigator.of(
+          context,
+          rootNavigator: widget.rootNavigator,
+        ).pop();
 
         if (widget.afterClicked != null) {
           widget.afterClicked!();

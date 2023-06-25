@@ -114,7 +114,9 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
         Text(
           widget.config.topMenuBarConfig.title,
           style: TextStyle(
-              color: Colors.white, fontSize: 36.zR, fontWeight: FontWeight.w500),
+              color: Colors.white,
+              fontSize: 36.zR,
+              fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -266,7 +268,10 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
               widget.config.onHangUp!.call();
             } else {
               /// default behaviour if hand up is null, back to previous page
-              Navigator.of(context).pop();
+              Navigator.of(
+                context,
+                rootNavigator: widget.config.rootNavigator,
+              ).pop();
             }
 
             /// restore controller's leave status
@@ -276,6 +281,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
       case ZegoMenuBarButtonName.showMemberListButton:
         return ZegoMemberListButton(
           config: widget.config.memberListConfig,
+          rootNavigator: widget.config.rootNavigator,
           avatarBuilder: widget.config.avatarBuilder,
           buttonSize: buttonSize,
           iconSize: iconSize,
@@ -293,6 +299,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
       case ZegoMenuBarButtonName.minimizingButton:
         return ZegoMinimizingButton(
           prebuiltData: widget.prebuiltData,
+          rootNavigator: widget.config.rootNavigator,
         );
     }
   }

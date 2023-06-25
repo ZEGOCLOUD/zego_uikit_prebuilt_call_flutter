@@ -1,26 +1,18 @@
-// Dart imports:
-import 'dart:async';
-
-// Package imports:
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
-import 'package:zego_uikit/zego_uikit.dart';
-
-// Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
+part of '../call_invitation_service.dart';
 
 /// @nodoc
-mixin ZegoPrebuiltCallKitService {
+mixin iOSCallKitService {
   ///
-  bool _callkitServiceInited = false;
+  bool _iOSCallKitServiceInit = false;
 
   /// callkit event subscriptions
-  final List<StreamSubscription<dynamic>> callkitServiceSubscriptions = [];
+  final List<StreamSubscription<dynamic>> _callkitServiceSubscriptions = [];
 
   /// init callkit service
-  void initCallkitService() {
-    if (_callkitServiceInited) {
+  void _initIOSCallkitService() {
+    if (_iOSCallKitServiceInit) {
       ZegoLoggerService.logInfo(
-        'callkit service had been inited',
+        'callkit service had been init',
         tag: 'call',
         subTag: 'iOS callkit service',
       );
@@ -28,8 +20,8 @@ mixin ZegoPrebuiltCallKitService {
       return;
     }
 
-    _callkitServiceInited = true;
-    callkitServiceSubscriptions
+    _iOSCallKitServiceInit = true;
+    _callkitServiceSubscriptions
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getCallkitProviderDidResetEventStream()
@@ -87,10 +79,10 @@ mixin ZegoPrebuiltCallKitService {
   }
 
   /// un-init callkit service
-  void uninitCallkitService() {
-    if (!_callkitServiceInited) {
+  void _uninitIOSCallkitService() {
+    if (!_iOSCallKitServiceInit) {
       ZegoLoggerService.logInfo(
-        'callkit service had not been inited',
+        'callkit service had not been init',
         tag: 'call',
         subTag: 'iOS callkit service',
       );
@@ -98,8 +90,8 @@ mixin ZegoPrebuiltCallKitService {
       return;
     }
 
-    _callkitServiceInited = false;
-    for (final subscription in callkitServiceSubscriptions) {
+    _iOSCallKitServiceInit = false;
+    for (final subscription in _callkitServiceSubscriptions) {
       subscription.cancel();
     }
 
@@ -191,10 +183,11 @@ mixin ZegoPrebuiltCallKitService {
 
     event.action.fulfill();
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .acceptCallKitIncomingCauseInBackground(
-            ZegoUIKitPrebuiltCallInvitationService().callKitCallID);
-    ZegoUIKitPrebuiltCallInvitationService().callKitCallID = null;
+    getCurrentCallKitCallID().then((callKitCallID) {
+      ZegoCallKitBackgroundService()
+          .acceptCallKitIncomingCauseInBackground(callKitCallID);
+      clearCurrentCallKitCallID();
+    });
   }
 
   void _onCallkitPerformEndCallActionEvent(
@@ -210,11 +203,10 @@ mixin ZegoPrebuiltCallKitService {
 
     if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
       /// exit call
-      ZegoUIKitPrebuiltCallInvitationService().handUpCurrentCallByCallKit();
+      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
     } else {
       /// refuse call request
-      ZegoUIKitPrebuiltCallInvitationService()
-          .refuseCallKitIncomingCauseInBackground();
+      ZegoCallKitBackgroundService().refuseInvitationInBackground();
     }
   }
 

@@ -74,7 +74,8 @@ class ZegoUIKitPrebuiltCallConfig {
   ZegoUIKitPrebuiltCallConfig({
     this.turnOnCameraWhenJoining = true,
     this.turnOnMicrophoneWhenJoining = true,
-    this.useSpeakerWhenJoining = true,
+    this.useSpeakerWhenJoining = false,
+    this.rootNavigator = false,
     ZegoPrebuiltAudioVideoViewConfig? audioVideoViewConfig,
     ZegoTopMenuBarConfig? topMenuBarConfig,
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
@@ -111,7 +112,7 @@ class ZegoUIKitPrebuiltCallConfig {
   bool turnOnMicrophoneWhenJoining;
 
   /// Whether to use the speaker to play audio when joining the call.
-  /// The default value is `true`.
+  /// The default value is `false`, but it will be set to `true` if the user is in a group call or video call.
   /// If this value is set to `false`, the system's default playback device, such as the earpiece or Bluetooth headset, will be used for audio playback.
   bool useSpeakerWhenJoining;
 
@@ -181,12 +182,20 @@ class ZegoUIKitPrebuiltCallConfig {
   /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
   VoidCallback? onHangUp;
 
+  /// This callback is triggered when local user removed from call
+  Future<void> Function(String)? onMeRemovedFromRoom;
+
   /// Callback function triggered when you are alone in the room.
   /// You can use this callback function to destroy the preset page and return to the previous page.
   void Function(BuildContext context)? onOnlySelfInRoom;
 
   /// Call timing configuration.
   ZegoCallDurationConfig durationConfig;
+
+  /// same as Flutter's Navigator's param
+  /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
+  /// Useful for pushing contents above all subsequent instances of [Navigator].
+  bool rootNavigator;
 }
 
 /// Configuration options for audio/video views.
@@ -426,69 +435,70 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
     required bool isVideo,
   }) {
     return ZegoUIKitPrebuiltCallConfig(
-        turnOnCameraWhenJoining: isVideo,
-        turnOnMicrophoneWhenJoining: true,
-        useSpeakerWhenJoining: isGroup || isVideo,
-        layout: isGroup ? ZegoLayout.gallery() : ZegoLayout.pictureInPicture(),
-        topMenuBarConfig: isGroup
-            ? ZegoTopMenuBarConfig(
-                isVisible: true,
-                style: ZegoMenuBarStyle.dark,
-                buttons: [
-                  ZegoMenuBarButtonName.showMemberListButton,
-                ],
-              )
-            : ZegoTopMenuBarConfig(
-                isVisible: false,
-                buttons: [],
-              ),
-        bottomMenuBarConfig: isGroup
-            ? ZegoBottomMenuBarConfig(
-                style: ZegoMenuBarStyle.dark,
-                buttons: isVideo
-                    ? const [
-                        ZegoMenuBarButtonName.toggleCameraButton,
-                        ZegoMenuBarButtonName.switchCameraButton,
-                        ZegoMenuBarButtonName.hangUpButton,
-                        ZegoMenuBarButtonName.toggleMicrophoneButton,
-                        ZegoMenuBarButtonName.switchAudioOutputButton,
-                      ]
-                    : const [
-                        ZegoMenuBarButtonName.toggleMicrophoneButton,
-                        ZegoMenuBarButtonName.hangUpButton,
-                        ZegoMenuBarButtonName.switchAudioOutputButton,
-                      ],
-              )
-            : ZegoBottomMenuBarConfig(
-                style: ZegoMenuBarStyle.light,
-                buttons: isVideo
-                    ? const [
-                        ZegoMenuBarButtonName.toggleCameraButton,
-                        ZegoMenuBarButtonName.switchCameraButton,
-                        ZegoMenuBarButtonName.hangUpButton,
-                        ZegoMenuBarButtonName.toggleMicrophoneButton,
-                        ZegoMenuBarButtonName.switchAudioOutputButton,
-                      ]
-                    : const [
-                        ZegoMenuBarButtonName.toggleMicrophoneButton,
-                        ZegoMenuBarButtonName.hangUpButton,
-                        ZegoMenuBarButtonName.switchAudioOutputButton,
-                      ],
-              ),
-        audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(
-          useVideoViewAspectFill: !isGroup,
-        ),
-        memberListConfig: ZegoMemberListConfig(),
-        onOnlySelfInRoom: isGroup
-            ? null
-            : (context) {
-                if (PrebuiltCallMiniOverlayPageState.idle !=
-                    ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-                  ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                      .changeState(PrebuiltCallMiniOverlayPageState.idle);
-                } else {
-                  Navigator.of(context).pop();
-                }
-              });
+      turnOnCameraWhenJoining: isVideo,
+      turnOnMicrophoneWhenJoining: true,
+      useSpeakerWhenJoining: isGroup || isVideo,
+      layout: isGroup ? ZegoLayout.gallery() : ZegoLayout.pictureInPicture(),
+      topMenuBarConfig: isGroup
+          ? ZegoTopMenuBarConfig(
+              isVisible: true,
+              style: ZegoMenuBarStyle.dark,
+              buttons: [
+                ZegoMenuBarButtonName.showMemberListButton,
+              ],
+            )
+          : ZegoTopMenuBarConfig(
+              isVisible: false,
+              buttons: [],
+            ),
+      bottomMenuBarConfig: isGroup
+          ? ZegoBottomMenuBarConfig(
+              style: ZegoMenuBarStyle.dark,
+              buttons: isVideo
+                  ? const [
+                      ZegoMenuBarButtonName.toggleCameraButton,
+                      ZegoMenuBarButtonName.switchCameraButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ]
+                  : const [
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ],
+            )
+          : ZegoBottomMenuBarConfig(
+              style: ZegoMenuBarStyle.light,
+              buttons: isVideo
+                  ? const [
+                      ZegoMenuBarButtonName.toggleCameraButton,
+                      ZegoMenuBarButtonName.switchCameraButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ]
+                  : const [
+                      ZegoMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoMenuBarButtonName.hangUpButton,
+                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                    ],
+            ),
+      audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(
+        useVideoViewAspectFill: !isGroup,
+      ),
+      memberListConfig: ZegoMemberListConfig(),
+      onOnlySelfInRoom: isGroup
+          ? null
+          : (context) {
+              if (PrebuiltCallMiniOverlayPageState.idle !=
+                  ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+                ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                    .changeState(PrebuiltCallMiniOverlayPageState.idle);
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+    );
   }
 }

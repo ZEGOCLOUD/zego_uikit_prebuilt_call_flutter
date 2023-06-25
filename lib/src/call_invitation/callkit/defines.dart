@@ -32,6 +32,12 @@ enum CallKitInnerVariable {
   /// string, App's name. using for display inside Callkit(iOS).
   /// App Name, Deprecated for iOS > 14, default using App name
   textAppName,
+
+  /// string, ringtone path
+  ringtonePath,
+
+  /// show call id or not
+  callIDVisibility,
 }
 
 extension CallKitInnerVariableExtension on CallKitInnerVariable {
@@ -58,6 +64,10 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
         return 'zg_ck_ac_clr';
       case CallKitInnerVariable.iconName:
         return 'zg_ck_t_icon_name';
+      case CallKitInnerVariable.ringtonePath:
+        return 'zg_ck_t_rg_p';
+      case CallKitInnerVariable.callIDVisibility:
+        return 'zg_ck_call_id_v';
     }
   }
 
@@ -83,6 +93,10 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
       case CallKitInnerVariable.iconName:
       case CallKitInnerVariable.textAppName:
         return '';
+      case CallKitInnerVariable.ringtonePath:
+        return 'system_ringtone_default';
+      case CallKitInnerVariable.callIDVisibility:
+        return false;
     }
   }
 }

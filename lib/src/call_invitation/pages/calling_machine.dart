@@ -105,8 +105,7 @@ class ZegoCallingMachine {
       return;
     }
 
-    Navigator.push(
-      context,
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ZegoCallingPage(
           pageManager: pageManager,

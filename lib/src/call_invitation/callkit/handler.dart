@@ -112,8 +112,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   });
 
   /// cache
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString(CallKitCalIDCacheKey, invitationInternalData.callID);
+  setCurrentCallKitCallID(invitationInternalData.callID);
 
   await showCallkitIncoming(
     caller: ZegoUIKitUser(id: '', name: inviterName),
@@ -134,20 +133,12 @@ void onIncomingPushReceived(Map extras, UUID uuid) {
 
   final payload = extras['payload'] as String? ?? '';
   final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
-  final inviterName = extendedMap['inviter_name'] as String;
-  final callType = ZegoCallTypeExtension.mapValue[extendedMap['type'] as int] ??
-      ZegoCallType.voiceCall;
   final invitationInternalData =
       InvitationInternalData.fromJson(extendedMap['data'] as String);
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
-  final callKitParam = makeSimpleCallKitParam(
-    caller: ZegoUIKitUser(id: '', name: inviterName),
-    callType: callType,
-    invitationInternalData: invitationInternalData,
-  );
-  ZegoUIKitPrebuiltCallInvitationService().callKitCallID = callKitParam.handle;
+  setCurrentCallKitCallID(invitationInternalData.callID);
 
   ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
 }

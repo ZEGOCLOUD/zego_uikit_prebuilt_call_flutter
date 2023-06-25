@@ -37,27 +37,31 @@ const String CallKitCalIDCacheKey = 'callkit_call_id';
 ///             }
 /// 	}
 /// }
-Future<CallKitParams> makeCallKitParam({
+Future<CallKitParams> _makeCallKitParam({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
   required InvitationInternalData invitationInternalData,
-  String ringtonePath = 'system_ringtone_default',
+  String? ringtonePath,
 }) async {
-  // final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
-  //         int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
-  //     .toString();
-
   final prefs = await SharedPreferences.getInstance();
+
+  var _ringtonePath = ringtonePath ?? '';
+  if (_ringtonePath.isEmpty) {
+    _ringtonePath =
+        prefs.getString(CallKitInnerVariable.ringtonePath.cacheKey) ??
+            CallKitInnerVariable.ringtonePath.defaultValue;
+  }
 
   return CallKitParams(
     id: const Uuid().v4(),
-    //invitationInternalData.callID
     nameCaller: caller?.name ?? '',
     appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
         CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
-    handle: invitationInternalData.callID,
-    //timestampFormat.substring(0, timestampFormat.length - 4),
+    handle: (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
+            CallKitInnerVariable.callIDVisibility.defaultValue)
+        ? invitationInternalData.callID
+        : '',
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
     duration: prefs.getInt(CallKitInnerVariable.duration.cacheKey) ??
@@ -74,19 +78,19 @@ Future<CallKitParams> makeCallKitParam({
       subtitle: prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
           CallKitInnerVariable.textMissedCall.defaultValue,
       callbackText:
-      prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
-          CallKitInnerVariable.textCallback.defaultValue,
+          prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
+              CallKitInnerVariable.textCallback.defaultValue,
     ),
     android: AndroidParams(
       isCustomNotification: true,
       isShowLogo: false,
-      ringtonePath: ringtonePath,
+      ringtonePath: _ringtonePath,
       backgroundColor:
-      prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
-          CallKitInnerVariable.backgroundColor.defaultValue,
+          prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
+              CallKitInnerVariable.backgroundColor.defaultValue,
       backgroundUrl:
-      prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
-          CallKitInnerVariable.backgroundUrl.defaultValue,
+          prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
+              CallKitInnerVariable.backgroundUrl.defaultValue,
       actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
           CallKitInnerVariable.actionColor.defaultValue,
     ),
@@ -105,72 +109,7 @@ Future<CallKitParams> makeCallKitParam({
       supportsHolding: true,
       supportsGrouping: false,
       supportsUngrouping: false,
-      ringtonePath: ringtonePath,
-    ),
-  );
-}
-
-/// @nodoc
-///
-/// Generate parameters required for third-party CallKit package.
-/// - caller
-/// - callType
-/// - invitationInternalData
-/// - ringtonePath
-CallKitParams makeSimpleCallKitParam({
-  required ZegoUIKitUser? caller,
-  required ZegoCallType callType,
-  required InvitationInternalData invitationInternalData,
-  String ringtonePath = 'system_ringtone_default',
-}) {
-  // final timestampFormat = DateTime.fromMillisecondsSinceEpoch(
-  //         int.tryParse(invitationInternalData.callID.split('_').last) ?? 0)
-  //     .toString();
-
-  return CallKitParams(
-    id: const Uuid().v4(),
-    //invitationInternalData.callID
-    nameCaller: caller?.name ?? '',
-    appName: CallKitInnerVariable.textAppName.defaultValue,
-    // avatar: 'https://i.pravatar.cc/100',
-    //timestampFormat.substring(0, timestampFormat.length - 4),
-    handle: invitationInternalData.callID,
-    //  callkit type: 0 - Audio Call, 1 - Video Call
-    type: callType.index,
-    duration: CallKitInnerVariable.duration.defaultValue,
-    textAccept: CallKitInnerVariable.textAccept.defaultValue,
-    textDecline: CallKitInnerVariable.textDecline.defaultValue,
-    extra: <String, dynamic>{},
-    headers: <String, dynamic>{},
-    missedCallNotification: NotificationParams(
-      showNotification: false,
-      isShowCallback: true,
-      subtitle: CallKitInnerVariable.textMissedCall.defaultValue,
-      callbackText: CallKitInnerVariable.textCallback.defaultValue,
-    ),
-    android: AndroidParams(
-      isCustomNotification: true,
-      isShowLogo: false,
-      ringtonePath: ringtonePath,
-      backgroundColor: CallKitInnerVariable.backgroundColor.defaultValue,
-      backgroundUrl: CallKitInnerVariable.backgroundUrl.defaultValue,
-      actionColor: CallKitInnerVariable.actionColor.defaultValue,
-    ),
-    ios: IOSParams(
-      iconName: CallKitInnerVariable.iconName.defaultValue,
-      handleType: '',
-      supportsVideo: true,
-      maximumCallGroups: 2,
-      maximumCallsPerCallGroup: 1,
-      audioSessionMode: 'default',
-      audioSessionActive: true,
-      audioSessionPreferredSampleRate: 44100.0,
-      audioSessionPreferredIOBufferDuration: 0.005,
-      supportsDTMF: true,
-      supportsHolding: true,
-      supportsGrouping: false,
-      supportsUngrouping: false,
-      ringtonePath: ringtonePath,
+      ringtonePath: _ringtonePath,
     ),
   );
 }
@@ -186,68 +125,24 @@ Future<void> showCallkitIncoming({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
   required InvitationInternalData invitationInternalData,
-  String ringtonePath = 'system_ringtone_default',
+  String? ringtonePath,
 }) async {
-  final callKitParam = await makeCallKitParam(
+  final callKitParam = await _makeCallKitParam(
     caller: caller,
     callType: callType,
     invitationInternalData: invitationInternalData,
+    ringtonePath: ringtonePath,
   );
 
   ZegoLoggerService.logInfo(
     'show callkit incoming, inviter name:${caller?.name}, call type:$callType, '
-        'data:${invitationInternalData.toJson()}, '
-        'callKitParam:${callKitParam.toJson()}',
+    'data:${invitationInternalData.toJson()}, '
+    'callKitParam:${callKitParam.toJson()}',
     tag: 'call',
-    subTag: 'background message',
+    subTag: 'callkit',
   );
 
   return FlutterCallkitIncoming.showCallkitIncoming(callKitParam);
-}
-
-///
-
-/// @nodoc
-///
-/// Retrieve the current call from a third-party CallKit library.
-///
-/// 参数格式如下:
-/// {
-/// 	id: $uuid,
-/// 	nameCaller: $inviter_name,
-/// 	appName: ,
-/// 	handle: $call_id,
-/// 	avatar: https: //i.pravatar.cc/100,
-/// 	type: $call_type,
-/// 	duration: 30000.0,
-/// 	textAccept: Accept,
-/// 	textDecline: Decline,
-/// 	textMissedCall: Missed call,
-/// 	textCallback: Call back,
-/// 	extra: {
-/// 		userId: 1 a2b3c4d
-/// 	},
-/// 	headers: {
-/// 		apiKey: Abc @123!,
-/// 		platform: flutter
-/// 	},
-/// 	android: null,
-/// 	ios: null
-/// }
-Future<CallKitParams?> getCurrentCallKitCall() async {
-  final calls = await FlutterCallkitIncoming.activeCalls();
-  if (calls is List) {
-    ZegoLoggerService.logInfo(
-      'activeCalls:${calls.length}',
-      tag: 'call',
-      subTag: 'background message',
-    );
-    if (calls.isNotEmpty) {
-      return convertCallKitCallToParam(calls.last as Map<dynamic, dynamic>);
-    }
-  }
-
-  return null;
 }
 
 /// @nodoc
@@ -258,30 +153,28 @@ Future<String?> getCurrentCallKitCallID() async {
   return prefs.getString(CallKitCalIDCacheKey);
 }
 
-/// @nodoc
-///
-/// Convert an internal map into the required parameters for a third-party CallKit.
-CallKitParams? convertCallKitCallToParam(Map<dynamic, dynamic> targetCall) {
-  final activeCallRawParam = <String, dynamic>{};
-  targetCall.forEach((key, value) {
-    if (value is Map) {
-      final _value = <String, dynamic>{};
-      value.forEach((key, value) {
-        _value[key as String] = value;
-      });
-      activeCallRawParam[key as String] = _value;
-    } else {
-      activeCallRawParam[key as String] = value;
-    }
-  });
+/// cached ID of the current cal
+Future<void> setCurrentCallKitCallID(String callID) async {
+  ZegoLoggerService.logInfo(
+    'set current callkit id:$callID',
+    tag: 'call',
+    subTag: 'callkit',
+  );
 
-  //  sdk bug
-  if (activeCallRawParam.containsKey('number') &&
-      !activeCallRawParam.containsKey('handle')) {
-    activeCallRawParam['handle'] = activeCallRawParam['number'];
-  }
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(CallKitCalIDCacheKey, callID);
+}
 
-  return CallKitParams.fromJson(activeCallRawParam);
+/// cached ID of the current cal
+Future<void> clearCurrentCallKitCallID() async {
+  ZegoLoggerService.logInfo(
+    'clear current callkit id',
+    tag: 'call',
+    subTag: 'callkit',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove(CallKitCalIDCacheKey);
 }
 
 /// @nodoc

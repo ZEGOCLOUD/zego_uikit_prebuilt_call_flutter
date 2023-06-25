@@ -110,9 +110,13 @@ class ZegoAndroidNotificationConfig {
   /// specify the sound file name id of notification, which is same in 'Zego Console'
   String? sound;
 
+  /// specify the call id show or hide,
+  bool callIDVisibility;
+
   ZegoAndroidNotificationConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
     this.sound = '',
+    this.callIDVisibility = true,
   });
 }

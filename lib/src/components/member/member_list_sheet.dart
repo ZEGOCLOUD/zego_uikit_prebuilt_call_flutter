@@ -15,12 +15,14 @@ class ZegoMemberListSheet extends StatefulWidget {
     this.showCameraState = true,
     this.itemBuilder,
     this.avatarBuilder,
+    this.rootNavigator = false,
   }) : super(key: key);
 
   final bool showMicrophoneState;
   final bool showCameraState;
   final ZegoMemberListItemBuilder? itemBuilder;
   final ZegoAvatarBuilder? avatarBuilder;
+  final bool rootNavigator;
 
   @override
   State<ZegoMemberListSheet> createState() => _ZegoMemberListSheetState();
@@ -66,7 +68,10 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.of(
+                context,
+                rootNavigator: widget.rootNavigator,
+              ).pop();
             },
             child: SizedBox(
               width: 70.zR,
@@ -95,6 +100,7 @@ void showMemberListSheet(
   showCameraState = true,
   ZegoMemberListItemBuilder? itemBuilder,
   ZegoAvatarBuilder? avatarBuilder,
+  bool rootNavigator = false,
 }) {
   showModalBottomSheet(
     barrierColor: ZegoUIKitDefaultTheme.viewBarrierColor,
@@ -121,6 +127,7 @@ void showMemberListSheet(
               showMicrophoneState: showMicrophoneState,
               itemBuilder: itemBuilder,
               avatarBuilder: avatarBuilder,
+              rootNavigator: rootNavigator,
             ),
           ),
         ),

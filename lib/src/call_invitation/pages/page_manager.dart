@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
@@ -17,7 +16,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/notification_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_ring.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
@@ -41,11 +41,11 @@ class ZegoInvitationPageManager {
   bool _invitationTopSheetVisibility = false;
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
   bool _appInBackground = false;
-  bool _hasCallkitIncomingCauseAppInBackground = false;
 
   /// iOS的bug, 锁屏下接受呼叫，有时候会先收到CallKit的performAnswerCallAction, 后才收到ZIM的onCallInvitationReceived
   /// 这时候需要在onCallInvitationReceived直接同意
   /// todo wait zim sdk fix bug
+  bool _hasCallkitIncomingCauseAppInBackground = false;
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
 
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
@@ -337,7 +337,7 @@ class ZegoInvitationPageManager {
   }
 
   ///
-  void onInvitationReceived(Map<String, dynamic> params) {
+  Future<void> onInvitationReceived(Map<String, dynamic> params) async {
     final ZegoUIKitUser inviter = params['inviter']!;
     final int type = params['type']!; // call type
     final String data = params['data']!; // extended field
@@ -389,8 +389,7 @@ class ZegoInvitationPageManager {
       ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
       ..type = ZegoCallTypeExtension.mapValue[type] ?? ZegoCallType.voiceCall;
 
-    final callKitCallID =
-        ZegoUIKitPrebuiltCallInvitationService().callKitCallID;
+    final callKitCallID = await getCurrentCallKitCallID();
     ZegoLoggerService.logInfo(
       '_waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$_waitingCallInvitationReceivedAfterCallKitIncomingAccepted, '
       'callkit call id:$callKitCallID',
@@ -414,7 +413,7 @@ class ZegoInvitationPageManager {
         }
 
         _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
-        ZegoUIKitPrebuiltCallInvitationService().callKitCallID = null;
+        clearCurrentCallKitCallID();
 
         ZegoUIKit()
             .getSignalingPlugin()
@@ -445,23 +444,22 @@ class ZegoInvitationPageManager {
           subTag: 'page manager',
         );
 
-        /// todo@yuyj 1. ringtone && callkit
-        // if (Platform.isAndroid) {
-        //   _calleeRingtone.startRing(); //  ios will crash
-        // }
         _hasCallkitIncomingCauseAppInBackground = true;
-        showCallkitIncoming(
-          caller: inviter,
-          callType: _invitationData.type,
-          invitationInternalData: invitationInternalData,
-          ringtonePath: _calleeRingtone.sourcePath,
-        );
+        if (Platform.isAndroid) {
+          // ZegoUIKit().getSignalingPlugin().addLocalNotification();
+          /// android 先弹prebuilt 呼叫邀请弹框
+          notificationManager.showInvitationNotification(invitationData);
+        } else {
+          setCurrentCallKitCallID(_invitationData.callID);
 
-        //  todo@yuyj android 大界面结束界面没跳转
-        // Future.delayed(Duration(seconds: 5), () {
-        //   // clearAllCallKitCalls();
-        //   FlutterCallkitIncoming.endCall(invitationInternalData.callID);
-        // });
+          showCallkitIncoming(
+            caller: inviter,
+            callType: _invitationData.type,
+            invitationInternalData: invitationInternalData,
+            ringtonePath:
+                callInvitationConfig.androidNotificationConfig?.sound ?? '',
+          );
+        }
       } else {
         showNotificationOnInvitationReceived();
       }
@@ -720,6 +718,7 @@ class ZegoInvitationPageManager {
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
+    notificationManager.cancelAll();
     hideInvitationTopSheet();
 
     if (CallingState.kIdle !=
@@ -738,6 +737,7 @@ class ZegoInvitationPageManager {
       callingMachine.stateIdle.enter();
     }
 
+    clearCurrentCallKitCallID();
     clearAllCallKitCalls();
 
     _invitationData = ZegoCallInvitationData.empty();
@@ -813,11 +813,24 @@ class ZegoInvitationPageManager {
         subTag: 'page manager',
       );
       if (_hasCallkitIncomingCauseAppInBackground) {
+        _hasCallkitIncomingCauseAppInBackground = false;
+
         ZegoLoggerService.logInfo(
           'not show notification, will be auto agree until callkit accept event received',
           tag: 'call',
           subTag: 'page manager',
         );
+
+        if (Platform.isAndroid) {
+          notificationManager.cancelAll();
+
+          if (ZegoNotificationManager.hasInvitation) {
+            ZegoNotificationManager.hasInvitation = false;
+
+            /// click on empty space of notification, not accept or decline
+            showNotificationOnInvitationReceived();
+          }
+        }
       } else {
         ZegoLoggerService.logInfo(
           'show notification now',

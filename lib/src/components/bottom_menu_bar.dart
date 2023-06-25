@@ -119,8 +119,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
                     .value;
               }
             : null,
-        microphoneDefaultValueFunc: widget
-                .prebuiltData.isPrebuiltFromMinimizing
+        microphoneDefaultValueFunc: widget.prebuiltData.isPrebuiltFromMinimizing
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
@@ -295,7 +294,10 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             if (widget.config.onHangUp != null) {
               widget.config.onHangUp!.call();
             } else {
-              Navigator.of(context).pop();
+              Navigator.of(
+                context,
+                rootNavigator: widget.config.rootNavigator,
+              ).pop();
             }
 
             /// restore controller's leave status
@@ -317,7 +319,9 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         );
       case ZegoMenuBarButtonName.minimizingButton:
         return ZegoMinimizingButton(
-            prebuiltData: widget.prebuiltData);
+          prebuiltData: widget.prebuiltData,
+          rootNavigator: widget.config.rootNavigator,
+        );
     }
   }
 

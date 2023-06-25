@@ -15,6 +15,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
@@ -86,12 +87,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
 
   StreamSubscription<dynamic>? userListStreamSubscription;
+  List<StreamSubscription<dynamic>?> subscriptions = [];
 
   late ZegoUIKitPrebuiltCallData prebuiltData;
 
   Timer? durationTimer;
   DateTime? durationStartTime;
   var durationNotifier = ValueNotifier<Duration>(Duration.zero);
+
+  final popUpManager = ZegoPopUpManager();
 
   @override
   void initState() {
@@ -128,7 +132,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.5.2; $version',
+        'version: zego_uikit_prebuilt_call:3.6.2; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -147,6 +151,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoUIKitPrebuiltCallMiniOverlayMachine()
         .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
+    subscriptions.add(
+        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom));
     userListStreamSubscription =
         ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
   }
@@ -355,8 +361,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             as ZegoLayoutPictureInPictureConfig)
           ..smallViewPosition = ZegoViewPosition.topRight
           ..smallViewSize = Size(190.0.zW, 338.0.zH)
-          ..smallViewMargin =
-              EdgeInsets.only(left: 20.zR, top: 50.zR, right: 20.zR, bottom: 30.zR);
+          ..smallViewMargin = EdgeInsets.only(
+              left: 20.zR, top: 50.zR, right: 20.zR, bottom: 30.zR);
         widget.config.layout = layout;
       }
 
@@ -478,6 +484,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return true;
     }
 
+    final key = DateTime.now().millisecondsSinceEpoch;
+    popUpManager.addAPopUpSheet(key);
+
     return showAlertDialog(
       context,
       widget.config.hangUpConfirmDialogInfo!.title,
@@ -490,7 +499,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this dialog
-            Navigator.of(context).pop(false);
+            Navigator.of(
+              context,
+              rootNavigator: widget.config.rootNavigator,
+            ).pop(false);
           },
         ),
         CupertinoDialogAction(
@@ -500,11 +512,18 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this dialog
-            Navigator.of(context).pop(true);
+            Navigator.of(
+              context,
+              rootNavigator: widget.config.rootNavigator,
+            ).pop(true);
           },
         ),
       ],
-    );
+    ).then((result) {
+      popUpManager.removeAPopUpSheet(key);
+
+      return result;
+    });
   }
 
   Widget audioVideoViewForeground(
@@ -580,5 +599,26 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       bottom: 0,
       child: Container(color: backgroundColor),
     );
+  }
+
+  void onMeRemovedFromRoom(String fromUserID) {
+    ZegoLoggerService.logInfo(
+      'local user removed by $fromUserID',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    ///more button, member list, chat dialog
+    popUpManager.autoPop(context, widget.config.rootNavigator);
+
+    if (null != widget.config.onMeRemovedFromRoom) {
+      widget.config.onMeRemovedFromRoom!.call(fromUserID);
+    } else {
+      //  pop this dialog
+      Navigator.of(
+        context,
+        rootNavigator: widget.config.rootNavigator,
+      ).pop(true);
+    }
   }
 }
