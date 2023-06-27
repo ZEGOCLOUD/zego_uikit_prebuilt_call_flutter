@@ -83,6 +83,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     return ValueNotifierSliderVisibility(
       visibilityNotifier: widget.visibilityNotifier,
       child: Container(
+        margin: widget.config.bottomMenuBarConfig.margin,
+        padding: widget.config.bottomMenuBarConfig.padding,
         height: widget.height ?? (widget.buttonSize.height + 2 * 3),
         decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.transparent,

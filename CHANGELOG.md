@@ -1,3 +1,13 @@
+## 3.7.1
+- Update ReadMe.
+
+## 3.7.0
+- Compatible for Android immersive navigation to the top and bottom toolbars.
+- Support for setting the style of the top and bottom toolbars by allowing customization of padding, margin, background color, and height.
+
+## 3.6.3
+- Fix the issue of offline notifications' title and message on Android.
+
 ## 3.6.2
 - Optimize the methods exposed by ZegoUIKitPrebuiltCallInvitationService.
 

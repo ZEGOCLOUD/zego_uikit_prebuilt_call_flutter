@@ -46,20 +46,22 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
 
   ZegoLoggerService.logInfo(
     'on background message received: '
-    'title:${message.title}'
-    'content:${message.content}'
+    'title:${message.title}, '
+    'content:${message.content}, '
     'extras:${message.extras}',
     tag: 'call',
     subTag: 'background message',
   );
 
+  final title = message.extras['title'] as String? ?? '';
+  final body = message.extras['body'] as String? ?? '';
   final payload = message.extras['payload'] as String? ?? '';
-  final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
-  final inviterName = extendedMap['inviter_name'] as String;
-  final callType = ZegoCallTypeExtension.mapValue[extendedMap['type'] as int] ??
+  final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
+  final inviterName = payloadMap['inviter_name'] as String;
+  final callType = ZegoCallTypeExtension.mapValue[payloadMap['type'] as int] ??
       ZegoCallType.voiceCall;
   final invitationInternalData =
-      InvitationInternalData.fromJson(extendedMap['data'] as String);
+      InvitationInternalData.fromJson(payloadMap['data'] as String);
 
   FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
     ZegoLoggerService.logInfo(
@@ -118,6 +120,8 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     caller: ZegoUIKitUser(id: '', name: inviterName),
     callType: callType,
     invitationInternalData: invitationInternalData,
+    title: title,
+    body: body,
   );
 }
 

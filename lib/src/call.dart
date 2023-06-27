@@ -132,7 +132,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.6.2; $version',
+        'version: zego_uikit_prebuilt_call:3.7.1; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -418,12 +418,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget topMenuBar() {
     final isLightStyle =
-        ZegoMenuBarStyle.light == widget.config.bottomMenuBarConfig.style;
+        ZegoMenuBarStyle.light == widget.config.topMenuBarConfig.style;
+    final safeAreaInsets = MediaQuery.of(context).padding;
 
     return Positioned(
       left: 0,
       right: 0,
-      top: 0,
+      top: safeAreaInsets.top,
       child: ZegoTopMenuBar(
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
@@ -432,9 +433,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
-        height: 88.zR,
-        backgroundColor:
-            isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
+        height: widget.config.topMenuBarConfig.height ?? 88.zR,
+        backgroundColor: widget.config.topMenuBarConfig.backgroundColor ??
+            (isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor),
       ),
     );
   }
@@ -442,11 +443,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   Widget bottomMenuBar() {
     final isLightStyle =
         ZegoMenuBarStyle.light == widget.config.bottomMenuBarConfig.style;
+    final safeAreaInsets = MediaQuery.of(context).padding;
 
     return Positioned(
       left: 0,
       right: 0,
-      bottom: isLightStyle ? 10 : 0,
+      bottom:
+          isLightStyle ? safeAreaInsets.bottom + 10.zR : safeAreaInsets.bottom,
       child: ZegoBottomMenuBar(
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
@@ -455,9 +458,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         prebuiltData: prebuiltData,
         isHangUpRequestingNotifier:
             widget.controller?.isHangUpRequestingNotifier,
-        height: isLightStyle ? null : 208.zR,
-        backgroundColor:
-            isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor,
+        height: widget.config.bottomMenuBarConfig.height ??
+            (isLightStyle ? null : 208.zR),
+        backgroundColor: widget.config.bottomMenuBarConfig.backgroundColor ??
+            (isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor),
         borderRadius: isLightStyle ? null : 32.zR,
       ),
     );
@@ -468,8 +472,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return Container();
     }
 
+    final safeAreaInsets = MediaQuery.of(context).padding;
+
     return Positioned(
-      top: 10,
+      top: safeAreaInsets.top + 10.zR,
       left: 0,
       right: 0,
       child: CallDurationTimeBoard(

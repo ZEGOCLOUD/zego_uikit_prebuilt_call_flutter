@@ -85,6 +85,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
       visibilityNotifier: widget.visibilityNotifier,
       endOffset: const Offset(0.0, -2.0),
       child: Container(
+        margin: widget.config.topMenuBarConfig.margin,
+        padding: widget.config.topMenuBarConfig.padding,
         height: widget.height ?? (widget.buttonSize.height + 2 * 3),
         decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.transparent,

@@ -274,22 +274,38 @@ class ZegoTopMenuBarConfig {
   /// Buttons displayed on the menu bar. The buttons will be arranged in the order specified in the list.
   List<ZegoMenuBarButtonName> buttons;
 
-  /// Style of the top menu bar.
-  ZegoMenuBarStyle style;
-
   /// Extension buttons that allow you to add your own buttons to the top toolbar.
   /// These buttons will be added to the menu bar in the specified order.
   /// If the limit of [3] is exceeded, additional buttons will be automatically added to the overflow menu.
   List<Widget> extendButtons;
 
+  /// Style of the top menu bar.
+  ZegoMenuBarStyle style;
+
+  /// padding for the top menu bar.
+  EdgeInsetsGeometry? padding;
+
+  /// margin for the top menu bar.
+  EdgeInsetsGeometry? margin;
+
+  /// background color for the top menu bar.
+  Color? backgroundColor;
+
+  /// height for the top menu bar.
+  double? height;
+
   ZegoTopMenuBarConfig({
     this.isVisible = true,
+    this.title = '',
     this.hideAutomatically = true,
     this.hideByClick = true,
     this.buttons = const [],
-    this.style = ZegoMenuBarStyle.light,
     this.extendButtons = const [],
-    this.title = '',
+    this.style = ZegoMenuBarStyle.light,
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.height,
   });
 }
 
@@ -314,6 +330,18 @@ class ZegoBottomMenuBarConfig {
   /// Button style for the bottom menu bar.
   ZegoMenuBarStyle style;
 
+  /// padding for the bottom menu bar.
+  EdgeInsetsGeometry? padding;
+
+  /// margin for the bottom menu bar.
+  EdgeInsetsGeometry? margin;
+
+  /// background color for the bottom menu bar.
+  Color? backgroundColor;
+
+  /// height for the bottom menu bar.
+  double? height;
+
   /// Extension buttons that allow you to add your own buttons to the top toolbar.
   /// These buttons will be added to the menu bar in the specified order.
   /// If the limit of [maxCount] is exceeded, additional buttons will be automatically added to the overflow menu.
@@ -329,9 +357,13 @@ class ZegoBottomMenuBarConfig {
       ZegoMenuBarButtonName.switchAudioOutputButton,
       ZegoMenuBarButtonName.switchCameraButton,
     ],
+    this.extendButtons = const [],
     this.maxCount = 5,
     this.style = ZegoMenuBarStyle.light,
-    this.extendButtons = const [],
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.height,
   });
 }
 

@@ -41,6 +41,8 @@ Future<CallKitParams> _makeCallKitParam({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
   required InvitationInternalData invitationInternalData,
+  String? title,
+  String? body,
   String? ringtonePath,
 }) async {
   final prefs = await SharedPreferences.getInstance();
@@ -52,16 +54,26 @@ Future<CallKitParams> _makeCallKitParam({
             CallKitInnerVariable.ringtonePath.defaultValue;
   }
 
+  var _title = title ?? '';
+  if (_title.isEmpty) {
+    _title = caller?.name ?? '';
+  }
+
+  var _body = body ?? '';
+  if (_body.isEmpty) {
+    _body = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
+            CallKitInnerVariable.callIDVisibility.defaultValue)
+        ? invitationInternalData.callID
+        : '';
+  }
+
   return CallKitParams(
     id: const Uuid().v4(),
-    nameCaller: caller?.name ?? '',
+    nameCaller: _title,
     appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
         CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
-    handle: (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
-            CallKitInnerVariable.callIDVisibility.defaultValue)
-        ? invitationInternalData.callID
-        : '',
+    handle: _body,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
     duration: prefs.getInt(CallKitInnerVariable.duration.cacheKey) ??
@@ -126,12 +138,16 @@ Future<void> showCallkitIncoming({
   required ZegoCallType callType,
   required InvitationInternalData invitationInternalData,
   String? ringtonePath,
+  String? title,
+  String? body,
 }) async {
   final callKitParam = await _makeCallKitParam(
     caller: caller,
     callType: callType,
     invitationInternalData: invitationInternalData,
     ringtonePath: ringtonePath,
+    title: title,
+    body: body,
   );
 
   ZegoLoggerService.logInfo(
