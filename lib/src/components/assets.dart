@@ -16,4 +16,5 @@ class PrebuiltCallIconUrls {
   static const String topMemberNormal = 'assets/icons/top_member_normal.png';
   static const String topCameraOverturn =
       'assets/icons/top_camera_overturn.png';
+  static const String toolbarBeautyEffect = 'assets/icons/toolbar_beauty.png';
 }

@@ -5,15 +5,15 @@ import 'dart:convert';
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 
 /// @nodoc
 ///
@@ -56,6 +56,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   final title = message.extras['title'] as String? ?? '';
   final body = message.extras['body'] as String? ?? '';
   final payload = message.extras['payload'] as String? ?? '';
+  final invitationID = message.extras['call_id'] as String? ?? '';
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
   final inviterName = payloadMap['inviter_name'] as String;
   final callType = ZegoCallTypeExtension.mapValue[payloadMap['type'] as int] ??
@@ -63,7 +64,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   final invitationInternalData =
       InvitationInternalData.fromJson(payloadMap['data'] as String);
 
-  FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
+  FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
     ZegoLoggerService.logInfo(
       'callkit incoming event, body:${event?.body}, event:${event?.event}',
       tag: 'call',
@@ -84,12 +85,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
         /// deal in [onInvitationReceived] supply again by ZIM when app re-start
         break;
       case Event.actionCallDecline:
-
-        /// todo@yuyj [onBackgroundMessageReceived] lack of invitationID
-        // ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
-        //       invitationID: '',
-        //       data: '{"reason":"decline"}',
-        //     );
+        await _declineBackgroundCall(invitationID);
         break;
       case Event.actionCallEnded:
         break;
@@ -125,6 +121,50 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   );
 }
 
+Future<void> _declineBackgroundCall(String invitationID) async {
+  final appSign = await getPreferenceString(
+    serializationKeyAppSign,
+    withDecode: true,
+  );
+  final handlerInfoJson =
+      await getPreferenceString(serializationKeyHandlerInfo);
+  final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
+
+  ZegoLoggerService.logInfo(
+    'decline android background call, handler info:$handlerInfo',
+    tag: 'call',
+    subTag: 'background message',
+  );
+
+  ZegoUIKit().installPlugins([ZegoUIKitSignalingPlugin()]);
+  await ZegoUIKit()
+      .getSignalingPlugin()
+      .init(int.tryParse(handlerInfo.appID) ?? 0, appSign: appSign);
+  await ZegoUIKit().getSignalingPlugin().login(
+        id: handlerInfo.userID,
+        name: handlerInfo.userName,
+      );
+
+  await ZegoUIKit()
+      .getSignalingPlugin()
+      .enableNotifyWhenAppRunningInBackgroundOrQuit(
+        true,
+        isIOSSandboxEnvironment: handlerInfo.isIOSSandboxEnvironment,
+        enableIOSVoIP: handlerInfo.enableIOSVoIP,
+        certificateIndex: handlerInfo.certificateIndex,
+        appName: handlerInfo.appName,
+        androidChannelID: handlerInfo.androidChannelID,
+        androidChannelName: handlerInfo.androidChannelName,
+        androidSound: '/raw/${handlerInfo.androidSound}',
+      );
+
+  await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
+        invitationID: invitationID,
+        data: '{"reason":"decline"}',
+      );
+  await ZegoUIKit().getSignalingPlugin().uninit();
+}
+
 /// @nodoc
 ///
 /// [iOS] VoIP event callback
@@ -135,6 +175,7 @@ void onIncomingPushReceived(Map extras, UUID uuid) {
     subTag: 'background message',
   );
 
+  final invitationID = extras['call_id'] as String? ?? '';
   final payload = extras['payload'] as String? ?? '';
   final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
   final invitationInternalData =
@@ -145,4 +186,74 @@ void onIncomingPushReceived(Map extras, UUID uuid) {
   setCurrentCallKitCallID(invitationInternalData.callID);
 
   ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
+}
+
+class HandlerPrivateInfo {
+  String appID;
+  String userID;
+  String userName;
+  bool isIOSSandboxEnvironment;
+  bool enableIOSVoIP;
+  int certificateIndex;
+  String appName;
+  String androidChannelID;
+  String androidChannelName;
+  String androidSound;
+
+  HandlerPrivateInfo({
+    required this.appID,
+    required this.userID,
+    required this.userName,
+    this.isIOSSandboxEnvironment = false,
+    this.enableIOSVoIP = true,
+    this.certificateIndex = 1,
+    this.appName = '',
+    this.androidChannelID = '',
+    this.androidChannelName = '',
+    this.androidSound = '',
+  });
+
+  factory HandlerPrivateInfo.fromJson(Map<String, dynamic> json) {
+    return HandlerPrivateInfo(
+      appID: json['aid'],
+      userID: json['uid'],
+      userName: json['un'],
+      isIOSSandboxEnvironment: json['isse'] ?? false,
+      enableIOSVoIP: json['eiv'] ?? true,
+      certificateIndex: json['ci'] ?? 1,
+      appName: json['an'] ?? '',
+      androidChannelID: json['aci'] ?? '',
+      androidChannelName: json['acn'] ?? '',
+      androidSound: json['as'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'aid': appID,
+      'uid': userID,
+      'un': userName,
+      'isse': isIOSSandboxEnvironment,
+      'eiv': enableIOSVoIP,
+      'ci': certificateIndex,
+      'an': appName,
+      'aci': androidChannelID,
+      'acn': androidChannelName,
+      'as': androidSound,
+    };
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
+
+  String toJsonString() {
+    return jsonEncode(toJson());
+  }
+
+  static HandlerPrivateInfo fromJsonString(String jsonString) {
+    final json = jsonDecode(jsonString);
+    return HandlerPrivateInfo.fromJson(json);
+  }
 }

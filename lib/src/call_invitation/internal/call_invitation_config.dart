@@ -2,6 +2,7 @@
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
@@ -31,6 +32,8 @@ class ZegoCallInvitationConfig {
 
   ZegoUIKitPrebuiltCallController? controller;
 
+  final List<IZegoUIKitPlugin>? plugins;
+
   ZegoCallInvitationConfig({
     required this.appID,
     required this.appSign,
@@ -44,5 +47,6 @@ class ZegoCallInvitationConfig {
     this.invitationEvents,
     this.innerText,
     this.controller,
+    this.plugins,
   });
 }

@@ -1,12 +1,14 @@
 // Dart imports:
 import 'dart:async';
+import 'dart:convert';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 
 /// @nodoc
 enum PluginNetworkState {
@@ -91,6 +93,8 @@ class ZegoPrebuiltPlugins {
     );
     initialized = true;
 
+    setPreferenceString(serializationKeyAppSign, appSign, withEncode: true);
+
     ZegoLoggerService.logInfo(
       'plugins init done',
       tag: 'call',
@@ -105,6 +109,9 @@ class ZegoPrebuiltPlugins {
       subTag: 'plugin',
     );
     initialized = false;
+
+    removePreferenceValue(serializationKeyAppSign);
+    removePreferenceValue(serializationKeyHandlerInfo);
 
     tryReLogging = false;
 

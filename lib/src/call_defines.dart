@@ -29,6 +29,9 @@ enum ZegoMenuBarButtonName {
   /// Button for minimizing the current [ZegoUIKitPrebuiltCall] widget within the app.
   /// When clicked, the [ZegoUIKitPrebuiltCall] widget will shrink into a small draggable widget within the app.
   minimizingButton,
+
+  /// Button for controlling the display or hiding of the beauty effect adjustment panel.
+  beautyEffectButton,
 }
 
 /// Sound wave effect types.

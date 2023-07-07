@@ -130,6 +130,9 @@ class ZegoUIKitPrebuiltCallConfig {
   /// Configuration related to the bottom member list, including displaying the member list, member list styles, and more.
   ZegoMemberListConfig memberListConfig;
 
+  /// advance beauty config
+  ZegoBeautyPluginConfig? beautyConfig;
+
   /// Layout-related configuration. You can choose your layout here.
   ZegoLayout? layout;
 

@@ -1,6 +1,5 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io' show Platform;
 
 // Flutter imports:
@@ -31,6 +30,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_i
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
+
+import 'internal/shared_pref_defines.dart';
 
 part 'callkit/call_invitation_service.callkit.dart';
 
@@ -163,6 +164,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoUIKitPrebuiltCallInvitationEvents? events,
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
     bool? isIOSSandboxEnvironment,
+    ZegoSignalingPluginMultiCertificate certificateIndex =
+        ZegoSignalingPluginMultiCertificate.firstCertificate,
     String appName = '',
     // ZegoIOSNotificationConfig? iOSNotificationConfig,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
@@ -172,7 +175,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.7.1; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.9.2; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -236,6 +239,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       invitationEvents: _data.events,
       innerText: _data.innerText,
       controller: _data.controller,
+      plugins: plugins,
     );
     if (null != _contextQuery) {
       _callInvitationConfig.contextQuery = _contextQuery;
@@ -298,20 +302,39 @@ class ZegoUIKitPrebuiltCallInvitationService
           //   );
           // }
 
+          final androidChannelID =
+              _data.androidNotificationConfig?.channelID ?? 'CallInvitation';
+          final androidChannelName =
+              _data.androidNotificationConfig?.channelName ?? 'Call Invitation';
+          final androidSound =
+              '/raw/${_data.androidNotificationConfig?.sound ?? '/raw/zego_incoming'}';
+          setPreferenceString(
+            serializationKeyHandlerInfo,
+            HandlerPrivateInfo(
+              appID: appID.toString(),
+              userID: userID,
+              userName: userName,
+              isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
+              enableIOSVoIP: _enableIOSVoIP,
+              certificateIndex: certificateIndex.id,
+              appName: appName,
+              androidChannelID: androidChannelID,
+              androidChannelName: androidChannelName,
+              androidSound: androidSound,
+            ).toJsonString(),
+          );
+
           ZegoUIKit()
               .getSignalingPlugin()
               .enableNotifyWhenAppRunningInBackgroundOrQuit(
                 true,
                 isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
                 enableIOSVoIP: _enableIOSVoIP,
+                certificateIndex: certificateIndex.id,
                 appName: appName,
-                androidChannelID: _data.androidNotificationConfig?.channelID ??
-                    'CallInvitation',
-                androidChannelName:
-                    _data.androidNotificationConfig?.channelName ??
-                        'Call Invitation',
-                androidSound:
-                    '/raw/${_data.androidNotificationConfig?.sound ?? '/raw/zego_incoming'}',
+                androidChannelID: androidChannelID,
+                androidChannelName: androidChannelName,
+                androidSound: androidSound,
               )
               .then((result) {
             if (_enableIOSVoIP) {

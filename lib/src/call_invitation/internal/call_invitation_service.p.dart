@@ -32,6 +32,11 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
     ZegoUIKit().login(_data.userID, _data.userName);
     await ZegoUIKit().init(appID: _data.appID, appSign: _data.appSign);
 
+    // enableCustomVideoProcessing
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().enableCustomVideoProcessing(true);
+    }
+
     ZegoUIKit.instance.turnCameraOn(false);
 
     _pageManager.init(

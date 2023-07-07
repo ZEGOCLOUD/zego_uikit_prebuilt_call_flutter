@@ -47,6 +47,7 @@ class ZegoInvitationPageManager {
   /// todo wait zim sdk fix bug
   bool _hasCallkitIncomingCauseAppInBackground = false;
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+  bool _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
 
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> _invitingInvitees = []; //  only change by inviter
@@ -69,6 +70,12 @@ class ZegoInvitationPageManager {
 
   set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(value) =>
       _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = value;
+
+  bool get waitingCallInvitationReceivedAfterCallKitIncomingRejected =>
+      _waitingCallInvitationReceivedAfterCallKitIncomingRejected;
+
+  set waitingCallInvitationReceivedAfterCallKitIncomingRejected(value) =>
+      _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
 
   bool get isInCalling =>
       CallingState.kOnlineAudioVideo == callingMachine.getPageState();
@@ -126,6 +133,7 @@ class ZegoInvitationPageManager {
     _appInBackground = false;
     _hasCallkitIncomingCauseAppInBackground = false;
     _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+    _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
 
     _invitationData = ZegoCallInvitationData.empty();
     _invitingInvitees.clear();
@@ -346,7 +354,7 @@ class ZegoInvitationPageManager {
     final invitationID = params['invitation_id'] as String? ?? '';
 
     ZegoLoggerService.logInfo(
-      'on invitation received, inviter:$inviter, type:$type, data:$data',
+      'on invitation received, state:${WidgetsBinding.instance.lifecycleState},  _init:$_init, inviter:$inviter, type:$type, data:$data, in background: $_appInBackground',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -426,20 +434,45 @@ class ZegoInvitationPageManager {
           );
         });
       } else {
-        /// in iOS's callkit, will [onIncomingPushReceived] first,
-        /// then [onInvitationReceived] latter
-        /// so, deal auto agree login in VoIP Event
-        ZegoLoggerService.logInfo(
-          'iOS, wait user decide to answer or end in popup window',
-          tag: 'call',
-          subTag: 'page manager',
-        );
-        hasCallkitIncomingCauseAppInBackground = true;
+        /// only iOS
+        if (_waitingCallInvitationReceivedAfterCallKitIncomingRejected) {
+          _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
+
+          ZegoLoggerService.logInfo(
+            'refuse invitation($invitationData) by callkit rejected',
+            tag: 'call',
+            subTag: 'call invitation service',
+          );
+
+          ZegoUIKit()
+              .getSignalingPlugin()
+              .refuseInvitation(
+                inviterID: invitationData.inviter?.id ?? '',
+                data: '{"reason":"decline"}',
+              )
+              .then((result) {
+            onLocalRefuseInvitation(
+                result.error?.code ?? '', result.error?.message ?? '');
+          });
+        } else {
+          /// in iOS's callkit, will [onIncomingPushReceived] first,
+          /// then [onInvitationReceived] latter
+          /// so, deal auto agree login in VoIP Event
+          ZegoLoggerService.logInfo(
+            'iOS, wait user decide to answer or end in popup window',
+            tag: 'call',
+            subTag: 'page manager',
+          );
+          hasCallkitIncomingCauseAppInBackground = true;
+        }
       }
     } else {
-      if (_appInBackground) {
+      final iOSCallKitBackground = Platform.isIOS &&
+          AppLifecycleState.inactive == WidgetsBinding.instance.lifecycleState;
+
+      if (_appInBackground || iOSCallKitBackground) {
         ZegoLoggerService.logInfo(
-          'app in background, create notification',
+          'app in background, app in background:$_appInBackground, iOS callkit background:$iOSCallKitBackground, create notification',
           tag: 'call',
           subTag: 'page manager',
         );

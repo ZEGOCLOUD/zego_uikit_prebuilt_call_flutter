@@ -66,6 +66,9 @@ class ZegoCallKitBackgroundService {
         subTag: 'call invitation service',
       );
 
+      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingRejected =
+          true;
+
       return;
     }
 

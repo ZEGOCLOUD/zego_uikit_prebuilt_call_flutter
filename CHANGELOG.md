@@ -1,3 +1,19 @@
+# 3.9.2
+- Fix some issues
+
+# 3.9.1
+- Fix the iOS offline call rejection issue.
+
+## 3.9.0
+- Supports offline push between two apps
+- Support refuse offline call
+
+## 3.8.1
+- update dependency
+
+## 3.8.0
+- Support advance beauty
+
 ## 3.7.1
 - Update ReadMe.
 

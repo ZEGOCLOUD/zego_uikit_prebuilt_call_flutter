@@ -10,6 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
@@ -322,6 +323,12 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
       case ZegoMenuBarButtonName.minimizingButton:
         return ZegoMinimizingButton(
           prebuiltData: widget.prebuiltData,
+          rootNavigator: widget.config.rootNavigator,
+        );
+      case ZegoMenuBarButtonName.beautyEffectButton:
+        return ZegoBeautyEffectButton(
+          buttonSize: buttonSize,
+          iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
         );
     }

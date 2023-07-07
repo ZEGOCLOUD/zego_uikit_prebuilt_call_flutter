@@ -151,6 +151,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
         widget.pageManager.onPrebuiltCallPageDispose();
       },
       controller: widget.callInvitationConfig.controller,
+      plugins: widget.callInvitationConfig.plugins,
     );
   }
 }

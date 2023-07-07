@@ -37,6 +37,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.config,
     this.onDispose,
     this.controller,
+    this.plugins,
     @Deprecated('Since 3.3.1') this.appDesignSize,
   }) : super(key: key);
 
@@ -70,6 +71,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
   /// Callback when the page is destroyed.
   final VoidCallback? onDispose;
+
+  final List<IZegoUIKitPlugin>? plugins;
 
   /// @nodoc
   @Deprecated('Since 3.3.1')
@@ -132,7 +135,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.7.1; $version',
+        'version: zego_uikit_prebuilt_call:3.9.2; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -178,6 +181,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         tag: 'call',
         subTag: 'prebuilt',
       );
+    }
+
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().getBeautyPlugin().uninit();
     }
   }
 
@@ -253,11 +260,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
   }
 
-  void initContext() {
+  Future<void> initContext() async {
     assert(widget.userID.isNotEmpty);
     assert(widget.userName.isNotEmpty);
     assert(widget.appID > 0);
     assert(widget.appSign.isNotEmpty);
+
+    await initEffectsPlugins();
 
     final config = widget.config;
     initPermissions().then((value) {
@@ -266,6 +275,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ZegoUIKit()
           .init(appID: widget.appID, appSign: widget.appSign)
           .then((value) {
+        // enableCustomVideoProcessing
+        if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+          ZegoUIKit().enableCustomVideoProcessing(true);
+        }
+
         ZegoUIKit()
           ..useFrontFacingCamera(true)
           ..updateVideoViewMode(
@@ -288,6 +302,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         });
       });
     });
+  }
+
+  Future<void> initEffectsPlugins() async {
+    if (widget.plugins != null) {
+      ZegoUIKit().installPlugins(widget.plugins!);
+    }
+
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit()
+          .getBeautyPlugin()
+          .setConfig(widget.config.beautyConfig ?? ZegoBeautyPluginConfig());
+      await ZegoUIKit()
+          .getBeautyPlugin()
+          .init(widget.appID, appSign: widget.appSign)
+          .then((value) {
+        ZegoLoggerService.logInfo(
+          'effects plugin init done',
+          tag: 'live streaming',
+          subTag: 'plugin',
+        );
+      });
+    }
   }
 
   void correctConfigValue() {
@@ -347,9 +383,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           return StreamBuilder<List<ZegoUIKitUser>>(
             stream: ZegoUIKit().getAudioVideoListStream(),
             builder: (context, snapshot) {
-              final streamUsers = snapshot.data ?? [];
-              return widget.config.audioVideoContainerBuilder!
-                  .call(context, allUsers, streamUsers);
+              return widget.config.audioVideoContainerBuilder!.call(
+                context,
+                allUsers,
+                ZegoUIKit().getAudioVideoList(),
+              );
             },
           );
         },
