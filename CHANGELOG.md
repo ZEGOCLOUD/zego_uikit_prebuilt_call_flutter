@@ -1,7 +1,15 @@
-# 3.9.2
+## 3.10.1
+- update dependency
+
+## 3.10.0
+- Fixed the issue of the name of the small video window not being fully displayed due to its length.
+- Added support for hiding the icon in the **ZegoSendCallInvitationButton**.
+- Added margin, padding, and border radius style properties to the **ZegoSendCallInvitationButton**.
+
+## 3.9.2
 - Fix some issues
 
-# 3.9.1
+## 3.9.1
 - Fix the iOS offline call rejection issue.
 
 ## 3.9.0

@@ -36,12 +36,16 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.notificationTitle,
     this.notificationMessage,
     this.buttonSize,
+    this.borderRadius,
     this.icon,
     this.iconSize,
+    this.iconVisible = true,
     this.text,
     this.textStyle,
     this.iconTextSpacing,
     this.verticalLayout = true,
+    this.margin,
+    this.padding,
     this.timeoutSeconds = 60,
     this.clickableTextColor = Colors.black,
     this.unclickableTextColor = Colors.black,
@@ -83,8 +87,13 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
   /// The size of the button.
   final Size? buttonSize;
 
+  /// The radius of the button.
+  final double? borderRadius;
+
   /// The icon widget for the button.
   final ButtonIcon? icon;
+
+  final bool iconVisible;
 
   /// The size of the icon.
   final Size? iconSize;
@@ -100,6 +109,12 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
 
   /// Determines whether the layout is vertical or horizontal.
   final bool verticalLayout;
+
+  /// padding of button
+  final EdgeInsetsGeometry? margin;
+
+  /// padding of button
+  final EdgeInsetsGeometry? padding;
 
   /// The text color when the button is clickable.
   final Color? clickableTextColor;
@@ -203,18 +218,25 @@ class _ZegoSendCallInvitationButtonState
                         : innerText?.incomingVoiceCallDialogMessage) ??
                     'Incoming voice call...')),
       ),
-      icon: widget.icon ??
-          ButtonIcon(
-            icon: widget.isVideoCall
-                ? PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteVideo)
-                : PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteVoice),
-          ),
+      icon: widget.iconVisible
+          ? (widget.icon ??
+              ButtonIcon(
+                icon: widget.isVideoCall
+                    ? PrebuiltCallImage.asset(
+                        InvitationStyleIconUrls.inviteVideo)
+                    : PrebuiltCallImage.asset(
+                        InvitationStyleIconUrls.inviteVoice),
+              ))
+          : null,
       iconSize: widget.iconSize,
       text: widget.text,
       textStyle: widget.textStyle,
       iconTextSpacing: widget.iconTextSpacing,
       verticalLayout: widget.verticalLayout,
       buttonSize: widget.buttonSize,
+      borderRadius: widget.borderRadius,
+      margin: widget.margin,
+      padding: widget.padding,
       onWillPressed: onWillPressed,
       onPressed: onPressed,
       clickableTextColor: widget.clickableTextColor,
