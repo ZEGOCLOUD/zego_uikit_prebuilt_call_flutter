@@ -9,14 +9,21 @@ class InvitationInternalData {
   String callID = '';
   List<ZegoUIKitUser> invitees = [];
   String customData = '';
+  int timeout = 60;
 
   InvitationInternalData.empty();
 
-  InvitationInternalData(this.callID, this.invitees, this.customData);
+  InvitationInternalData({
+    required this.callID,
+    required this.invitees,
+    required this.timeout,
+    required this.customData,
+  });
 
   InvitationInternalData.fromJson(String json) {
     final dict = jsonDecode(json) as Map<String, dynamic>;
     callID = dict['call_id'] as String;
+    timeout = dict['timeout'] as int? ?? 60;
     customData = dict['custom_data'] as String;
 
     for (final invitee in dict['invitees'] as List) {
@@ -38,6 +45,7 @@ class InvitationInternalData {
                 'user_name': user.name,
               })
           .toList(),
+      'timeout': timeout,
       'custom_data': customData,
     };
     return const JsonEncoder().convert(dict);

@@ -1,3 +1,18 @@
+## 3.10.5
+- Fixed the issue where audio playback was not working in the App due to changes in the **prefix** path when using **audioplayers**.
+- Update **audioplayers** dependency
+
+## 3.10.4
+- Fix the issue of incorrect microphone status in the bottom-right corner of the screen for users in PIP view.
+- Fix the problem of delayed CallKit pop-up dismissal for offline calls in silent push mode.
+- Update **shared_preferences** dependency
+
+## 3.10.3
+- Fixed the issue of the name of the small video window not being fully displayed due to its length.
+
+## 3.10.2
+- Fixed the issue of the name of the small video window not being fully displayed due to its length.
+
 ## 3.10.1
 - update dependency
 

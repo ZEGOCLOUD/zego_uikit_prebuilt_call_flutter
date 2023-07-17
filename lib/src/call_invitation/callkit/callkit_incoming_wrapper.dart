@@ -76,8 +76,7 @@ Future<CallKitParams> _makeCallKitParam({
     handle: _body,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
-    duration: prefs.getInt(CallKitInnerVariable.duration.cacheKey) ??
-        CallKitInnerVariable.duration.defaultValue,
+    duration: invitationInternalData.timeout * 1000,
     textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
         CallKitInnerVariable.textAccept.defaultValue,
     textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??

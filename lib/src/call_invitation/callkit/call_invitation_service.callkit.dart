@@ -79,9 +79,6 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
     SharedPreferences.getInstance().then((prefs) {
       variables.forEach((key, value) {
         switch (key) {
-          case CallKitInnerVariable.duration:
-            prefs.setDouble(key.cacheKey, value as double? ?? key.defaultValue);
-            break;
           case CallKitInnerVariable.callIDVisibility:
             prefs.setBool(key.cacheKey, value as bool? ?? key.defaultValue);
             break;

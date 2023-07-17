@@ -163,11 +163,12 @@ class ZegoUIKitPrebuiltCallInvitationService
     bool showDeclineButton = true,
     ZegoUIKitPrebuiltCallInvitationEvents? events,
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
-    bool? isIOSSandboxEnvironment,
     ZegoSignalingPluginMultiCertificate certificateIndex =
         ZegoSignalingPluginMultiCertificate.firstCertificate,
     String appName = '',
-    // ZegoIOSNotificationConfig? iOSNotificationConfig,
+    @Deprecated('use iOSNotificationConfig.isSandboxEnvironment instead')
+        bool? isIOSSandboxEnvironment,
+    ZegoIOSNotificationConfig? iOSNotificationConfig,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallController? controller,
     ZegoCallInvitationInnerText? innerText,
@@ -175,7 +176,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.10.1; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.10.5; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -207,6 +208,11 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     _isInit = true;
+
+    _correctIOSNotificationConfig(
+      isIOSSandboxEnvironment: isIOSSandboxEnvironment,
+      iOSNotificationConfig: iOSNotificationConfig,
+    );
     _data = ZegoUIKitPrebuiltCallInvitationServiceData(
       appID: appID,
       appSign: appSign,
@@ -218,8 +224,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       events: events,
       notifyWhenAppRunningInBackgroundOrQuit:
           notifyWhenAppRunningInBackgroundOrQuit,
-      isIOSSandboxEnvironment: isIOSSandboxEnvironment,
-      // iOSNotificationConfig: iOSNotificationConfig,
+      iOSNotificationConfig: iOSNotificationConfig,
       androidNotificationConfig: androidNotificationConfig,
       controller: controller,
       innerText: innerText,
@@ -287,20 +292,11 @@ class ZegoUIKitPrebuiltCallInvitationService
         Future.delayed(const Duration(milliseconds: 500), () {
           ZegoLoggerService.logInfo(
             'try enable notification, '
-            'isIOSSandboxEnvironment:${_data.isIOSSandboxEnvironment}, '
-            // 'iOSNotificationConfig:${_data.iOSNotificationConfig.toString()}, '
+            'iOSNotificationConfig:${_data.iOSNotificationConfig}, '
             'enableIOSVoIP:$_enableIOSVoIP ',
             tag: 'call',
             subTag: 'call invitation service',
           );
-          // if (_data.isIOSSandboxEnvironment != null) {
-          //   assert(false);
-          //   ZegoLoggerService.logInfo(
-          //     'isIOSSandboxEnvironment is deprecated, use iOSNotificationConfig.isIOSSandboxEnvironment instead',
-          //     tag: 'call',
-          //     subTag: 'call invitation service',
-          //   );
-          // }
 
           final androidChannelID =
               _data.androidNotificationConfig?.channelID ?? 'CallInvitation';
@@ -314,7 +310,8 @@ class ZegoUIKitPrebuiltCallInvitationService
               appID: appID.toString(),
               userID: userID,
               userName: userName,
-              isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
+              isIOSSandboxEnvironment:
+                  _data.iOSNotificationConfig?.isSandboxEnvironment ?? false,
               enableIOSVoIP: _enableIOSVoIP,
               certificateIndex: certificateIndex.id,
               appName: appName,
@@ -328,7 +325,8 @@ class ZegoUIKitPrebuiltCallInvitationService
               .getSignalingPlugin()
               .enableNotifyWhenAppRunningInBackgroundOrQuit(
                 true,
-                isIOSSandboxEnvironment: _data.isIOSSandboxEnvironment ?? false,
+                isIOSSandboxEnvironment:
+                    _data.iOSNotificationConfig?.isSandboxEnvironment ?? false,
                 enableIOSVoIP: _enableIOSVoIP,
                 certificateIndex: certificateIndex.id,
                 appName: appName,
@@ -342,8 +340,8 @@ class ZegoUIKitPrebuiltCallInvitationService
                     ZegoSignalingPluginProviderConfiguration(
                       localizedName: appName,
                       iconTemplateImageName:
-                          // _data.iOSNotificationConfig?.systemCallingIconName ??
-                          'AppIcon',
+                          _data.iOSNotificationConfig?.systemCallingIconName ??
+                              '',
                       supportsVideo: false,
                       maximumCallsPerCallGroup: 1,
                       maximumCallGroups: 1,

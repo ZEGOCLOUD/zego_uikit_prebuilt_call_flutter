@@ -15,6 +15,7 @@ class ZegoRingtone {
 
   bool isVibrate = true;
   String prefix = '';
+  String cachePrefix = '';
   String sourcePath = '';
 
   ZegoRingtone();
@@ -30,15 +31,12 @@ class ZegoRingtone {
       subTag: 'ringtone',
     );
 
-    AudioCache.instance.prefix = prefix;
-
     this.prefix = prefix;
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 
-    final audioContext = AudioContext(
+    const audioContext = AudioContext(
       iOS: AudioContextIOS(
-        defaultToSpeaker: true,
         category: AVAudioSessionCategory.ambient,
         options: [
           AVAudioSessionOptions.defaultToSpeaker,
@@ -53,7 +51,7 @@ class ZegoRingtone {
         audioFocus: AndroidAudioFocus.gain,
       ),
     );
-    AudioPlayer.global.setGlobalAudioContext(audioContext);
+    AudioPlayer.global.setAudioContext(audioContext);
   }
 
   Future<void> startRing() async {
@@ -63,6 +61,7 @@ class ZegoRingtone {
         tag: 'call',
         subTag: 'ringtone',
       );
+
       return;
     }
 
@@ -73,6 +72,9 @@ class ZegoRingtone {
     );
 
     isRingTimerRunning = true;
+
+    cachePrefix = AudioCache.instance.prefix;
+    AudioCache.instance.prefix = prefix;
 
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     await audioPlayer.play(AssetSource(sourcePath));
@@ -105,6 +107,10 @@ class ZegoRingtone {
       tag: 'call',
       subTag: 'ringtone',
     );
+
+    if (isRingTimerRunning) {
+      AudioCache.instance.prefix = cachePrefix;
+    }
 
     isRingTimerRunning = false;
 

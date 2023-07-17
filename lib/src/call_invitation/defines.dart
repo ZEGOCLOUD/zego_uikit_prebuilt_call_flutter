@@ -84,17 +84,17 @@ class ZegoCallUser {
 /// @nodoc
 class ZegoIOSNotificationConfig {
   /// is iOS sandbox or not
-  bool isIOSSandboxEnvironment;
+  bool isSandboxEnvironment;
   String systemCallingIconName;
 
   ZegoIOSNotificationConfig({
-    this.isIOSSandboxEnvironment = false,
+    this.isSandboxEnvironment = false,
     this.systemCallingIconName = '',
   });
 
   @override
   String toString() {
-    return 'isIOSSandboxEnvironment:$isIOSSandboxEnvironment, '
+    return 'isSandboxEnvironment:$isSandboxEnvironment, '
         'systemCallingIconName:$systemCallingIconName ';
   }
 }

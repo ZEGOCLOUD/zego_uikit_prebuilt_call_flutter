@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 String serializationKeyAppSign = 'call_app_sign';
 String serializationKeyHandlerInfo = 'handler_info';
@@ -28,6 +29,12 @@ Future<void> setPreferenceString(
   if (withEncode) {
     _value = _encodeString(value);
   }
+
+  ZegoLoggerService.logInfo(
+    'setPreferenceString, key:$key, value:$value.',
+    tag: 'call',
+    subTag: 'call invitation service',
+  );
 
   final prefs = await SharedPreferences.getInstance();
   prefs.setString(key, _value);

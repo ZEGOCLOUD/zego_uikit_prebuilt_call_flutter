@@ -80,8 +80,7 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
     this.showDeclineButton = true,
     this.events,
     this.notifyWhenAppRunningInBackgroundOrQuit = true,
-    this.isIOSSandboxEnvironment,
-    // this.iOSNotificationConfig,
+    this.iOSNotificationConfig,
     this.androidNotificationConfig,
     this.controller,
     ZegoCallInvitationInnerText? innerText,
@@ -117,10 +116,7 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
   /// whether to enable offline notification, default is true
   final bool notifyWhenAppRunningInBackgroundOrQuit;
 
-  /// iOS only
-  final bool? isIOSSandboxEnvironment;
-
-  // final ZegoIOSNotificationConfig? iOSNotificationConfig;
+  ZegoIOSNotificationConfig? iOSNotificationConfig;
 
   /// only for Android
   final ZegoAndroidNotificationConfig? androidNotificationConfig;

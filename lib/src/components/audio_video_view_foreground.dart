@@ -29,7 +29,6 @@ class ZegoAudioVideoForeground extends StatelessWidget {
     if (user == null) {
       return Container(color: Colors.transparent);
     }
-
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
         padding: const EdgeInsets.all(5),
@@ -37,7 +36,6 @@ class ZegoAudioVideoForeground extends StatelessWidget {
           children: [
             Positioned(
               bottom: 0,
-              left: 0,
               right: 0,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
@@ -50,7 +48,7 @@ class ZegoAudioVideoForeground extends StatelessWidget {
                   children: [
                     userName(
                       context,
-                      constraints.maxWidth * 0.5,
+                      constraints.maxWidth * 0.4,
                     ),
                     microphoneStateIcon(),
                     cameraStateIcon(),
@@ -72,7 +70,6 @@ class ZegoAudioVideoForeground extends StatelessWidget {
             ),
             child: Text(
               user?.name ?? '',
-              textAlign: TextAlign.left,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 24.0.zR,

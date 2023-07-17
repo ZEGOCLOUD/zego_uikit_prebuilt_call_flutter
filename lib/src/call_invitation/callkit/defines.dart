@@ -1,9 +1,6 @@
 /// Set the key for modifying CallKit variables.
 /// If you want to modify certain variables in CallKit, you can invoke [ZegoUIKitPrebuiltCallInvitationService].[setCallKitVariables].
 enum CallKitInnerVariable {
-  /// double, Incoming call/Outgoing call display time (millisecond). If the time is over, the call will be missed.
-  duration,
-
   /// string, Text Accept used in Android
   textAccept,
 
@@ -44,8 +41,6 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
   /// The keys used to cache CallKit variables.
   String get cacheKey {
     switch (this) {
-      case CallKitInnerVariable.duration:
-        return 'zg_ck_duration';
       case CallKitInnerVariable.textAccept:
         return 'zg_ck_t_accept';
       case CallKitInnerVariable.textDecline:
@@ -74,8 +69,6 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
   /// The default values of CallKit variables.
   dynamic get defaultValue {
     switch (this) {
-      case CallKitInnerVariable.duration:
-        return 30 * 1000; //  30 seconds
       case CallKitInnerVariable.textAccept:
         return 'Accept';
       case CallKitInnerVariable.textDecline:

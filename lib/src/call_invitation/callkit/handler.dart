@@ -55,12 +55,14 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
 
   final title = message.extras['title'] as String? ?? '';
   final body = message.extras['body'] as String? ?? '';
-  final payload = message.extras['payload'] as String? ?? '';
   final invitationID = message.extras['call_id'] as String? ?? '';
+
+  final payload = message.extras['payload'] as String? ?? '';
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
   final inviterName = payloadMap['inviter_name'] as String;
   final callType = ZegoCallTypeExtension.mapValue[payloadMap['type'] as int] ??
       ZegoCallType.voiceCall;
+
   final invitationInternalData =
       InvitationInternalData.fromJson(payloadMap['data'] as String);
 

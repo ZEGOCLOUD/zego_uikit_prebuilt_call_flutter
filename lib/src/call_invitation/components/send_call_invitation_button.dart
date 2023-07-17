@@ -190,9 +190,10 @@ class _ZegoSendCallInvitationButtonState
       }).toList(),
       timeoutSeconds: widget.timeoutSeconds,
       data: InvitationInternalData(
-        callIDNotifier.value,
-        List.from(widget.invitees),
-        widget.customData,
+        callID: callIDNotifier.value,
+        invitees: List.from(widget.invitees),
+        timeout: widget.timeoutSeconds,
+        customData: widget.customData,
       ).toJson(),
       notificationConfig: ZegoNotificationConfig(
         resourceID: widget.resourceID ?? '',

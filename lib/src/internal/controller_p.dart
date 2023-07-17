@@ -47,14 +47,15 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
             isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
           ).value,
           data: InvitationInternalData(
-            callID,
-            invitees
+            callID: callID,
+            invitees: invitees
                 .map((invitee) => ZegoUIKitUser(
                       id: invitee.id,
                       name: invitee.name,
                     ))
                 .toList(),
-            customData,
+            timeout: timeoutSeconds,
+            customData: customData,
           ).toJson(),
           zegoNotificationConfig: ZegoNotificationConfig(
             notifyWhenAppIsInTheBackgroundOrQuit: true,
