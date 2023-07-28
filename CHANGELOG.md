@@ -1,3 +1,13 @@
+## 3.11.0
+- Support hiding the cancel button of caller. You can configure the **showCancelInvitationButton** parameter in the **init** method of **ZegoUIKitPrebuiltCallInvitationService**. 
+
+## 3.10.7
+- Fixed the issue of not receiving calls when prebuilt_call is used in conjunction with prebuilt_live_audio_room or prebuilt_live_streaming. you also need to update prebuilt_live_audio_room to 
+  version v2.8.4 or prebuilt_live_streaming to v2.12.9.
+
+## 3.10.6
+- Fixed issues with calling on iOS while the device is locked.
+
 ## 3.10.5
 - Fixed the issue where audio playback was not working in the App due to changes in the **prefix** path when using **audioplayers**.
 - Update **audioplayers** dependency

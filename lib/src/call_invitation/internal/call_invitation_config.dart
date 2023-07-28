@@ -26,6 +26,8 @@ class ZegoCallInvitationConfig {
 
   bool notifyWhenAppRunningInBackgroundOrQuit = true;
   bool showDeclineButton = true;
+  bool showCancelInvitationButton = true;
+  ZegoIOSNotificationConfig? iOSNotificationConfig;
   ZegoAndroidNotificationConfig? androidNotificationConfig;
   ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
   ZegoCallInvitationInnerText? innerText;
@@ -42,8 +44,10 @@ class ZegoCallInvitationConfig {
     required this.prebuiltConfigQuery,
     this.contextQuery,
     this.showDeclineButton = true,
+    this.showCancelInvitationButton = true,
     this.notifyWhenAppRunningInBackgroundOrQuit = true,
     this.androidNotificationConfig,
+    this.iOSNotificationConfig,
     this.invitationEvents,
     this.innerText,
     this.controller,

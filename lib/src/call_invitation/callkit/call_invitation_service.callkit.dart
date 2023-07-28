@@ -50,7 +50,7 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
       tag: 'call',
       subTag: 'callkit service',
     );
-    FlutterCallkitIncoming.onEvent.listen(_initCallKitIncomingEvent);
+    FlutterCallkitIncoming.onEvent.listen(_onOnlineCallKitIncomingEvent);
   }
 
   Future<void> _uninitCallKit() async {
@@ -89,7 +89,6 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
           case CallKitInnerVariable.backgroundColor:
           case CallKitInnerVariable.backgroundUrl:
           case CallKitInnerVariable.actionColor:
-          case CallKitInnerVariable.iconName:
           case CallKitInnerVariable.textAppName:
           case CallKitInnerVariable.ringtonePath:
             prefs.setString(key.cacheKey, value as String? ?? key.defaultValue);
@@ -100,20 +99,20 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
   }
 
   /// for popup top notify window if app in background
-  void _initCallKitIncomingEvent(CallEvent? event) {
+  void _onOnlineCallKitIncomingEvent(CallEvent? event) {
     ZegoLoggerService.logInfo(
-      'callkit incoming event, event:${event?.event}, body:${event?.body}',
+      'online callkit incoming event, event:${event?.event}, body:${event?.body}',
       tag: 'call',
       subTag: 'callkit service',
     );
 
     switch (event!.event) {
-      case Event.actionDidUpdateDevicePushTokenVoip:
       case Event.actionCallIncoming:
-      case Event.actionCallStart:
+        ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
         break;
       case Event.actionCallAccept:
         getCurrentCallKitCallID().then((callKitCallID) {
+          ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
           ZegoCallKitBackgroundService()
               .acceptCallKitIncomingCauseInBackground(callKitCallID);
         });
@@ -129,15 +128,19 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
           ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
         }
         break;
+      case Event.actionCallToggleMute:
+        final params = event.body as Map<String, dynamic>? ?? {};
+        final isMute = params['isMuted'] as bool? ?? false;
+        ZegoUIKit().turnMicrophoneOn(!isMute);
+        break;
+      case Event.actionDidUpdateDevicePushTokenVoip:
+      case Event.actionCallStart:
       case Event.actionCallCallback:
       case Event.actionCallToggleHold:
-      case Event.actionCallToggleMute:
       case Event.actionCallToggleDmtf:
       case Event.actionCallToggleGroup:
       case Event.actionCallToggleAudioSession:
-        break;
       case Event.actionCallCustom:
-        // TODO: Handle this case.
         break;
     }
   }

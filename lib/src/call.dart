@@ -135,7 +135,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.10.5; $version',
+        'version: zego_uikit_prebuilt_call:3.11.0; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -293,7 +293,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           assert(result.errorCode == 0);
 
           if (result.errorCode != 0) {
-            ZegoLoggerService.logInfo(
+            ZegoLoggerService.logError(
               'failed to login room:${result.errorCode},${result.extendedData}',
               tag: 'call',
               subTag: 'prebuilt',

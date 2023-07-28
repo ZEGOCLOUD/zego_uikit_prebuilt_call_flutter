@@ -42,6 +42,10 @@ class ZegoInvitationPageManager {
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
   bool _appInBackground = false;
 
+  bool inCallingByIOSBackgroundLock = false;
+  StreamSubscription<dynamic>?
+      userListStreamSubscriptionInCallingByIOSBackgroundLock;
+
   /// iOS的bug, 锁屏下接受呼叫，有时候会先收到CallKit的performAnswerCallAction, 后才收到ZIM的onCallInvitationReceived
   /// 这时候需要在onCallInvitationReceived直接同意
   /// todo wait zim sdk fix bug
@@ -78,7 +82,8 @@ class ZegoInvitationPageManager {
       _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
 
   bool get isInCalling =>
-      CallingState.kOnlineAudioVideo == callingMachine.getPageState();
+      CallingState.kOnlineAudioVideo == callingMachine.getPageState() ||
+      inCallingByIOSBackgroundLock;
 
   Future<void> init({
     required ZegoRingtoneConfig ringtoneConfig,
@@ -134,6 +139,7 @@ class ZegoInvitationPageManager {
     _hasCallkitIncomingCauseAppInBackground = false;
     _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
     _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
+    userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
 
     _invitationData = ZegoCallInvitationData.empty();
     _invitingInvitees.clear();
@@ -299,7 +305,8 @@ class ZegoInvitationPageManager {
 
   void onLocalAcceptInvitation(String code, String message) {
     ZegoLoggerService.logInfo(
-      'local accept invitation, code:$code, message:$message',
+      'local accept invitation, code:$code, message:$message, '
+      'app in background:$_appInBackground',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -312,7 +319,63 @@ class ZegoInvitationPageManager {
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
-    callingMachine.stateOnlineAudioVideo.enter();
+    if (Platform.isIOS && _appInBackground) {
+      inCallingByIOSBackgroundLock = true;
+
+      ZegoLoggerService.logInfo(
+        'accept call by callkit in background-locked, manually enter room',
+        tag: 'call',
+        subTag: 'page manager',
+      );
+
+      /// At this point, when answering a CallKit call on iOS lock screen,
+      /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
+      /// Therefore, it is necessary to manually enter the room at this point.
+      ZegoUIKit()
+          .login(callInvitationConfig.userID, callInvitationConfig.userName);
+
+      ZegoUIKit()
+          .init(
+              appID: callInvitationConfig.appID,
+              appSign: callInvitationConfig.appSign)
+          .then((value) {
+        ZegoUIKit()
+          ..turnMicrophoneOn(true)
+          ..setAudioOutputToSpeaker(true);
+
+        ZegoUIKit().joinRoom(invitationData.callID).then((result) async {
+          userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
+          userListStreamSubscriptionInCallingByIOSBackgroundLock = ZegoUIKit()
+              .getUserLeaveStream()
+              .listen(onUserLeaveInIOSBackgroundLockCalling);
+
+          if (result.errorCode != 0) {
+            ZegoLoggerService.logError(
+              'accept call by callkit in background-locked, failed to login room:${result.errorCode},${result.extendedData}',
+              tag: 'call',
+              subTag: 'page manager',
+            );
+          }
+        });
+      });
+    } else {
+      callingMachine.stateOnlineAudioVideo.enter();
+    }
+  }
+
+  void onUserLeaveInIOSBackgroundLockCalling(List<ZegoUIKitUser> users) {
+    if (ZegoUIKit().getRemoteUsers().isEmpty) {
+      ZegoLoggerService.logInfo(
+        'on user leave in iOS background lock calling',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
+
+      ///  If the remote users has already ended the call, it is necessary to clear the current CallKit call.
+      clearAllCallKitCalls();
+    }
   }
 
   void onLocalRefuseInvitation(String code, String message) {
@@ -491,6 +554,8 @@ class ZegoInvitationPageManager {
             invitationInternalData: invitationInternalData,
             ringtonePath:
                 callInvitationConfig.androidNotificationConfig?.sound ?? '',
+            iOSIconName: callInvitationConfig
+                .iOSNotificationConfig?.systemCallingIconName,
           );
         }
       } else {
@@ -829,7 +894,9 @@ class ZegoInvitationPageManager {
       'didChangeAppLifecycleState, '
       'is app in background: previous:$_appInBackground, current: $isAppInBackground, '
       'call machine page state:${callingMachine.getPageState()}, '
-      'invitation data:$_invitationData',
+      'invitation data:$_invitationData, '
+      'in calling by ios background lock:$inCallingByIOSBackgroundLock, '
+      'current room info:${ZegoUIKit().getRoom()}',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -855,26 +922,50 @@ class ZegoInvitationPageManager {
         );
 
         if (Platform.isAndroid) {
+          // && ! is screen lock
           notificationManager.cancelAll();
 
           if (ZegoNotificationManager.hasInvitation) {
             ZegoNotificationManager.hasInvitation = false;
+
+            clearAllCallKitCalls();
 
             /// click on empty space of notification, not accept or decline
             showNotificationOnInvitationReceived();
           }
         }
       } else {
-        ZegoLoggerService.logInfo(
-          'show notification now',
-          tag: 'call',
-          subTag: 'page manager',
-        );
-        showNotificationOnInvitationReceived();
+        if (ZegoUIKit().getRoom().id.isEmpty) {
+          ZegoLoggerService.logInfo(
+            'show notification now',
+            tag: 'call',
+            subTag: 'page manager',
+          );
+          showNotificationOnInvitationReceived();
+        } else {
+          /// if accept by callkit when ios is screen-locked,
+          /// room will be enter in callkit
+          ZegoLoggerService.logInfo(
+            'already in room, now show notification',
+            tag: 'call',
+            subTag: 'page manager',
+          );
+        }
       }
     }
 
     _appInBackground = isAppInBackground;
+
+    if (!_appInBackground && inCallingByIOSBackgroundLock) {
+      /// Previously, due to answering a CallKit call on iOS lock screen,
+      /// the automatic enter-room logic was triggered, but the interface was not displayed properly.
+      /// At this point, since the device is no longer on lock screen,
+      /// it is necessary to manually re-render the audio-video page.
+      inCallingByIOSBackgroundLock = false;
+      userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
+
+      callingMachine.stateOnlineAudioVideo.enter();
+    }
   }
 
   void onMiniOverlayMachineStateChanged(

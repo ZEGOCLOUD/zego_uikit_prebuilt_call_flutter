@@ -1,13 +1,11 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:convert';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 
 /// @nodoc
@@ -115,8 +113,8 @@ class ZegoPrebuiltPlugins {
 
     tryReLogging = false;
 
-    /// todo use with ZIM Kit
-    await ZegoUIKit().getSignalingPlugin().logout();
+    /// not need logout
+    // await ZegoUIKit().getSignalingPlugin().logout();
     await ZegoUIKit().getSignalingPlugin().uninit();
 
     for (final streamSubscription in subscriptions) {

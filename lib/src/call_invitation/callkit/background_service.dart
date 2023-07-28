@@ -3,7 +3,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 /// @nodoc
@@ -109,7 +108,7 @@ class ZegoCallKitBackgroundService {
     }
 
     ZegoLoggerService.logInfo(
-      'callkit call id: $callKitCallID',
+      'accept invitation, callkit call id: $callKitCallID',
       tag: 'call',
       subTag: 'call invitation service',
     );
@@ -117,7 +116,7 @@ class ZegoCallKitBackgroundService {
     if (callKitCallID != null &&
         callKitCallID == _pageManager?.invitationData.callID) {
       ZegoLoggerService.logInfo(
-        'auto agree, cause exist callkit params same as current call',
+        'accept invitation, auto agree, cause exist callkit params same as current call',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -138,7 +137,7 @@ class ZegoCallKitBackgroundService {
 
   void handUpCurrentCallByCallKit() {
     ZegoLoggerService.logInfo(
-      'hang up by call kit',
+      'hang up by call kit, iOSBackgroundLockCalling:${_pageManager?.inCallingByIOSBackgroundLock}',
       tag: 'call',
       subTag: 'call invitation service',
     );
@@ -151,6 +150,13 @@ class ZegoCallKitBackgroundService {
       );
     });
 
-    Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call()).pop();
+    if (_pageManager?.inCallingByIOSBackgroundLock ?? false) {
+      _pageManager?.restoreToIdle();
+    } else {
+      /// background callkit call, not need to navigate
+      Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call())
+          .pop();
+    }
+    _pageManager?.inCallingByIOSBackgroundLock = false;
   }
 }

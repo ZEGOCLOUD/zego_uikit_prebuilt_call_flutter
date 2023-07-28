@@ -68,7 +68,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
 
   FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
     ZegoLoggerService.logInfo(
-      'callkit incoming event, body:${event?.body}, event:${event?.event}',
+      'android callkit incoming event, body:${event?.body}, event:${event?.event}',
       tag: 'call',
       subTag: 'background message',
     );
@@ -124,47 +124,54 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
 }
 
 Future<void> _declineBackgroundCall(String invitationID) async {
-  final appSign = await getPreferenceString(
-    serializationKeyAppSign,
-    withDecode: true,
-  );
-  final handlerInfoJson =
-      await getPreferenceString(serializationKeyHandlerInfo);
-  final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
+  if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) != null) {
+    await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
+          invitationID: invitationID,
+          data: '{"reason":"decline"}',
+        );
+  } else {
+    final appSign = await getPreferenceString(
+      serializationKeyAppSign,
+      withDecode: true,
+    );
+    final handlerInfoJson =
+        await getPreferenceString(serializationKeyHandlerInfo);
+    final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
 
-  ZegoLoggerService.logInfo(
-    'decline android background call, handler info:$handlerInfo',
-    tag: 'call',
-    subTag: 'background message',
-  );
+    ZegoLoggerService.logInfo(
+      'decline android background call, handler info:$handlerInfo',
+      tag: 'call',
+      subTag: 'background message',
+    );
 
-  ZegoUIKit().installPlugins([ZegoUIKitSignalingPlugin()]);
-  await ZegoUIKit()
-      .getSignalingPlugin()
-      .init(int.tryParse(handlerInfo.appID) ?? 0, appSign: appSign);
-  await ZegoUIKit().getSignalingPlugin().login(
-        id: handlerInfo.userID,
-        name: handlerInfo.userName,
-      );
+    ZegoUIKit().installPlugins([ZegoUIKitSignalingPlugin()]);
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .init(int.tryParse(handlerInfo.appID) ?? 0, appSign: appSign);
+    await ZegoUIKit().getSignalingPlugin().login(
+          id: handlerInfo.userID,
+          name: handlerInfo.userName,
+        );
 
-  await ZegoUIKit()
-      .getSignalingPlugin()
-      .enableNotifyWhenAppRunningInBackgroundOrQuit(
-        true,
-        isIOSSandboxEnvironment: handlerInfo.isIOSSandboxEnvironment,
-        enableIOSVoIP: handlerInfo.enableIOSVoIP,
-        certificateIndex: handlerInfo.certificateIndex,
-        appName: handlerInfo.appName,
-        androidChannelID: handlerInfo.androidChannelID,
-        androidChannelName: handlerInfo.androidChannelName,
-        androidSound: '/raw/${handlerInfo.androidSound}',
-      );
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .enableNotifyWhenAppRunningInBackgroundOrQuit(
+          true,
+          isIOSSandboxEnvironment: handlerInfo.isIOSSandboxEnvironment,
+          enableIOSVoIP: handlerInfo.enableIOSVoIP,
+          certificateIndex: handlerInfo.certificateIndex,
+          appName: handlerInfo.appName,
+          androidChannelID: handlerInfo.androidChannelID,
+          androidChannelName: handlerInfo.androidChannelName,
+          androidSound: '/raw/${handlerInfo.androidSound}',
+        );
 
-  await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
-        invitationID: invitationID,
-        data: '{"reason":"decline"}',
-      );
-  await ZegoUIKit().getSignalingPlugin().uninit();
+    await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
+          invitationID: invitationID,
+          data: '{"reason":"decline"}',
+        );
+    await ZegoUIKit().getSignalingPlugin().uninit();
+  }
 }
 
 /// @nodoc
@@ -177,7 +184,7 @@ void onIncomingPushReceived(Map extras, UUID uuid) {
     subTag: 'background message',
   );
 
-  final invitationID = extras['call_id'] as String? ?? '';
+  // final invitationID = extras['call_id'] as String? ?? '';
   final payload = extras['payload'] as String? ?? '';
   final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
   final invitationInternalData =

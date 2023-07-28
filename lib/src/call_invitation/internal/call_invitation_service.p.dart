@@ -20,6 +20,11 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
     );
 
     await requestPermission(Permission.notification);
+    if (Platform.isIOS) {
+      /// Fix the issue where callkits window cannot make a direct call on iOS lock screen.
+      await requestPermission(Permission.camera);
+      await requestPermission(Permission.microphone);
+    }
   }
 
   Future<void> _initContext() async {
@@ -78,6 +83,7 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
     required this.plugins,
     this.requireConfig,
     this.showDeclineButton = true,
+    this.showCancelInvitationButton = true,
     this.events,
     this.notifyWhenAppRunningInBackgroundOrQuit = true,
     this.iOSNotificationConfig,
@@ -112,6 +118,9 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
 
   /// whether to display the reject button, default is true
   final bool showDeclineButton;
+
+  /// whether to display the invitation cancel button, default is true
+  final bool showCancelInvitationButton;
 
   /// whether to enable offline notification, default is true
   final bool notifyWhenAppRunningInBackgroundOrQuit;

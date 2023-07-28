@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/call_invitation_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
@@ -135,9 +134,15 @@ class ZegoNotificationManager {
     });
   }
 
-  void cancelAll() {
+  Future<void> cancelAll() async {
+    ZegoLoggerService.logInfo(
+      'cancelAll',
+      tag: 'notification',
+      subTag: 'page manager',
+    );
+
     /// clear notifications
-    AwesomeNotifications().cancelAll();
+    await AwesomeNotifications().cancelAll();
   }
 
   void uninit() {}

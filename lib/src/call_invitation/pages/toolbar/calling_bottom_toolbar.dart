@@ -29,22 +29,26 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
     return SizedBox(
       height: 120.zH,
       child: Center(
-        child: ZegoCancelInvitationButton(
-          invitees: invitees.map((e) => e.id).toList(),
-          icon: ButtonIcon(
-            icon: Image(
-              image: PrebuiltCallImage.asset(
-                      InvitationStyleIconUrls.toolbarBottomCancel)
-                  .image,
-              fit: BoxFit.fill,
-            ),
-          ),
-          buttonSize: Size(120.zR, 120.zR),
-          iconSize: Size(120.zR, 120.zR),
-          onPressed: (String code, String message, List<String> errorInvitees) {
-            pageManager.onLocalCancelInvitation(code, message, errorInvitees);
-          },
-        ),
+        child: callInvitationConfig.showCancelInvitationButton
+            ? ZegoCancelInvitationButton(
+                invitees: invitees.map((e) => e.id).toList(),
+                icon: ButtonIcon(
+                  icon: Image(
+                    image: PrebuiltCallImage.asset(
+                            InvitationStyleIconUrls.toolbarBottomCancel)
+                        .image,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                buttonSize: Size(120.zR, 120.zR),
+                iconSize: Size(120.zR, 120.zR),
+                onPressed:
+                    (String code, String message, List<String> errorInvitees) {
+                  pageManager.onLocalCancelInvitation(
+                      code, message, errorInvitees);
+                },
+              )
+            : Container(),
       ),
     );
   }

@@ -161,6 +161,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     required List<IZegoUIKitPlugin> plugins,
     PrebuiltConfigQuery? requireConfig,
     bool showDeclineButton = true,
+    bool showCancelInvitationButton = true,
     ZegoUIKitPrebuiltCallInvitationEvents? events,
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
     ZegoSignalingPluginMultiCertificate certificateIndex =
@@ -176,7 +177,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   }) async {
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.10.5; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.11.0; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service',
       );
@@ -201,7 +202,9 @@ class ZegoUIKitPrebuiltCallInvitationService
         return;
       }
 
+      /// todo 'locked awake' is also resumed in android
       final isAppInBackground = state != AppLifecycleState.resumed;
+
       _pageManager.didChangeAppLifecycleState(isAppInBackground);
       _plugins.didChangeAppLifecycleState(isAppInBackground);
       return null;
@@ -221,6 +224,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       plugins: plugins,
       requireConfig: requireConfig,
       showDeclineButton: showDeclineButton,
+      showCancelInvitationButton: showCancelInvitationButton,
       events: events,
       notifyWhenAppRunningInBackgroundOrQuit:
           notifyWhenAppRunningInBackgroundOrQuit,
@@ -240,7 +244,9 @@ class ZegoUIKitPrebuiltCallInvitationService
       notifyWhenAppRunningInBackgroundOrQuit:
           _data.notifyWhenAppRunningInBackgroundOrQuit,
       showDeclineButton: _data.showDeclineButton,
+      showCancelInvitationButton: _data.showCancelInvitationButton,
       androidNotificationConfig: _data.androidNotificationConfig,
+      iOSNotificationConfig: _data.iOSNotificationConfig,
       invitationEvents: _data.events,
       innerText: _data.innerText,
       controller: _data.controller,
@@ -381,6 +387,13 @@ class ZegoUIKitPrebuiltCallInvitationService
     if (Platform.isIOS) {
       _uninitIOSCallkitService();
     }
+
+    ZegoLoggerService.logInfo(
+      'logout signaling account',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
+    await ZegoUIKit().getSignalingPlugin().logout();
 
     await _uninitContext();
   }

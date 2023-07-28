@@ -22,10 +22,6 @@ enum CallKitInnerVariable {
   /// Color used in button/text on notification.
   actionColor,
 
-  /// App's Icon. using for display inside Callkit(iOS)	CallKitLogo
-  /// using from Images.xcassets/CallKitLogo
-  iconName,
-
   /// string, App's name. using for display inside Callkit(iOS).
   /// App Name, Deprecated for iOS > 14, default using App name
   textAppName,
@@ -57,8 +53,6 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
         return 'zg_ck_bg_url';
       case CallKitInnerVariable.actionColor:
         return 'zg_ck_ac_clr';
-      case CallKitInnerVariable.iconName:
-        return 'zg_ck_t_icon_name';
       case CallKitInnerVariable.ringtonePath:
         return 'zg_ck_t_rg_p';
       case CallKitInnerVariable.callIDVisibility:
@@ -83,7 +77,6 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
         return 'assets/test.png';
       case CallKitInnerVariable.actionColor:
         return '#4CAF50';
-      case CallKitInnerVariable.iconName:
       case CallKitInnerVariable.textAppName:
         return '';
       case CallKitInnerVariable.ringtonePath:

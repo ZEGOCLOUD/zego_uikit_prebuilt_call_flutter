@@ -44,6 +44,7 @@ Future<CallKitParams> _makeCallKitParam({
   String? title,
   String? body,
   String? ringtonePath,
+  String? iOSIconName,
 }) async {
   final prefs = await SharedPreferences.getInstance();
 
@@ -106,21 +107,20 @@ Future<CallKitParams> _makeCallKitParam({
           CallKitInnerVariable.actionColor.defaultValue,
     ),
     ios: IOSParams(
-      iconName: prefs.getString(CallKitInnerVariable.iconName.cacheKey) ??
-          CallKitInnerVariable.iconName.defaultValue,
+      iconName: iOSIconName,
       handleType: '',
-      supportsVideo: true,
-      maximumCallGroups: 2,
+      supportsVideo: ZegoCallType.videoCall == callType,
+      ringtonePath: _ringtonePath,
+      maximumCallGroups: 1,
       maximumCallsPerCallGroup: 1,
       audioSessionMode: 'default',
       audioSessionActive: true,
       audioSessionPreferredSampleRate: 44100.0,
       audioSessionPreferredIOBufferDuration: 0.005,
       supportsDTMF: true,
-      supportsHolding: true,
+      supportsHolding: false,
       supportsGrouping: false,
       supportsUngrouping: false,
-      ringtonePath: _ringtonePath,
     ),
   );
 }
@@ -139,6 +139,7 @@ Future<void> showCallkitIncoming({
   String? ringtonePath,
   String? title,
   String? body,
+  String? iOSIconName,
 }) async {
   final callKitParam = await _makeCallKitParam(
     caller: caller,
@@ -147,6 +148,7 @@ Future<void> showCallkitIncoming({
     ringtonePath: ringtonePath,
     title: title,
     body: body,
+    iOSIconName: iOSIconName,
   );
 
   ZegoLoggerService.logInfo(
