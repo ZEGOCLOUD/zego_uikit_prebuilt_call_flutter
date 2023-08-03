@@ -1,3 +1,6 @@
+## 3.11.1
+- Fixed the configuration error for incoming and outgoing ringtone.
+
 ## 3.11.0
 - Support hiding the cancel button of caller. You can configure the **showCancelInvitationButton** parameter in the **init** method of **ZegoUIKitPrebuiltCallInvitationService**. 
 

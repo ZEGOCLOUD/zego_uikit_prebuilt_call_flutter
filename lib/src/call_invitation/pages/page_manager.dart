@@ -164,15 +164,15 @@ class ZegoInvitationPageManager {
   }
 
   void initRing(ZegoRingtoneConfig ringtoneConfig) {
-    if (ringtoneConfig.incomingCallPath != null) {
+    if (ringtoneConfig.outgoingCallPath != null) {
       ZegoLoggerService.logInfo(
-        'reset caller ring, source path:${ringtoneConfig.incomingCallPath}',
+        'reset caller ring, source path:${ringtoneConfig.outgoingCallPath}',
         tag: 'call',
         subTag: 'page manager',
       );
       _callerRingtone.init(
         prefix: '',
-        sourcePath: ringtoneConfig.incomingCallPath!,
+        sourcePath: ringtoneConfig.outgoingCallPath!,
         isVibrate: false,
       );
     } else {
@@ -182,15 +182,15 @@ class ZegoInvitationPageManager {
         isVibrate: false,
       );
     }
-    if (ringtoneConfig.outgoingCallPath != null) {
+    if (ringtoneConfig.incomingCallPath != null) {
       ZegoLoggerService.logInfo(
-        'reset callee ring, source path:${ringtoneConfig.outgoingCallPath}',
+        'reset callee ring, source path:${ringtoneConfig.incomingCallPath}',
         tag: 'call',
         subTag: 'page manager',
       );
       _calleeRingtone.init(
         prefix: '',
-        sourcePath: ringtoneConfig.outgoingCallPath!,
+        sourcePath: ringtoneConfig.incomingCallPath!,
         isVibrate: true,
       );
     } else {
