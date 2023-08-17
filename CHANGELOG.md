@@ -1,3 +1,17 @@
+## 3.12.3
+- Fix the issue where can no longer receive offline calls after rejecting them.
+
+## 3.12.2
+- Fix the issue of multiple initialization of notifications.
+- update dependency
+
+## 3.12.1
+- Fix the issue of context being destroyed and resulting in a bunch of NullPointerExceptions when continuously calling **ZegoUIKitPrebuiltCallInvitationService.init**. you should call 
+  **ZegoUIKitPrebuiltCallInvitationService.init** after the successful login of the App user, and call **ZegoUIKitPrebuiltCallInvitationService.uninit** before the successful logout of the App user.
+
+## 3.12.0
+- Support chat, you can add **ZegoMenuBarButtonName.chatButton** to **ZegoBottomMenuBarConfig.buttons** to enable.
+
 ## 3.11.1
 - Fixed the configuration error for incoming and outgoing ringtone.
 

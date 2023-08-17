@@ -32,6 +32,9 @@ enum ZegoMenuBarButtonName {
 
   /// Button for controlling the display or hiding of the beauty effect adjustment panel.
   beautyEffectButton,
+
+  /// Button to open/hide the chat UI.
+  chatButton,
 }
 
 /// Sound wave effect types.

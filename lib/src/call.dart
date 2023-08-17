@@ -88,6 +88,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     with SingleTickerProviderStateMixin {
   var barVisibilityNotifier = ValueNotifier<bool>(true);
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
+  var chatViewVisibleNotifier = ValueNotifier<bool>(false);
 
   StreamSubscription<dynamic>? userListStreamSubscription;
   List<StreamSubscription<dynamic>?> subscriptions = [];
@@ -135,7 +136,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.11.1; $version',
+        'version: zego_uikit_prebuilt_call:3.12.3; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -474,6 +475,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         height: widget.config.topMenuBarConfig.height ?? 88.zR,
         backgroundColor: widget.config.topMenuBarConfig.backgroundColor ??
             (isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor),
+        chatViewVisibleNotifier: chatViewVisibleNotifier,
+        popUpManager: popUpManager,
       ),
     );
   }
@@ -501,6 +504,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         backgroundColor: widget.config.bottomMenuBarConfig.backgroundColor ??
             (isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor),
         borderRadius: isLightStyle ? null : 32.zR,
+        chatViewVisibleNotifier: chatViewVisibleNotifier,
+        popUpManager: popUpManager,
       ),
     );
   }

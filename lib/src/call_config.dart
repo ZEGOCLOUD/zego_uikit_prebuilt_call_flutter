@@ -81,6 +81,7 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoMemberListConfig? memberListConfig,
     ZegoCallDurationConfig? durationConfig,
+    ZegoInRoomChatViewConfig? chatViewConfig,
     this.layout,
     this.hangUpConfirmDialogInfo,
     this.onHangUpConfirmation,
@@ -93,7 +94,8 @@ class ZegoUIKitPrebuiltCallConfig {
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
         bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
         memberListConfig = memberListConfig ?? ZegoMemberListConfig(),
-        durationConfig = durationConfig ?? ZegoCallDurationConfig() {
+        durationConfig = durationConfig ?? ZegoCallDurationConfig(),
+        chatViewConfig = chatViewConfig ?? ZegoInRoomChatViewConfig() {
     layout ??= ZegoLayout.pictureInPicture();
   }
 
@@ -199,6 +201,9 @@ class ZegoUIKitPrebuiltCallConfig {
   /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
   /// Useful for pushing contents above all subsequent instances of [Navigator].
   bool rootNavigator;
+
+  /// Configuration related to the bottom-left message list.
+  ZegoInRoomChatViewConfig chatViewConfig;
 }
 
 /// Configuration options for audio/video views.
@@ -490,14 +495,14 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
           ? ZegoBottomMenuBarConfig(
               style: ZegoMenuBarStyle.dark,
               buttons: isVideo
-                  ? const [
+                  ? [
                       ZegoMenuBarButtonName.toggleCameraButton,
                       ZegoMenuBarButtonName.switchCameraButton,
                       ZegoMenuBarButtonName.hangUpButton,
                       ZegoMenuBarButtonName.toggleMicrophoneButton,
                       ZegoMenuBarButtonName.switchAudioOutputButton,
                     ]
-                  : const [
+                  : [
                       ZegoMenuBarButtonName.toggleMicrophoneButton,
                       ZegoMenuBarButtonName.hangUpButton,
                       ZegoMenuBarButtonName.switchAudioOutputButton,
@@ -506,14 +511,14 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
           : ZegoBottomMenuBarConfig(
               style: ZegoMenuBarStyle.light,
               buttons: isVideo
-                  ? const [
+                  ? [
                       ZegoMenuBarButtonName.toggleCameraButton,
                       ZegoMenuBarButtonName.switchCameraButton,
                       ZegoMenuBarButtonName.hangUpButton,
                       ZegoMenuBarButtonName.toggleMicrophoneButton,
                       ZegoMenuBarButtonName.switchAudioOutputButton,
                     ]
-                  : const [
+                  : [
                       ZegoMenuBarButtonName.toggleMicrophoneButton,
                       ZegoMenuBarButtonName.hangUpButton,
                       ZegoMenuBarButtonName.switchAudioOutputButton,
@@ -536,4 +541,29 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
             },
     );
   }
+}
+
+/// Control options for the bottom-left message list.
+/// This class is used for the [chatViewConfig] property of [ZegoUIKitPrebuiltCallConfig].
+///
+/// If you want to customize chat messages, you can specify the [itemBuilder] in [ZegoInRoomMessageViewConfig].
+///
+/// Example:
+///
+/// ZegoInRoomMessageViewConfig(
+///   itemBuilder: (BuildContext context, ZegoRoomMessage message) {
+///     return ListTile(
+///       title: Text(message.message),
+///       subtitle: Text(message.user.id),
+///     );
+///   },
+/// );
+class ZegoInRoomChatViewConfig {
+  /// Use this to customize the style and content of each chat message list item.
+  /// For example, you can modify the background color, opacity, border radius, or add additional information like the sender's level or role.
+  ZegoInRoomMessageItemBuilder? itemBuilder;
+
+  ZegoInRoomChatViewConfig({
+    this.itemBuilder,
+  });
 }

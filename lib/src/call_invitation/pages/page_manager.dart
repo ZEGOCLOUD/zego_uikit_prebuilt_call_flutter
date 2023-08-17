@@ -113,7 +113,7 @@ class ZegoInvitationPageManager {
 
     ZegoLoggerService.logInfo(
       'init, appID:${callInvitationConfig.appID}, '
-      'appSign:${callInvitationConfig.appSign},'
+      // 'appSign:${callInvitationConfig.appSign},'
       'userID:${callInvitationConfig.userID}, '
       'userName: ${callInvitationConfig.userName}',
       tag: 'call',
@@ -123,6 +123,12 @@ class ZegoInvitationPageManager {
 
   void uninit() {
     if (!_init) {
+      ZegoLoggerService.logInfo(
+        'no init, not need to uninit',
+        tag: 'call',
+        subTag: 'page manager',
+      );
+
       return;
     }
 

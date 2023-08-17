@@ -6,6 +6,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 
 // Package imports:
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -15,6 +16,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invit
 
 /// @nodoc
 class ZegoNotificationManager {
+  bool isInit = false;
   final bool showDeclineButton;
   final ZegoCallInvitationConfig callInvitationConfig;
 
@@ -57,12 +59,36 @@ class ZegoNotificationManager {
       'Call Invitation';
 
   void init() {
+    if (isInit) {
+      ZegoLoggerService.logInfo(
+        'init already',
+        tag: 'call',
+        subTag: 'notification manager',
+      );
+
+      return;
+    }
+
+    isInit = true;
+
     ZegoLoggerService.logInfo(
       'init',
-      tag: 'notification',
+      tag: 'call',
       subTag: 'notification manager',
     );
 
+    requestPermission(Permission.notification).then((value) {
+      ZegoLoggerService.logInfo(
+        'request permission result:$value',
+        tag: 'call',
+        subTag: 'notification manager',
+      );
+
+      initAwesomeNotification();
+    });
+  }
+
+  void initAwesomeNotification() {
     String? soundSource;
 
     if (Platform.isAndroid &&
@@ -79,8 +105,8 @@ class ZegoNotificationManager {
 
       ZegoLoggerService.logInfo(
         "sound file, config name:${callInvitationConfig.androidNotificationConfig?.sound ?? ""}, file name:$soundFileName",
-        tag: 'notification',
-        subTag: 'page manager',
+        tag: 'call',
+        subTag: 'notification manager',
       );
     }
 
@@ -106,11 +132,11 @@ class ZegoNotificationManager {
               )
             ],
             debug: true)
-        .then((value) {
+        .then((result) {
       ZegoLoggerService.logInfo(
-        'init finished',
-        tag: 'notification',
-        subTag: 'page manager',
+        'init finished, result:$result',
+        tag: 'call',
+        subTag: 'notification manager',
       );
 
       /// clear notifications
@@ -123,8 +149,8 @@ class ZegoNotificationManager {
       AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
         ZegoLoggerService.logInfo(
           'is allowed: $isAllowed',
-          tag: 'notification',
-          subTag: 'page manager',
+          tag: 'call',
+          subTag: 'notification manager',
         );
 
         if (!isAllowed) {
@@ -137,17 +163,33 @@ class ZegoNotificationManager {
   Future<void> cancelAll() async {
     ZegoLoggerService.logInfo(
       'cancelAll',
-      tag: 'notification',
-      subTag: 'page manager',
+      tag: 'call',
+      subTag: 'notification manager',
     );
 
     /// clear notifications
     await AwesomeNotifications().cancelAll();
   }
 
-  void uninit() {}
+  void uninit() {
+    ZegoLoggerService.logInfo(
+      'uninit',
+      tag: 'call',
+      subTag: 'notification manager',
+    );
+
+    isInit = false;
+  }
 
   void showInvitationNotification(ZegoCallInvitationData invitationData) {
+    if (!isInit) {
+      ZegoLoggerService.logWarn(
+        'not init',
+        tag: 'call',
+        subTag: 'notification manager',
+      );
+    }
+
     ZegoNotificationManager.hasInvitation = true;
 
     final declineButton = NotificationActionButton(
@@ -200,7 +242,7 @@ class ZegoNotificationManager {
       ZegoLoggerService.logError(
         error.toString(),
         tag: 'create notification',
-        subTag: 'page manager',
+        subTag: 'notification manager',
       );
       return true;
     });

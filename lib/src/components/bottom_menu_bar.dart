@@ -12,9 +12,12 @@ import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
+
+import 'message/in_room_message_button.dart';
 
 /// @nodoc
 class ZegoBottomMenuBar extends StatefulWidget {
@@ -31,6 +34,9 @@ class ZegoBottomMenuBar extends StatefulWidget {
 
   final ZegoUIKitPrebuiltCallData prebuiltData;
 
+  final ValueNotifier<bool> chatViewVisibleNotifier;
+  final ZegoPopUpManager popUpManager;
+
   const ZegoBottomMenuBar({
     Key? key,
     required this.config,
@@ -38,6 +44,8 @@ class ZegoBottomMenuBar extends StatefulWidget {
     required this.restartHideTimerNotifier,
     required this.prebuiltData,
     required this.isHangUpRequestingNotifier,
+    required this.chatViewVisibleNotifier,
+    required this.popUpManager,
     this.autoHideSeconds = 3,
     this.buttonSize = const Size(60, 60),
     this.height,
@@ -330,6 +338,15 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           buttonSize: buttonSize,
           iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
+        );
+      case ZegoMenuBarButtonName.chatButton:
+        return ZegoInRoomMessageButton(
+          buttonSize: buttonSize,
+          iconSize: iconSize,
+          avatarBuilder: widget.config.avatarBuilder,
+          itemBuilder: widget.config.chatViewConfig.itemBuilder,
+          viewVisibleNotifier: widget.chatViewVisibleNotifier,
+          popUpManager: widget.popUpManager,
         );
     }
   }

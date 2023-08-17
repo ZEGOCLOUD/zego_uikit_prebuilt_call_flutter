@@ -175,22 +175,30 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
   }) async {
-    ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
-      ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.11.1; $uikitVersion',
+    if (_isInit) {
+      ZegoLoggerService.logWarn(
+        'service had init before',
         tag: 'call',
-        subTag: 'call invitation service',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
+
+      return;
+    }
+
+    _isInit = true;
+
+    await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
+      ZegoLoggerService.logInfo(
+        'versions: zego_uikit_prebuilt_call:3.12.3; $uikitVersion',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
       );
     });
-
-    if (_isInit) {
-      await uninit();
-    }
 
     ZegoLoggerService.logInfo(
       'service init',
       tag: 'call',
-      subTag: 'call invitation service',
+      subTag: 'call invitation service(${identityHashCode(this)})',
     );
 
     /// sync app background state
@@ -209,8 +217,6 @@ class ZegoUIKitPrebuiltCallInvitationService
       _plugins.didChangeAppLifecycleState(isAppInBackground);
       return null;
     });
-
-    _isInit = true;
 
     _correctIOSNotificationConfig(
       isIOSSandboxEnvironment: isIOSSandboxEnvironment,
@@ -260,7 +266,6 @@ class ZegoUIKitPrebuiltCallInvitationService
       showDeclineButton: showDeclineButton,
       callInvitationConfig: _callInvitationConfig,
     );
-    _notificationManager.init();
 
     _pageManager = ZegoInvitationPageManager(
       callInvitationConfig: _callInvitationConfig,
@@ -291,7 +296,7 @@ class ZegoUIKitPrebuiltCallInvitationService
         'plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
         '${_data.notifyWhenAppRunningInBackgroundOrQuit}',
         tag: 'call',
-        subTag: 'call invitation service',
+        subTag: 'call invitation service(${identityHashCode(this)})',
       );
 
       if (_data.notifyWhenAppRunningInBackgroundOrQuit) {
@@ -301,7 +306,7 @@ class ZegoUIKitPrebuiltCallInvitationService
             'iOSNotificationConfig:${_data.iOSNotificationConfig}, '
             'enableIOSVoIP:$_enableIOSVoIP ',
             tag: 'call',
-            subTag: 'call invitation service',
+            subTag: 'call invitation service(${identityHashCode(this)})',
           );
 
           final androidChannelID =
@@ -358,7 +363,7 @@ class ZegoUIKitPrebuiltCallInvitationService
             ZegoLoggerService.logInfo(
               'enable notification result: $result',
               tag: 'call',
-              subTag: 'call invitation service',
+              subTag: 'call invitation service(${identityHashCode(this)})',
             );
           });
         });
@@ -370,13 +375,19 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   Future<void> uninit() async {
     if (!_isInit) {
+      ZegoLoggerService.logInfo(
+        'service had not init, not need to un-init',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
+
       return;
     }
 
     ZegoLoggerService.logInfo(
-      'un-init',
+      'service un-init',
       tag: 'call',
-      subTag: 'call invitation service',
+      subTag: 'call invitation service(${identityHashCode(this)})',
     );
 
     _isInit = false;
@@ -391,7 +402,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoLoggerService.logInfo(
       'logout signaling account',
       tag: 'call',
-      subTag: 'call invitation service',
+      subTag: 'call invitation service(${identityHashCode(this)})',
     );
     await ZegoUIKit().getSignalingPlugin().logout();
 
@@ -402,7 +413,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoLoggerService.logInfo(
       'using system calling ui, plugins size: ${plugins.length}',
       tag: 'call',
-      subTag: 'call invitation service',
+      subTag: 'call invitation service(${identityHashCode(this)})',
     );
 
     ZegoUIKit().installPlugins(plugins);
@@ -410,7 +421,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       ZegoLoggerService.logInfo(
         'register background message handler',
         tag: 'call',
-        subTag: 'call invitation service',
+        subTag: 'call invitation service(${identityHashCode(this)})',
       );
 
       ZegoUIKit()
@@ -420,7 +431,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',
         tag: 'call',
-        subTag: 'call invitation service',
+        subTag: 'call invitation service(${identityHashCode(this)})',
       );
 
       _enableIOSVoIP = true;

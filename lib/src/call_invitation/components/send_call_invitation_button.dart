@@ -248,6 +248,16 @@ class _ZegoSendCallInvitationButtonState
   }
 
   Future<bool> onWillPressed() async {
+    if (ZegoSignalingPluginConnectionState.connected !=
+        ZegoUIKit().getSignalingPlugin().getConnectionState()) {
+      ZegoLoggerService.logError(
+        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}',
+        tag: 'call',
+        subTag: 'start call button',
+      );
+      return false;
+    }
+
     if (requesting) {
       ZegoLoggerService.logInfo(
         'still in request',
@@ -266,6 +276,9 @@ class _ZegoSendCallInvitationButtonState
       return false;
     }
 
+    final x1 = pageManager?.callingMachine;
+    final x2 = pageManager?.callingMachine.machine;
+    final x3 = pageManager?.callingMachine.machine.current?.identifier;
     final currentState =
         pageManager?.callingMachine.machine.current?.identifier ??
             CallingState.kIdle;

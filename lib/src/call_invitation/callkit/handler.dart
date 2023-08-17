@@ -170,7 +170,13 @@ Future<void> _declineBackgroundCall(String invitationID) async {
           invitationID: invitationID,
           data: '{"reason":"decline"}',
         );
-    await ZegoUIKit().getSignalingPlugin().uninit();
+
+    /// force kill the signaling SDK, otherwise it will keep running in the
+    /// background.
+    /// Otherwise, sdk will keep receiving online calls even in offline status.
+    await ZegoUIKit().getSignalingPlugin().uninit(forceDestroy: true);
+
+    ZegoUIKit().uninstallPlugins([ZegoUIKitSignalingPlugin()]);
   }
 }
 
