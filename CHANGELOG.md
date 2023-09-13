@@ -1,3 +1,24 @@
+## 3.14.0
+- Support close callKit popup programmatically for the offline callee when the caller cancels the call.
+
+## 3.13.5
+- Update dependency.
+
+## 3.13.4
+- Fix the issue where canceling offline calls is not effective on the callee side
+
+## 3.13.3
+- Fix the exception that may arise from a null pointer.
+
+## 3.13.2
+- Fix the exception that may arise from a null pointer.
+
+## 3.13.1
+- Fix the issue of call notifications not appearing when the screen is locked.
+
+## 3.13.0
+- Add **advanceConfigs** config, which to set advanced engine configuration
+
 ## 3.12.3
 - Fix the issue where can no longer receive offline calls after rejecting them.
 

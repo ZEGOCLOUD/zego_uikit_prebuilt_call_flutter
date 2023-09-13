@@ -4,8 +4,8 @@ part of '../call_invitation_service.dart';
 mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
   bool _callKitServiceInit = false;
 
-  late ZegoInvitationPageManager _pageManager;
-  late ZegoNotificationManager _notificationManager;
+  ZegoInvitationPageManager? _myPageManager;
+  ZegoNotificationManager? _notificationManager;
 
   Future<void> _initCallKit({
     required ZegoInvitationPageManager pageManager,
@@ -35,9 +35,13 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
       tag: 'call',
       subTag: 'callkit service',
     );
-    await clearAllCallKitCalls();
 
-    _pageManager = pageManager;
+    /// In iOS, it is not necessary to explicitly clear the call as it may result in automatically disconnecting the offline call.
+    if (Platform.isAndroid) {
+      await clearAllCallKitCalls();
+    }
+
+    _myPageManager = pageManager;
 
     _setCallKitVariables({
       CallKitInnerVariable.callIDVisibility:
@@ -65,6 +69,13 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
     }
 
     _callKitServiceInit = false;
+
+    ZegoLoggerService.logInfo(
+      'unregister callkit incoming event listener',
+      tag: 'call',
+      subTag: 'callkit service',
+    );
+    FlutterCallkitIncoming.onEvent.listen(null);
 
     clearCurrentCallKitCallID();
   }
@@ -122,7 +133,7 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
         ZegoCallKitBackgroundService().refuseInvitationInBackground();
         break;
       case Event.actionCallEnded:
-        _pageManager.hasCallkitIncomingCauseAppInBackground = false;
+        _myPageManager?.hasCallkitIncomingCauseAppInBackground = false;
 
         if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
           ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();

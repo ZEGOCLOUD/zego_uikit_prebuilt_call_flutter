@@ -15,6 +15,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.da
 
 /// @nodoc
 const String CallKitCalIDCacheKey = 'callkit_call_id';
+const String CallKitParamsCacheKey = 'callkit_params';
 
 /// @nodoc
 ///
@@ -201,8 +202,25 @@ Future<void> clearAllCallKitCalls() async {
   ZegoLoggerService.logInfo(
     'clear all callKit calls',
     tag: 'call',
-    subTag: 'background message',
+    subTag: 'callkit',
   );
 
   return FlutterCallkitIncoming.endAllCalls();
+}
+
+/// cached ID of the current params
+Future<void> setCurrentCallKitParams(String params) async {
+  ZegoLoggerService.logInfo(
+    'set current callkit params:$params',
+    tag: 'call',
+    subTag: 'callkit',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(CallKitParamsCacheKey, params);
+}
+
+Future<String?> getCurrentCallKitParams() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(CallKitParamsCacheKey);
 }

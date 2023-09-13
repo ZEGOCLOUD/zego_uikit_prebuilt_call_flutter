@@ -3,11 +3,13 @@ import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 /// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage

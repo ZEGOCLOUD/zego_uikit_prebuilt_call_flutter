@@ -2,15 +2,11 @@ part of '../call_invitation_service.dart';
 
 /// @nodoc
 mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
-  bool _isInit = false;
   ContextQuery? _contextQuery;
-  late ZegoUIKitPrebuiltCallInvitationServiceData _data;
-  late ZegoInvitationPageManager _pageManager;
-  late ZegoCallInvitationConfig _callInvitationConfig;
-  late ZegoPrebuiltPlugins _plugins;
-
-  /// callkit
-  bool _enableIOSVoIP = false;
+  ZegoUIKitPrebuiltCallInvitationServiceData? _data;
+  ZegoInvitationPageManager? _pageManager;
+  ZegoCallInvitationConfig? _callInvitationConfig;
+  ZegoPrebuiltPlugins? _plugins;
 
   Future<void> _initPermissions() async {
     ZegoLoggerService.logInfo(
@@ -34,8 +30,9 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
       subTag: 'call invitation service',
     );
 
-    ZegoUIKit().login(_data.userID, _data.userName);
-    await ZegoUIKit().init(appID: _data.appID, appSign: _data.appSign);
+    ZegoUIKit().login(_data?.userID ?? '', _data?.userName ?? '');
+    await ZegoUIKit()
+        .init(appID: _data?.appID ?? 0, appSign: _data?.appSign ?? '');
 
     // enableCustomVideoProcessing
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
@@ -43,10 +40,6 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
     }
 
     ZegoUIKit.instance.turnCameraOn(false);
-
-    _pageManager.init(
-      ringtoneConfig: _data.ringtoneConfig,
-    );
   }
 
   Future<void> _uninitContext() async {
@@ -56,8 +49,8 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
       subTag: 'call invitation service',
     );
 
-    _pageManager.uninit();
-    await _plugins.uninit();
+    _pageManager?.uninit();
+    await _plugins?.uninit();
   }
 
   ZegoUIKitPrebuiltCallConfig _defaultConfig(ZegoCallInvitationData data) {

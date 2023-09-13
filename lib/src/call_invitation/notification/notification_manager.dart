@@ -35,9 +35,16 @@ class ZegoNotificationManager {
   static String keyDecline = 'key_decline';
 
   /// Use this method to detect when the user taps on a notification or action button
-  @pragma("vm:entry-point")
+  @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
-      ReceivedAction receivedAction) async {
+    ReceivedAction receivedAction,
+  ) async {
+    ZegoLoggerService.logInfo(
+      'onActionReceivedMethod, ${receivedAction.toMap()}',
+      tag: 'call',
+      subTag: 'notification manager',
+    );
+
     if (ZegoNotificationManager.keyAccept == receivedAction.buttonKeyPressed) {
       ZegoNotificationManager.hasInvitation = false;
 
@@ -132,7 +139,15 @@ class ZegoNotificationManager {
               )
             ],
             debug: true)
-        .then((result) {
+        .catchError((error) {
+      ZegoLoggerService.logError(
+        'init error:$error',
+        tag: 'call',
+        subTag: 'notification manager',
+      );
+
+      return true;
+    }).then((result) {
       ZegoLoggerService.logInfo(
         'init finished, result:$result',
         tag: 'call',
@@ -214,6 +229,7 @@ class ZegoNotificationManager {
           title: invitationData.inviter?.name ?? 'unknown',
           wakeUpScreen: true,
           fullScreenIntent: true,
+          autoDismissible: false,
           notificationLayout: NotificationLayout.Default,
           body: ZegoCallType.videoCall == invitationData.type
               ? ((invitationData.invitees.length > 1

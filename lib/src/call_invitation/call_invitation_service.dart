@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 // Flutter imports:
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:is_lock_screen2/is_lock_screen2.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
@@ -20,18 +22,18 @@ import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.android.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/app_state.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/plugins.dart';
-
-import 'internal/shared_pref_defines.dart';
 
 part 'callkit/call_invitation_service.callkit.dart';
 
@@ -125,25 +127,27 @@ class ZegoUIKitPrebuiltCallInvitationService
         ZegoUIKitPrebuiltCallInvitationServiceCallKit {
   factory ZegoUIKitPrebuiltCallInvitationService() => _instance;
 
-  ZegoCallInvitationInnerText get innerText => _data.innerText;
+  ZegoCallInvitationInnerText get innerText =>
+      _data?.innerText ?? ZegoCallInvitationInnerText();
 
   /// Invitation-related event notifications and callbacks.
-  ZegoUIKitPrebuiltCallInvitationEvents? get events => _data.events;
+  ZegoUIKitPrebuiltCallInvitationEvents? get events => _data?.events;
 
-  ZegoRingtoneConfig get ringtoneConfig => _data.ringtoneConfig;
+  ZegoRingtoneConfig get ringtoneConfig =>
+      _data?.ringtoneConfig ?? const ZegoRingtoneConfig();
 
   ZegoAndroidNotificationConfig? get androidNotificationConfig =>
-      _data.androidNotificationConfig;
+      _data?.androidNotificationConfig;
 
-  ZegoUIKitPrebuiltCallController? get controller => _data.controller;
+  ZegoUIKitPrebuiltCallController? get controller => _data?.controller;
 
-  bool get isInCalling => _pageManager.isInCalling;
+  bool get isInCalling => _pageManager?.isInCalling ?? false;
 
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
     if (_isInit) {
-      _callInvitationConfig.contextQuery = () {
+      _callInvitationConfig?.contextQuery = () {
         return navigatorKey.currentState!.context;
       };
     } else {
@@ -189,7 +193,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.12.3; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.14.0; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -210,11 +214,21 @@ class ZegoUIKitPrebuiltCallInvitationService
         return;
       }
 
-      /// todo 'locked awake' is also resumed in android
-      final isAppInBackground = state != AppLifecycleState.resumed;
+      final isScreenLockEnabled = await isLockScreen() ?? false;
+      var isAppInBackground = state != AppLifecycleState.resumed;
+      if (isScreenLockEnabled) {
+        isAppInBackground = true;
+      }
+      ZegoLoggerService.logInfo(
+        'AppLifecycleStateChanged, state:$state, '
+        'isAppInBackground:$isAppInBackground, '
+        'isScreenLockEnabled:$isScreenLockEnabled',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
 
-      _pageManager.didChangeAppLifecycleState(isAppInBackground);
-      _plugins.didChangeAppLifecycleState(isAppInBackground);
+      _pageManager?.didChangeAppLifecycleState(isAppInBackground);
+      _plugins?.didChangeAppLifecycleState(isAppInBackground);
       return null;
     });
 
@@ -242,132 +256,163 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
 
     _callInvitationConfig = ZegoCallInvitationConfig(
-      appID: _data.appID,
-      appSign: _data.appSign,
-      userID: _data.userID,
-      userName: _data.userName,
-      prebuiltConfigQuery: _data.requireConfig ?? _defaultConfig,
+      appID: _data!.appID,
+      appSign: _data!.appSign,
+      userID: _data!.userID,
+      userName: _data!.userName,
+      prebuiltConfigQuery: _data!.requireConfig ?? _defaultConfig,
       notifyWhenAppRunningInBackgroundOrQuit:
-          _data.notifyWhenAppRunningInBackgroundOrQuit,
-      showDeclineButton: _data.showDeclineButton,
-      showCancelInvitationButton: _data.showCancelInvitationButton,
-      androidNotificationConfig: _data.androidNotificationConfig,
-      iOSNotificationConfig: _data.iOSNotificationConfig,
-      invitationEvents: _data.events,
-      innerText: _data.innerText,
-      controller: _data.controller,
+          _data!.notifyWhenAppRunningInBackgroundOrQuit,
+      showDeclineButton: _data!.showDeclineButton,
+      showCancelInvitationButton: _data!.showCancelInvitationButton,
+      androidNotificationConfig: _data!.androidNotificationConfig,
+      iOSNotificationConfig: _data!.iOSNotificationConfig,
+      invitationEvents: _data!.events,
+      innerText: _data!.innerText,
+      controller: _data!.controller,
       plugins: plugins,
     );
     if (null != _contextQuery) {
-      _callInvitationConfig.contextQuery = _contextQuery;
+      _callInvitationConfig!.contextQuery = _contextQuery;
     }
 
     _notificationManager = ZegoNotificationManager(
       showDeclineButton: showDeclineButton,
-      callInvitationConfig: _callInvitationConfig,
+      callInvitationConfig: _callInvitationConfig!,
     );
 
     _pageManager = ZegoInvitationPageManager(
-      callInvitationConfig: _callInvitationConfig,
-      notificationManager: _notificationManager,
+      callInvitationConfig: _callInvitationConfig!,
+      notificationManager: _notificationManager!,
+    );
+    _pageManager?.init(
+      ringtoneConfig: _data!.ringtoneConfig,
     );
 
     ZegoCallInvitationInternalInstance.instance.register(
-      pageManager: _pageManager,
-      callInvitationConfig: _callInvitationConfig,
+      pageManager: _pageManager!,
+      callInvitationConfig: _callInvitationConfig!,
     );
 
     _initCallKit(
-      pageManager: _pageManager,
-      showDeclineButton: _data.showDeclineButton,
-      callInvitationConfig: _callInvitationConfig,
-      androidNotificationConfig: _data.androidNotificationConfig,
+      pageManager: _pageManager!,
+      showDeclineButton: _data!.showDeclineButton,
+      callInvitationConfig: _callInvitationConfig!,
+      androidNotificationConfig: _data!.androidNotificationConfig,
     );
 
     _plugins = ZegoPrebuiltPlugins(
-      appID: _data.appID,
-      appSign: _data.appSign,
-      userID: _data.userID,
-      userName: _data.userName,
-      plugins: _data.plugins,
+      appID: _data!.appID,
+      appSign: _data!.appSign,
+      userID: _data!.userID,
+      userName: _data!.userName,
+      plugins: _data!.plugins,
     );
-    await _plugins.init().then((value) {
-      ZegoLoggerService.logInfo(
-        'plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
-        '${_data.notifyWhenAppRunningInBackgroundOrQuit}',
-        tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
-      );
+    await _plugins!.init(onPluginInit: () async {
+      if (_data!.notifyWhenAppRunningInBackgroundOrQuit) {
+        ZegoLoggerService.logInfo(
+          'try enable notification, '
+          'iOSNotificationConfig:${_data!.iOSNotificationConfig}, '
+          'enableIOSVoIP:$_enableIOSVoIP ',
+          tag: 'call',
+          subTag: 'call invitation service(${identityHashCode(this)})',
+        );
 
-      if (_data.notifyWhenAppRunningInBackgroundOrQuit) {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          ZegoLoggerService.logInfo(
-            'try enable notification, '
-            'iOSNotificationConfig:${_data.iOSNotificationConfig}, '
-            'enableIOSVoIP:$_enableIOSVoIP ',
-            tag: 'call',
-            subTag: 'call invitation service(${identityHashCode(this)})',
-          );
+        final androidChannelID =
+            _data!.androidNotificationConfig?.channelID ?? 'CallInvitation';
+        final androidChannelName =
+            _data!.androidNotificationConfig?.channelName ?? 'Call Invitation';
+        final androidSound =
+            '/raw/${_data!.androidNotificationConfig?.sound ?? '/raw/zego_incoming'}';
+        setPreferenceString(
+          serializationKeyHandlerInfo,
+          HandlerPrivateInfo(
+            appID: appID.toString(),
+            userID: userID,
+            userName: userName,
+            isIOSSandboxEnvironment:
+                _data!.iOSNotificationConfig?.isSandboxEnvironment ?? false,
+            enableIOSVoIP: _enableIOSVoIP,
+            certificateIndex: certificateIndex.id,
+            appName: appName,
+            androidChannelID: androidChannelID,
+            androidChannelName: androidChannelName,
+            androidSound: androidSound,
+          ).toJsonString(),
+        );
 
-          final androidChannelID =
-              _data.androidNotificationConfig?.channelID ?? 'CallInvitation';
-          final androidChannelName =
-              _data.androidNotificationConfig?.channelName ?? 'Call Invitation';
-          final androidSound =
-              '/raw/${_data.androidNotificationConfig?.sound ?? '/raw/zego_incoming'}';
-          setPreferenceString(
-            serializationKeyHandlerInfo,
-            HandlerPrivateInfo(
-              appID: appID.toString(),
-              userID: userID,
-              userName: userName,
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .enableNotifyWhenAppRunningInBackgroundOrQuit(
+              true,
               isIOSSandboxEnvironment:
-                  _data.iOSNotificationConfig?.isSandboxEnvironment ?? false,
+                  _data!.iOSNotificationConfig?.isSandboxEnvironment ?? false,
               enableIOSVoIP: _enableIOSVoIP,
               certificateIndex: certificateIndex.id,
               appName: appName,
               androidChannelID: androidChannelID,
               androidChannelName: androidChannelName,
               androidSound: androidSound,
-            ).toJsonString(),
+            )
+            .then((result) {
+          if (_enableIOSVoIP) {
+            ZegoUIKit().getSignalingPlugin().setInitConfiguration(
+                  ZegoSignalingPluginProviderConfiguration(
+                    localizedName: appName,
+                    iconTemplateImageName:
+                        _data!.iOSNotificationConfig?.systemCallingIconName ??
+                            '',
+                    supportsVideo: false,
+                    maximumCallsPerCallGroup: 1,
+                    maximumCallGroups: 1,
+                  ),
+                );
+          }
+
+          ZegoLoggerService.logInfo(
+            'enable notification result: $result',
+            tag: 'call',
+            subTag: 'call invitation service(${identityHashCode(this)})',
           );
-
-          ZegoUIKit()
-              .getSignalingPlugin()
-              .enableNotifyWhenAppRunningInBackgroundOrQuit(
-                true,
-                isIOSSandboxEnvironment:
-                    _data.iOSNotificationConfig?.isSandboxEnvironment ?? false,
-                enableIOSVoIP: _enableIOSVoIP,
-                certificateIndex: certificateIndex.id,
-                appName: appName,
-                androidChannelID: androidChannelID,
-                androidChannelName: androidChannelName,
-                androidSound: androidSound,
-              )
-              .then((result) {
-            if (_enableIOSVoIP) {
-              ZegoUIKit().getSignalingPlugin().setInitConfiguration(
-                    ZegoSignalingPluginProviderConfiguration(
-                      localizedName: appName,
-                      iconTemplateImageName:
-                          _data.iOSNotificationConfig?.systemCallingIconName ??
-                              '',
-                      supportsVideo: false,
-                      maximumCallsPerCallGroup: 1,
-                      maximumCallGroups: 1,
-                    ),
-                  );
-            }
-
-            ZegoLoggerService.logInfo(
-              'enable notification result: $result',
-              tag: 'call',
-              subTag: 'call invitation service(${identityHashCode(this)})',
-            );
-          });
         });
       }
+    }).then((value) {
+      ZegoLoggerService.logInfo(
+        'plugin init finished, notifyWhenAppRunningInBackgroundOrQuit:'
+        '${_data!.notifyWhenAppRunningInBackgroundOrQuit}',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
+
+      _pageManager?.listenStream();
+
+      getCurrentCallKitCallID().then((callKitCallID) {
+        if ((callKitCallID?.isNotEmpty ?? false) && Platform.isAndroid) {
+          ZegoLoggerService.logInfo(
+            'exist offline call accept',
+            tag: 'call',
+            subTag: 'callkit service',
+          );
+
+          /// 存在离线呼叫
+          _pageManager
+                  ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
+              true;
+          getCurrentCallKitParams().then((paramsJson) {
+            ZegoLoggerService.logInfo(
+              'offline call param: $paramsJson',
+              tag: 'call',
+              subTag: 'callkit service',
+            );
+
+            if (paramsJson?.isEmpty ?? true) {
+              return;
+            }
+
+            _pageManager?.onInvitationReceived(jsonDecode(paramsJson!));
+          });
+        }
+      });
     });
 
     await _initPermissions().then((value) => _initContext());
@@ -392,7 +437,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     _isInit = false;
 
-    _notificationManager.uninit();
+    _notificationManager?.uninit();
 
     await _uninitCallKit();
     if (Platform.isIOS) {
@@ -451,4 +496,9 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   static final ZegoUIKitPrebuiltCallInvitationService _instance =
       ZegoUIKitPrebuiltCallInvitationService._internal();
+
+  bool _isInit = false;
+
+  /// callkit
+  bool _enableIOSVoIP = false;
 }

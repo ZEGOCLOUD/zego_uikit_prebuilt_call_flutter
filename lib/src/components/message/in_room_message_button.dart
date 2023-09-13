@@ -6,13 +6,11 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
-
-import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_list_sheet.dart';
 
 // Project imports:
-
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_list_sheet.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 
 /// @nodoc
 /// switch cameras

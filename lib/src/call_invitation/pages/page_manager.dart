@@ -37,7 +37,7 @@ class ZegoInvitationPageManager {
   final _calleeRingtone = ZegoRingtone();
 
   bool _init = false;
-  late ZegoCallingMachine callingMachine;
+  ZegoCallingMachine? callingMachine;
   bool _invitationTopSheetVisibility = false;
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
   bool _appInBackground = false;
@@ -59,6 +59,8 @@ class ZegoInvitationPageManager {
   ZegoCallInvitationData get invitationData => _invitationData;
 
   bool get isGroupCall => _invitationData.invitees.length > 1;
+
+  String get currentCallID => _invitationData.callID;
 
   /// still ring mean nobody accept this invitation
   bool get isNobodyAccepted => _callerRingtone.isRingTimerRunning;
@@ -82,7 +84,8 @@ class ZegoInvitationPageManager {
       _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
 
   bool get isInCalling =>
-      CallingState.kOnlineAudioVideo == callingMachine.getPageState() ||
+      CallingState.kOnlineAudioVideo ==
+          (callingMachine?.getPageState() ?? CallingState.kIdle) ||
       inCallingByIOSBackgroundLock;
 
   Future<void> init({
@@ -98,13 +101,12 @@ class ZegoInvitationPageManager {
     }
 
     _init = true;
-    listenStream();
 
     callingMachine = ZegoCallingMachine(
       pageManager: this,
       callInvitationConfig: callInvitationConfig,
     );
-    callingMachine.init();
+    callingMachine!.init();
 
     initRing(ringtoneConfig);
 
@@ -209,7 +211,14 @@ class ZegoInvitationPageManager {
   }
 
   void listenStream() {
+    ZegoLoggerService.logInfo(
+      'listen stream',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+
     // check plugin installed
+    removeStreamListener();
 
     _streamSubscriptions
       ..add(ZegoUIKit()
@@ -239,6 +248,12 @@ class ZegoInvitationPageManager {
   }
 
   void removeStreamListener() {
+    ZegoLoggerService.logInfo(
+      'remove stream',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+
     for (final streamSubscription in _streamSubscriptions) {
       streamSubscription.cancel();
     }
@@ -289,11 +304,11 @@ class ZegoInvitationPageManager {
 
       if (isGroupCall) {
         /// group call, enter room directly
-        callingMachine.stateOnlineAudioVideo.enter();
+        callingMachine?.stateOnlineAudioVideo.enter();
       } else {
         /// single call
         if (ZegoCallType.voiceCall == _invitationData.type) {
-          callingMachine.stateCallingWithVoice.enter();
+          callingMachine?.stateCallingWithVoice.enter();
         } else {
           if (callInvitationConfig
               .prebuiltConfigQuery(_invitationData)
@@ -301,7 +316,7 @@ class ZegoInvitationPageManager {
             ZegoUIKit.instance.turnCameraOn(true);
           }
 
-          callingMachine.stateCallingWithVideo.enter();
+          callingMachine?.stateCallingWithVideo.enter();
         }
       }
     } else {
@@ -365,7 +380,7 @@ class ZegoInvitationPageManager {
         });
       });
     } else {
-      callingMachine.stateOnlineAudioVideo.enter();
+      callingMachine?.stateOnlineAudioVideo.enter();
     }
   }
 
@@ -384,9 +399,13 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onLocalRefuseInvitation(String code, String message) {
+  void onLocalRefuseInvitation(
+    String code,
+    String message, {
+    bool needClearCallKit = true,
+  }) {
     ZegoLoggerService.logInfo(
-      'local refuse invitation, code:$code, message:$message',
+      'local refuse invitation, code:$code, message:$message, lifecycleState:${WidgetsBinding.instance.lifecycleState}',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -394,7 +413,9 @@ class ZegoInvitationPageManager {
     callInvitationConfig.invitationEvents?.onIncomingCallDeclineButtonPressed
         ?.call();
 
-    restoreToIdle();
+    restoreToIdle(
+      needClearCallKit: needClearCallKit,
+    );
   }
 
   void onLocalCancelInvitation(
@@ -413,15 +434,41 @@ class ZegoInvitationPageManager {
     restoreToIdle();
   }
 
+  ///title:user_073493,
+  ///content:,
+  ///extras:{
+  ///body: Incoming video call...,
+  ///title: user_073493,
+  /// payload: {
+  /// "inviter_name":"user_073493",
+  /// "type":1,
+  /// "data":"{
+  /// \"call_id\":\"call_073493_1694161894381\",
+  /// \"invitees\":[{\"user_id\":\"946042\",\"user_name\":\"user_946042\"}],
+  /// \"timeout\":60,
+  /// \"custom_data\":\"\
+  /// "}
+  /// "},
+  /// call_id: 14400815982535765263}
   ///
+  /// inviter:{id:073493, name:user_073493, in-room attributes:{}, camera:false, microphone:false, microphone mute mode:false },
+  /// type:1,
+  /// data:{"call_id":"call_073493_1694162272838","invitees":[{"user_id":"946042","user_name":"user_946042"}],"timeout":60,"custom_data":""}
   Future<void> onInvitationReceived(Map<String, dynamic> params) async {
-    final ZegoUIKitUser inviter = params['inviter']!;
+    var inviter = ZegoUIKitUser.empty();
+    if (params['inviter'] is ZegoUIKitUser) {
+      inviter = params['inviter']!;
+    } else if (params['inviter'] is Map<String, dynamic>) {
+      inviter =
+          ZegoUIKitUser.fromJson(params['inviter'] as Map<String, dynamic>);
+    }
     final int type = params['type']!; // call type
     final String data = params['data']!; // extended field
 
     /// zim call id
     final invitationID = params['invitation_id'] as String? ?? '';
 
+    ZegoLoggerService.logInfo('on invitation received,params:$params');
     ZegoLoggerService.logInfo(
       'on invitation received, state:${WidgetsBinding.instance.lifecycleState},  _init:$_init, inviter:$inviter, type:$type, data:$data, in background: $_appInBackground',
       tag: 'call',
@@ -429,11 +476,12 @@ class ZegoInvitationPageManager {
     );
 
     if (_invitationData.callID.isNotEmpty ||
-        CallingState.kIdle != callingMachine.getPageState()) {
+        CallingState.kIdle !=
+            (callingMachine?.getPageState() ?? CallingState.kIdle)) {
       ZegoLoggerService.logInfo(
         'auto refuse this call, because is busy, '
         'is inviting: ${_invitationData.callID.isNotEmpty}, '
-        'current state: ${callingMachine.getPageState()}',
+        'current state: ${callingMachine?.getPageState() ?? CallingState.kIdle}',
         tag: 'call',
         subTag: 'page manager',
       );
@@ -495,7 +543,10 @@ class ZegoInvitationPageManager {
         ZegoUIKit()
             .getSignalingPlugin()
             .acceptInvitation(
-                inviterID: _invitationData.inviter?.id ?? '', data: '')
+              inviterID: _invitationData.inviter?.id ?? '',
+              data: '',
+              targetInvitationID: invitationID,
+            )
             .then((result) {
           onLocalAcceptInvitation(
             result.error?.code ?? '',
@@ -510,7 +561,7 @@ class ZegoInvitationPageManager {
           ZegoLoggerService.logInfo(
             'refuse invitation($invitationData) by callkit rejected',
             tag: 'call',
-            subTag: 'call invitation service',
+            subTag: 'page manager',
           );
 
           ZegoUIKit()
@@ -625,7 +676,7 @@ class ZegoInvitationPageManager {
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
-    callingMachine.stateOnlineAudioVideo.enter();
+    callingMachine?.stateOnlineAudioVideo.enter();
   }
 
   void onInvitationTimeout(Map<String, dynamic> params) {
@@ -781,8 +832,12 @@ class ZegoInvitationPageManager {
       ZegoUIKit()
           .getSignalingPlugin()
           .cancelInvitation(
-              invitees: _invitingInvitees.map((user) => user.id).toList(),
-              data: '')
+            invitees: _invitingInvitees.map((user) => user.id).toList(),
+            data: const JsonEncoder().convert({
+              'call_id': _invitationData.callID,
+              'operation_type': 'cancel_invitation',
+            }),
+          )
           .then((result) {
         ZegoLoggerService.logInfo(
           'hang up cancel result, $result',
@@ -807,9 +862,12 @@ class ZegoInvitationPageManager {
     restoreToIdle(needPop: false);
   }
 
-  void restoreToIdle({bool needPop = true}) {
+  void restoreToIdle({
+    bool needPop = true,
+    bool needClearCallKit = true,
+  }) {
     ZegoLoggerService.logInfo(
-      'invitation page service to be idle',
+      'invitation page service to be idle, needClearCallKit:$needClearCallKit',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -826,9 +884,9 @@ class ZegoInvitationPageManager {
     hideInvitationTopSheet();
 
     if (CallingState.kIdle !=
-        (callingMachine.machine.current?.identifier ?? CallingState.kIdle)) {
+        (callingMachine?.machine.current?.identifier ?? CallingState.kIdle)) {
       ZegoLoggerService.logInfo(
-        'restore to idle, current state:${callingMachine.machine.current?.identifier}',
+        'restore to idle, current state:${callingMachine?.machine.current?.identifier}',
         tag: 'call',
         subTag: 'page manager',
       );
@@ -838,11 +896,13 @@ class ZegoInvitationPageManager {
         Navigator.of(callInvitationConfig.contextQuery!.call()).pop();
       }
 
-      callingMachine.stateIdle.enter();
+      callingMachine?.stateIdle.enter();
     }
 
-    clearCurrentCallKitCallID();
-    clearAllCallKitCalls();
+    if (needClearCallKit) {
+      clearCurrentCallKitCallID();
+      clearAllCallKitCalls();
+    }
 
     _invitationData = ZegoCallInvitationData.empty();
   }
@@ -851,13 +911,19 @@ class ZegoInvitationPageManager {
     hideInvitationTopSheet();
 
     if (ZegoCallType.voiceCall == _invitationData.type) {
-      callingMachine.stateCallingWithVoice.enter();
+      callingMachine?.stateCallingWithVoice.enter();
     } else {
-      callingMachine.stateCallingWithVideo.enter();
+      callingMachine?.stateCallingWithVideo.enter();
     }
   }
 
   void showInvitationTopSheet() {
+    ZegoLoggerService.logInfo(
+      'showInvitationTopSheet',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+
     if (_invitationTopSheetVisibility) {
       return;
     }
@@ -899,7 +965,7 @@ class ZegoInvitationPageManager {
     ZegoLoggerService.logInfo(
       'didChangeAppLifecycleState, '
       'is app in background: previous:$_appInBackground, current: $isAppInBackground, '
-      'call machine page state:${callingMachine.getPageState()}, '
+      'call machine page state:${callingMachine?.getPageState() ?? CallingState.kIdle}, '
       'invitation data:$_invitationData, '
       'in calling by ios background lock:$inCallingByIOSBackgroundLock, '
       'current room info:${ZegoUIKit().getRoom()}',
@@ -909,7 +975,8 @@ class ZegoInvitationPageManager {
 
     final hasReceivedInvitation = _invitationData.callID.isNotEmpty &&
         _invitationData.inviter?.id != ZegoUIKit().getLocalUser().id;
-    if (CallingState.kIdle == callingMachine.getPageState() &&
+    if (CallingState.kIdle ==
+            (callingMachine?.getPageState() ?? CallingState.kIdle) &&
         _appInBackground &&
         !isAppInBackground &&
         hasReceivedInvitation) {
@@ -970,14 +1037,14 @@ class ZegoInvitationPageManager {
       inCallingByIOSBackgroundLock = false;
       userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
 
-      callingMachine.stateOnlineAudioVideo.enter();
+      callingMachine?.stateOnlineAudioVideo.enter();
     }
   }
 
   void onMiniOverlayMachineStateChanged(
       PrebuiltCallMiniOverlayPageState state) {
     if (PrebuiltCallMiniOverlayPageState.calling == state) {
-      callingMachine.stateOnlineAudioVideo.enter();
+      callingMachine?.stateOnlineAudioVideo.enter();
     }
   }
 }

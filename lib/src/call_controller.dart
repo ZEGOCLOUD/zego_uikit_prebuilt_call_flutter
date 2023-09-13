@@ -153,7 +153,7 @@ class ZegoUIKitPrebuiltCallController
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
 
     final currentState =
-        _pageManager?.callingMachine.machine.current?.identifier ??
+        _pageManager?.callingMachine?.machine.current?.identifier ??
             CallingState.kIdle;
     if (CallingState.kIdle != currentState) {
       ZegoLoggerService.logInfo(
@@ -170,9 +170,12 @@ class ZegoUIKitPrebuiltCallController
       subTag: 'controller',
     );
 
-    if (_pageManager?.callingMachine.isPagePushed ?? false) {
+    if (_pageManager?.callingMachine?.isPagePushed ?? false) {
       return _waitUntil(() {
-        return !_pageManager!.callingMachine.isPagePushed;
+        if (null == _pageManager?.callingMachine) {
+          return true;
+        }
+        return _pageManager!.callingMachine!.isPagePushed;
       }).then((value) {
         return _sendInvitation(
           invitees: invitees,

@@ -13,12 +13,11 @@ import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
-
-import 'message/in_room_message_button.dart';
 
 /// @nodoc
 class ZegoTopMenuBar extends StatefulWidget {

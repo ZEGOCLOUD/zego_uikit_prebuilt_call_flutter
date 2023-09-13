@@ -76,13 +76,14 @@ class ZegoUIKitPrebuiltCallConfig {
     this.turnOnMicrophoneWhenJoining = true,
     this.useSpeakerWhenJoining = false,
     this.rootNavigator = false,
+    this.advanceConfigs = const {},
     ZegoPrebuiltAudioVideoViewConfig? audioVideoViewConfig,
     ZegoTopMenuBarConfig? topMenuBarConfig,
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoMemberListConfig? memberListConfig,
     ZegoCallDurationConfig? durationConfig,
     ZegoInRoomChatViewConfig? chatViewConfig,
-    this.layout,
+    ZegoLayout? layout,
     this.hangUpConfirmDialogInfo,
     this.onHangUpConfirmation,
     this.onHangUp,
@@ -95,9 +96,8 @@ class ZegoUIKitPrebuiltCallConfig {
         bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
         memberListConfig = memberListConfig ?? ZegoMemberListConfig(),
         durationConfig = durationConfig ?? ZegoCallDurationConfig(),
-        chatViewConfig = chatViewConfig ?? ZegoInRoomChatViewConfig() {
-    layout ??= ZegoLayout.pictureInPicture();
-  }
+        chatViewConfig = chatViewConfig ?? ZegoInRoomChatViewConfig(),
+        layout = layout ?? ZegoLayout.pictureInPicture();
 
   /// Whether to open the camera when joining the call.
   ///
@@ -136,7 +136,7 @@ class ZegoUIKitPrebuiltCallConfig {
   ZegoBeautyPluginConfig? beautyConfig;
 
   /// Layout-related configuration. You can choose your layout here.
-  ZegoLayout? layout;
+  ZegoLayout layout;
 
   /// Custom audio/video view.
   /// If you don't want to use the default view components, you can pass a custom component through this parameter.
@@ -168,6 +168,10 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ```
   ///
   ZegoAvatarBuilder? avatarBuilder;
+
+  /// Set advanced engine configuration, Used to enable advanced functions.
+  /// For details, please consult ZEGO technical support.
+  Map<String, String> advanceConfigs;
 
   /// Confirmation dialog information when hang up the call.
   /// If not set, clicking the exit button will directly exit the call.

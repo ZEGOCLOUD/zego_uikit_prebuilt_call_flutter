@@ -242,8 +242,18 @@ mixin iOSCallKitService {
       /// exit call
       ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
     } else {
+      /// There is no need to clear CallKit here;  manually clear the CallKit ID.
+      ///
+      /// This is because offline calls on iOS will wake up the app,
+      /// and when you reject the call for the first time,
+      /// you need to wait for a certain period of time for the refusal callback.
+      /// Otherwise, it will automatically reject the second offline call that comes immediately after.
+      clearCurrentCallKitCallID();
+
       /// refuse call request
-      ZegoCallKitBackgroundService().refuseInvitationInBackground();
+      ZegoCallKitBackgroundService().refuseInvitationInBackground(
+        needClearCallKit: false,
+      );
     }
   }
 

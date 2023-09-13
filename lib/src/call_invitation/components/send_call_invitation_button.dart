@@ -276,11 +276,8 @@ class _ZegoSendCallInvitationButtonState
       return false;
     }
 
-    final x1 = pageManager?.callingMachine;
-    final x2 = pageManager?.callingMachine.machine;
-    final x3 = pageManager?.callingMachine.machine.current?.identifier;
     final currentState =
-        pageManager?.callingMachine.machine.current?.identifier ??
+        pageManager?.callingMachine?.machine.current?.identifier ??
             CallingState.kIdle;
     if (CallingState.kIdle != currentState) {
       ZegoLoggerService.logInfo(

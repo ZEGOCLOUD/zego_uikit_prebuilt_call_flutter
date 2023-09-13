@@ -1,6 +1,6 @@
 // Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
 import 'package:flutter/material.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
@@ -57,7 +57,7 @@ class ZegoCallKitBackgroundService {
     }
   }
 
-  void refuseInvitationInBackground() {
+  void refuseInvitationInBackground({bool needClearCallKit = true}) {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'refuse invitation, but has not callkit incoming cause by app in background',
@@ -87,7 +87,10 @@ class ZegoCallKitBackgroundService {
         )
         .then((result) {
       _pageManager?.onLocalRefuseInvitation(
-          result.error?.code ?? '', result.error?.message ?? '');
+        result.error?.code ?? '',
+        result.error?.message ?? '',
+        needClearCallKit: needClearCallKit,
+      );
     });
   }
 

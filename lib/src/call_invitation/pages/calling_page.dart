@@ -45,7 +45,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   VoidCallback? callConfigHandUp;
   ZegoUIKitPrebuiltCallConfig? callConfig;
 
-  ZegoCallingMachine get machine => widget.pageManager.callingMachine;
+  ZegoCallingMachine? get machine => widget.pageManager.callingMachine;
 
   @override
   void initState() {
@@ -54,14 +54,14 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     widget.onInitState();
 
     SchedulerBinding.instance?.addPostFrameCallback((_) {
-      machine.onStateChanged = (CallingState state) {
+      machine?.onStateChanged = (CallingState state) {
         setState(() {
           currentState = state;
         });
       };
 
-      if (null != machine.machine.current) {
-        machine.onStateChanged!(machine.machine.current!.identifier);
+      if (null != machine?.machine.current) {
+        machine!.onStateChanged!(machine!.machine.current!.identifier);
       }
     });
   }
@@ -70,7 +70,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
   void dispose() {
     widget.onDispose();
 
-    machine.onStateChanged = null;
+    machine?.onStateChanged = null;
 
     callConfig = null;
 

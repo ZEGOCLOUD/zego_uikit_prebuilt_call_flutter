@@ -38,6 +38,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     return ZegoUIKit()
         .getSignalingPlugin()
         .sendInvitation(
+          inviterID: ZegoUIKit().getLocalUser().id,
           inviterName: ZegoUIKit().getLocalUser().name,
           invitees: invitees.map((user) {
             return user.id;

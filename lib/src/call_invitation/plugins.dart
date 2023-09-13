@@ -70,13 +70,18 @@ class ZegoPrebuiltPlugins {
       ..add(ZegoUIKit().getNetworkModeStream().listen(onNetworkModeChanged));
   }
 
-  Future<void> init() async {
+  Future<void> init({Future<void> Function()? onPluginInit}) async {
     ZegoLoggerService.logInfo(
       'plugins init',
       tag: 'call',
       subTag: 'plugin',
     );
-    await ZegoUIKit().getSignalingPlugin().init(appID, appSign: appSign);
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .init(appID, appSign: appSign)
+        .then((value) async {
+      await onPluginInit?.call();
+    });
 
     ZegoLoggerService.logInfo(
       'plugins init done, login...',

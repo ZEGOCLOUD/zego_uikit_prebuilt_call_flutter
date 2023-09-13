@@ -136,7 +136,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.12.3; $version',
+        'version: zego_uikit_prebuilt_call:3.14.0; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -270,12 +270,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     await initEffectsPlugins();
 
     final config = widget.config;
-    initPermissions().then((value) {
+    initPermissions().then((value) async {
       ZegoUIKit().login(widget.userID, widget.userName);
+
+      await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
       ZegoUIKit()
           .init(appID: widget.appID, appSign: widget.appSign)
-          .then((value) {
+          .then((value) async {
+        await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
+
         // enableCustomVideoProcessing
         if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
           ZegoUIKit().enableCustomVideoProcessing(true);
@@ -406,7 +410,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       }
 
       avContainer = ZegoAudioVideoContainer(
-        layout: widget.config.layout!,
+        layout: widget.config.layout,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
         screenSharingViewController:
