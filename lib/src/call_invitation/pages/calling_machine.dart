@@ -20,7 +20,7 @@ enum CallingState {
   kCallingWithVoice,
   //  video call request
   kCallingWithVideo,
-  //  in voice call
+  //  in call
   kOnlineAudioVideo,
 }
 

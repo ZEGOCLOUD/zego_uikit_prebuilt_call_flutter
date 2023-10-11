@@ -220,10 +220,10 @@ mixin iOSCallKitService {
 
     event.action.fulfill();
 
-    getCurrentCallKitCallID().then((callKitCallID) {
+    getOfflineCallKitCallID().then((callKitCallID) {
       ZegoCallKitBackgroundService()
           .acceptCallKitIncomingCauseInBackground(callKitCallID);
-      clearCurrentCallKitCallID();
+      clearOfflineCallKitCallID();
     });
   }
 
@@ -248,7 +248,7 @@ mixin iOSCallKitService {
       /// and when you reject the call for the first time,
       /// you need to wait for a certain period of time for the refusal callback.
       /// Otherwise, it will automatically reject the second offline call that comes immediately after.
-      clearCurrentCallKitCallID();
+      clearOfflineCallKitCallID();
 
       /// refuse call request
       ZegoCallKitBackgroundService().refuseInvitationInBackground(

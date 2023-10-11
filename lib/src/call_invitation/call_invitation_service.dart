@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
+import 'dart:isolate';
+import 'dart:ui';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
@@ -9,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Package imports:
-import 'package:flutter_callkit_incoming/entities/call_event.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
+import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:is_lock_screen2/is_lock_screen2.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -157,6 +159,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  bool get isInit => _isInit;
+
   Future<void> init({
     required int appID,
     required String appSign,
@@ -172,7 +176,7 @@ class ZegoUIKitPrebuiltCallInvitationService
         ZegoSignalingPluginMultiCertificate.firstCertificate,
     String appName = '',
     @Deprecated('use iOSNotificationConfig.isSandboxEnvironment instead')
-        bool? isIOSSandboxEnvironment,
+    bool? isIOSSandboxEnvironment,
     ZegoIOSNotificationConfig? iOSNotificationConfig,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
     ZegoUIKitPrebuiltCallController? controller,
@@ -191,9 +195,11 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     _isInit = true;
 
+    _registerOfflineCallIsolateNameServer();
+
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.14.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.15.5; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -280,6 +286,15 @@ class ZegoUIKitPrebuiltCallInvitationService
       showDeclineButton: showDeclineButton,
       callInvitationConfig: _callInvitationConfig!,
     );
+    if (_callInvitationConfig!.notifyWhenAppRunningInBackgroundOrQuit) {
+      await _notificationManager!.init();
+    } else {
+      ZegoLoggerService.logInfo(
+        'notifyWhenAppRunningInBackgroundOrQuit is false, not need to init',
+        tag: 'call',
+        subTag: 'notification manager',
+      );
+    }
 
     _pageManager = ZegoInvitationPageManager(
       callInvitationConfig: _callInvitationConfig!,
@@ -386,8 +401,18 @@ class ZegoUIKitPrebuiltCallInvitationService
 
       _pageManager?.listenStream();
 
-      getCurrentCallKitCallID().then((callKitCallID) {
-        if ((callKitCallID?.isNotEmpty ?? false) && Platform.isAndroid) {
+      if (Platform.isAndroid) {
+        getCurrentCallKitParams().then((paramsJson) {
+          ZegoLoggerService.logInfo(
+            'offline callkit param: $paramsJson',
+            tag: 'call',
+            subTag: 'callkit service',
+          );
+
+          if (paramsJson?.isEmpty ?? true) {
+            return;
+          }
+
           ZegoLoggerService.logInfo(
             'exist offline call accept',
             tag: 'call',
@@ -398,21 +423,10 @@ class ZegoUIKitPrebuiltCallInvitationService
           _pageManager
                   ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
               true;
-          getCurrentCallKitParams().then((paramsJson) {
-            ZegoLoggerService.logInfo(
-              'offline call param: $paramsJson',
-              tag: 'call',
-              subTag: 'callkit service',
-            );
 
-            if (paramsJson?.isEmpty ?? true) {
-              return;
-            }
-
-            _pageManager?.onInvitationReceived(jsonDecode(paramsJson!));
-          });
-        }
-      });
+          _pageManager?.onInvitationReceived(jsonDecode(paramsJson!));
+        });
+      }
     });
 
     await _initPermissions().then((value) => _initContext());
@@ -436,6 +450,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
 
     _isInit = false;
+
+    _unregisterOfflineCallIsolateNameServer();
 
     _notificationManager?.uninit();
 
@@ -489,10 +505,65 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  void _registerOfflineCallIsolateNameServer() {
+    _backgroundPort = ReceivePort();
+    IsolateNameServer.registerPortWithName(
+      _backgroundPort!.sendPort,
+      backgroundMessageIsolatePortName,
+    );
+    _backgroundPort!.listen((dynamic message) async {
+      final messageExtras = message as Map<String, Object?>? ?? {};
+
+      ZegoLoggerService.logInfo(
+        'current port(${_backgroundPort!.hashCode}) receive, '
+        'message:$message, extra:$messageExtras',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
+
+      /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
+      await ZegoUIKit().getSignalingPlugin().activeAppToForeground();
+      await ZegoUIKit().getSignalingPlugin().requestDismissKeyguard();
+
+      /// There is no need for additional processing.
+      /// When the app is suspended after being screen-locked for more than 10
+      /// minutes, it will receives offline calls from ZPNS.
+      ///
+      /// At this time, the offline handler wakes up the app through isolate
+      /// and then ZIM been reconnected and receive online call.
+      /// After receiving an online call, because the app is in the background,
+      /// it will run the logic code of background online calls and then pops
+      /// up the CallKit UI.
+    });
+
+    ZegoLoggerService.logInfo(
+      'register offline call isolate name server, port:${_backgroundPort?.hashCode}',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+  }
+
+  void _unregisterOfflineCallIsolateNameServer() {
+    ZegoLoggerService.logInfo(
+      'unregister offline call  isolate name server, port:${_backgroundPort?.hashCode}',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+
+    _backgroundPort?.close();
+    IsolateNameServer.removePortNameMapping(backgroundMessageIsolatePortName);
+  }
+
   @Deprecated('Since 3.3.3')
   void didChangeAppLifecycleState(bool isAppInBackground) {}
 
-  ZegoUIKitPrebuiltCallInvitationService._internal();
+  ZegoUIKitPrebuiltCallInvitationService._internal() {
+    ZegoLoggerService.logInfo(
+      'ZegoUIKitPrebuiltCallInvitationService create',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+  }
 
   static final ZegoUIKitPrebuiltCallInvitationService _instance =
       ZegoUIKitPrebuiltCallInvitationService._internal();
@@ -501,4 +572,6 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// callkit
   bool _enableIOSVoIP = false;
+
+  ReceivePort? _backgroundPort;
 }

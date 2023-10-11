@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
@@ -139,37 +141,26 @@ class ZegoUIKitPrebuiltCallController
     String? notificationMessage,
     int timeoutSeconds = 60,
   }) async {
-    if (null == _pageManager || null == _callInvitationConfig) {
-      ZegoLoggerService.logInfo(
-        'send call invitation, param is invalid, page manager:$_pageManager, invitation config:$_callInvitationConfig',
-        tag: 'call',
-        subTag: 'controller',
-      );
+    ZegoLoggerService.logInfo(
+      'send call invitation',
+      tag: 'call',
+      subTag: 'controller',
+    );
 
+    if (!_checkParamValid()) {
+      return false;
+    }
+
+    if (!_checkSignalingPlugin()) {
+      return false;
+    }
+
+    if (!_checkInCalling()) {
       return false;
     }
 
     final currentCallID = callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-
-    final currentState =
-        _pageManager?.callingMachine?.machine.current?.identifier ??
-            CallingState.kIdle;
-    if (CallingState.kIdle != currentState) {
-      ZegoLoggerService.logInfo(
-        'send call invitation, still in calling, $currentState',
-        tag: 'call',
-        subTag: 'controller',
-      );
-      return false;
-    }
-
-    ZegoLoggerService.logInfo(
-      'send call invitation, start request',
-      tag: 'call',
-      subTag: 'controller',
-    );
-
     if (_pageManager?.callingMachine?.isPagePushed ?? false) {
       return _waitUntil(() {
         if (null == _pageManager?.callingMachine) {
@@ -178,7 +169,7 @@ class ZegoUIKitPrebuiltCallController
         return _pageManager!.callingMachine!.isPagePushed;
       }).then((value) {
         return _sendInvitation(
-          invitees: invitees,
+          callees: invitees,
           isVideoCall: isVideoCall,
           callID: currentCallID,
           customData: customData,
@@ -191,7 +182,7 @@ class ZegoUIKitPrebuiltCallController
     }
 
     return _sendInvitation(
-      invitees: invitees,
+      callees: invitees,
       isVideoCall: isVideoCall,
       callID: currentCallID,
       customData: customData,
@@ -199,6 +190,88 @@ class ZegoUIKitPrebuiltCallController
       timeoutSeconds: timeoutSeconds,
       notificationTitle: notificationTitle,
       notificationMessage: notificationMessage,
+    );
+  }
+
+  Future<bool> cancelCallInvitation({
+    required List<ZegoCallUser> callees,
+    String customData = '',
+  }) async {
+    ZegoLoggerService.logInfo(
+      'cancel call invitation',
+      tag: 'call',
+      subTag: 'controller',
+    );
+
+    if (!_checkParamValid()) {
+      return false;
+    }
+
+    if (!_checkSignalingPlugin()) {
+      return false;
+    }
+
+    if (!_checkInNotCalling()) {
+      return false;
+    }
+
+    return _cancelInvitation(
+      callees: callees,
+      customData: customData,
+    );
+  }
+
+  Future<bool> rejectCallInvitation({
+    String customData = '',
+  }) async {
+    ZegoLoggerService.logInfo(
+      'reject call invitation',
+      tag: 'call',
+      subTag: 'controller',
+    );
+
+    if (!_checkParamValid()) {
+      return false;
+    }
+
+    if (!_checkSignalingPlugin()) {
+      return false;
+    }
+
+    if (!_checkInCalling()) {
+      return false;
+    }
+
+    return _rejectInvitation(
+      callerID: _pageManager?.invitationData.inviter?.id ?? '',
+      customData: customData,
+    );
+  }
+
+  Future<bool> acceptCallInvitation({
+    String customData = '',
+  }) async {
+    ZegoLoggerService.logInfo(
+      'accept call invitation',
+      tag: 'call',
+      subTag: 'controller',
+    );
+
+    if (!_checkParamValid()) {
+      return false;
+    }
+
+    if (!_checkSignalingPlugin()) {
+      return false;
+    }
+
+    if (!_checkInCalling()) {
+      return false;
+    }
+
+    return _acceptInvitation(
+      callerID: _pageManager?.invitationData.inviter?.id ?? '',
+      customData: customData,
     );
   }
 }

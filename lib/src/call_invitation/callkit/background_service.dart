@@ -57,7 +57,9 @@ class ZegoCallKitBackgroundService {
     }
   }
 
-  void refuseInvitationInBackground({bool needClearCallKit = true}) {
+  void refuseInvitationInBackground({
+    bool needClearCallKit = true,
+  }) {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'refuse invitation, but has not callkit incoming cause by app in background',

@@ -29,9 +29,9 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
       pageManager: pageManager,
     );
 
-    final callKitCallID = await getCurrentCallKitCallID();
+    final callKitCallID = await getOfflineCallKitCallID();
     ZegoLoggerService.logInfo(
-      'callkit call id: $callKitCallID',
+      'offline callkit call id: $callKitCallID',
       tag: 'call',
       subTag: 'callkit service',
     );
@@ -77,7 +77,8 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
     );
     FlutterCallkitIncoming.onEvent.listen(null);
 
-    clearCurrentCallKitCallID();
+    clearOfflineCallKitCallID();
+    clearOfflineCallKitParams();
   }
 
   void _setCallKitVariables(Map<CallKitInnerVariable, dynamic> variables) {
@@ -122,15 +123,22 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
         ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
         break;
       case Event.actionCallAccept:
-        getCurrentCallKitCallID().then((callKitCallID) {
+        getOfflineCallKitCallID().then((callKitCallID) {
           ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
           ZegoCallKitBackgroundService()
               .acceptCallKitIncomingCauseInBackground(callKitCallID);
         });
         break;
       case Event.actionCallDecline:
-      case Event.actionCallTimeout:
         ZegoCallKitBackgroundService().refuseInvitationInBackground();
+        break;
+      case Event.actionCallTimeout:
+        if (Platform.isAndroid) {
+          ZegoCallKitBackgroundService().refuseInvitationInBackground();
+        } else {
+          /// will call actionCallDecline before actionCallTimeout,
+          /// iOS not need to do with actionCallTimeout
+        }
         break;
       case Event.actionCallEnded:
         _myPageManager?.hasCallkitIncomingCauseAppInBackground = false;

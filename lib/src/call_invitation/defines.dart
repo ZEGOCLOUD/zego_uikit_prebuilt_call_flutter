@@ -8,7 +8,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 typedef PrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
     ZegoCallInvitationData);
 
-/// @nodoc
+/// ringtone config
 class ZegoRingtoneConfig {
   final String? packageName;
   final String? incomingCallPath;
@@ -21,7 +21,7 @@ class ZegoRingtoneConfig {
   });
 }
 
-/// @nodoc
+/// Call Type
 enum ZegoCallType {
   voiceCall,
   videoCall,
@@ -68,7 +68,7 @@ class ZegoCallInvitationData {
   }
 }
 
-///
+/// User In Call
 class ZegoCallUser {
   String id;
   String name;
@@ -81,10 +81,24 @@ class ZegoCallUser {
   }
 }
 
-/// @nodoc
+/// iOS notification config
 class ZegoIOSNotificationConfig {
   /// is iOS sandbox or not
   bool isSandboxEnvironment;
+
+  /// Customizing the icon for the iOS CallKit lock screen interface
+  ///
+  /// Below, we will using the example of setting a CallKitIcon icon, to
+  /// explain how to set the icon for the CallKit lock screen interface on iOS system .
+  ///
+  /// Place your icon file in the ios/Runner/Assets.xcassets/ folder, with the file name CallKitIcon.imageset.
+  /// When calling ZegoUIKitPrebuiltCallInvitationService.init,
+  /// configure the [iOSNotificationConfig.systemCallingIconName] parameter with the file name (without the file extension).
+  ///
+  /// such as :
+  ///   iOSNotificationConfig: ZegoIOSNotificationConfig(
+  ///     systemCallingIconName: 'CallKitIcon',
+  ///   ),
   String systemCallingIconName;
 
   ZegoIOSNotificationConfig({
@@ -99,7 +113,7 @@ class ZegoIOSNotificationConfig {
   }
 }
 
-/// @nodoc
+/// android notification config
 class ZegoAndroidNotificationConfig {
   /// specify the channel id of notification, which is same in 'Zego Console'
   String channelID;
@@ -107,7 +121,14 @@ class ZegoAndroidNotificationConfig {
   /// specify the channel name of notification, which is same in 'Zego Console'
   String channelName;
 
-  /// specify the sound file name id of notification, which is same in 'Zego Console'
+  /// specify the icon file name id of notification,
+  /// Additionally, you must place your icon file in the following path:
+  /// ${project_root}/android/app/src/main/res/drawable/${icon}.png
+  String? icon;
+
+  /// specify the sound file name id of notification, which is same in 'Zego Console'.
+  /// Additionally, you must place your audio file in the following path:
+  /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
   String? sound;
 
   /// specify the call id show or hide,
@@ -116,6 +137,7 @@ class ZegoAndroidNotificationConfig {
   ZegoAndroidNotificationConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
+    this.icon = '',
     this.sound = '',
     this.callIDVisibility = true,
   });

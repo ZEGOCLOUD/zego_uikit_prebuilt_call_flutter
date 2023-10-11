@@ -9,15 +9,19 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_inc
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
+UUID? iOSIncomingPushUUID;
+
 /// @nodoc
 ///
 /// [iOS] VoIP event callback
 void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) {
   ZegoLoggerService.logInfo(
-    'on incoming push received: extras:$extras',
+    'on incoming push received: extras:$extras, uuid:$uuid',
     tag: 'call',
     subTag: 'background message',
   );
+
+  iOSIncomingPushUUID = uuid;
 
   // final invitationID = extras['call_id'] as String? ?? '';
   final payload = extras['payload'] as String? ?? '';
@@ -27,7 +31,7 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) {
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
-  setCurrentCallKitCallID(invitationInternalData.callID);
+  setOfflineCallKitCallID(invitationInternalData.callID);
 
   ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
 }

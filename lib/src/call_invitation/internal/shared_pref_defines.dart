@@ -54,6 +54,12 @@ Future<String> getPreferenceString(
 }
 
 Future<void> removePreferenceValue(String key) async {
+  ZegoLoggerService.logInfo(
+    'removePreferenceValue, key:$key.',
+    tag: 'call',
+    subTag: 'call invitation service',
+  );
+
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove(key);
 }

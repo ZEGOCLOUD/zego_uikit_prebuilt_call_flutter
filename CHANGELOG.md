@@ -1,215 +1,312 @@
+## 3.15.5
+
+* Optimize the Android online notification style
+
+## 3.15.4
+
+* remove **awesome_notifications** library
+* Fixed some bugs
+* update dart dependency
+
+## 3.15.3
+
+- Update dependency.
+
+## 3.15.2
+
+- Update dependency.
+
+## 3.15.1
+
+- Fix the issue of call cancellation on the calling end, where the call fails to be accepted by the receiving end after calling again.
+
+## 3.15.0
+
+- Add three invitation-related interfaces to ZegoUIKitPrebuiltCallController: cancelCallInvitation, rejectCallInvitation, and acceptCallInvitation. These interfaces can be used in conjunction with
+  sendCallInvitation.
+- Add onInvitationUserStateChanged to ZegoUIKitPrebuiltCallInvitationEvents. This callback will be triggered to the caller or callee of the ongoing call invitation when the other callee accepts,
+  rejects, exits, or when the response times out.
+
 ## 3.14.0
+
 - Support close callKit popup programmatically for the offline callee when the caller cancels the call.
 
 ## 3.13.5
+
 - Update dependency.
 
 ## 3.13.4
+
 - Fix the issue where canceling offline calls is not effective on the callee side
 
 ## 3.13.3
+
 - Fix the exception that may arise from a null pointer.
 
 ## 3.13.2
+
 - Fix the exception that may arise from a null pointer.
 
 ## 3.13.1
+
 - Fix the issue of call notifications not appearing when the screen is locked.
 
 ## 3.13.0
+
 - Add **advanceConfigs** config, which to set advanced engine configuration
 
 ## 3.12.3
+
 - Fix the issue where can no longer receive offline calls after rejecting them.
 
 ## 3.12.2
+
 - Fix the issue of multiple initialization of notifications.
 - update dependency
 
 ## 3.12.1
-- Fix the issue of context being destroyed and resulting in a bunch of NullPointerExceptions when continuously calling **ZegoUIKitPrebuiltCallInvitationService.init**. you should call 
+
+- Fix the issue of context being destroyed and resulting in a bunch of NullPointerExceptions when continuously calling **ZegoUIKitPrebuiltCallInvitationService.init**. you should call
   **ZegoUIKitPrebuiltCallInvitationService.init** after the successful login of the App user, and call **ZegoUIKitPrebuiltCallInvitationService.uninit** before the successful logout of the App user.
 
 ## 3.12.0
+
 - Support chat, you can add **ZegoMenuBarButtonName.chatButton** to **ZegoBottomMenuBarConfig.buttons** to enable.
 
 ## 3.11.1
+
 - Fixed the configuration error for incoming and outgoing ringtone.
 
 ## 3.11.0
-- Support hiding the cancel button of caller. You can configure the **showCancelInvitationButton** parameter in the **init** method of **ZegoUIKitPrebuiltCallInvitationService**. 
+
+- Support hiding the cancel button of caller. You can configure the **showCancelInvitationButton** parameter in the **init** method of **ZegoUIKitPrebuiltCallInvitationService**.
 
 ## 3.10.7
-- Fixed the issue of not receiving calls when prebuilt_call is used in conjunction with prebuilt_live_audio_room or prebuilt_live_streaming. you also need to update prebuilt_live_audio_room to 
+
+- Fixed the issue of not receiving calls when prebuilt_call is used in conjunction with prebuilt_live_audio_room or prebuilt_live_streaming. you also need to update prebuilt_live_audio_room to
   version v2.8.4 or prebuilt_live_streaming to v2.12.9.
 
 ## 3.10.6
+
 - Fixed issues with calling on iOS while the device is locked.
 
 ## 3.10.5
+
 - Fixed the issue where audio playback was not working in the App due to changes in the **prefix** path when using **audioplayers**.
 - Update **audioplayers** dependency
 
 ## 3.10.4
+
 - Fix the issue of incorrect microphone status in the bottom-right corner of the screen for users in PIP view.
 - Fix the problem of delayed CallKit pop-up dismissal for offline calls in silent push mode.
 - Update **shared_preferences** dependency
 
 ## 3.10.3
+
 - Fixed the issue of the name of the small video window not being fully displayed due to its length.
 
 ## 3.10.2
+
 - Fixed the issue of the name of the small video window not being fully displayed due to its length.
 
 ## 3.10.1
+
 - update dependency
 
 ## 3.10.0
+
 - Fixed the issue of the name of the small video window not being fully displayed due to its length.
 - Added support for hiding the icon in the **ZegoSendCallInvitationButton**.
 - Added margin, padding, and border radius style properties to the **ZegoSendCallInvitationButton**.
 
 ## 3.9.2
+
 - Fix some issues
 
 ## 3.9.1
+
 - Fix the iOS offline call rejection issue.
 
 ## 3.9.0
+
 - Supports offline push between two apps
 - Support refuse offline call
 
 ## 3.8.1
+
 - update dependency
 
 ## 3.8.0
+
 - Support advance beauty
 
 ## 3.7.1
+
 - Update ReadMe.
 
 ## 3.7.0
+
 - Compatible for Android immersive navigation to the top and bottom toolbars.
 - Support for setting the style of the top and bottom toolbars by allowing customization of padding, margin, background color, and height.
 
 ## 3.6.3
+
 - Fix the issue of offline notifications' title and message on Android.
 
 ## 3.6.2
+
 - Optimize the methods exposed by ZegoUIKitPrebuiltCallInvitationService.
 
 ## 3.6.1
+
 - Use awesome notification to display call pop-ups in Android's background mode, fixing the issue where Android devices couldn't enter a call after clicking on the notification in the background mode.
 
 ## 3.6.0
+
 - Added logic for being kicked out of the call, which will automatically exit and return to the previous page.
 
 ## 3.5.2
+
 - update dependency
 
 ## 3.5.1
+
 - Fix the issue of custom sound not working for offline push notifications.
 
 ## 3.5.0
+
 - `ZegoSendCallInvitationButton` supports custom `call ID`, and `onWillPressed` is added to support custom processing before calling.
 
 ## 3.4.0
-- Add a `customData` parameter to `ZegoUIKitPrebuiltCallInvitationEvents`.`onIncomingCallReceived` function. The `customData` is sourced from the additional data attached when initiating a call invitation using `ZegoSendCallInvitationButton` or `ZegoUIKitPrebuiltCallController`.`sendCallInvitation`.
+
+- Add a `customData` parameter to `ZegoUIKitPrebuiltCallInvitationEvents`.`onIncomingCallReceived` function. The `customData` is sourced from the additional data attached when initiating a call
+  invitation using `ZegoSendCallInvitationButton` or `ZegoUIKitPrebuiltCallController`.`sendCallInvitation`.
 
 ## 3.3.21
+
 - Fixed an issue where the avatar was not displayed in the call invitation pop-up.
 
 ## 3.3.20
+
 - update dependency
 
 ## 3.3.19
+
 - fix the issue of conflict with extension key of the `flutter_screenutil` package.
 
 ## 3.3.18
+
 - fix for the issue caused by SystemChannels.lifecycle.setMessageHandler leading to the failure of app-side didChangeAppLifecycleState.
 
 ## 3.3.17
+
 - fix the issue that the user does not log in caused by the app staying in the background for a long time
 - fix some user login status issues when used `zego_uikit_prebuilt_call` with `zego_zimkit`
 
 ## 3.3.16
+
 - update comments
 
 ## 3.3.15
+
 - update dependencies
 
 ## 3.3.14
+
 - update comments
 
 ## 3.3.13
+
 - update dependencies
 
 ## 3.3.12
+
 - deprecate flutter_screenutil_zego package
 
 ## 3.3.11
+
 - fix the issue of inability to open notification permissions on Android OS version 13+.
 
 ## 3.3.10
+
 - fix the issue where the video button is displayed incorrectly when minimizing the app during a voice call.
 
 ## 3.3.9
+
 - support close duration in config
 
 ## 3.3.8
+
 - add a "hangUp" method to the controller that allows for actively ending the current call.
 - support tracking the duration of the call locally.
 
 ## 3.3.7
+
 - Update dependencies
 
 ## 3.3.6
+
 - Update dependencies
 
 ## 3.3.5
+
 - Fix some issues about iOS supports VoIP mode.
 
 ## 3.3.4
+
 - Fix the issue with show notification box crashing when received a call background in iOS
 
 ## 3.3.3
+
 - Fix the issue of missed call notifications not popping up when the app is in the background.
 
 ## 3.3.2
+
 - mark 'appDesignSize' as Deprecated
 
 ## 3.3.1
+
 - Update dependencies
 
 ## 3.3.0
-- To differentiate the 'appDesignSize' between the App and ZegoUIKitPrebuiltCall, we introduced the 'flutter_screenutil_zego' library and removed the 'appDesignSize' parameter from the 
+
+- To differentiate the 'appDesignSize' between the App and ZegoUIKitPrebuiltCall, we introduced the 'flutter_screenutil_zego' library and removed the 'appDesignSize' parameter from the
   ZegoUIKitPrebuiltCall that was previously present.
 
 ## 3.2.0
+
 - For the offline calling feature, Android supports a silent push mode, while iOS supports VoIP mode.
 
-## 3.1.1 
+## 3.1.1
+
 - Optimize the in-app minimization feature and add control for local camera and microphone; display the camera and microphone status of others; display user names.
 
 ## 3.1.0
+
 - supports in-app minimization.
 
 ## 3.0.3
+
 - fixed appDesignSize for ScreenUtil that didn't work
 
 ## 3.0.2-dev.1
+
 - add sendCallInvitation function in ZegoUIKitPrebuiltCallController
 
 ## 3.0.1-dev.1
+
 - onOutgoingCallRejectedCauseBusy and onOutgoingCallDeclined, these two event are trigger wrong
 
 ## 3.0.0-dev.1
+
 - ZegoUIKitPrebuiltCallWithInvitation Widget class is deprecated, replace by a singleton instance ZegoUIKitPrebuiltCallInvitationService
 
-## 2.1.3 
+## 2.1.3
+
 - add assert to key parameters to ensure prebuilt run normally
 
 ## 2.1.2
+
 - Fixed landscape not displaying full web screen sharing content
 
 ## 2.1.1
@@ -236,11 +333,11 @@
 
 ## 1.4.2
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.4.1
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.4.0
 
@@ -265,7 +362,7 @@
 
 ## 1.2.10
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.2.9
 
@@ -282,7 +379,7 @@
 
 ## 1.2.6
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.2.5
 
@@ -290,11 +387,11 @@
 
 ## 1.2.4
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.2.3
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.2.2
 
@@ -302,7 +399,7 @@
 
 ## 1.2.1
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.2.0
 
@@ -310,15 +407,15 @@
 
 ## 1.1.4
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.1.3
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.1.2
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.1.1
 
@@ -327,19 +424,19 @@
 ## 1.1.0
 
 * support group call
-* fix some bugs
+* Fixed some bugs
 
 ## 1.0.3
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.0.2
 
-* fix some bugs
+* Fixed some bugs
 
 ## 1.0.1
 
-* fix some bugs
+* Fixed some bugs
 * update a dependency to the latest release
 
 ## 1.0.0
@@ -348,16 +445,16 @@
 
 ## 0.0.5
 
-* fix some bugs
+* Fixed some bugs
 * update ZegoUIKitPrebuiltCallConfig
 
 ## 0.0.4
 
-* fix some bugs
+* Fixed some bugs
 
 ## 0.0.3
 
-* fix some bugs
+* Fixed some bugs
 * remove **serverSecret** in init function
 * update a dependency to the latest release
 

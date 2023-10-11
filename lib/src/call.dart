@@ -136,7 +136,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.14.0; $version',
+        'version: zego_uikit_prebuilt_call:3.15.5; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -404,7 +404,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             as ZegoLayoutPictureInPictureConfig)
           ..smallViewPosition = ZegoViewPosition.topRight
           ..smallViewSize = Size(190.0.zW, 338.0.zH)
-          ..smallViewMargin = EdgeInsets.only(
+          ..margin = EdgeInsets.only(
               left: 20.zR, top: 50.zR, right: 20.zR, bottom: 30.zR);
         widget.config.layout = layout;
       }

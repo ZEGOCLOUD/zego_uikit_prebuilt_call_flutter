@@ -164,57 +164,48 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
   }
 
   Widget declineButton() {
-    return Listener(
-      onPointerDown: (e) {
-        widget.pageManager.hideInvitationTopSheet();
-      },
-      child: AbsorbPointer(
-        absorbing: false,
-        child: ZegoRefuseInvitationButton(
-          inviterID: widget.invitationData.inviter?.id ?? '',
-          // customization is not supported
-          data: '{"reason":"decline"}',
-          icon: ButtonIcon(
-            icon: Image(
-              image:
-                  PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteReject)
-                      .image,
-              fit: BoxFit.fill,
-            ),
+    return AbsorbPointer(
+      absorbing: false,
+      child: ZegoRefuseInvitationButton(
+        inviterID: widget.invitationData.inviter?.id ?? '',
+        // customization is not supported
+        data: '{"reason":"decline"}',
+        icon: ButtonIcon(
+          icon: Image(
+            image: PrebuiltCallImage.asset(InvitationStyleIconUrls.inviteReject)
+                .image,
+            fit: BoxFit.fill,
           ),
-          iconSize: Size(74.zR, 74.zR),
-          buttonSize: Size(74.zR, 74.zR),
-          onPressed: (String code, String message) {
-            widget.pageManager.onLocalRefuseInvitation(code, message);
-          },
         ),
+        iconSize: Size(74.zR, 74.zR),
+        buttonSize: Size(74.zR, 74.zR),
+        onPressed: (String code, String message) {
+          widget.pageManager.hideInvitationTopSheet();
+          widget.pageManager.onLocalRefuseInvitation(code, message);
+        },
       ),
     );
   }
 
   Widget acceptButton() {
-    return Listener(
-      onPointerDown: (e) {
-        widget.pageManager.hideInvitationTopSheet();
-      },
-      child: AbsorbPointer(
-        absorbing: false,
-        child: ZegoAcceptInvitationButton(
-          inviterID: widget.invitationData.inviter?.id ?? '',
-          icon: ButtonIcon(
-            icon: Image(
-              image: PrebuiltCallImage.asset(
-                      imageURLByInvitationType(widget.invitationData.type))
-                  .image,
-              fit: BoxFit.fill,
-            ),
+    return AbsorbPointer(
+      absorbing: false,
+      child: ZegoAcceptInvitationButton(
+        inviterID: widget.invitationData.inviter?.id ?? '',
+        icon: ButtonIcon(
+          icon: Image(
+            image: PrebuiltCallImage.asset(
+              imageURLByInvitationType(widget.invitationData.type),
+            ).image,
+            fit: BoxFit.fill,
           ),
-          iconSize: Size(74.zR, 74.zR),
-          buttonSize: Size(74.zR, 74.zR),
-          onPressed: (String code, String message) {
-            widget.pageManager.onLocalAcceptInvitation(code, message);
-          },
         ),
+        iconSize: Size(74.zR, 74.zR),
+        buttonSize: Size(74.zR, 74.zR),
+        onPressed: (String code, String message) {
+          widget.pageManager.hideInvitationTopSheet();
+          widget.pageManager.onLocalAcceptInvitation(code, message);
+        },
       ),
     );
   }

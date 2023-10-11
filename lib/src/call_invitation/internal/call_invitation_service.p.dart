@@ -15,12 +15,8 @@ mixin ZegoUIKitPrebuiltCallInvitationServicePrivate {
       subTag: 'call invitation service',
     );
 
-    await requestPermission(Permission.notification);
-    if (Platform.isIOS) {
-      /// Fix the issue where callkits window cannot make a direct call on iOS lock screen.
-      await requestPermission(Permission.camera);
-      await requestPermission(Permission.microphone);
-    }
+    await requestPermission(Permission.camera);
+    await requestPermission(Permission.microphone);
   }
 
   Future<void> _initContext() async {

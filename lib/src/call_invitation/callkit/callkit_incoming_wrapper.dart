@@ -1,9 +1,9 @@
 // Package imports:
-import 'package:flutter_callkit_incoming/entities/android_params.dart';
-import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
-import 'package:flutter_callkit_incoming/entities/ios_params.dart';
-import 'package:flutter_callkit_incoming/entities/notification_params.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/android_params.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/notification_params.dart';
+import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zego_uikit/zego_uikit.dart';
@@ -165,38 +165,6 @@ Future<void> showCallkitIncoming({
 
 /// @nodoc
 ///
-/// Retrieve the cached ID of the current call, which is stored in the handler received from ZPNS.
-Future<String?> getCurrentCallKitCallID() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(CallKitCalIDCacheKey);
-}
-
-/// cached ID of the current cal
-Future<void> setCurrentCallKitCallID(String callID) async {
-  ZegoLoggerService.logInfo(
-    'set current callkit id:$callID',
-    tag: 'call',
-    subTag: 'callkit',
-  );
-
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString(CallKitCalIDCacheKey, callID);
-}
-
-/// cached ID of the current cal
-Future<void> clearCurrentCallKitCallID() async {
-  ZegoLoggerService.logInfo(
-    'clear current callkit id',
-    tag: 'call',
-    subTag: 'callkit',
-  );
-
-  final prefs = await SharedPreferences.getInstance();
-  prefs.remove(CallKitCalIDCacheKey);
-}
-
-/// @nodoc
-///
 /// Clear the call cache of a third-party CallKit.
 Future<void> clearAllCallKitCalls() async {
   ZegoLoggerService.logInfo(
@@ -208,19 +176,74 @@ Future<void> clearAllCallKitCalls() async {
   return FlutterCallkitIncoming.endAllCalls();
 }
 
-/// cached ID of the current params
-Future<void> setCurrentCallKitParams(String params) async {
+/// cached ID of the current cal
+Future<void> setOfflineCallKitCallID(String callID) async {
   ZegoLoggerService.logInfo(
-    'set current callkit params:$params',
+    'set offline callkit id:$callID',
+    tag: 'call',
+    subTag: 'callkit',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(CallKitCalIDCacheKey, callID);
+}
+
+/// @nodoc
+///
+/// Retrieve the cached ID of the current call, which is stored in the handler received from ZPNS.
+Future<String?> getOfflineCallKitCallID() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(CallKitCalIDCacheKey);
+}
+
+/// cached ID of the current cal
+Future<void> clearOfflineCallKitCallID() async {
+  ZegoLoggerService.logInfo(
+    'clear offline callkit id',
+    tag: 'call',
+    subTag: 'callkit',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove(CallKitCalIDCacheKey);
+}
+
+/// cached ID of the current params
+Future<void> setOfflineCallKitParams(String params) async {
+  ZegoLoggerService.logInfo(
+    'set offline callkit params:$params',
     tag: 'call',
     subTag: 'callkit',
   );
 
   final prefs = await SharedPreferences.getInstance();
   prefs.setString(CallKitParamsCacheKey, params);
+
+  ZegoLoggerService.logInfo(
+    'set offline callkit params done',
+    tag: 'call',
+    subTag: 'callkit',
+  );
 }
 
 Future<String?> getCurrentCallKitParams() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString(CallKitParamsCacheKey);
+}
+
+Future<void> clearOfflineCallKitParams() async {
+  ZegoLoggerService.logInfo(
+    'clear offline callkit params',
+    tag: 'call',
+    subTag: 'callkit',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove(CallKitParamsCacheKey);
+
+  ZegoLoggerService.logInfo(
+    'clear offline callkit params done',
+    tag: 'call',
+    subTag: 'callkit',
+  );
 }

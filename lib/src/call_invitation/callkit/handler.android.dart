@@ -1,11 +1,13 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
+import 'dart:ui';
 
 // Package imports:
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_callkit_incoming/entities/call_event.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
+import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -16,6 +18,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pre
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
+const backgroundMessageIsolatePortName = 'bg_msg_isolate_port';
+
 /// @nodoc
 ///
 /// [Android] Silent Notification event notify
@@ -23,14 +27,8 @@ import 'package:zego_zpns/zego_zpns.dart';
 /// Note: @pragma('vm:entry-point') must be placed on a function to indicate that it can be parsed, allocated, or called directly from native or VM code in AOT mode.
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
-  /// maybe installed, but offline after 5 minutes, so received onBackgroundMessageReceived
-  /// so don't install if had installed
-  final signalingPluginNeedInstalled = ValueNotifier<bool>(
-      null == ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling));
-
   ZegoLoggerService.logInfo(
     'on background message received: '
-    'signaling plugin need installed:$signalingPluginNeedInstalled, '
     'title:${message.title}, '
     'content:${message.content}, '
     'extras:${message.extras}',
@@ -38,11 +36,91 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     subTag: 'background message',
   );
 
+  final registeredIsolatePort =
+      IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
+  final isAppRunning = null != registeredIsolatePort;
+  ZegoLoggerService.logInfo(
+    'isAppRunning:$isAppRunning',
+    tag: 'call',
+    subTag: 'background message',
+  );
+  if (isAppRunning) {
+    /// android callkit拉起两个app的问题
+    /// 如果app还存在，那么就放弃这次离线通知
+    /// 激活当前app, 初始化zim，等zim的在线补发
+    ///
+    /// after app being screen-locked for more than 10 minutes, the app was not
+    /// killed(suspended) but the zpns login timed out, so that's why receive
+    /// offline call when app was alive.
+    ///
+    /// At this time, because the fcm push will make the Dart open another isolate (thread) to process,
+    /// it will cause the problem of double opening of the app.
+    ///
+    /// So, send this offline call to [ZegoUIKitPrebuiltCallInvitationService] to handle.
+    ZegoLoggerService.logInfo(
+      'app has another isolate(${registeredIsolatePort.hashCode}), '
+      'send command to deal with this background message',
+      tag: 'call',
+      subTag: 'background message',
+    );
+    registeredIsolatePort.send(message.extras);
+    return;
+  }
+
+  final backgroundPort = ReceivePort();
+  IsolateNameServer.registerPortWithName(
+    backgroundPort.sendPort,
+    backgroundMessageIsolatePortName,
+  );
+  backgroundPort.listen((dynamic message) async {
+    final messageExtras = message as Map<String, Object?>? ?? {};
+
+    ZegoLoggerService.logInfo(
+      'current port(${backgroundPort.hashCode}) receive, '
+      'message:$message, extra:$messageExtras',
+      tag: 'call',
+      subTag: 'background message',
+    );
+
+    _onBackgroundMessageReceived(
+      messageExtras: messageExtras,
+      fromOtherIsolate: true,
+      backgroundPort: backgroundPort,
+    );
+  });
+  ZegoLoggerService.logInfo(
+    'register and listen port(${backgroundPort.hashCode}), '
+    'send command to deal with this background message',
+    tag: 'call',
+    subTag: 'background message',
+  );
+
+  _onBackgroundMessageReceived(
+    messageExtras: message.extras,
+    fromOtherIsolate: false,
+    backgroundPort: backgroundPort,
+  );
+}
+
+Future<void> _onBackgroundMessageReceived({
+  required Map<String, Object?> messageExtras,
+  required bool fromOtherIsolate,
+  required ReceivePort backgroundPort,
+}) async {
+  /// maybe installed, but offline after 5 minutes, so received onBackgroundMessageReceived
+  /// so don't install if had installed
+  final signalingPluginNeedInstalled = ValueNotifier<bool>(
+      null == ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling));
+  ZegoLoggerService.logInfo(
+    'signaling plugin need installed:$signalingPluginNeedInstalled',
+    tag: 'call',
+    subTag: 'background message',
+  );
   if (signalingPluginNeedInstalled.value) {
     await _installSignalingPlugin();
   }
 
-  final payload = message.extras['payload'] as String? ?? '';
+  final payload = messageExtras['payload'] as String? ?? '';
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
   final operationType = payloadMap['operation_type'] as String? ?? '';
 
@@ -72,9 +150,11 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     await _onBackgroundInvitationCanceled(callID);
   } else {
     await _onBackgroundOfflineCall(
-      message,
-      payloadMap,
-      signalingPluginNeedInstalled,
+      messageExtras: messageExtras,
+      payloadMap: payloadMap,
+      signalingPluginInstalled: signalingPluginNeedInstalled,
+      fromOtherIsolate: fromOtherIsolate,
+      backgroundPort: backgroundPort,
     );
   }
 }
@@ -86,7 +166,7 @@ Future<void> _onBackgroundInvitationCanceled(String callID) async {
     subTag: 'background message',
   );
 
-  await getCurrentCallKitCallID().then((cacheCallID) async {
+  await getOfflineCallKitCallID().then((cacheCallID) async {
     ZegoLoggerService.logInfo(
       'background offline call cancel, cacheCallID:$cacheCallID',
       tag: 'call',
@@ -94,16 +174,24 @@ Future<void> _onBackgroundInvitationCanceled(String callID) async {
     );
 
     if (cacheCallID == callID) {
+      ZegoLoggerService.logInfo(
+        'background offline call cancel, callID is same as cacheCallID, clear...',
+        tag: 'call',
+        subTag: 'background message',
+      );
+
       await clearAllCallKitCalls();
     }
   });
 }
 
-Future<void> _onBackgroundOfflineCall(
-  ZPNsMessage message,
-  Map<String, dynamic> payloadMap,
-  ValueNotifier<bool> signalingPluginInstalled,
-) async {
+Future<void> _onBackgroundOfflineCall({
+  required Map<String, Object?> messageExtras,
+  required Map<String, dynamic> payloadMap,
+  required ValueNotifier<bool> signalingPluginInstalled,
+  required bool fromOtherIsolate,
+  required ReceivePort backgroundPort,
+}) async {
   /// offline call data format:
   ///
   /// title:user_378508
@@ -127,12 +215,12 @@ Future<void> _onBackgroundOfflineCall(
   /// }
 
   ZegoLoggerService.logInfo(
-    'background offline call',
+    'background offline call, from other isolate:$fromOtherIsolate',
     tag: 'call',
     subTag: 'background message',
   );
 
-  final invitationID = message.extras['call_id'] as String? ?? '';
+  final invitationID = messageExtras['call_id'] as String? ?? '';
   final inviter = ZegoUIKitUser(
       id: payloadMap['inviter_id'] as String? ?? '',
       name: payloadMap['inviter_name'] as String? ?? '');
@@ -143,35 +231,49 @@ Future<void> _onBackgroundOfflineCall(
 
   final signalingSubscriptions = <StreamSubscription<dynamic>>[];
   _listenFlutterCallkitIncomingEvent(
-    invitationID,
-    inviter,
-    callType,
-    payloadData,
-    signalingPluginInstalled,
-    signalingSubscriptions,
+    invitationID: invitationID,
+    inviter: inviter,
+    callType: callType,
+    payloadData: payloadData,
+    signalingPluginNeedUninstalled: signalingPluginInstalled,
+    signalingSubscriptions: signalingSubscriptions,
+    backgroundPort: backgroundPort,
   );
   _listenSignalingEvents(signalingSubscriptions);
 
-  /// cache
-  setCurrentCallKitCallID(invitationInternalData.callID);
+  /// cache and do when app run
+  setOfflineCallKitCallID(invitationInternalData.callID);
+  await setOfflineCallKitParams(jsonEncode({
+    'invitation_id': invitationID,
+    'inviter': inviter,
+    'type': callType.value,
+    'data': payloadData,
+  }));
 
-  await showCallkitIncoming(
-    caller: inviter,
-    callType: callType,
-    invitationInternalData: invitationInternalData,
-    title: message.extras['title'] as String? ?? '',
-    body: message.extras['body'] as String? ?? '',
-  );
+  if (fromOtherIsolate) {
+    /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
+    await ZegoUIKit().getSignalingPlugin().activeAppToForeground();
+    await ZegoUIKit().getSignalingPlugin().requestDismissKeyguard();
+  } else {
+    await showCallkitIncoming(
+      caller: inviter,
+      callType: callType,
+      invitationInternalData: invitationInternalData,
+      title: messageExtras['title'] as String? ?? '',
+      body: messageExtras['body'] as String? ?? '',
+    );
+  }
 }
 
-void _listenFlutterCallkitIncomingEvent(
-  String invitationID,
-  ZegoUIKitUser inviter,
-  ZegoCallType callType,
-  String payloadData,
-  ValueNotifier<bool> signalingPluginNeedUninstalled,
-  List<StreamSubscription<dynamic>> signalingSubscriptions,
-) {
+void _listenFlutterCallkitIncomingEvent({
+  required String invitationID,
+  required ZegoUIKitUser inviter,
+  required ZegoCallType callType,
+  required String payloadData,
+  required ValueNotifier<bool> signalingPluginNeedUninstalled,
+  required List<StreamSubscription<dynamic>> signalingSubscriptions,
+  required ReceivePort backgroundPort,
+}) {
   FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
     if (null == event) {
       ZegoLoggerService.logError(
@@ -192,18 +294,19 @@ void _listenFlutterCallkitIncomingEvent(
     switch (event.event) {
       case Event.actionCallAccept:
 
-        /// cache and do when app run
-        final invitationReceivedParams = {
-          'invitation_id': invitationID,
-          'inviter': inviter,
-          'type': callType.value,
-          'data': payloadData,
-        };
-        setCurrentCallKitParams(jsonEncode(invitationReceivedParams));
+        /// After launching the app, will check in the [ZegoUIKitPrebuiltCallInvitationService.init] method.
+        /// If there is exist an OfflineCallKitParams, simulate accepting the online call and join the room directly.
+
+        ZegoLoggerService.logInfo(
+          'accept, wait direct accept and enter call in ZegoUIKitPrebuiltCallInvitationService.init',
+          tag: 'call',
+          subTag: 'background message',
+        );
 
         break;
       case Event.actionCallDecline:
-        clearCurrentCallKitCallID();
+        await clearOfflineCallKitCallID();
+        await clearOfflineCallKitParams();
 
         await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
               invitationID: invitationID,
@@ -211,7 +314,8 @@ void _listenFlutterCallkitIncomingEvent(
             );
         break;
       case Event.actionCallTimeout:
-        clearCurrentCallKitCallID();
+        await clearOfflineCallKitCallID();
+        await clearOfflineCallKitParams();
         break;
       default:
         break;
@@ -223,15 +327,23 @@ void _listenFlutterCallkitIncomingEvent(
       case Event.actionCallEnded:
       case Event.actionCallTimeout:
         ZegoLoggerService.logInfo(
-          'clear signaling plugin, signaling plugin need uninstalled:$signalingPluginNeedUninstalled',
+          'clear IsolateNameServer, port:${backgroundPort.hashCode}',
           tag: 'call',
           subTag: 'background message',
         );
+        backgroundPort.close();
+        IsolateNameServer.removePortNameMapping(
+            backgroundMessageIsolatePortName);
 
         for (final subscription in signalingSubscriptions) {
           subscription.cancel();
         }
 
+        ZegoLoggerService.logInfo(
+          'clear signaling plugin, need uninstalled:$signalingPluginNeedUninstalled',
+          tag: 'call',
+          subTag: 'background message',
+        );
         if (signalingPluginNeedUninstalled.value) {
           signalingPluginNeedUninstalled.value = false;
           await _uninstallSignalingPlugin();
@@ -302,7 +414,22 @@ Future<void> _installSignalingPlugin() async {
   );
   final handlerInfoJson =
       await getPreferenceString(serializationKeyHandlerInfo);
+  ZegoLoggerService.logInfo(
+    'install signaling plugin, parsing handler info:$handlerInfoJson',
+    tag: 'call',
+    subTag: 'background message',
+  );
   final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
+  if (null == handlerInfo) {
+    removePreferenceValue(serializationKeyHandlerInfo);
+
+    ZegoLoggerService.logInfo(
+      'install signaling plugin, but handler info parse failed',
+      tag: 'call',
+      subTag: 'background message',
+    );
+    return;
+  }
 
   ZegoLoggerService.logInfo(
     'install signaling plugin, handler info:$handlerInfo',
@@ -453,8 +580,18 @@ class HandlerPrivateInfo {
     return jsonEncode(toJson());
   }
 
-  static HandlerPrivateInfo fromJsonString(String jsonString) {
-    final json = jsonDecode(jsonString);
-    return HandlerPrivateInfo.fromJson(json);
+  static HandlerPrivateInfo? fromJsonString(String jsonString) {
+    Map<String, dynamic>? jsonMap;
+    try {
+      jsonMap = jsonDecode(jsonString);
+    } catch (e) {
+      ZegoLoggerService.logInfo(
+        'parsing handler info exception:$e',
+        tag: 'call',
+        subTag: 'call invitation service',
+      );
+    }
+
+    return null == jsonMap ? null : HandlerPrivateInfo.fromJson(jsonMap);
   }
 }
