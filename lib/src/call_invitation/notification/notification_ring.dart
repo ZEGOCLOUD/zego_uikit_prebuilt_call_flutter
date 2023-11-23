@@ -79,7 +79,21 @@ class ZegoRingtone {
     AudioCache.instance.prefix = prefix;
 
     audioPlayer.setReleaseMode(ReleaseMode.loop);
-    await audioPlayer.play(AssetSource(sourcePath));
+    try {
+      await audioPlayer.play(AssetSource(sourcePath)).then((value) {
+        ZegoLoggerService.logInfo(
+          'audioPlayer play done',
+          tag: 'call',
+          subTag: 'ringtone',
+        );
+      });
+    } catch (e) {
+      ZegoLoggerService.logInfo(
+        'audioPlayer play error:$e',
+        tag: 'call',
+        subTag: 'ringtone',
+      );
+    }
     if (isVibrate) {
       Vibrate.vibrate();
     }
@@ -92,7 +106,21 @@ class ZegoRingtone {
           subTag: 'ringtone',
         );
 
-        audioPlayer.stop();
+        try {
+          audioPlayer.stop().then((value) {
+            ZegoLoggerService.logInfo(
+              'audioPlayer stop done',
+              tag: 'call',
+              subTag: 'ringtone',
+            );
+          });
+        } catch (e) {
+          ZegoLoggerService.logInfo(
+            'audioPlayer stop error:$e',
+            tag: 'call',
+            subTag: 'ringtone',
+          );
+        }
 
         timer.cancel();
       } else {
@@ -116,6 +144,20 @@ class ZegoRingtone {
 
     isRingTimerRunning = false;
 
-    return audioPlayer.stop();
+    try {
+      await audioPlayer.stop().then((value) {
+        ZegoLoggerService.logInfo(
+          'audioPlayer stop done',
+          tag: 'call',
+          subTag: 'ringtone',
+        );
+      });
+    } catch (e) {
+      ZegoLoggerService.logInfo(
+        'audioPlayer stop error:$e',
+        tag: 'call',
+        subTag: 'ringtone',
+      );
+    }
   }
 }

@@ -3,13 +3,16 @@ import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 
 /// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
@@ -79,11 +82,12 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
     topLeft = widget.topLeft;
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
           .listenStateChanged(onMiniOverlayMachineStateChanged);
 
-      if (null != ZegoUIKitPrebuiltCallMiniOverlayMachine().machine.current) {
+      if (null !=
+          ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().machine.current) {
         syncState();
       }
     });
@@ -102,7 +106,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     userListStreamSubscription?.cancel();
     audioVideoListSubscription?.cancel();
 
-    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
   }
 
@@ -164,11 +168,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
         return GestureDetector(
           onTap: () {
             final prebuiltData =
-                ZegoUIKitPrebuiltCallMiniOverlayMachine().prebuiltData;
+                ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().prebuiltData;
             assert(null != prebuiltData);
 
             /// re-enter prebuilt call
-            ZegoUIKitPrebuiltCallMiniOverlayMachine()
+            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
                 .changeState(PrebuiltCallMiniOverlayPageState.calling);
 
             Navigator.of(widget.contextQuery(), rootNavigator: true).push(
@@ -211,7 +215,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               backgroundBuilder: widget.backgroundBuilder,
               avatarConfig: ZegoAvatarConfig(
                 builder: widget.avatarBuilder ??
-                    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+                    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
                         .prebuiltData
                         ?.config
                         .avatarBuilder,
@@ -271,7 +275,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   Widget durationTimeBoard() {
-    if (!(ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    if (!(ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
             .prebuiltData
             ?.config
             .durationConfig
@@ -285,8 +289,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       right: 0,
       top: 1,
       child: CallDurationTimeBoard(
-        durationNotifier:
-            ZegoUIKitPrebuiltCallMiniOverlayMachine().durationNotifier(),
+        durationNotifier: ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
+            .durationNotifier(),
         fontSize: 8,
       ),
     );
@@ -301,14 +305,14 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return Container();
     }
 
-    final cameraEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    final cameraEnabled = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
             .prebuiltData
             ?.config
             .bottomMenuBarConfig
             .buttons
             .contains(ZegoMenuBarButtonName.toggleCameraButton) ??
         true;
-    final microphoneEnabled = ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    final microphoneEnabled = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
             .prebuiltData
             ?.config
             .bottomMenuBarConfig
@@ -409,7 +413,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   void syncState() {
     setState(() {
-      currentState = ZegoUIKitPrebuiltCallMiniOverlayMachine().state();
+      currentState = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
       visibility = currentState == PrebuiltCallMiniOverlayPageState.minimizing;
 
       if (visibility) {
@@ -488,7 +492,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     if (ZegoUIKit().getRemoteUsers().isEmpty) {
       //  remote users is empty
 
-      ZegoUIKitPrebuiltCallMiniOverlayMachine()
+      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
           .prebuiltData
           ?.config
           .onOnlySelfInRoom

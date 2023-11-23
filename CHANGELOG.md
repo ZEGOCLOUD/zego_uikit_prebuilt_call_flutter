@@ -1,3 +1,73 @@
+## 3.17.9
+
+- Update dependency.
+
+## 3.17.8
+- Fixing some bugs in offline calling on iOS.
+- Fixing the exception issue when kicking user out by server api.
+
+## 3.17.7
+
+- Update dependency.
+
+## 3.17.6
+
+- Optimization warnings from analysis
+
+## 3.17.5
+
+- Fixing video/audio display issues for iOS VOIP calls.
+
+## 3.17.4
+- Fixed the issue where hang up from a call invitation would result in going back to the previous page twice when **onHangUp** is overridden.
+  
+  💥 Reminder: If you override **onHangUp**, please remember to **return to the previous page**, such as use Navigator.of(context).pop().
+- Constrain the APIs of **ZegoUIKitPrebuiltCallMiniOverlayMachine**, only use certain public methods.
+
+
+## 3.17.3
+
+- Optimization warnings from analysis
+
+## 3.17.2
+
+- Compatible offline messages from with zego_zimkit.
+- Update dependency
+- Fixed some bugs
+
+## 3.17.1
+
+- Update dependency.
+
+## 3.17.0
+- Support foreground/background in config，if you need to nest some widgets in **ZegoUIKitPrebuiltCall**, please use **foreground**/**background** nesting, otherwise these widgets will be lost when you 
+  minimize and restore the **ZegoUIKitPrebuiltCall**
+
+## 3.16.3
+- Fixing the issue of notification not set correctly initialize.
+
+## 3.16.2
+
+- Optimization warnings from analysis
+
+## 3.16.1
+
+- Optimization warnings from analysis
+
+## 3.16.0
+
+- Support listening for errors in the signaling plugins and uikit library.
+
+## 3.15.7
+
+- Fix the issue of not receiving offline call after canceling by caller
+- About offline call on iOS, whether in sandbox or production environment, will be automatically selected internal and no longer require manual assignment by **iOSNotificationConfig.
+  isSandboxEnvironment**.
+
+## 3.15.6
+
+- Update dependency.
+
 ## 3.15.5
 
 * Optimize the Android online notification style

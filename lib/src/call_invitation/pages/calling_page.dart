@@ -7,11 +7,11 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_view.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
 class ZegoCallingPage extends StatefulWidget {
@@ -53,7 +53,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
     widget.onInitState();
 
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       machine?.onStateChanged = (CallingState state) {
         setState(() {
           currentState = state;
@@ -130,15 +130,24 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
   void onCallHandUp() {
     callConfigHandUp?.call();
-    widget.pageManager.onHangUp();
+
+    /// If the customer overrides callConfig?.onHangUp and it is not null,
+    /// then the customer is responsible for popping the screen.
+    widget.pageManager.onHangUp(
+      needPop: null == callConfigHandUp,
+    );
   }
 
   Widget prebuiltCallPage() {
-    callConfig = widget.callInvitationConfig
-        .prebuiltConfigQuery(widget.pageManager.invitationData);
+    callConfig = widget.callInvitationConfig.prebuiltConfigQuery(
+      widget.pageManager.invitationData,
+    );
 
     callConfigHandUp = callConfig?.onHangUp;
     callConfig?.onHangUp = onCallHandUp;
+
+    callConfig?.onError ??=
+        widget.callInvitationConfig.invitationEvents?.onError;
 
     return ZegoUIKitPrebuiltCall(
       appID: widget.callInvitationConfig.appID,

@@ -158,7 +158,7 @@ mixin iOSCallKitService {
       subTag: 'iOS callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
+    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
   }
 
   void _onCallkitActivateAudioEvent(
@@ -191,6 +191,8 @@ mixin iOSCallKitService {
     );
 
     event.action.fulfill();
+
+    ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
 
   void _onCallkitPerformStartCallActionEvent(
@@ -202,9 +204,11 @@ mixin iOSCallKitService {
       subTag: 'iOS callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
+    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
 
     event.action.fulfill();
+
+    ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
 
   void _onCallkitPerformAnswerCallActionEvent(
@@ -216,9 +220,11 @@ mixin iOSCallKitService {
       subTag: 'iOS callkit service',
     );
 
-    ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
+    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
 
     event.action.fulfill();
+
+    ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
     getOfflineCallKitCallID().then((callKitCallID) {
       ZegoCallKitBackgroundService()
@@ -237,6 +243,8 @@ mixin iOSCallKitService {
     );
 
     event.action.fulfill();
+
+    ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
     if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
       /// exit call

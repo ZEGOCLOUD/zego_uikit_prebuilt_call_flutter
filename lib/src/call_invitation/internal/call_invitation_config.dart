@@ -1,14 +1,14 @@
-// Dart imports:
-
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 /// @nodoc
 typedef ContextQuery = BuildContext Function();

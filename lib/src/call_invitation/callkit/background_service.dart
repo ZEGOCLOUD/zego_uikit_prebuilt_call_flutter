@@ -1,5 +1,9 @@
-// Package imports:
+import 'dart:io' show Platform;
+
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -15,6 +19,8 @@ class ZegoCallKitBackgroundService {
       ZegoCallKitBackgroundService._internal();
 
   ZegoInvitationPageManager? _pageManager;
+
+  bool _iOSCallKitDisplaying = false;
 
   void register({
     required ZegoInvitationPageManager pageManager,
@@ -57,9 +63,9 @@ class ZegoCallKitBackgroundService {
     }
   }
 
-  void refuseInvitationInBackground({
+  Future<void> refuseInvitationInBackground({
     bool needClearCallKit = true,
-  }) {
+  }) async {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'refuse invitation, but has not callkit incoming cause by app in background',
@@ -81,7 +87,7 @@ class ZegoCallKitBackgroundService {
       subTag: 'call invitation service',
     );
 
-    ZegoUIKit()
+    await ZegoUIKit()
         .getSignalingPlugin()
         .refuseInvitation(
           inviterID: _pageManager?.invitationData.inviter?.id ?? '',
@@ -96,9 +102,9 @@ class ZegoCallKitBackgroundService {
     });
   }
 
-  void acceptCallKitIncomingCauseInBackground(
+  Future<void> acceptCallKitIncomingCauseInBackground(
     String? callKitCallID,
-  ) {
+  ) async {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'accept invitation, but has not callkit incoming cause by app in background',
@@ -126,7 +132,7 @@ class ZegoCallKitBackgroundService {
         subTag: 'call invitation service',
       );
 
-      ZegoUIKit()
+      await ZegoUIKit()
           .getSignalingPlugin()
           .acceptInvitation(
               inviterID: _pageManager?.invitationData.inviter?.id ?? '',
@@ -140,14 +146,36 @@ class ZegoCallKitBackgroundService {
     }
   }
 
-  void handUpCurrentCallByCallKit() {
+  /// If the call is ended by the end button of iOS CallKit,
+  /// the widget navigation of the CallPage will not be properly
+  /// execute dispose function.
+  ///
+  /// As a result, during the next offline call,
+  /// the dispose of the previous CallPage will cause confusion in the widget
+  /// navigation.
+  void setWaitCallPageDisposeFlag(bool value) {
+    _pageManager?.setWaitCallPageDisposeFlag(value);
+  }
+
+  Future<void> handUpCurrentCallByCallKit() async {
     ZegoLoggerService.logInfo(
       'hang up by call kit, iOSBackgroundLockCalling:${_pageManager?.inCallingByIOSBackgroundLock}',
       tag: 'call',
       subTag: 'call invitation service',
     );
 
-    ZegoUIKit().leaveRoom().then((result) {
+    /// If the call is ended by the end button of iOS CallKit,
+    /// the widget navigation of the CallPage will not be properly
+    /// execute dispose function.
+    ///
+    /// As a result, during the next offline call,
+    /// the dispose of the previous CallPage will cause confusion in the widget
+    /// navigation.
+    ///
+    /// Here, it is marked as requiring waiting for the dispose of the previous call page.
+    ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(true);
+
+    await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(
         'leave room result, ${result.errorCode} ${result.extendedData}',
         tag: 'call',
@@ -155,13 +183,28 @@ class ZegoCallKitBackgroundService {
       );
     });
 
-    if (_pageManager?.inCallingByIOSBackgroundLock ?? false) {
+    if (Platform.isIOS &&
+        ((_pageManager?.inCallingByIOSBackgroundLock ?? false) ||
+            (_pageManager?.appInBackground ?? false))) {
       _pageManager?.restoreToIdle();
     } else {
       /// background callkit call, not need to navigate
       Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call())
           .pop();
     }
+
     _pageManager?.inCallingByIOSBackgroundLock = false;
+  }
+
+  bool get isIOSCallKitDisplaying => _iOSCallKitDisplaying;
+
+  void setIOSCallKitCallingDisplayState(bool isCalling) {
+    _iOSCallKitDisplaying = isCalling;
+
+    ZegoLoggerService.logInfo(
+      'setIOSCallKitCallingState:$isCalling',
+      tag: 'call',
+      subTag: 'call invitation service',
+    );
   }
 }

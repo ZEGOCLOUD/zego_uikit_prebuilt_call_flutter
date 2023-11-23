@@ -6,7 +6,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
@@ -55,7 +56,7 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
     return GestureDetector(
       onTap: () {
         if (PrebuiltCallMiniOverlayPageState.minimizing ==
-            ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
           ZegoLoggerService.logInfo(
             'is minimizing, ignore',
             tag: 'call',
@@ -65,7 +66,7 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
           return;
         }
 
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().changeState(
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
           PrebuiltCallMiniOverlayPageState.minimizing,
           prebuiltData: widget.prebuiltData,
         );

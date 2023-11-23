@@ -11,13 +11,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
+
+import 'call_invitation/callkit/background_service.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -106,13 +109,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoLoggerService.logInfo(
-      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayMachine().state()}',
+      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()}',
       tag: 'call',
       subTag: 'prebuilt',
     );
 
     final isPrebuiltFromMinimizing = PrebuiltCallMiniOverlayPageState.idle !=
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().state();
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
 
     initDurationTimer(
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
@@ -136,7 +139,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.15.5; $version',
+        'version: zego_uikit_prebuilt_call:3.17.9; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -152,11 +155,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// not wake from mini page
       initContext();
     }
-    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
         .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
-    subscriptions.add(
-        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom));
+    subscriptions
+      ..add(
+        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
+      )
+      ..add(ZegoUIKit().getErrorStream().listen(onUIKitError));
     userListStreamSubscription =
         ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
   }
@@ -165,7 +171,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void dispose() {
     super.dispose();
 
+    for (final subscription in subscriptions) {
+      subscription?.cancel();
+    }
     userListStreamSubscription?.cancel();
+
     widget.onDispose?.call();
 
     durationTimer?.cancel();
@@ -173,7 +183,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     widget.controller?.uninitByPrebuilt();
 
     if (PrebuiltCallMiniOverlayPageState.minimizing !=
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoUIKit().leaveRoom();
       // await ZegoUIKit().uninit();
     } else {
@@ -187,6 +197,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
       ZegoUIKit().getBeautyPlugin().uninit();
     }
+
+    ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
   }
 
   @override
@@ -220,6 +232,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                       Container(),
                     bottomMenuBar(),
                     durationTimeBoard(),
+                    foreground(context, constraints.maxHeight),
                   ],
                 ),
               );
@@ -242,7 +255,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
 
     durationStartTime = isPrebuiltFromMinimizing
-        ? ZegoUIKitPrebuiltCallMiniOverlayMachine().durationStartTime()
+        ? ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().durationStartTime()
         : DateTime.now();
     durationNotifier.value = DateTime.now().difference(durationStartTime!);
     durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -286,9 +299,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         }
 
         ZegoUIKit()
-          ..useFrontFacingCamera(true)
+
+          /// maybe change back by button in calling, this call will reset to front
+          // ..useFrontFacingCamera(true)
           ..updateVideoViewMode(
-              config.audioVideoViewConfig.useVideoViewAspectFill)
+            config.audioVideoViewConfig.useVideoViewAspectFill,
+          )
           ..enableVideoMirroring(config.audioVideoViewConfig.isVideoMirror)
           ..turnCameraOn(config.turnOnCameraWhenJoining)
           ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
@@ -636,6 +652,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   Widget background(double maxWidth) {
+    if (null != widget.config.background) {
+      return widget.config.background!;
+    }
+
     final screenSize = MediaQuery.of(context).size;
     final isSmallView = (screenSize.width - maxWidth).abs() > 1;
 
@@ -652,6 +672,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       bottom: 0,
       child: Container(color: backgroundColor),
     );
+  }
+
+  Widget foreground(BuildContext context, double height) {
+    return widget.config.foreground ?? Container();
   }
 
   void onMeRemovedFromRoom(String fromUserID) {
@@ -673,5 +697,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         rootNavigator: widget.config.rootNavigator,
       ).pop(true);
     }
+  }
+
+  void onUIKitError(ZegoUIKitError error) {
+    ZegoLoggerService.logError(
+      'on uikit error:$error',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    widget.config.onError?.call(error);
   }
 }

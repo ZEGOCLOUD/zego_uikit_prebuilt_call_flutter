@@ -2,7 +2,7 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
 typedef PrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
@@ -84,7 +84,7 @@ class ZegoCallUser {
 /// iOS notification config
 class ZegoIOSNotificationConfig {
   /// is iOS sandbox or not
-  bool isSandboxEnvironment;
+  bool? isSandboxEnvironment;
 
   /// Customizing the icon for the iOS CallKit lock screen interface
   ///
@@ -102,7 +102,7 @@ class ZegoIOSNotificationConfig {
   String systemCallingIconName;
 
   ZegoIOSNotificationConfig({
-    this.isSandboxEnvironment = false,
+    this.isSandboxEnvironment,
     this.systemCallingIconName = '',
   });
 
@@ -131,14 +131,40 @@ class ZegoAndroidNotificationConfig {
   /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
   String? sound;
 
+  bool vibrate;
+
   /// specify the call id show or hide,
   bool callIDVisibility;
+
+  /// specify the channel id of message notification, which is same in 'Zego Console'
+  String messageChannelID;
+
+  /// specify the channel name of message notification, which is same in 'Zego Console'
+  String messageChannelName;
+
+  /// specify the icon file name id of message notification,
+  /// Additionally, you must place your icon file in the following path:
+  /// ${project_root}/android/app/src/main/res/drawable/${icon}.png
+  String? messageIcon;
+
+  /// specify the sound file name id of message notification, which is same in 'Zego Console'.
+  /// Additionally, you must place your audio file in the following path:
+  /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
+  String? messageSound;
+
+  bool messageVibrate;
 
   ZegoAndroidNotificationConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
     this.icon = '',
     this.sound = '',
+    this.vibrate = true,
+    this.messageVibrate = false,
     this.callIDVisibility = true,
+    this.messageChannelID = 'Message',
+    this.messageChannelName = 'Message',
+    this.messageIcon = '',
+    this.messageSound = '',
   });
 }

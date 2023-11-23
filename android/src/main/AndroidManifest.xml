@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.zegocloud.uikit.call_plugin">
+
+    <application>
+        <receiver android:name=".notification.AcceptReceiver" android:exported="false"/>
+        <receiver android:name=".notification.RejectReceiver" android:exported="false"/>
+        <receiver android:name=".notification.CancelReceiver" android:exported="false"/>
+        <receiver android:name=".notification.ClickReceiver" android:exported="false"/>
+    </application>
+
+</manifest>

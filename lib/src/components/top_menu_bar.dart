@@ -8,15 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
@@ -203,18 +204,20 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
     }
 
     return widget.config.topMenuBarConfig.buttons
-        .map((type) => buttonWrapper(
-              child: generateDefaultButtonsByEnum(context, type),
+        .map((buttonName) => buttonWrapper(
+              child: generateDefaultButtonsByEnum(context, buttonName),
             ))
         .toList();
   }
 
   Widget generateDefaultButtonsByEnum(
-      BuildContext context, ZegoMenuBarButtonName type) {
+    BuildContext context,
+    ZegoMenuBarButtonName buttonName,
+  ) {
     final buttonSize = Size(70.zR, 70.zR);
     final iconSize = Size(64.zR, 64.zR);
 
-    switch (type) {
+    switch (buttonName) {
       case ZegoMenuBarButtonName.toggleMicrophoneButton:
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
@@ -271,7 +274,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
               tag: 'call',
               subTag: 'top bar',
             );
-            ZegoUIKitPrebuiltCallMiniOverlayMachine()
+            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
                 .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
             if (widget.config.onHangUp != null) {

@@ -1,4 +1,5 @@
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
+// Package imports:
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
@@ -9,6 +10,9 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 /// "incoming" represents an incoming call, indicating that someone is calling you.
 /// "outgoing" represents an outgoing call, indicating that you are calling someone else.
 class ZegoUIKitPrebuiltCallInvitationEvents {
+  /// error stream
+  Function(ZegoUIKitError)? onError;
+
   /// This callback will be triggered to **caller** or **callee** in current
   /// calling inviting when the other calling member accepts, rejects,
   /// or exits, or the response times out.

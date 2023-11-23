@@ -10,6 +10,9 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 
 /// @nodoc
 class ZegoNotificationManager {
@@ -24,13 +27,21 @@ class ZegoNotificationManager {
 
   static bool hasInvitation = false;
 
-  String get channelKey =>
+  String get callChannelKey =>
       callInvitationConfig.androidNotificationConfig?.channelID ??
-      'CallInvitation';
+      defaultCallChannelKey;
 
-  String get channelName =>
+  String get callChannelName =>
       callInvitationConfig.androidNotificationConfig?.channelName ??
-      'Call Invitation';
+      defaultCallChannelName;
+
+  String get messageChannelID =>
+      callInvitationConfig.androidNotificationConfig?.messageChannelID ??
+      defaultMessageChannelID;
+
+  String get messageChannelName =>
+      callInvitationConfig.androidNotificationConfig?.messageChannelName ??
+      defaultMessageChannelName;
 
   Future<void> init() async {
     if (isInit) {
@@ -68,19 +79,32 @@ class ZegoNotificationManager {
       );
     });
 
-    initNotificationPlugin();
-  }
+    await ZegoCallPluginPlatform.instance.createNotificationChannel(
+      ZegoSignalingPluginLocalNotificationChannelConfig(
+        channelID: callChannelKey,
+        channelName: callChannelName,
+        vibrate:
+            callInvitationConfig.androidNotificationConfig?.vibrate ?? true,
+        soundSource: getSoundSource(
+          callInvitationConfig.androidNotificationConfig?.sound,
+        ),
+      ),
+    );
 
-  Future<void> initNotificationPlugin() async {
-    await ZegoUIKit().getSignalingPlugin().createNotificationChannel(
-          ZegoSignalingPluginOutgoingNotificationChannelConfig(
-            channelID: channelKey,
-            channelName: channelName,
-            soundSource: getSoundSource(),
-          ),
-        );
+    await ZegoCallPluginPlatform.instance.createNotificationChannel(
+      ZegoSignalingPluginLocalNotificationChannelConfig(
+        channelID: messageChannelID,
+        channelName: messageChannelName,
+        vibrate:
+            callInvitationConfig.androidNotificationConfig?.messageVibrate ??
+                false,
+        soundSource: getSoundSource(
+          callInvitationConfig.androidNotificationConfig?.messageSound,
+        ),
+      ),
+    );
 
-    await ZegoUIKit().getSignalingPlugin().dismissAllNotifications();
+    await ZegoCallPluginPlatform.instance.dismissAllNotifications();
   }
 
   Future<void> cancelAll() async {
@@ -91,7 +115,7 @@ class ZegoNotificationManager {
     );
 
     /// clear notifications
-    await ZegoUIKit().getSignalingPlugin().dismissAllNotifications();
+    await ZegoCallPluginPlatform.instance.dismissAllNotifications();
   }
 
   void uninit() {
@@ -114,113 +138,108 @@ class ZegoNotificationManager {
       );
     }
 
-    ZegoUIKit().getSignalingPlugin().dismissAllNotifications();
+    ZegoCallPluginPlatform.instance.dismissAllNotifications();
 
     ZegoNotificationManager.hasInvitation = true;
 
-    ZegoUIKit().getSignalingPlugin().addLocalNotification(
-          ZegoSignalingPluginOutgoingNotificationConfig(
-              id: Random().nextInt(2147483647),
-              channelID: channelKey,
-              iconSource: getIconSource(),
-              soundSource: getSoundSource(),
-              title: invitationData.inviter?.name ?? 'unknown',
-              content: ZegoCallType.videoCall == invitationData.type
-                  ? ((invitationData.invitees.length > 1
-                          ? callInvitationConfig
-                              .innerText?.incomingGroupVideoCallDialogMessage
-                          : callInvitationConfig
-                              .innerText?.incomingVideoCallDialogMessage) ??
-                      'Incoming video call...')
-                  : ((invitationData.invitees.length > 1
-                          ? callInvitationConfig
-                              .innerText?.incomingGroupVoiceCallDialogMessage
-                          : callInvitationConfig
-                              .innerText?.incomingVoiceCallDialogMessage) ??
-                      'Incoming voice call...'),
-              acceptButtonText: callInvitationConfig
-                      .innerText?.incomingCallPageAcceptButton ??
+    ZegoCallPluginPlatform.instance.addLocalCallNotification(
+      ZegoSignalingPluginLocalCallNotificationConfig(
+          id: Random().nextInt(2147483647),
+          channelID: callChannelKey,
+          iconSource: getIconSource(
+              callInvitationConfig.androidNotificationConfig?.icon),
+          soundSource: getSoundSource(
+              callInvitationConfig.androidNotificationConfig?.sound),
+          vibrate:
+              callInvitationConfig.androidNotificationConfig?.vibrate ?? true,
+          title: invitationData.inviter?.name ?? 'unknown',
+          content: ZegoCallType.videoCall == invitationData.type
+              ? ((invitationData.invitees.length > 1
+                      ? callInvitationConfig
+                          .innerText?.incomingGroupVideoCallDialogMessage
+                      : callInvitationConfig
+                          .innerText?.incomingVideoCallDialogMessage) ??
+                  'Incoming video call...')
+              : ((invitationData.invitees.length > 1
+                      ? callInvitationConfig
+                          .innerText?.incomingGroupVoiceCallDialogMessage
+                      : callInvitationConfig
+                          .innerText?.incomingVoiceCallDialogMessage) ??
+                  'Incoming voice call...'),
+          acceptButtonText:
+              callInvitationConfig.innerText?.incomingCallPageAcceptButton ??
                   'Accept',
-              rejectButtonText: callInvitationConfig
-                      .innerText?.incomingCallPageDeclineButton ??
+          rejectButtonText:
+              callInvitationConfig.innerText?.incomingCallPageDeclineButton ??
                   'Decline',
-              acceptCallback: () async {
-                ZegoLoggerService.logInfo(
-                  'LocalNotification, acceptCallback',
-                  tag: 'call',
-                  subTag: 'notification manager',
-                );
+          acceptCallback: () async {
+            ZegoLoggerService.logInfo(
+              'LocalNotification, acceptCallback',
+              tag: 'call',
+              subTag: 'notification manager',
+            );
 
-                ZegoNotificationManager.hasInvitation = false;
+            ZegoNotificationManager.hasInvitation = false;
 
-                await ZegoUIKit()
-                    .getSignalingPlugin()
-                    .dismissAllNotifications();
-                await ZegoUIKit().getSignalingPlugin().activeAppToForeground();
-                await ZegoUIKit().getSignalingPlugin().requestDismissKeyguard();
+            await ZegoCallPluginPlatform.instance.dismissAllNotifications();
+            await ZegoCallPluginPlatform.instance.activeAppToForeground();
+            await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
 
-                ZegoCallKitBackgroundService().acceptInvitationInBackground();
-              },
-              rejectCallback: () async {
-                ZegoLoggerService.logInfo(
-                  'LocalNotification, rejectCallback',
-                  tag: 'call',
-                  subTag: 'notification manager',
-                );
+            ZegoCallKitBackgroundService().acceptInvitationInBackground();
+          },
+          rejectCallback: () async {
+            ZegoLoggerService.logInfo(
+              'LocalNotification, rejectCallback',
+              tag: 'call',
+              subTag: 'notification manager',
+            );
 
-                ZegoNotificationManager.hasInvitation = false;
+            ZegoNotificationManager.hasInvitation = false;
 
-                await ZegoUIKit()
-                    .getSignalingPlugin()
-                    .dismissAllNotifications();
+            await ZegoCallPluginPlatform.instance.dismissAllNotifications();
 
-                ZegoCallKitBackgroundService().refuseInvitationInBackground();
-              },
-              cancelCallback: () {
-                ZegoLoggerService.logInfo(
-                  'LocalNotification, cancelCallback',
-                  tag: 'call',
-                  subTag: 'notification manager',
-                );
+            ZegoCallKitBackgroundService().refuseInvitationInBackground();
+          },
+          cancelCallback: () {
+            ZegoLoggerService.logInfo(
+              'LocalNotification, cancelCallback',
+              tag: 'call',
+              subTag: 'notification manager',
+            );
 
-                ZegoNotificationManager.hasInvitation = false;
+            ZegoNotificationManager.hasInvitation = false;
 
-                ZegoCallKitBackgroundService().refuseInvitationInBackground();
-              },
-              clickCallback: () async {
-                ZegoLoggerService.logInfo(
-                  'LocalNotification, clickCallback',
-                  tag: 'call',
-                  subTag: 'notification manager',
-                );
+            ZegoCallKitBackgroundService().refuseInvitationInBackground();
+          },
+          clickCallback: () async {
+            ZegoLoggerService.logInfo(
+              'LocalNotification, clickCallback',
+              tag: 'call',
+              subTag: 'notification manager',
+            );
 
-                await ZegoUIKit()
-                    .getSignalingPlugin()
-                    .dismissAllNotifications();
-                await ZegoUIKit().getSignalingPlugin().activeAppToForeground();
-                await ZegoUIKit().getSignalingPlugin().requestDismissKeyguard();
-              }),
-        );
+            await ZegoCallPluginPlatform.instance.dismissAllNotifications();
+            await ZegoCallPluginPlatform.instance.activeAppToForeground();
+            await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+          }),
+    );
   }
 
-  String? getIconSource() {
+  String? getIconSource(String? iconFileName) {
     String? iconSource;
 
-    if (Platform.isAndroid &&
-        (callInvitationConfig.androidNotificationConfig?.icon?.isNotEmpty ??
-            false)) {
-      var iconFileName =
-          callInvitationConfig.androidNotificationConfig?.icon ?? '';
-      final postfixIndex = iconFileName.indexOf('.');
+    if (Platform.isAndroid && (iconFileName?.isNotEmpty ?? false)) {
+      var targetIconFileName = iconFileName ?? '';
+      final postfixIndex = targetIconFileName.indexOf('.');
       if (-1 != postfixIndex) {
-        iconFileName = iconFileName.substring(0, postfixIndex);
+        targetIconFileName = targetIconFileName.substring(0, postfixIndex);
       }
 
-      iconSource = 'resource://drawable/$iconFileName';
+      iconSource = 'resource://drawable/$targetIconFileName';
 
       ZegoLoggerService.logInfo(
-        "icon file, config name:${callInvitationConfig.androidNotificationConfig?.icon ?? ""}, "
-        'file name:$iconFileName, source:$iconSource',
+        "icon file, config name:${iconFileName ?? ""}, "
+        'file name:$targetIconFileName, source:$iconSource',
         tag: 'call',
         subTag: 'notification manager',
       );
@@ -229,24 +248,21 @@ class ZegoNotificationManager {
     return iconSource;
   }
 
-  String? getSoundSource() {
+  String? getSoundSource(String? soundFileName) {
     String? soundSource;
 
-    if (Platform.isAndroid &&
-        (callInvitationConfig.androidNotificationConfig?.sound?.isNotEmpty ??
-            false)) {
-      var soundFileName =
-          callInvitationConfig.androidNotificationConfig?.sound ?? '';
-      final postfixIndex = soundFileName.indexOf('.');
+    if (Platform.isAndroid && (soundFileName?.isNotEmpty ?? false)) {
+      var targetSoundFileName = soundFileName ?? '';
+      final postfixIndex = targetSoundFileName.indexOf('.');
       if (-1 != postfixIndex) {
-        soundFileName = soundFileName.substring(0, postfixIndex);
+        targetSoundFileName = targetSoundFileName.substring(0, postfixIndex);
       }
 
-      soundSource = 'resource://raw/$soundFileName';
+      soundSource = 'resource://raw/$targetSoundFileName';
 
       ZegoLoggerService.logInfo(
-        "sound file, config name:${callInvitationConfig.androidNotificationConfig?.sound ?? ""}, "
-        'file name:$soundFileName, source:$soundSource',
+        "sound file, config name:${soundFileName ?? ""}, "
+        'file name:$targetSoundFileName, source:$soundSource',
         tag: 'call',
         subTag: 'notification manager',
       );

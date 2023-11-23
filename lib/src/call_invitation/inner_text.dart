@@ -139,8 +139,7 @@ class ZegoCallInvitationInnerText {
     String? outgoingGroupVideoCallPageMessage,
     String? outgoingGroupVoiceCallPageTitle,
     String? outgoingGroupVoiceCallPageMessage,
-  })
-      : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
+  })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
         incomingVoiceCallDialogTitle = incomingVoiceCallDialogTitle ?? param_1,

@@ -1,4 +1,4 @@
-part of 'package:zego_uikit_prebuilt_call/src/call_controller.dart';
+part of 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 /// @nodoc
 mixin ZegoUIKitPrebuiltCallControllerPrivate {
@@ -134,7 +134,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
           invitees: callees.map((e) => e.id).toList(),
           data: const JsonEncoder().convert({
             'call_id': _pageManager?.currentCallID ?? '',
-            'operation_type': 'cancel_invitation',
+            messageTypePayloadKey: BackgroundMessageType.cancelInvitation.text,
             'custom_data': customData,
           }),
         )

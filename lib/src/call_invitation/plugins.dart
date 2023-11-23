@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+
+// Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 
 /// @nodoc
@@ -17,13 +19,15 @@ enum PluginNetworkState {
 
 /// @nodoc
 class ZegoPrebuiltPlugins {
-  ZegoPrebuiltPlugins(
-      {required this.appID,
-      required this.appSign,
-      required this.userID,
-      required this.userName,
-      required this.plugins,
-      this.onPluginReLogin}) {
+  ZegoPrebuiltPlugins({
+    required this.appID,
+    required this.appSign,
+    required this.userID,
+    required this.userName,
+    required this.plugins,
+    this.onPluginReLogin,
+    required this.onError,
+  }) {
     _install();
   }
 
@@ -36,6 +40,8 @@ class ZegoPrebuiltPlugins {
   final List<IZegoUIKitPlugin> plugins;
 
   final VoidCallback? onPluginReLogin;
+
+  Function(ZegoUIKitError)? onError;
 
   PluginNetworkState networkState = PluginNetworkState.unknown;
   List<StreamSubscription<dynamic>?> subscriptions = [];
@@ -57,6 +63,14 @@ class ZegoPrebuiltPlugins {
           subTag: 'plugin',
         );
       });
+
+      if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) !=
+          null) {
+        subscriptions.add(ZegoUIKit()
+            .getSignalingPlugin()
+            .getErrorStream()
+            .listen(onSignalingError));
+      }
     }
 
     pluginUserStateNotifier.value =
@@ -189,6 +203,20 @@ class ZegoPrebuiltPlugins {
       tryReLogging = false;
       onPluginReLogin?.call();
     }
+  }
+
+  void onSignalingError(ZegoSignalingError error) {
+    ZegoLoggerService.logError(
+      'on signaling error:$error',
+      tag: 'call',
+      subTag: 'plugin',
+    );
+
+    onError?.call(ZegoUIKitError(
+      code: error.code,
+      message: error.message,
+      method: error.method,
+    ));
   }
 
   void didChangeAppLifecycleState(bool isAppInBackground) {

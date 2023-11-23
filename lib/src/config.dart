@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 
 /// Configuration for initializing the Call
@@ -84,10 +85,13 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallDurationConfig? durationConfig,
     ZegoInRoomChatViewConfig? chatViewConfig,
     ZegoLayout? layout,
+    this.foreground,
+    this.background,
     this.hangUpConfirmDialogInfo,
     this.onHangUpConfirmation,
     this.onHangUp,
     this.onOnlySelfInRoom,
+    this.onError,
     this.avatarBuilder,
     this.audioVideoContainerBuilder,
   })  : audioVideoViewConfig =
@@ -138,10 +142,37 @@ class ZegoUIKitPrebuiltCallConfig {
   /// Layout-related configuration. You can choose your layout here.
   ZegoLayout layout;
 
+  /// The foreground of the call.
+  ///
+  /// If you need to nest some widgets in [ZegoUIKitPrebuiltCall], please use [foreground] nesting, otherwise these widgets will be lost when you minimize and restore the [ZegoUIKitPrebuiltCall]
+  Widget? foreground;
+
+  /// The background of the call.
+  ///
+  /// You can use any Widget as the background of the call, such as a video, a GIF animation, an image, a web page, etc.
+  /// If you need to dynamically change the background content, you will need to implement the logic for dynamic modification within the Widget you return.
+  ///
+  /// ```dart
+  ///
+  ///  // eg:
+  /// ..background = Container(
+  ///     width: size.width,
+  ///     height: size.height,
+  ///     decoration: const BoxDecoration(
+  ///       image: DecorationImage(
+  ///         fit: BoxFit.fitHeight,
+  ///         image: ,
+  ///       )));
+  /// ```
+  Widget? background;
+
   /// Custom audio/video view.
   /// If you don't want to use the default view components, you can pass a custom component through this parameter.
-  Widget Function(BuildContext, List<ZegoUIKitUser> allUsers,
-      List<ZegoUIKitUser> audioVideoUsers)? audioVideoContainerBuilder;
+  Widget Function(
+    BuildContext,
+    List<ZegoUIKitUser> allUsers,
+    List<ZegoUIKitUser> audioVideoUsers,
+  )? audioVideoContainerBuilder;
 
   /// Use this to customize the avatar, and replace the default avatar with it.
   ///
@@ -185,16 +216,42 @@ class ZegoUIKitPrebuiltCallConfig {
   /// If you return true in the callback, the prebuilt page will quit and return to your previous page, otherwise it will be ignored.
   Future<bool?> Function(BuildContext context)? onHangUpConfirmation;
 
-  /// This callback is triggered after hang up the call.
-  /// The default behavior is to return to the previous page. If you override this callback, you must perform the page navigation yourself, otherwise the user will remain on the call page.
+  /// This callback is triggered after you hang up the call, only receive to
+  /// the hang up user.
+  ///
+  /// The default behavior is to return to the previous page.
+  ///
+  /// If you override this callback, you must perform the page navigation
+  /// yourself to return to the previous page!!!
+  /// otherwise the user will remain on the current call page !!!!!
+  ///
   /// You can perform business-related prompts or other actions in this callback.
   /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
   VoidCallback? onHangUp;
 
   /// This callback is triggered when local user removed from call
+  ///
+  /// The default behavior is to return to the previous page.
+  ///
+  /// If you override this callback, you must perform the page navigation
+  /// yourself to return to the previous page!!!
+  /// otherwise the user will remain on the current call page !!!!!
+  ///
+  /// You can perform business-related prompts or other actions in this callback.
+  /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
   Future<void> Function(String)? onMeRemovedFromRoom;
 
+  /// During the call, when the other party terminates the call, and then
+  /// only one person remains in the call, that the person will receive this callback.
+  ///
+  /// The default behavior is to return to the previous page.
+  ///
   /// Callback function triggered when you are alone in the room.
+  ///
+  /// If you override this callback, you must perform the page navigation
+  /// yourself to return to the previous page!!!
+  /// otherwise the user will remain on the current call page !!!!!
+  ///
   /// You can use this callback function to destroy the preset page and return to the previous page.
   void Function(BuildContext context)? onOnlySelfInRoom;
 
@@ -208,6 +265,9 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// Configuration related to the bottom-left message list.
   ZegoInRoomChatViewConfig chatViewConfig;
+
+  /// error stream
+  Function(ZegoUIKitError)? onError;
 }
 
 /// Configuration options for audio/video views.
@@ -537,8 +597,8 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
           : (context) {
               if (PrebuiltCallMiniOverlayPageState.idle !=
                   ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-                ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                    .changeState(PrebuiltCallMiniOverlayPageState.idle);
+                /// now is minimizing state, not need to navigate, just switch to idle
+                ZegoUIKitPrebuiltCallMiniOverlayMachine().switchToIdle();
               } else {
                 Navigator.of(context).pop();
               }

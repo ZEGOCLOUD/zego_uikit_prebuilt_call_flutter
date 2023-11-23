@@ -13,6 +13,7 @@ import 'package:zego_zpns/zego_zpns.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
@@ -22,7 +23,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notifi
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_ring.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 
 /// @nodoc
 class ZegoInvitationPageManager {
@@ -44,6 +46,17 @@ class ZegoInvitationPageManager {
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
   bool _appInBackground = false;
 
+  /// If the call is ended by the end button of iOS CallKit,
+  /// the widget navigation of the CallPage will not be properly
+  /// execute dispose function.
+  ///
+  /// As a result, during the next offline call,
+  /// the dispose of the previous CallPage will cause confusion in the widget
+  /// navigation.
+  ZegoCallInvitationData? _invitationDataOfWaitCallPageDisposeInIOSCallKit;
+  final _waitCallPageDisposeFlagInIOSCallKit = ValueNotifier<bool>(false);
+  Timer? _timerWaitAppResumedFlagInIOSCallKit;
+
   bool inCallingByIOSBackgroundLock = false;
   StreamSubscription<dynamic>?
       userListStreamSubscriptionInCallingByIOSBackgroundLock;
@@ -57,6 +70,8 @@ class ZegoInvitationPageManager {
 
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> _invitingInvitees = []; //  only change by inviter
+
+  bool get appInBackground => _appInBackground;
 
   ZegoCallInvitationData get invitationData => _invitationData;
 
@@ -112,7 +127,7 @@ class ZegoInvitationPageManager {
 
     initRing(ringtoneConfig);
 
-    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
         .listenStateChanged(onMiniOverlayMachineStateChanged);
 
     ZegoLoggerService.logInfo(
@@ -146,7 +161,7 @@ class ZegoInvitationPageManager {
 
     _invitationTopSheetVisibility = false;
     _appInBackground = false;
-    hasCallkitIncomingCauseAppInBackground = false;
+    _hasCallkitIncomingCauseAppInBackground = false;
     _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
     _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
     userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
@@ -154,7 +169,7 @@ class ZegoInvitationPageManager {
     _invitationData = ZegoCallInvitationData.empty();
     _invitingInvitees.clear();
 
-    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
 
     removeStreamListener();
@@ -343,51 +358,155 @@ class ZegoInvitationPageManager {
 
     _calleeRingtone.stopRing();
 
-    //  if inputting right now
+    ///  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (Platform.isIOS && _appInBackground) {
-      inCallingByIOSBackgroundLock = true;
-
       ZegoLoggerService.logInfo(
         'accept call by callkit in background-locked, manually enter room',
         tag: 'call',
         subTag: 'page manager',
       );
 
-      /// At this point, when answering a CallKit call on iOS lock screen,
-      /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
-      /// Therefore, it is necessary to manually enter the room at this point.
-      ZegoUIKit()
-          .login(callInvitationConfig.userID, callInvitationConfig.userName);
+      if (_waitCallPageDisposeFlagInIOSCallKit.value) {
+        /// If the call is ended by the end button of iOS CallKit,
+        /// the widget navigation of the CallPage will not be properly
+        /// execute dispose function.
+        ///
+        /// As a result, during the next offline call,
+        /// the dispose of the previous CallPage will cause confusion in the widget
+        /// navigation.
+        ///
+        /// Here, because call page had not disposed cause by previous
+        /// callkit end, but now next call is incoming, so listening for the
+        /// dispose of the previous call page, incoming call will be enter after
+        /// previous dispose
+        _waitCallPageDisposeFlagInIOSCallKit.addListener(
+          onWaitingCallPageDisposeInIOSCallKit,
+        );
+      } else {
+        inCallingByIOSBackgroundLock = true;
 
-      ZegoUIKit()
-          .init(
-              appID: callInvitationConfig.appID,
-              appSign: callInvitationConfig.appSign)
-          .then((value) {
+        /// At this point, when answering a CallKit call on iOS lock screen,
+        /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
+        /// Therefore, it is necessary to manually enter the room at this point.
+
+        ZegoUIKit().login(
+          callInvitationConfig.userID,
+          callInvitationConfig.userName,
+        );
+
         ZegoUIKit()
-          ..turnMicrophoneOn(true)
-          ..setAudioOutputToSpeaker(true);
+            .init(
+          appID: callInvitationConfig.appID,
+          appSign: callInvitationConfig.appSign,
+        )
+            .then((value) async {
+          ZegoUIKit()
+            ..turnMicrophoneOn(true)
+            ..setAudioOutputToSpeaker(true);
 
-        ZegoUIKit().joinRoom(invitationData.callID).then((result) async {
-          userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
-          userListStreamSubscriptionInCallingByIOSBackgroundLock = ZegoUIKit()
-              .getUserLeaveStream()
-              .listen(onUserLeaveInIOSBackgroundLockCalling);
+          await ZegoUIKit()
+              .joinRoom(invitationData.callID)
+              .then((result) async {
+            userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
+            userListStreamSubscriptionInCallingByIOSBackgroundLock = ZegoUIKit()
+                .getUserLeaveStream()
+                .listen(onUserLeaveInIOSBackgroundLockCalling);
 
-          if (result.errorCode != 0) {
-            ZegoLoggerService.logError(
-              'accept call by callkit in background-locked, failed to login room:${result.errorCode},${result.extendedData}',
-              tag: 'call',
-              subTag: 'page manager',
-            );
-          }
+            if (result.errorCode != 0) {
+              ZegoLoggerService.logError(
+                'accept call by callkit in background-locked, failed to login room:${result.errorCode},${result.extendedData}',
+                tag: 'call',
+                subTag: 'page manager',
+              );
+            }
+          });
         });
-      });
+      }
     } else {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
+  }
+
+  void onWaitingAppResumedInIOSCallKit(
+    AppLifecycleState appLifecycleState,
+  ) {
+    if (appLifecycleState != AppLifecycleState.resumed) {
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'app resumed, try enter current invitation call',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    ZegoUIKit()
+        .adapterService()
+        .unregisterMessageHandler(onWaitingAppResumedInIOSCallKit);
+    _timerWaitAppResumedFlagInIOSCallKit?.cancel();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      enterCallAfterCallPageDisposeInIOSCallKit();
+    });
+  }
+
+  Future<void> onWaitingCallPageDisposeInIOSCallKit() async {
+    /// If the call is ended by the end button of iOS CallKit,
+    /// the widget navigation of the CallPage will not be properly
+    /// execute dispose function.
+    ///
+    /// As a result, during the next offline call,
+    /// the dispose of the previous CallPage will cause confusion in the widget
+    /// navigation.
+    ///
+    /// Here, the previous call page was destroyed.
+    /// Only at this moment does the page navigation and enter room.
+    _waitCallPageDisposeFlagInIOSCallKit.removeListener(
+      onWaitingCallPageDisposeInIOSCallKit,
+    );
+
+    ZegoLoggerService.logInfo(
+      'call page dispose, try enter current invitation call',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    /// waits for a maximum of one second and executes immediately if it exceeds that time.
+    _timerWaitAppResumedFlagInIOSCallKit = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer timer) {
+        ZegoUIKit()
+            .adapterService()
+            .unregisterMessageHandler(onWaitingAppResumedInIOSCallKit);
+        _timerWaitAppResumedFlagInIOSCallKit?.cancel();
+
+        enterCallAfterCallPageDisposeInIOSCallKit();
+      },
+    );
+    ZegoUIKit()
+        .adapterService()
+        .registerMessageHandler(onWaitingAppResumedInIOSCallKit);
+  }
+
+  void enterCallAfterCallPageDisposeInIOSCallKit() {
+    /// assign invitation data from cache
+    if (null != _invitationDataOfWaitCallPageDisposeInIOSCallKit) {
+      _invitationData = _invitationDataOfWaitCallPageDisposeInIOSCallKit!;
+    }
+
+    ZegoLoggerService.logInfo(
+      'call page dispose, enter cache invitation call by callkit:$_invitationData',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    callingMachine?.stateOnlineAudioVideo.enter();
+
+    /// clear
+    cacheInvitationDataForWaitCallPageDisposeInIOSCallKit(false);
+    setWaitCallPageDisposeFlag(false);
   }
 
   void onUserLeaveInIOSBackgroundLockCalling(List<ZegoUIKitUser> users) {
@@ -509,11 +628,12 @@ class ZegoInvitationPageManager {
       ZegoUIKit()
           .getSignalingPlugin()
           .refuseInvitation(
-              inviterID: inviter.id,
-              data: const JsonEncoder().convert({
-                'reason': 'busy',
-                'invitation_id': invitationID,
-              }))
+            inviterID: inviter.id,
+            data: const JsonEncoder().convert({
+              'reason': 'busy',
+              'invitation_id': invitationID,
+            }),
+          )
           .then((result) {
         ZegoLoggerService.logInfo(
           'auto refuse result, $result',
@@ -533,6 +653,10 @@ class ZegoInvitationPageManager {
       ..invitees = List.from(invitationInternalData.invitees)
       ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
       ..type = ZegoCallTypeExtension.mapValue[type] ?? ZegoCallType.voiceCall;
+
+    if (_waitCallPageDisposeFlagInIOSCallKit.value) {
+      cacheInvitationDataForWaitCallPageDisposeInIOSCallKit(true);
+    }
 
     final callKitCallID = await getOfflineCallKitCallID();
     ZegoLoggerService.logInfo(
@@ -620,21 +744,31 @@ class ZegoInvitationPageManager {
 
         hasCallkitIncomingCauseAppInBackground = true;
         if (Platform.isAndroid) {
-          // ZegoUIKit().getSignalingPlugin().addLocalNotification();
+          // ZegoUIKit().getSignalingPlugin().addLocalCallNotification();
           /// android 先弹prebuilt 呼叫邀请弹框
           notificationManager.showInvitationNotification(invitationData);
         } else {
-          setOfflineCallKitCallID(_invitationData.callID);
+          await getOfflineCallKitCallID().then((offlineCallID) {
+            ZegoLoggerService.logInfo(
+              'offlineCallID:$offlineCallID, _invitationData.callID:${_invitationData.callID}',
+              tag: 'call',
+              subTag: 'page manager',
+            );
 
-          showCallkitIncoming(
-            caller: inviter,
-            callType: _invitationData.type,
-            invitationInternalData: invitationInternalData,
-            ringtonePath:
-                callInvitationConfig.androidNotificationConfig?.sound ?? '',
-            iOSIconName: callInvitationConfig
-                .iOSNotificationConfig?.systemCallingIconName,
-          );
+            if (offlineCallID != _invitationData.callID) {
+              setOfflineCallKitCallID(_invitationData.callID);
+
+              showCallkitIncoming(
+                caller: inviter,
+                callType: _invitationData.type,
+                invitationInternalData: invitationInternalData,
+                ringtonePath:
+                    callInvitationConfig.androidNotificationConfig?.sound ?? '',
+                iOSIconName: callInvitationConfig
+                    .iOSNotificationConfig?.systemCallingIconName,
+              );
+            }
+          });
         }
       } else {
         showNotificationOnInvitationReceived();
@@ -842,9 +976,11 @@ class ZegoInvitationPageManager {
     restoreToIdle();
   }
 
-  void onHangUp() {
+  void onHangUp({
+    bool needPop = true,
+  }) {
     ZegoLoggerService.logInfo(
-      'on hang up',
+      'on hang up, needPop:$needPop',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -856,7 +992,8 @@ class ZegoInvitationPageManager {
             invitees: _invitingInvitees.map((user) => user.id).toList(),
             data: const JsonEncoder().convert({
               'call_id': _invitationData.callID,
-              'operation_type': 'cancel_invitation',
+              messageTypePayloadKey:
+                  BackgroundMessageType.cancelInvitation.text,
             }),
           )
           .then((result) {
@@ -868,7 +1005,7 @@ class ZegoInvitationPageManager {
       });
     }
 
-    restoreToIdle();
+    restoreToIdle(needPop: needPop);
   }
 
   void onPrebuiltCallPageDispose() {
@@ -888,7 +1025,9 @@ class ZegoInvitationPageManager {
     bool needClearCallKit = true,
   }) {
     ZegoLoggerService.logInfo(
-      'invitation page service to be idle, needClearCallKit:$needClearCallKit',
+      'invitation page service to be idle, '
+      'needPop:$needPop, '
+      'needClearCallKit:$needClearCallKit',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -897,7 +1036,7 @@ class ZegoInvitationPageManager {
     _calleeRingtone.stopRing();
 
     if (PrebuiltCallMiniOverlayPageState.minimizing !=
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
@@ -1042,6 +1181,22 @@ class ZegoInvitationPageManager {
             /// click on empty space of notification, not accept or decline
             showNotificationOnInvitationReceived();
           }
+        } else {
+          if (ZegoCallKitBackgroundService().isIOSCallKitDisplaying) {
+            /// not accept or reject, then switch to app, close callkit popup
+            /// and show top sheet
+
+            ZegoLoggerService.logInfo(
+              'close callkit now, then show top invitation popup',
+              tag: 'call',
+              subTag: 'page manager',
+            );
+
+            clearAllCallKitCalls();
+
+            /// click on empty space of notification, not accept or decline
+            showNotificationOnInvitationReceived();
+          }
         }
       } else {
         if (ZegoUIKit().getRoom().id.isEmpty) {
@@ -1082,5 +1237,37 @@ class ZegoInvitationPageManager {
     if (PrebuiltCallMiniOverlayPageState.calling == state) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
+  }
+
+  ValueNotifier<bool> get waitCallPageDisposeInIOSCallKit =>
+      _waitCallPageDisposeFlagInIOSCallKit;
+
+  void cacheInvitationDataForWaitCallPageDisposeInIOSCallKit(bool isCache) {
+    _invitationDataOfWaitCallPageDisposeInIOSCallKit =
+        isCache ? invitationData : null;
+
+    ZegoLoggerService.logInfo(
+      'cacheInvitationDataForWaitCallPageDisposeInIOSCallKit $isCache,'
+      'data:$_invitationDataOfWaitCallPageDisposeInIOSCallKit',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+  }
+
+  /// If the call is ended by the end button of iOS CallKit,
+  /// the widget navigation of the CallPage will not be properly
+  /// execute dispose function.
+  ///
+  /// As a result, during the next offline call,
+  /// the dispose of the previous CallPage will cause confusion in the widget
+  /// navigation.
+  void setWaitCallPageDisposeFlag(bool needWait) {
+    _waitCallPageDisposeFlagInIOSCallKit.value = needWait;
+
+    ZegoLoggerService.logInfo(
+      'setPendingCallPageDisposeFlag:$needWait',
+      tag: 'call',
+      subTag: 'page manager',
+    );
   }
 }

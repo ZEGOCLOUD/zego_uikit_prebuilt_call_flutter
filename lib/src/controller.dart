@@ -1,13 +1,13 @@
-// Flutter imports:
+// Dart imports:
 import 'dart:convert';
 
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
@@ -15,7 +15,9 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.da
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 
 part 'package:zego_uikit_prebuilt_call/src/internal/controller_p.dart';
 
@@ -101,7 +103,7 @@ class ZegoUIKitPrebuiltCallController
       tag: 'call',
       subTag: 'controller',
     );
-    ZegoUIKitPrebuiltCallMiniOverlayMachine()
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
         .changeState(PrebuiltCallMiniOverlayPageState.idle);
 
     if (prebuiltConfig?.onHangUp != null) {
@@ -274,4 +276,7 @@ class ZegoUIKitPrebuiltCallController
       customData: customData,
     );
   }
+
+  bool get isMinimizing =>
+      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().isMinimizing;
 }

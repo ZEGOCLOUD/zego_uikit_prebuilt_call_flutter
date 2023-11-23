@@ -27,9 +27,8 @@ class CallPage extends StatelessWidget {
           ..onOnlySelfInRoom = (context) {
             if (PrebuiltCallMiniOverlayPageState.idle !=
                 ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-              /// in minimizing
-              ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                  .changeState(PrebuiltCallMiniOverlayPageState.idle);
+              /// now is minimizing state, not need to navigate
+              ZegoUIKitPrebuiltCallMiniOverlayMachine().switchToIdle();
             } else {
               Navigator.of(context).pop();
             }

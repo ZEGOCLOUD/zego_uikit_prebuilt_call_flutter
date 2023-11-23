@@ -28,6 +28,9 @@ enum ZegoMenuBarButtonName {
 
   /// Button for minimizing the current [ZegoUIKitPrebuiltCall] widget within the app.
   /// When clicked, the [ZegoUIKitPrebuiltCall] widget will shrink into a small draggable widget within the app.
+  ///
+  /// If you need to nest some widgets in [ZegoUIKitPrebuiltCall], please use [foreground] nesting,
+  /// otherwise these widgets will be lost when you minimize and restore the [ZegoUIKitPrebuiltCall]
   minimizingButton,
 
   /// Button for controlling the display or hiding of the beauty effect adjustment panel.

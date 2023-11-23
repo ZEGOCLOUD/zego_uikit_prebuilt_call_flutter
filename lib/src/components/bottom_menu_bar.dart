@@ -8,14 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_config.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
 
 /// @nodoc
@@ -225,10 +226,10 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     }
 
     return widget.config.bottomMenuBarConfig.buttons
-        .map((type) => buttonWrapper(
+        .map((buttonName) => buttonWrapper(
               child: generateDefaultButtonsByEnum(
                 context,
-                type,
+                buttonName,
                 cameraDefaultValueFunc: cameraDefaultValueFunc,
                 microphoneDefaultValueFunc: microphoneDefaultValueFunc,
               ),
@@ -238,14 +239,14 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
 
   Widget generateDefaultButtonsByEnum(
     BuildContext context,
-    ZegoMenuBarButtonName type, {
+    ZegoMenuBarButtonName buttonName, {
     bool Function()? cameraDefaultValueFunc,
     bool Function()? microphoneDefaultValueFunc,
   }) {
     final buttonSize = Size(96.zR, 96.zR);
     final iconSize = Size(56.zR, 56.zR);
 
-    switch (type) {
+    switch (buttonName) {
       case ZegoMenuBarButtonName.toggleMicrophoneButton:
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
@@ -298,8 +299,9 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
               tag: 'call',
               subTag: 'bottom bar',
             );
-            ZegoUIKitPrebuiltCallMiniOverlayMachine()
-                .changeState(PrebuiltCallMiniOverlayPageState.idle);
+            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+              PrebuiltCallMiniOverlayPageState.idle,
+            );
 
             if (widget.config.onHangUp != null) {
               widget.config.onHangUp!.call();

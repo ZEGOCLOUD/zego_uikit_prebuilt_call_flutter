@@ -1,9 +1,11 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
+
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoBeautyEffectButton extends StatefulWidget {

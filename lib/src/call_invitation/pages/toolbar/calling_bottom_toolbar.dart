@@ -1,6 +1,7 @@
-// Flutter imports:
+// Dart imports:
 import 'dart:convert';
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -36,7 +37,8 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
                 invitees: invitees.map((e) => e.id).toList(),
                 data: const JsonEncoder().convert({
                   'call_id': pageManager.currentCallID,
-                  'operation_type': 'cancel_invitation',
+                  messageTypePayloadKey:
+                      BackgroundMessageType.cancelInvitation.text,
                 }),
                 icon: ButtonIcon(
                   icon: Image(

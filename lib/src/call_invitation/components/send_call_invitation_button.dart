@@ -13,7 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.da
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 
 /// This button is used to send a call invitation to one or more specified users.
 ///
@@ -196,29 +196,31 @@ class _ZegoSendCallInvitationButtonState
         customData: widget.customData,
       ).toJson(),
       notificationConfig: ZegoNotificationConfig(
-        resourceID: widget.resourceID ?? '',
-        title: widget.notificationTitle ??
-            (widget.isVideoCall
-                    ? ((widget.invitees.length > 1
-                            ? innerText?.incomingGroupVideoCallDialogTitle
-                            : innerText?.incomingVideoCallDialogTitle) ??
-                        param_1)
-                    : ((widget.invitees.length > 1
-                            ? innerText?.incomingGroupVoiceCallDialogTitle
-                            : innerText?.incomingVoiceCallDialogTitle) ??
-                        param_1))
-                .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
-        message: widget.notificationMessage ??
-            (widget.isVideoCall
-                ? ((widget.invitees.length > 1
-                        ? innerText?.incomingGroupVideoCallDialogMessage
-                        : innerText?.incomingVideoCallDialogMessage) ??
-                    'Incoming video call...')
-                : ((widget.invitees.length > 1
-                        ? innerText?.incomingGroupVoiceCallDialogMessage
-                        : innerText?.incomingVoiceCallDialogMessage) ??
-                    'Incoming voice call...')),
-      ),
+          resourceID: widget.resourceID ?? '',
+          title: widget.notificationTitle ??
+              (widget.isVideoCall
+                      ? ((widget.invitees.length > 1
+                              ? innerText?.incomingGroupVideoCallDialogTitle
+                              : innerText?.incomingVideoCallDialogTitle) ??
+                          param_1)
+                      : ((widget.invitees.length > 1
+                              ? innerText?.incomingGroupVoiceCallDialogTitle
+                              : innerText?.incomingVoiceCallDialogTitle) ??
+                          param_1))
+                  .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
+          message: widget.notificationMessage ??
+              (widget.isVideoCall
+                  ? ((widget.invitees.length > 1
+                          ? innerText?.incomingGroupVideoCallDialogMessage
+                          : innerText?.incomingVideoCallDialogMessage) ??
+                      'Incoming video call...')
+                  : ((widget.invitees.length > 1
+                          ? innerText?.incomingGroupVoiceCallDialogMessage
+                          : innerText?.incomingVoiceCallDialogMessage) ??
+                      'Incoming voice call...')),
+          voIPConfig: ZegoNotificationVoIPConfig(
+            iOSVoIPHasVideo: widget.isVideoCall,
+          )),
       icon: widget.iconVisible
           ? (widget.icon ??
               ButtonIcon(
@@ -267,7 +269,7 @@ class _ZegoSendCallInvitationButtonState
       return false;
     }
 
-    if (ZegoUIKitPrebuiltCallMiniOverlayMachine().isMinimizing) {
+    if (ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().isMinimizing) {
       ZegoLoggerService.logInfo(
         'still in minimizing',
         tag: 'call',

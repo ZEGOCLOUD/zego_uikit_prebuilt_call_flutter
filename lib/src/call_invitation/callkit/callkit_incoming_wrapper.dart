@@ -14,8 +14,8 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 
 /// @nodoc
-const String CallKitCalIDCacheKey = 'callkit_call_id';
-const String CallKitParamsCacheKey = 'callkit_params';
+const String callkitCalIDCacheKey = 'callkit_call_id';
+const String callkitParamsCacheKey = 'callkit_params';
 
 /// @nodoc
 ///
@@ -185,7 +185,7 @@ Future<void> setOfflineCallKitCallID(String callID) async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.setString(CallKitCalIDCacheKey, callID);
+  prefs.setString(callkitCalIDCacheKey, callID);
 }
 
 /// @nodoc
@@ -193,7 +193,7 @@ Future<void> setOfflineCallKitCallID(String callID) async {
 /// Retrieve the cached ID of the current call, which is stored in the handler received from ZPNS.
 Future<String?> getOfflineCallKitCallID() async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(CallKitCalIDCacheKey);
+  return prefs.getString(callkitCalIDCacheKey);
 }
 
 /// cached ID of the current cal
@@ -205,7 +205,7 @@ Future<void> clearOfflineCallKitCallID() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.remove(CallKitCalIDCacheKey);
+  prefs.remove(callkitCalIDCacheKey);
 }
 
 /// cached ID of the current params
@@ -217,7 +217,7 @@ Future<void> setOfflineCallKitParams(String params) async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.setString(CallKitParamsCacheKey, params);
+  prefs.setString(callkitParamsCacheKey, params);
 
   ZegoLoggerService.logInfo(
     'set offline callkit params done',
@@ -228,7 +228,7 @@ Future<void> setOfflineCallKitParams(String params) async {
 
 Future<String?> getCurrentCallKitParams() async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(CallKitParamsCacheKey);
+  return prefs.getString(callkitParamsCacheKey);
 }
 
 Future<void> clearOfflineCallKitParams() async {
@@ -239,7 +239,7 @@ Future<void> clearOfflineCallKitParams() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.remove(CallKitParamsCacheKey);
+  prefs.remove(callkitParamsCacheKey);
 
   ZegoLoggerService.logInfo(
     'clear offline callkit params done',

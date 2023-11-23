@@ -9,7 +9,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 
 // Project imports:
 
@@ -86,7 +87,7 @@ class ZegoCallingMachine {
 
   void onCallingEntry() {
     if (PrebuiltCallMiniOverlayPageState.calling ==
-        ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',
         tag: 'call',

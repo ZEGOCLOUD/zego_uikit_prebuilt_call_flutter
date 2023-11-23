@@ -3,18 +3,19 @@ import 'dart:convert';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
-import 'package:zego_zpns/zego_zpns.dart';
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 
 UUID? iOSIncomingPushUUID;
 
 /// @nodoc
 ///
 /// [iOS] VoIP event callback
-void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) {
+void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   ZegoLoggerService.logInfo(
     'on incoming push received: extras:$extras, uuid:$uuid',
     tag: 'call',
@@ -31,7 +32,19 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) {
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
-  setOfflineCallKitCallID(invitationInternalData.callID);
+  await setOfflineCallKitCallID(invitationInternalData.callID).then((value) {
+    ZegoLoggerService.logInfo(
+      'cache ${invitationInternalData.callID}',
+      tag: 'call',
+      subTag: 'background message',
+    );
+  });
 
-  ZegoUIKit().getSignalingPlugin().activeAudioByCallKit();
+  await ZegoCallPluginPlatform.instance.activeAudioByCallKit().then((value) {
+    ZegoLoggerService.logInfo(
+      'activeAudioByCallKit',
+      tag: 'call',
+      subTag: 'background message',
+    );
+  });
 }

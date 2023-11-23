@@ -64,7 +64,7 @@ class ZegoInRoomMessageInputBoard extends ModalRoute<String> {
               Navigator.of(
                 context,
                 rootNavigator: rootNavigator,
-              ).pop;
+              ).pop();
             },
           ),
         ],
