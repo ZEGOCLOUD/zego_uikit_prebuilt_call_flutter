@@ -11,9 +11,9 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.ios.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
@@ -245,26 +245,38 @@ class ZegoInvitationPageManager {
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationReceivedStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationReceived))
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationAcceptedStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationAccepted))
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationTimeoutStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationTimeout))
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationResponseTimeoutStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationResponseTimeout))
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationRefusedStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationRefused))
       ..add(ZegoUIKit()
           .getSignalingPlugin()
           .getInvitationCanceledStream()
+          .where((param) =>
+              ZegoCallTypeExtension.isCallType((param['type'] as int?) ?? -1))
           .listen(onInvitationCanceled));
   }
 
@@ -560,16 +572,16 @@ class ZegoInvitationPageManager {
   }
 
   void onInvitationUserStateChanged(
-    List<ZegoSignalingPluginInvitationUserInfo> userInfos,
+    ZegoSignalingPluginInvitationUserStateChangedEvent event,
   ) {
     ZegoLoggerService.logInfo(
-      'on invitation user state changed, user infos:$userInfos',
+      'on invitation user state changed, event:$event',
       tag: 'call',
       subTag: 'page manager',
     );
 
     callInvitationConfig.invitationEvents?.onInvitationUserStateChanged
-        ?.call(userInfos);
+        ?.call(event.callUserList);
   }
 
   ///title:user_073493,
@@ -808,8 +820,8 @@ class ZegoInvitationPageManager {
       subTag: 'page manager',
     );
 
-    final inviteeIndex =
-        _invitingInvitees.indexWhere((_invitee) => _invitee.id == invitee.id);
+    final inviteeIndex = _invitingInvitees
+        .indexWhere((invitingInvitee) => invitingInvitee.id == invitee.id);
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitation accepted, but invitee is not in list, '
@@ -898,8 +910,8 @@ class ZegoInvitationPageManager {
     final ZegoUIKitUser invitee = params['invitee']!;
     final String data = params['data']!; // extended field
 
-    final inviteeIndex =
-        _invitingInvitees.indexWhere((_invitee) => _invitee.id == invitee.id);
+    final inviteeIndex = _invitingInvitees
+        .indexWhere((invitingInvitee) => invitingInvitee.id == invitee.id);
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitation refused, but invitee is not in list, '

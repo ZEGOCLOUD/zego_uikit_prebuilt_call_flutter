@@ -26,9 +26,9 @@ Future<void> setPreferenceString(
   String value, {
   bool withEncode = false,
 }) async {
-  var _value = value;
+  var tempValue = value;
   if (withEncode) {
-    _value = _encodeString(value);
+    tempValue = _encodeString(value);
   }
 
   ZegoLoggerService.logInfo(
@@ -38,7 +38,7 @@ Future<void> setPreferenceString(
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.setString(key, _value);
+  prefs.setString(key, tempValue);
 }
 
 Future<String> getPreferenceString(

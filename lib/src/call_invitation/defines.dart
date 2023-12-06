@@ -33,6 +33,11 @@ typedef ZegoInvitationType = ZegoCallType;
 
 /// @nodoc
 extension ZegoCallTypeExtension on ZegoCallType {
+  static bool isCallType(int type) {
+    return type == ZegoCallType.voiceCall.value ||
+        type == ZegoCallType.videoCall.value;
+  }
+
   static const valueMap = {
     ZegoCallType.voiceCall: 0,
     ZegoCallType.videoCall: 1,

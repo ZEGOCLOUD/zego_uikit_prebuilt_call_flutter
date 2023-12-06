@@ -49,21 +49,21 @@ Future<CallKitParams> _makeCallKitParam({
 }) async {
   final prefs = await SharedPreferences.getInstance();
 
-  var _ringtonePath = ringtonePath ?? '';
-  if (_ringtonePath.isEmpty) {
-    _ringtonePath =
+  var tempRingtonePath = ringtonePath ?? '';
+  if (tempRingtonePath.isEmpty) {
+    tempRingtonePath =
         prefs.getString(CallKitInnerVariable.ringtonePath.cacheKey) ??
             CallKitInnerVariable.ringtonePath.defaultValue;
   }
 
-  var _title = title ?? '';
-  if (_title.isEmpty) {
-    _title = caller?.name ?? '';
+  var tempTitle = title ?? '';
+  if (tempTitle.isEmpty) {
+    tempTitle = caller?.name ?? '';
   }
 
-  var _body = body ?? '';
-  if (_body.isEmpty) {
-    _body = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
+  var tempBody = body ?? '';
+  if (tempBody.isEmpty) {
+    tempBody = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
             CallKitInnerVariable.callIDVisibility.defaultValue)
         ? invitationInternalData.callID
         : '';
@@ -71,11 +71,11 @@ Future<CallKitParams> _makeCallKitParam({
 
   return CallKitParams(
     id: const Uuid().v4(),
-    nameCaller: _title,
+    nameCaller: tempTitle,
     appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
         CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
-    handle: _body,
+    handle: tempBody,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
     duration: invitationInternalData.timeout * 1000,
@@ -97,7 +97,7 @@ Future<CallKitParams> _makeCallKitParam({
     android: AndroidParams(
       isCustomNotification: true,
       isShowLogo: false,
-      ringtonePath: _ringtonePath,
+      ringtonePath: tempRingtonePath,
       backgroundColor:
           prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
               CallKitInnerVariable.backgroundColor.defaultValue,
@@ -111,7 +111,7 @@ Future<CallKitParams> _makeCallKitParam({
       iconName: iOSIconName,
       handleType: '',
       supportsVideo: ZegoCallType.videoCall == callType,
-      ringtonePath: _ringtonePath,
+      ringtonePath: tempRingtonePath,
       maximumCallGroups: 1,
       maximumCallsPerCallGroup: 1,
       audioSessionMode: 'default',

@@ -19,7 +19,6 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
-
 import 'call_invitation/callkit/background_service.dart';
 
 /// Call Widget.
@@ -139,7 +138,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:3.17.9; $version',
+        'version: zego_uikit_prebuilt_call:3.17.10; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );

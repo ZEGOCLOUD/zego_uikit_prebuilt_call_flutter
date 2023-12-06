@@ -181,10 +181,9 @@ class _ZegoSendCallInvitationButtonState
 
   Widget button() {
     return ZegoStartInvitationButton(
-      invitationType: ZegoCallTypeExtension(widget.isVideoCall
-              ? ZegoCallType.videoCall
-              : ZegoCallType.voiceCall)
-          .value,
+      invitationType: ZegoCallTypeExtension(
+        widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
+      ).value,
       invitees: widget.invitees.map((user) {
         return user.id;
       }).toList(),
