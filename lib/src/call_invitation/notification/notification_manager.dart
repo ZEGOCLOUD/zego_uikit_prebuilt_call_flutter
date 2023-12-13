@@ -225,7 +225,7 @@ class ZegoNotificationManager {
     );
   }
 
-  String? getIconSource(String? iconFileName) {
+  static String? getIconSource(String? iconFileName) {
     String? iconSource;
 
     if (Platform.isAndroid && (iconFileName?.isNotEmpty ?? false)) {
@@ -248,7 +248,7 @@ class ZegoNotificationManager {
     return iconSource;
   }
 
-  String? getSoundSource(String? soundFileName) {
+  static String? getSoundSource(String? soundFileName) {
     String? soundSource;
 
     if (Platform.isAndroid && (soundFileName?.isNotEmpty ?? false)) {

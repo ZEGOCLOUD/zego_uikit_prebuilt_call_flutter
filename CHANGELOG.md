@@ -1,4 +1,9 @@
+## 3.18.1
+
+- Fix the issue of setting the icon for message offline notifications failure.
+
 ## 3.18.0
+
 - Support setting background in invitation views, you can use **uiConfig.callingBackgroundBuilder** in **ZegoUIKitPrebuiltCallInvitationService.init**.
 
 ## 3.17.11
@@ -14,6 +19,7 @@
 - Update dependency.
 
 ## 3.17.8
+
 - Fixing some bugs in offline calling on iOS.
 - Fixing the exception issue when kicking user out by server api.
 
@@ -30,11 +36,11 @@
 - Fixing video/audio display issues for iOS VOIP calls.
 
 ## 3.17.4
+
 - Fixed the issue where hang up from a call invitation would result in going back to the previous page twice when **onHangUp** is overridden.
-  
+
   💥 Reminder: If you override **onHangUp**, please remember to **return to the previous page**, such as use Navigator.of(context).pop().
 - Constrain the APIs of **ZegoUIKitPrebuiltCallMiniOverlayMachine**, only use certain public methods.
-
 
 ## 3.17.3
 
@@ -51,10 +57,12 @@
 - Update dependency.
 
 ## 3.17.0
-- Support foreground/background in config，if you need to nest some widgets in **ZegoUIKitPrebuiltCall**, please use **foreground**/**background** nesting, otherwise these widgets will be lost when you 
+
+- Support foreground/background in config，if you need to nest some widgets in **ZegoUIKitPrebuiltCall**, please use **foreground**/**background** nesting, otherwise these widgets will be lost when you
   minimize and restore the **ZegoUIKitPrebuiltCall**
 
 ## 3.16.3
+
 - Fixing the issue of notification not set correctly initialize.
 
 ## 3.16.2

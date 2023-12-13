@@ -214,7 +214,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.18.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.18.1; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -339,8 +339,6 @@ class ZegoUIKitPrebuiltCallInvitationService
         final androidChannelName =
             _data!.androidNotificationConfig?.channelName ??
                 defaultCallChannelName;
-        final androidSound =
-            '/raw/${_data!.androidNotificationConfig?.sound ?? '/zego_incoming'}';
         setPreferenceString(
           serializationKeyHandlerInfo,
           HandlerPrivateInfo(
@@ -354,7 +352,7 @@ class ZegoUIKitPrebuiltCallInvitationService
             appName: appName,
             androidCallChannelID: androidChannelID,
             androidCallChannelName: androidChannelName,
-            androidCallSound: androidSound,
+            androidCallSound: _data!.androidNotificationConfig?.sound ?? '',
             androidCallVibrate:
                 _data!.androidNotificationConfig?.vibrate ?? true,
             androidMessageChannelID:
@@ -363,8 +361,10 @@ class ZegoUIKitPrebuiltCallInvitationService
             androidMessageChannelName:
                 _data!.androidNotificationConfig?.messageChannelName ??
                     defaultMessageChannelName,
+            androidMessageIcon:
+                _data!.androidNotificationConfig?.messageIcon ?? '',
             androidMessageSound:
-                '/raw/${_data!.androidNotificationConfig?.messageSound ?? '/zego_incoming'}',
+                _data!.androidNotificationConfig?.messageSound ?? '',
             androidMessageVibrate:
                 _data!.androidNotificationConfig?.messageVibrate ?? false,
           ).toJsonString(),
@@ -381,7 +381,10 @@ class ZegoUIKitPrebuiltCallInvitationService
               appName: appName,
               androidChannelID: androidChannelID,
               androidChannelName: androidChannelName,
-              androidSound: androidSound,
+              androidSound:
+                  (_data!.androidNotificationConfig?.sound?.isEmpty ?? true)
+                      ? ''
+                      : '/raw/${_data!.androidNotificationConfig?.sound}',
             )
             .then((result) {
           if (_enableIOSVoIP) {

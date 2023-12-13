@@ -21,6 +21,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 
@@ -196,9 +197,15 @@ Future<void> _onBackgroundIMMessageReceived({
     ZegoSignalingPluginLocalIMNotificationConfig(
       id: Random().nextInt(2147483647),
       channelID: channelID,
-      vibrate: handlerInfo?.androidMessageVibrate ?? false,
       title: senderName,
       content: body,
+      vibrate: handlerInfo?.androidMessageVibrate ?? false,
+      iconSource: ZegoNotificationManager.getIconSource(
+        handlerInfo?.androidMessageIcon ?? '',
+      ),
+      soundSource: ZegoNotificationManager.getSoundSource(
+        handlerInfo?.androidMessageSound ?? '',
+      ),
       clickCallback: () async {
         await ZegoCallPluginPlatform.instance.activeAppToForeground();
         await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
@@ -603,7 +610,12 @@ Future<void> _installSignalingPlugin({
         appName: handlerInfo.appName,
         androidChannelID: handlerInfo.androidCallChannelID,
         androidChannelName: handlerInfo.androidCallChannelName,
-        androidSound: '/raw/${handlerInfo.androidCallSound}',
+
+        /// not need to get abs uri like ZegoNotificationManager.getSoundSource(handlerInfo.androidCallSound),
+        /// zim will add prefix like ${android.resource://" + application.getPackageName() + androidSound}
+        androidSound: handlerInfo.androidCallSound.isEmpty
+            ? ''
+            : '/raw/${handlerInfo.androidCallSound}',
       );
 }
 
@@ -654,12 +666,18 @@ class HandlerPrivateInfo {
   bool enableIOSVoIP;
   int certificateIndex;
   String appName;
+
+  /// call
   String androidCallChannelID;
   String androidCallChannelName;
+  String androidCallIcon;
   String androidCallSound;
   bool androidCallVibrate;
+
+  /// message
   String androidMessageChannelID;
   String androidMessageChannelName;
+  String androidMessageIcon;
   String androidMessageSound;
   bool androidMessageVibrate;
 
@@ -673,10 +691,12 @@ class HandlerPrivateInfo {
     this.appName = '',
     this.androidCallChannelID = '',
     this.androidCallChannelName = '',
+    this.androidCallIcon = '',
     this.androidCallSound = '',
     this.androidCallVibrate = true,
     this.androidMessageChannelID = '',
     this.androidMessageChannelName = '',
+    this.androidMessageIcon = '',
     this.androidMessageSound = '',
     this.androidMessageVibrate = false,
   });
@@ -692,10 +712,12 @@ class HandlerPrivateInfo {
       appName: json['an'] ?? '',
       androidCallChannelID: json['aci'] ?? '',
       androidCallChannelName: json['acn'] ?? '',
+      androidCallIcon: json['ai'] ?? '',
       androidCallSound: json['as'] ?? '',
       androidCallVibrate: json['av'] ?? '',
       androidMessageChannelID: json['amci'] ?? '',
       androidMessageChannelName: json['amcn'] ?? '',
+      androidMessageIcon: json['ami'] ?? '',
       androidMessageSound: json['ams'] ?? '',
       androidMessageVibrate: json['amv'] ?? '',
     );
@@ -712,11 +734,13 @@ class HandlerPrivateInfo {
       'an': appName,
       'aci': androidCallChannelID,
       'acn': androidCallChannelName,
+      'ai': androidCallIcon,
       'as': androidCallSound,
       'av': androidCallVibrate,
       'amci': androidMessageChannelID,
       'amcn': androidMessageChannelName,
       'ams': androidMessageSound,
+      'ami': androidMessageIcon,
       'amv': androidMessageVibrate,
     };
   }
