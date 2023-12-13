@@ -49,9 +49,13 @@ class ZegoCallingMachine {
 
   bool isPagePushed = false;
 
-  BuildContext get context => callInvitationConfig.contextQuery!.call();
-
   void init() {
+    ZegoLoggerService.logInfo(
+      'init',
+      tag: 'call',
+      subTag: 'machine',
+    );
+
     machine.onAfterTransition.listen((event) {
       ZegoLoggerService.logInfo(
         'calling, from ${event.source} to ${event.target}',
@@ -106,22 +110,32 @@ class ZegoCallingMachine {
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ZegoCallingPage(
-          pageManager: pageManager,
-          callInvitationConfig: callInvitationConfig,
-          inviter: pageManager.invitationData.inviter!,
-          invitees: pageManager.invitationData.invitees,
-          onInitState: () {
-            isPagePushed = true;
-          },
-          onDispose: () {
-            isPagePushed = false;
-          },
+    try {
+      final currentContext = callInvitationConfig.contextQuery?.call();
+      Navigator.of(currentContext!).push(
+        MaterialPageRoute(
+          builder: (context) => ZegoCallingPage(
+            pageManager: pageManager,
+            callInvitationConfig: callInvitationConfig,
+            inviter: pageManager.invitationData.inviter!,
+            invitees: pageManager.invitationData.invitees,
+            onInitState: () {
+              isPagePushed = true;
+            },
+            onDispose: () {
+              isPagePushed = false;
+            },
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      ZegoLoggerService.logError(
+        'Navigator push exception:$e, '
+        'contextQuery:${callInvitationConfig.contextQuery}, ',
+        tag: 'call',
+        subTag: 'machine',
+      );
+    }
   }
 
   CallingState getPageState() {

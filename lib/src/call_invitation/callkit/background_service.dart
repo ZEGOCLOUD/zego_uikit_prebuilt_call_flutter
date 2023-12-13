@@ -190,8 +190,17 @@ class ZegoCallKitBackgroundService {
       _pageManager?.restoreToIdle();
     } else {
       /// background callkit call, not need to navigate
-      Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call())
-          .pop();
+      try {
+        Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call())
+            .pop();
+      } catch (e) {
+        ZegoLoggerService.logError(
+          'Navigator pop exception:$e, '
+          'contextQuery:${_pageManager?.callInvitationConfig.contextQuery}',
+          tag: 'call',
+          subTag: 'call invitation service',
+        );
+      }
     }
 
     _pageManager?.inCallingByIOSBackgroundLock = false;

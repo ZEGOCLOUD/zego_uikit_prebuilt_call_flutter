@@ -80,7 +80,9 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
     this.controller,
     ZegoCallInvitationInnerText? innerText,
     ZegoRingtoneConfig? ringtoneConfig,
+    ZegoCallInvitationUIConfig? uiConfig,
   })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
+        uiConfig = uiConfig ?? const ZegoCallInvitationUIConfig(),
         innerText = innerText ?? ZegoCallInvitationInnerText();
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -99,11 +101,17 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
   /// we need the [ZegoUIKitPrebuiltCallConfig] to show [ZegoUIKitPrebuiltCall]
   final PrebuiltConfigQuery? requireConfig;
 
-  /// you can customize your ringing bell
-  final ZegoRingtoneConfig ringtoneConfig;
+  final ZegoCallInvitationInnerText innerText;
+
+  final ZegoUIKitPrebuiltCallController? controller;
 
   ///
   final List<IZegoUIKitPlugin> plugins;
+
+  /// you can customize your ringing bell
+  final ZegoRingtoneConfig ringtoneConfig;
+
+  final ZegoCallInvitationUIConfig uiConfig;
 
   /// whether to display the reject button, default is true
   final bool showDeclineButton;
@@ -118,8 +126,4 @@ class ZegoUIKitPrebuiltCallInvitationServiceData {
 
   /// only for Android
   final ZegoAndroidNotificationConfig? androidNotificationConfig;
-
-  final ZegoCallInvitationInnerText innerText;
-
-  final ZegoUIKitPrebuiltCallController? controller;
 }

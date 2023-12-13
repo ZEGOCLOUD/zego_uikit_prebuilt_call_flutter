@@ -148,6 +148,14 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
+    ZegoLoggerService.logInfo(
+      'setNavigatorKey, '
+      'isInit:$_isInit,'
+      'navigatorKey:$navigatorKey',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+
     if (_isInit) {
       _callInvitationConfig?.contextQuery = () {
         return navigatorKey.currentState!.context;
@@ -168,20 +176,27 @@ class ZegoUIKitPrebuiltCallInvitationService
     required String userName,
     required List<IZegoUIKitPlugin> plugins,
     PrebuiltConfigQuery? requireConfig,
+    ZegoUIKitPrebuiltCallInvitationEvents? events,
+    ZegoUIKitPrebuiltCallController? controller,
+    ZegoCallInvitationInnerText? innerText,
+    ZegoRingtoneConfig? ringtoneConfig,
+    ZegoCallInvitationUIConfig? uiConfig,
+
+    /// todo: move to [ZegoCallInvitationUIConfig]
     bool showDeclineButton = true,
     bool showCancelInvitationButton = true,
-    ZegoUIKitPrebuiltCallInvitationEvents? events,
+
+    /// todo: move to [ZegoCallInvitationNotificationConfig]
     bool notifyWhenAppRunningInBackgroundOrQuit = true,
+    ZegoAndroidNotificationConfig? androidNotificationConfig,
+    ZegoIOSNotificationConfig? iOSNotificationConfig,
+
+    /// todo: move to [ZegoIOSNotificationConfig]
     ZegoSignalingPluginMultiCertificate certificateIndex =
         ZegoSignalingPluginMultiCertificate.firstCertificate,
     String appName = '',
     @Deprecated('use iOSNotificationConfig.isSandboxEnvironment instead')
     bool? isIOSSandboxEnvironment,
-    ZegoIOSNotificationConfig? iOSNotificationConfig,
-    ZegoAndroidNotificationConfig? androidNotificationConfig,
-    ZegoUIKitPrebuiltCallController? controller,
-    ZegoCallInvitationInnerText? innerText,
-    ZegoRingtoneConfig? ringtoneConfig,
   }) async {
     if (_isInit) {
       ZegoLoggerService.logWarn(
@@ -199,7 +214,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:3.17.10; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:3.18.0; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -236,6 +251,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       controller: controller,
       innerText: innerText,
       ringtoneConfig: ringtoneConfig,
+      uiConfig: uiConfig,
     );
 
     _callInvitationConfig = ZegoCallInvitationConfig(
@@ -246,6 +262,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       prebuiltConfigQuery: _data!.requireConfig ?? _defaultConfig,
       notifyWhenAppRunningInBackgroundOrQuit:
           _data!.notifyWhenAppRunningInBackgroundOrQuit,
+      uiConfig: _data!.uiConfig,
       showDeclineButton: _data!.showDeclineButton,
       showCancelInvitationButton: _data!.showCancelInvitationButton,
       androidNotificationConfig: _data!.androidNotificationConfig,
@@ -256,6 +273,12 @@ class ZegoUIKitPrebuiltCallInvitationService
       plugins: plugins,
     );
     if (null != _contextQuery) {
+      ZegoLoggerService.logInfo(
+        'update contextQuery in call invitation config',
+        tag: 'call',
+        subTag: 'call invitation service(${identityHashCode(this)})',
+      );
+
       _callInvitationConfig!.contextQuery = _contextQuery;
     }
 
@@ -269,7 +292,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       ZegoLoggerService.logInfo(
         'notifyWhenAppRunningInBackgroundOrQuit is false, not need to init',
         tag: 'call',
-        subTag: 'notification manager',
+        subTag: 'call invitation service(${identityHashCode(this)})',
       );
     }
 

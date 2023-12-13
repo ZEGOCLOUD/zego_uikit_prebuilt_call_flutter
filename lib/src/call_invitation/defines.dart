@@ -1,4 +1,5 @@
 // Package imports:
+import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -7,6 +8,50 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 /// @nodoc
 typedef PrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
     ZegoCallInvitationData);
+
+class ZegoCallingBackgroundBuilderInfo {
+  ZegoCallingBackgroundBuilderInfo({
+    required this.inviter,
+    required this.invitees,
+    required this.callType,
+  });
+
+  final ZegoUIKitUser inviter;
+  final List<ZegoUIKitUser> invitees;
+  final ZegoCallType callType;
+}
+
+typedef ZegoCallingBackgroundBuilder = Widget? Function(
+  BuildContext context,
+  Size size,
+  ZegoCallingBackgroundBuilderInfo info,
+);
+
+class ZegoCallInvitationUIConfig {
+  const ZegoCallInvitationUIConfig({
+    this.callingBackgroundBuilder,
+    // this.showDeclineButton = true,
+    // this.showCancelInvitationButton = true,
+  });
+
+  // bool showDeclineButton;
+  // bool showCancelInvitationButton;
+  final ZegoCallingBackgroundBuilder? callingBackgroundBuilder;
+}
+
+// class ZegoCallInvitationNotificationConfig {
+//   ZegoCallInvitationNotificationConfig({
+//     this.iOSNotificationConfig,
+//     this.androidNotificationConfig,
+//     this.appName = '',
+//     this.notifyWhenAppRunningInBackgroundOrQuit = true,
+//   });
+//
+//   String appName;
+//   bool notifyWhenAppRunningInBackgroundOrQuit;
+//   ZegoIOSNotificationConfig? iOSNotificationConfig;
+//   ZegoAndroidNotificationConfig? androidNotificationConfig;
+// }
 
 /// ringtone config
 class ZegoRingtoneConfig {

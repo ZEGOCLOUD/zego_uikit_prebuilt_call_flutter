@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_zpns/zego_zpns.dart';
+import 'package:zego_callkit/zego_callkit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
@@ -1065,7 +1065,16 @@ class ZegoInvitationPageManager {
 
       if (needPop) {
         assert(callInvitationConfig.contextQuery != null);
-        Navigator.of(callInvitationConfig.contextQuery!.call()).pop();
+        try {
+          Navigator.of(callInvitationConfig.contextQuery!.call()).pop();
+        } catch (e) {
+          ZegoLoggerService.logError(
+            'Navigator pop exception:$e, '
+            'contextQuery:${callInvitationConfig.contextQuery}, ',
+            tag: 'call',
+            subTag: 'page manager',
+          );
+        }
       }
 
       callingMachine?.stateIdle.enter();
@@ -1100,7 +1109,8 @@ class ZegoInvitationPageManager {
 
   void showInvitationTopSheet() {
     ZegoLoggerService.logInfo(
-      'showInvitationTopSheet',
+      'showInvitationTopSheet, '
+      'contextQuery:${callInvitationConfig.contextQuery}, ',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -1112,7 +1122,7 @@ class ZegoInvitationPageManager {
     _invitationTopSheetVisibility = true;
 
     showTopModalSheet(
-      callInvitationConfig.contextQuery!.call(),
+      callInvitationConfig.contextQuery?.call(),
       GestureDetector(
         onTap: onInvitationTopSheetEmptyClicked,
         child: ZegoCallInvitationDialog(
@@ -1138,7 +1148,16 @@ class ZegoInvitationPageManager {
 
     if (_invitationTopSheetVisibility) {
       assert(callInvitationConfig.contextQuery != null);
-      Navigator.of(callInvitationConfig.contextQuery!.call()).pop();
+      try {
+        Navigator.of(callInvitationConfig.contextQuery!.call()).pop();
+      } catch (e) {
+        ZegoLoggerService.logError(
+          'Navigator pop exception:$e, '
+          'contextQuery:${callInvitationConfig.contextQuery}, ',
+          tag: 'call',
+          subTag: 'page manager',
+        );
+      }
 
       _invitationTopSheetVisibility = false;
     }

@@ -69,7 +69,6 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
 
   final ZegoCallType invitationType;
   final ZegoUIKitUser inviter;
-  final List<ZegoUIKitUser> invitees;
   final bool showDeclineButton;
 
   const ZegoInviteeCallingBottomToolBar({
@@ -77,7 +76,6 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
     required this.pageManager,
     required this.callInvitationConfig,
     required this.inviter,
-    required this.invitees,
     required this.invitationType,
     this.showDeclineButton = true,
   }) : super(key: key);

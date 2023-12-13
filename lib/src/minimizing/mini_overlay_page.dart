@@ -175,22 +175,30 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
                 .changeState(PrebuiltCallMiniOverlayPageState.calling);
 
-            Navigator.of(widget.contextQuery(), rootNavigator: true).push(
-              MaterialPageRoute(builder: (context) {
-                return SafeArea(
-                  child: ZegoUIKitPrebuiltCall(
-                    appID: prebuiltData!.appID,
-                    appSign: prebuiltData.appSign,
-                    userID: prebuiltData.userID,
-                    userName: prebuiltData.userName,
-                    callID: prebuiltData.callID,
-                    config: prebuiltData.config,
-                    onDispose: prebuiltData.onDispose,
-                    controller: prebuiltData.controller,
-                  ),
-                );
-              }),
-            );
+            try {
+              Navigator.of(widget.contextQuery(), rootNavigator: true).push(
+                MaterialPageRoute(builder: (context) {
+                  return SafeArea(
+                    child: ZegoUIKitPrebuiltCall(
+                      appID: prebuiltData!.appID,
+                      appSign: prebuiltData.appSign,
+                      userID: prebuiltData.userID,
+                      userName: prebuiltData.userName,
+                      callID: prebuiltData.callID,
+                      config: prebuiltData.config,
+                      onDispose: prebuiltData.onDispose,
+                      controller: prebuiltData.controller,
+                    ),
+                  );
+                }),
+              );
+            } catch (e) {
+              ZegoLoggerService.logError(
+                'navigator push to call page exception:$e',
+                tag: 'call',
+                subTag: 'overlay page',
+              );
+            }
           },
           child: ValueListenableBuilder<String?>(
             valueListenable: activeUserIDNotifier,

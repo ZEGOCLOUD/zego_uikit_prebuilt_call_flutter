@@ -8,6 +8,11 @@
 .buildlog/
 .history
 .svn/
+/test/*
+example/test/*
+dgph
+pubspec_overrides.yaml
+
 
 # IntelliJ related
 *.iml

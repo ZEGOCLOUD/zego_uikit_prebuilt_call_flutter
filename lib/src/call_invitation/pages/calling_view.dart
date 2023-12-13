@@ -44,7 +44,7 @@ class ZegoCallingInviterView extends StatelessWidget {
       builder: (context, child) {
         return Stack(
           children: [
-            backgroundView(),
+            backgroundView(context),
             surface(context),
           ],
         );
@@ -52,12 +52,23 @@ class ZegoCallingInviterView extends StatelessWidget {
     );
   }
 
-  Widget backgroundView() {
+  Widget backgroundView(BuildContext context) {
     if (ZegoCallType.videoCall == invitationType) {
       return ZegoAudioVideoView(user: inviter);
     }
 
-    return backgroundImage();
+    return LayoutBuilder(builder: (context, constraints) {
+      return callInvitationConfig.uiConfig?.callingBackgroundBuilder?.call(
+            context,
+            Size(constraints.maxWidth, constraints.maxHeight),
+            ZegoCallingBackgroundBuilderInfo(
+              inviter: inviter,
+              invitees: invitees,
+              callType: invitationType,
+            ),
+          ) ??
+          backgroundImage();
+    });
   }
 
   Widget surface(BuildContext context) {
@@ -77,8 +88,12 @@ class ZegoCallingInviterView extends StatelessWidget {
           child: ValueListenableBuilder(
             valueListenable: ZegoUIKitUserPropertiesNotifier(firstInvitee),
             builder: (context, _, __) {
-              return avatarBuilder
-                      ?.call(context, Size(200.zR, 200.zR), firstInvitee, {}) ??
+              return avatarBuilder?.call(
+                    context,
+                    Size(200.zR, 200.zR),
+                    firstInvitee,
+                    {},
+                  ) ??
                   circleAvatar(firstInvitee.name);
             },
           ),
@@ -154,7 +169,19 @@ class ZegoCallingInviteeView extends StatelessWidget {
       builder: (context, child) {
         return Stack(
           children: [
-            backgroundImage(),
+            LayoutBuilder(builder: (context, constraints) {
+              return callInvitationConfig.uiConfig?.callingBackgroundBuilder
+                      ?.call(
+                    context,
+                    Size(constraints.maxWidth, constraints.maxHeight),
+                    ZegoCallingBackgroundBuilderInfo(
+                      inviter: inviter,
+                      invitees: invitees,
+                      callType: invitationType,
+                    ),
+                  ) ??
+                  backgroundImage();
+            }),
             surface(context),
           ],
         );
@@ -218,7 +245,6 @@ class ZegoCallingInviteeView extends StatelessWidget {
           pageManager: pageManager,
           callInvitationConfig: callInvitationConfig,
           inviter: inviter,
-          invitees: invitees,
           invitationType: invitationType,
           showDeclineButton: showDeclineButton,
         ),

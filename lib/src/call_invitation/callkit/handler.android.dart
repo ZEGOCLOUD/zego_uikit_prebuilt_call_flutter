@@ -624,7 +624,6 @@ Future<void> _uninstallSignalingPlugin() async {
 
 void _onThroughMessage(
   ZPNsMessage message,
-  Function? iOSOnThroughMessageReceivedCompletion,
 ) {
   ZegoLoggerService.logInfo(
     'on through message: '

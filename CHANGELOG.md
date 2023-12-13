@@ -1,3 +1,10 @@
+## 3.18.0
+- Support setting background in invitation views, you can use **uiConfig.callingBackgroundBuilder** in **ZegoUIKitPrebuiltCallInvitationService.init**.
+
+## 3.17.11
+
+- Update dependency.
+
 ## 3.17.10
 
 - Update dependency.
