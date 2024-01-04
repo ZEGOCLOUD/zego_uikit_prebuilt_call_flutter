@@ -1,16 +1,13 @@
-part of '../call_invitation_service.dart';
+part of '../service.dart';
 
 /// @nodoc
-mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
+mixin CallInvitationServiceCallKit {
   bool _callKitServiceInit = false;
 
   ZegoInvitationPageManager? _myPageManager;
-  ZegoNotificationManager? _notificationManager;
 
   Future<void> _initCallKit({
     required ZegoInvitationPageManager pageManager,
-    required bool showDeclineButton,
-    required ZegoCallInvitationConfig callInvitationConfig,
     ZegoAndroidNotificationConfig? androidNotificationConfig,
   }) async {
     if (_callKitServiceInit) {
@@ -22,6 +19,12 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
 
       return;
     }
+
+    ZegoLoggerService.logInfo(
+      'callkit service init',
+      tag: 'call',
+      subTag: 'callkit service',
+    );
 
     _callKitServiceInit = true;
 
@@ -68,13 +71,14 @@ mixin ZegoUIKitPrebuiltCallInvitationServiceCallKit {
       return;
     }
 
-    _callKitServiceInit = false;
-
     ZegoLoggerService.logInfo(
-      'unregister callkit incoming event listener',
+      'callkit service uninit',
       tag: 'call',
       subTag: 'callkit service',
     );
+
+    _callKitServiceInit = false;
+
     FlutterCallkitIncoming.onEvent.listen(null);
 
     clearOfflineCallKitCallID();

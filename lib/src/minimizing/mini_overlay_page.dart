@@ -8,11 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
 
 /// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
@@ -31,6 +34,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.padding = 0.0,
     this.showDevices = true,
     this.showUserName = true,
+    this.showLeaveButton = true,
+    this.leaveButtonIcon,
+    this.foreground,
     this.builder,
     this.foregroundBuilder,
     this.backgroundBuilder,
@@ -45,12 +51,19 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final Offset topLeft;
   final bool showDevices;
   final bool showUserName;
-  final BuildContext Function() contextQuery;
 
+  final bool showLeaveButton;
+  final Widget? leaveButtonIcon;
+
+  final Widget? foreground;
   final Widget Function(ZegoUIKitUser? activeUser)? builder;
+
   final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
   final ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
   final ZegoAvatarBuilder? avatarBuilder;
+
+  /// You need to return the `context` of NavigatorState in this callback
+  final BuildContext Function() contextQuery;
 
   @override
   ZegoUIKitPrebuiltCallMiniOverlayPageState createState() =>
@@ -75,6 +88,13 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Timer? activeUserTimer;
   final activeUserIDNotifier = ValueNotifier<String?>(null);
   final Map<String, List<double>> rangeSoundLevels = {};
+
+  Size get buttonArea => Size(itemSize.width * 0.3, itemSize.width * 0.3);
+
+  Size get buttonSize => Size(itemSize.width * 0.2, itemSize.width * 0.2);
+
+  ZegoUIKitPrebuiltCallMinimizeData? get minimizeData =>
+      ZegoUIKitPrebuiltCallController.instance.minimize.private.minimizeData;
 
   @override
   void initState() {
@@ -167,38 +187,10 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       case PrebuiltCallMiniOverlayPageState.minimizing:
         return GestureDetector(
           onTap: () {
-            final prebuiltData =
-                ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().prebuiltData;
-            assert(null != prebuiltData);
-
-            /// re-enter prebuilt call
-            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-                .changeState(PrebuiltCallMiniOverlayPageState.calling);
-
-            try {
-              Navigator.of(widget.contextQuery(), rootNavigator: true).push(
-                MaterialPageRoute(builder: (context) {
-                  return SafeArea(
-                    child: ZegoUIKitPrebuiltCall(
-                      appID: prebuiltData!.appID,
-                      appSign: prebuiltData.appSign,
-                      userID: prebuiltData.userID,
-                      userName: prebuiltData.userName,
-                      callID: prebuiltData.callID,
-                      config: prebuiltData.config,
-                      onDispose: prebuiltData.onDispose,
-                      controller: prebuiltData.controller,
-                    ),
-                  );
-                }),
-              );
-            } catch (e) {
-              ZegoLoggerService.logError(
-                'navigator push to call page exception:$e',
-                tag: 'call',
-                subTag: 'overlay page',
-              );
-            }
+            ZegoUIKitPrebuiltCallController.instance.minimize.restore(
+              widget.contextQuery(),
+              rootNavigator: true,
+            );
           },
           child: ValueListenableBuilder<String?>(
             valueListenable: activeUserIDNotifier,
@@ -222,26 +214,54 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               foregroundBuilder: widget.foregroundBuilder,
               backgroundBuilder: widget.backgroundBuilder,
               avatarConfig: ZegoAvatarConfig(
-                builder: widget.avatarBuilder ??
-                    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-                        .prebuiltData
-                        ?.config
-                        .avatarBuilder,
+                builder:
+                    widget.avatarBuilder ?? minimizeData?.config.avatarBuilder,
                 soundWaveColor: widget.soundWaveColor,
               ),
             ),
             devices(activeUser),
             userName(activeUser),
             durationTimeBoard(),
+            widget.foreground ?? Container(),
+            widget.showLeaveButton
+                ? Positioned(
+                    top: 10.zR,
+                    right: 10.zR,
+                    child: leaveButton(),
+                  )
+                : Container(),
           ],
         );
+  }
+
+  Widget leaveButton() {
+    return ZegoTextIconButton(
+      buttonSize: buttonArea,
+      iconSize: buttonSize,
+      icon: ButtonIcon(
+        icon: widget.leaveButtonIcon ??
+            Image(
+              image: PrebuiltCallImage.asset(
+                InvitationStyleIconUrls.toolbarBottomCancel,
+              ).image,
+              fit: BoxFit.fill,
+            ),
+        backgroundColor: Colors.white,
+      ),
+      onPressed: () {
+        ZegoUIKitPrebuiltCallController.instance.hangUp(
+          context,
+          showConfirmation: false,
+        );
+      },
+    );
   }
 
   Widget userName(ZegoUIKitUser? activeUser) {
     return widget.showUserName
         ? Positioned(
-            right: 5,
-            top: 8,
+            left: 2,
+            top: 10,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -283,12 +303,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   Widget durationTimeBoard() {
-    if (!(ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-            .prebuiltData
-            ?.config
-            .durationConfig
-            .isVisible ??
-        true)) {
+    if (!(minimizeData?.config.durationConfig.isVisible ?? true)) {
       return Container();
     }
 
@@ -313,18 +328,10 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return Container();
     }
 
-    final cameraEnabled = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-            .prebuiltData
-            ?.config
-            .bottomMenuBarConfig
-            .buttons
+    final cameraEnabled = minimizeData?.config.bottomMenuBarConfig.buttons
             .contains(ZegoMenuBarButtonName.toggleCameraButton) ??
         true;
-    final microphoneEnabled = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-            .prebuiltData
-            ?.config
-            .bottomMenuBarConfig
-            .buttons
+    final microphoneEnabled = minimizeData?.config.bottomMenuBarConfig.buttons
             .contains(ZegoMenuBarButtonName.toggleMicrophoneButton) ??
         true;
     return Positioned(
@@ -356,8 +363,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
                 }
               : null,
           child: Container(
-            width: itemSize.width * 0.3,
-            height: itemSize.width * 0.3,
+            width: buttonArea.width,
+            height: buttonArea.height,
             decoration: BoxDecoration(
               color: isCameraEnabled
                   ? controlBarButtonCheckedBackgroundColor
@@ -367,8 +374,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             child: Align(
               alignment: Alignment.center,
               child: SizedBox(
-                width: itemSize.width * 0.2,
-                height: itemSize.width * 0.2,
+                width: buttonSize.width,
+                height: buttonSize.height,
                 child: uikitImage(
                   isCameraEnabled ? toolbarCameraNormal : toolbarCameraOff,
                 ),
@@ -395,8 +402,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
                 }
               : null,
           child: Container(
-            width: itemSize.width * 0.3,
-            height: itemSize.width * 0.3,
+            width: buttonArea.width,
+            height: buttonArea.height,
             decoration: BoxDecoration(
               color: isMicrophoneEnabled
                   ? controlBarButtonCheckedBackgroundColor
@@ -406,8 +413,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             child: Align(
               alignment: Alignment.center,
               child: SizedBox(
-                width: itemSize.width * 0.2,
-                height: itemSize.width * 0.2,
+                width: buttonSize.width,
+                height: buttonSize.height,
                 child: uikitImage(
                   isMicrophoneEnabled ? toolbarMicNormal : toolbarMicOff,
                 ),
@@ -500,11 +507,15 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     if (ZegoUIKit().getRemoteUsers().isEmpty) {
       //  remote users is empty
 
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-          .prebuiltData
-          ?.config
-          .onOnlySelfInRoom
-          ?.call(context);
+      minimizeData?.events.onCallEnd?.call(
+          ZegoUIKitCallEndEvent(
+            reason: ZegoUIKitCallEndReason.remoteHangUp,
+          ), () {
+        /// now is minimizing state, not need to navigate, just switch to idle
+        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+          PrebuiltCallMiniOverlayPageState.idle,
+        );
+      });
     }
   }
 

@@ -1,3 +1,23 @@
+## 4.0.0
+
+The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
+
+Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
+
+💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html) 
+
+## 3.18.4
+
+- Update dependency.
+
+## 3.18.3
+
+- Fix the issue of video shaking caused by chat input.
+
+## 3.18.2
+
+- Fix the issue where the user window disappears after both the camera and microphone are turned off
+
 ## 3.18.1
 
 - Fix the issue of setting the icon for message offline notifications failure.

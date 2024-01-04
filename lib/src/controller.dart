@@ -3,6 +3,7 @@ import 'dart:convert';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
@@ -10,41 +11,61 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/internal/controller_p.dart';
+import 'call_invitation/callkit/background_service.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/invitation.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/invitation.private.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/screen_sharing.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/minimize.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/minimize.private.dart';
+
+part 'package:zego_uikit_prebuilt_call/src/controller/private.dart';
 
 /// Used to control the call functionality.
-/// If the default call UI and interactions do not meet your requirements, you can use this [ZegoUIKitPrebuiltCallController] to actively control the business logic.
-/// This class is used by setting the [controller] parameter in the constructor of [ZegoUIKitPrebuiltCall].
 ///
-/// If you use `call invitation`, you can make it effective by setting the [controller] parameter in the [init] method of [ZegoUIKitPrebuiltCallInvitationService].
+/// [ZegoUIKitPrebuiltCallController] is a **singleton instance** class,
+/// you can directly invoke it by ZegoUIKitPrebuiltCallController().
+///
+/// If the default call UI and interactions do not meet your requirements,
+/// you can use this [ZegoUIKitPrebuiltCallController] to actively control the business logic.
+///
+/// If you use `invitation` series API about, you must [init] by
+/// [ZegoUIKitPrebuiltCallInvitationService] firstly.
 class ZegoUIKitPrebuiltCallController
-    with ZegoUIKitPrebuiltCallControllerPrivate {
-  /// This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
-  /// You need to provide the user's ID [userID] to determine which user to perform the operation on.
-  /// By using a boolean value [isFullscreen], you can specify whether the user enters or exits full-screen mode.
-  void showScreenSharingViewInFullscreenMode(String userID, bool isFullscreen) {
-    screenSharingViewController.showScreenSharingViewInFullscreenMode(
-        userID, isFullscreen);
-  }
+    with
+        ZegoCallControllerScreenSharing,
+        ZegoCallControllerInvitation,
+        ZegoCallControllerMinimizing,
+        ZegoCallControllerPrivate {
+  factory ZegoUIKitPrebuiltCallController() => instance;
 
   /// This function is used to end the current call.
   /// You can pass the context [context] for any necessary pop-ups or page transitions.
   /// By using the [showConfirmation] parameter, you can control whether to display a confirmation dialog to confirm ending the call.
   /// This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the [onHangUpConfirmation] and [onHangUp] settings in the config.
+  ///
+  /// if you want hangUp in minimize state, please call [minimize.hangUp]
   Future<bool> hangUp(
     BuildContext context, {
     bool showConfirmation = false,
   }) async {
-    if (null == prebuiltConfig) {
+    if (null == private.prebuiltConfig) {
       ZegoLoggerService.logInfo(
         'hang up, config is null',
         tag: 'call',
@@ -54,7 +75,7 @@ class ZegoUIKitPrebuiltCallController
       return false;
     }
 
-    if (isHangUpRequestingNotifier.value) {
+    if (private.isHangUpRequestingNotifier.value) {
       ZegoLoggerService.logInfo(
         'hang up, is hang up requesting...',
         tag: 'call',
@@ -69,13 +90,14 @@ class ZegoUIKitPrebuiltCallController
       tag: 'call',
       subTag: 'controller',
     );
-    isHangUpRequestingNotifier.value = true;
 
     if (showConfirmation) {
+      private.isHangUpRequestingNotifier.value = true;
+
       ///  if there is a user-defined event before the click,
       ///  wait the synchronize execution result
       final canHangUp =
-          await prebuiltConfig?.onHangUpConfirmation?.call(context) ?? true;
+          await private.events?.onHangUpConfirmation?.call(context) ?? true;
       if (!canHangUp) {
         ZegoLoggerService.logInfo(
           'hang up, reject',
@@ -83,7 +105,7 @@ class ZegoUIKitPrebuiltCallController
           subTag: 'controller',
         );
 
-        isHangUpRequestingNotifier.value = false;
+        private.isHangUpRequestingNotifier.value = false;
 
         return false;
       }
@@ -98,20 +120,37 @@ class ZegoUIKitPrebuiltCallController
       return 0 == result.errorCode;
     });
 
+    final callEndEvent = ZegoUIKitCallEndEvent(
+      reason: ZegoUIKitCallEndReason.localHangUp,
+    );
+    defaultAction() {
+      private.defaultCallEndEvent(callEndEvent, context, true);
+    }
+
+    if (private.events?.onCallEnd != null) {
+      private.events?.onCallEnd?.call(callEndEvent, defaultAction);
+    } else {
+      defaultAction.call();
+    }
+
     ZegoLoggerService.logInfo(
       'hang up, restore mini state by hang up',
       tag: 'call',
       subTag: 'controller',
     );
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-        .changeState(PrebuiltCallMiniOverlayPageState.idle);
+    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+      PrebuiltCallMiniOverlayPageState.idle,
+    );
 
-    if (prebuiltConfig?.onHangUp != null) {
-      prebuiltConfig?.onHangUp?.call();
-    } else {
-      /// default behaviour if hand up is null, back to previous page
-      Navigator.of(context).pop();
+    private.uninitByPrebuilt();
+    invitation.private.uninitByPrebuilt();
+    minimize.private.uninitByPrebuilt();
+
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().getBeautyPlugin().uninit();
     }
+
+    ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
     ZegoLoggerService.logInfo(
       'hang up, finished',
@@ -122,161 +161,14 @@ class ZegoUIKitPrebuiltCallController
     return result;
   }
 
-  /// This function is used to send call invitations to one or more specified users.
-  ///
-  /// You can provide a list of target users [invitees] and specify whether it is a video call [isVideoCall]. If it is not a video call, it defaults to an audio call.
-  /// You can also pass additional custom data [customData] to the invitees.
-  /// Additionally, you can specify the call ID [callID]. If not provided, the system will generate one automatically based on certain rules.
-  /// If you want to set a ringtone for offline call invitations, set [resourceID] to a value that matches the push resource ID in the ZEGOCLOUD management console.
-  /// Note that the [resourceID] setting will only take effect when [notifyWhenAppRunningInBackgroundOrQuit] is true.
-  /// You can also set the notification title [notificationTitle] and message [notificationMessage].
-  /// If the call times out, the call will automatically hang up after the specified timeout duration [timeoutSeconds] (in seconds).
-  ///
-  /// Note that this function behaves the same as [ZegoSendCallInvitationButton].
-  Future<bool> sendCallInvitation({
-    required List<ZegoCallUser> invitees,
-    required bool isVideoCall,
-    String customData = '',
-    String? callID,
-    String? resourceID,
-    String? notificationTitle,
-    String? notificationMessage,
-    int timeoutSeconds = 60,
-  }) async {
+  ZegoUIKitPrebuiltCallController._internal() {
     ZegoLoggerService.logInfo(
-      'send call invitation',
+      'ZegoUIKitPrebuiltCallController create',
       tag: 'call',
-      subTag: 'controller',
-    );
-
-    if (!_checkParamValid()) {
-      return false;
-    }
-
-    if (!_checkSignalingPlugin()) {
-      return false;
-    }
-
-    if (!_checkInCalling()) {
-      return false;
-    }
-
-    final currentCallID = callID ??
-        'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-    if (_pageManager?.callingMachine?.isPagePushed ?? false) {
-      return _waitUntil(() {
-        if (null == _pageManager?.callingMachine) {
-          return true;
-        }
-        return _pageManager!.callingMachine!.isPagePushed;
-      }).then((value) {
-        return _sendInvitation(
-          callees: invitees,
-          isVideoCall: isVideoCall,
-          callID: currentCallID,
-          customData: customData,
-          resourceID: resourceID,
-          timeoutSeconds: timeoutSeconds,
-          notificationTitle: notificationTitle,
-          notificationMessage: notificationMessage,
-        );
-      });
-    }
-
-    return _sendInvitation(
-      callees: invitees,
-      isVideoCall: isVideoCall,
-      callID: currentCallID,
-      customData: customData,
-      resourceID: resourceID,
-      timeoutSeconds: timeoutSeconds,
-      notificationTitle: notificationTitle,
-      notificationMessage: notificationMessage,
+      subTag: 'call controller(${identityHashCode(this)})',
     );
   }
 
-  Future<bool> cancelCallInvitation({
-    required List<ZegoCallUser> callees,
-    String customData = '',
-  }) async {
-    ZegoLoggerService.logInfo(
-      'cancel call invitation',
-      tag: 'call',
-      subTag: 'controller',
-    );
-
-    if (!_checkParamValid()) {
-      return false;
-    }
-
-    if (!_checkSignalingPlugin()) {
-      return false;
-    }
-
-    if (!_checkInNotCalling()) {
-      return false;
-    }
-
-    return _cancelInvitation(
-      callees: callees,
-      customData: customData,
-    );
-  }
-
-  Future<bool> rejectCallInvitation({
-    String customData = '',
-  }) async {
-    ZegoLoggerService.logInfo(
-      'reject call invitation',
-      tag: 'call',
-      subTag: 'controller',
-    );
-
-    if (!_checkParamValid()) {
-      return false;
-    }
-
-    if (!_checkSignalingPlugin()) {
-      return false;
-    }
-
-    if (!_checkInCalling()) {
-      return false;
-    }
-
-    return _rejectInvitation(
-      callerID: _pageManager?.invitationData.inviter?.id ?? '',
-      customData: customData,
-    );
-  }
-
-  Future<bool> acceptCallInvitation({
-    String customData = '',
-  }) async {
-    ZegoLoggerService.logInfo(
-      'accept call invitation',
-      tag: 'call',
-      subTag: 'controller',
-    );
-
-    if (!_checkParamValid()) {
-      return false;
-    }
-
-    if (!_checkSignalingPlugin()) {
-      return false;
-    }
-
-    if (!_checkInCalling()) {
-      return false;
-    }
-
-    return _acceptInvitation(
-      callerID: _pageManager?.invitationData.inviter?.id ?? '',
-      customData: customData,
-    );
-  }
-
-  bool get isMinimizing =>
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().isMinimizing;
+  static final ZegoUIKitPrebuiltCallController instance =
+      ZegoUIKitPrebuiltCallController._internal();
 }

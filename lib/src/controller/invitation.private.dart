@@ -1,29 +1,60 @@
 part of 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 /// @nodoc
-mixin ZegoUIKitPrebuiltCallControllerPrivate {
-  /// Screen sharing related interfaces.
-  final screenSharingViewController = ZegoScreenSharingViewController();
+mixin ZegoCallControllerInvitationPrivate {
+  final _private = ZegoCallControllerInvitationPrivateImpl();
 
-  /// Whether the call hang-up operation is in progress
-  /// such as clicking the close button in the upper right corner or calling the `hangUp` function of the controller.
-  /// If it is not handled completely, it is considered as in progress.
-  final ValueNotifier<bool> isHangUpRequestingNotifier =
-      ValueNotifier<bool>(false);
+  /// Don't call that
+  ZegoCallControllerInvitationPrivateImpl get private => _private;
+}
+
+/// @nodoc
+/// Here are the APIs related to invitation.
+class ZegoCallControllerInvitationPrivateImpl {
+  ZegoInvitationPageManager? get _pageManager =>
+      ZegoCallInvitationInternalInstance.instance.pageManager;
+
+  ZegoUIKitPrebuiltCallInvitationData? get _callInvitationConfig =>
+      ZegoCallInvitationInternalInstance.instance.callInvitationData;
+
+  ZegoCallInvitationInnerText? get _innerText =>
+      _callInvitationConfig?.innerText;
 
   /// ZegoUIKitPrebuiltCall's config
   ZegoUIKitPrebuiltCallConfig? get prebuiltConfig => _prebuiltConfig;
 
   ZegoUIKitPrebuiltCallConfig? _prebuiltConfig;
 
-  ZegoInvitationPageManager? get _pageManager =>
-      ZegoCallInvitationInternalInstance.instance.pageManager;
+  ZegoUIKitPrebuiltCallEvents? get events => _events;
 
-  ZegoCallInvitationConfig? get _callInvitationConfig =>
-      ZegoCallInvitationInternalInstance.instance.callInvitationConfig;
+  ZegoUIKitPrebuiltCallEvents? _events;
 
-  ZegoCallInvitationInnerText? get _innerText =>
-      _callInvitationConfig?.innerText;
+  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
+  void initByPrebuilt({
+    required ZegoUIKitPrebuiltCallConfig prebuiltConfig,
+    required ZegoUIKitPrebuiltCallEvents? events,
+  }) {
+    ZegoLoggerService.logInfo(
+      'init by prebuilt',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
+    );
+
+    _prebuiltConfig = prebuiltConfig;
+    _events = events;
+  }
+
+  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
+  void uninitByPrebuilt() {
+    ZegoLoggerService.logInfo(
+      'un-init by prebuilt',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
+    );
+
+    _prebuiltConfig = null;
+    _events = null;
+  }
 
   Future<bool> _sendInvitation({
     required List<ZegoCallUser> callees,
@@ -46,7 +77,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
       'notificationMessage:$notificationMessage, '
       'timeoutSeconds:$timeoutSeconds',
       tag: 'call',
-      subTag: 'controller_p',
+      subTag: 'controller.invitation.p',
     );
 
     return ZegoUIKit()
@@ -61,7 +92,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
           type: ZegoCallTypeExtension(
             isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
           ).value,
-          data: InvitationInternalData(
+          data: InvitationSendRequestData(
             callID: callID,
             invitees: callees
                 .map((invitee) => ZegoUIKitUser(
@@ -125,18 +156,17 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     ZegoLoggerService.logInfo(
       'cancel call invitation, callees:$callees',
       tag: 'call',
-      subTag: 'controller_p',
+      subTag: 'controller.invitation.p',
     );
 
     return ZegoUIKit()
         .getSignalingPlugin()
         .cancelInvitation(
           invitees: callees.map((e) => e.id).toList(),
-          data: const JsonEncoder().convert({
-            'call_id': _pageManager?.currentCallID ?? '',
-            messageTypePayloadKey: BackgroundMessageType.cancelInvitation.text,
-            'custom_data': customData,
-          }),
+          data: InvitationCancelRequestData(
+            callID: _pageManager?.currentCallID ?? '',
+            customData: customData,
+          ).toJson(),
         )
         .then((result) async {
       _pageManager?.onLocalCancelInvitation(
@@ -156,7 +186,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     ZegoLoggerService.logInfo(
       'reject call invitation, callerID:$callerID',
       tag: 'call',
-      subTag: 'controller_p',
+      subTag: 'controller.invitation.p',
     );
 
     _pageManager?.hideInvitationTopSheet();
@@ -165,10 +195,10 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
         .getSignalingPlugin()
         .refuseInvitation(
           inviterID: callerID,
-          data: const JsonEncoder().convert({
-            'reason': 'decline',
-            'custom_data': customData,
-          }),
+          data: InvitationRejectRequestData(
+            reason: CallInvitationProtocolKey.refuseByDecline,
+            customData: customData,
+          ).toJson(),
         )
         .then((result) {
       _pageManager?.onLocalRefuseInvitation(
@@ -187,7 +217,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
     ZegoLoggerService.logInfo(
       'accept call invitation, callerID:$callerID',
       tag: 'call',
-      subTag: 'controller_p',
+      subTag: 'controller.invitation.p',
     );
 
     _pageManager?.hideInvitationTopSheet();
@@ -196,9 +226,9 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
         .getSignalingPlugin()
         .acceptInvitation(
           inviterID: callerID,
-          data: const JsonEncoder().convert({
-            'custom_data': customData,
-          }),
+          data: InvitationAcceptRequestData(
+            customData: customData,
+          ).toJson(),
         )
         .then((result) {
       _pageManager?.onLocalAcceptInvitation(
@@ -234,7 +264,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
       ZegoLoggerService.logInfo(
         'param is invalid, page manager:$_pageManager, invitation config:$_callInvitationConfig',
         tag: 'call',
-        subTag: 'controller',
+        subTag: 'controller.invitation.p',
       );
 
       return false;
@@ -249,7 +279,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
       ZegoLoggerService.logError(
         'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}',
         tag: 'call',
-        subTag: 'controller',
+        subTag: 'controller.invitation.p',
       );
       return false;
     }
@@ -265,7 +295,7 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
       ZegoLoggerService.logInfo(
         'in calling now, $currentState',
         tag: 'call',
-        subTag: 'controller',
+        subTag: 'controller.invitation.p',
       );
       return false;
     }
@@ -283,35 +313,11 @@ mixin ZegoUIKitPrebuiltCallControllerPrivate {
       ZegoLoggerService.logInfo(
         'not in calling now, $currentState',
         tag: 'call',
-        subTag: 'controller',
+        subTag: 'controller.invitation.p',
       );
       return false;
     }
 
     return true;
-  }
-
-  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
-  void initByPrebuilt({required ZegoUIKitPrebuiltCallConfig prebuiltConfig}) {
-    ZegoLoggerService.logInfo(
-      'init by prebuilt',
-      tag: 'call',
-      subTag: 'controller_p',
-    );
-
-    _prebuiltConfig = prebuiltConfig;
-  }
-
-  /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
-  void uninitByPrebuilt() {
-    ZegoLoggerService.logInfo(
-      'un-init by prebuilt',
-      tag: 'call',
-      subTag: 'controller_p',
-    );
-
-    isHangUpRequestingNotifier.value = false;
-
-    _prebuiltConfig = null;
   }
 }

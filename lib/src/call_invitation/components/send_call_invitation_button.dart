@@ -8,9 +8,9 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
@@ -142,8 +142,8 @@ class _ZegoSendCallInvitationButtonState
   ZegoInvitationPageManager? get pageManager =>
       ZegoCallInvitationInternalInstance.instance.pageManager;
 
-  ZegoCallInvitationConfig? get callInvitationConfig =>
-      ZegoCallInvitationInternalInstance.instance.callInvitationConfig;
+  ZegoUIKitPrebuiltCallInvitationData? get callInvitationConfig =>
+      ZegoCallInvitationInternalInstance.instance.callInvitationData;
 
   ZegoCallInvitationInnerText? get innerText => callInvitationConfig?.innerText;
 
@@ -188,7 +188,7 @@ class _ZegoSendCallInvitationButtonState
         return user.id;
       }).toList(),
       timeoutSeconds: widget.timeoutSeconds,
-      data: InvitationInternalData(
+      data: InvitationSendRequestData(
         callID: callIDNotifier.value,
         invitees: List.from(widget.invitees),
         timeout: widget.timeoutSeconds,
@@ -252,7 +252,8 @@ class _ZegoSendCallInvitationButtonState
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
       ZegoLoggerService.logError(
-        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}',
+        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
+        'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin first',
         tag: 'call',
         subTag: 'start call button',
       );

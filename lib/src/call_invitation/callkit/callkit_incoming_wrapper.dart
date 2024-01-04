@@ -1,4 +1,5 @@
 // Package imports:
+
 import 'package:flutter_callkit_incoming_yoer/entities/android_params.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/ios_params.dart';
@@ -6,12 +7,13 @@ import 'package:flutter_callkit_incoming_yoer/entities/notification_params.dart'
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 
 /// @nodoc
 const String callkitCalIDCacheKey = 'callkit_call_id';
@@ -41,7 +43,7 @@ const String callkitParamsCacheKey = 'callkit_params';
 Future<CallKitParams> _makeCallKitParam({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
-  required InvitationInternalData invitationInternalData,
+  required InvitationSendRequestData invitationSendRequestData,
   String? title,
   String? body,
   String? ringtonePath,
@@ -65,7 +67,7 @@ Future<CallKitParams> _makeCallKitParam({
   if (tempBody.isEmpty) {
     tempBody = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
             CallKitInnerVariable.callIDVisibility.defaultValue)
-        ? invitationInternalData.callID
+        ? invitationSendRequestData.callID
         : '';
   }
 
@@ -78,7 +80,7 @@ Future<CallKitParams> _makeCallKitParam({
     handle: tempBody,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
-    duration: invitationInternalData.timeout * 1000,
+    duration: invitationSendRequestData.timeout * 1000,
     textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
         CallKitInnerVariable.textAccept.defaultValue,
     textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
@@ -136,7 +138,7 @@ Future<CallKitParams> _makeCallKitParam({
 Future<void> showCallkitIncoming({
   required ZegoUIKitUser? caller,
   required ZegoCallType callType,
-  required InvitationInternalData invitationInternalData,
+  required InvitationSendRequestData invitationSendRequestData,
   String? ringtonePath,
   String? title,
   String? body,
@@ -145,7 +147,7 @@ Future<void> showCallkitIncoming({
   final callKitParam = await _makeCallKitParam(
     caller: caller,
     callType: callType,
-    invitationInternalData: invitationInternalData,
+    invitationSendRequestData: invitationSendRequestData,
     ringtonePath: ringtonePath,
     title: title,
     body: body,
@@ -154,7 +156,7 @@ Future<void> showCallkitIncoming({
 
   ZegoLoggerService.logInfo(
     'show callkit incoming, inviter name:${caller?.name}, call type:$callType, '
-    'data:${invitationInternalData.toJson()}, '
+    'data:${invitationSendRequestData.toJson()}, '
     'callKitParam:${callKitParam.toJson()}',
     tag: 'call',
     subTag: 'callkit',

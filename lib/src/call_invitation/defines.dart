@@ -28,30 +28,48 @@ typedef ZegoCallingBackgroundBuilder = Widget? Function(
 );
 
 class ZegoCallInvitationUIConfig {
-  const ZegoCallInvitationUIConfig({
+  ZegoCallInvitationUIConfig({
     this.callingBackgroundBuilder,
-    // this.showDeclineButton = true,
-    // this.showCancelInvitationButton = true,
+    this.showDeclineButton = true,
+    this.showCancelInvitationButton = true,
   });
 
-  // bool showDeclineButton;
-  // bool showCancelInvitationButton;
-  final ZegoCallingBackgroundBuilder? callingBackgroundBuilder;
+  /// whether to display the reject button, default is true
+  bool showDeclineButton;
+
+  /// whether to display the invitation cancel button, default is true
+  bool showCancelInvitationButton;
+
+  ///
+  ZegoCallingBackgroundBuilder? callingBackgroundBuilder;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationUIConfig:{'
+        'showDeclineButton:$showDeclineButton, '
+        'showCancelInvitationButton:$showCancelInvitationButton, '
+        'callingBackgroundBuilder:$callingBackgroundBuilder, '
+        '}';
+  }
 }
 
-// class ZegoCallInvitationNotificationConfig {
-//   ZegoCallInvitationNotificationConfig({
-//     this.iOSNotificationConfig,
-//     this.androidNotificationConfig,
-//     this.appName = '',
-//     this.notifyWhenAppRunningInBackgroundOrQuit = true,
-//   });
-//
-//   String appName;
-//   bool notifyWhenAppRunningInBackgroundOrQuit;
-//   ZegoIOSNotificationConfig? iOSNotificationConfig;
-//   ZegoAndroidNotificationConfig? androidNotificationConfig;
-// }
+class ZegoCallInvitationNotificationConfig {
+  ZegoCallInvitationNotificationConfig({
+    this.iOSNotificationConfig,
+    this.androidNotificationConfig,
+  });
+
+  ZegoIOSNotificationConfig? iOSNotificationConfig;
+  ZegoAndroidNotificationConfig? androidNotificationConfig;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationNotificationConfig:{'
+        'androidNotificationConfig:$androidNotificationConfig, '
+        'iOSNotificationConfig:$iOSNotificationConfig, '
+        '}';
+  }
+}
 
 /// ringtone config
 class ZegoRingtoneConfig {
@@ -64,6 +82,15 @@ class ZegoRingtoneConfig {
     this.incomingCallPath,
     this.outgoingCallPath,
   });
+
+  @override
+  String toString() {
+    return 'ZegoRingtoneConfig:{'
+        'packageName:$packageName, '
+        'incomingCallPath:$incomingCallPath, '
+        'outgoingCallPath:$outgoingCallPath, '
+        '}';
+  }
 }
 
 /// Call Type
@@ -133,8 +160,13 @@ class ZegoCallUser {
 
 /// iOS notification config
 class ZegoIOSNotificationConfig {
+  String appName;
+
   /// is iOS sandbox or not
   bool? isSandboxEnvironment;
+
+  ///
+  ZegoSignalingPluginMultiCertificate certificateIndex;
 
   /// Customizing the icon for the iOS CallKit lock screen interface
   ///
@@ -152,14 +184,21 @@ class ZegoIOSNotificationConfig {
   String systemCallingIconName;
 
   ZegoIOSNotificationConfig({
+    this.appName = '',
+    this.certificateIndex =
+        ZegoSignalingPluginMultiCertificate.firstCertificate,
     this.isSandboxEnvironment,
     this.systemCallingIconName = '',
   });
 
   @override
   String toString() {
-    return 'isSandboxEnvironment:$isSandboxEnvironment, '
-        'systemCallingIconName:$systemCallingIconName ';
+    return 'ZegoIOSNotificationConfig:{'
+        'appName:$appName, '
+        'certificateIndex:$certificateIndex, '
+        'isSandboxEnvironment:$isSandboxEnvironment, '
+        'systemCallingIconName:$systemCallingIconName, '
+        '}';
   }
 }
 
@@ -217,4 +256,21 @@ class ZegoAndroidNotificationConfig {
     this.messageIcon = '',
     this.messageSound = '',
   });
+
+  @override
+  toString() {
+    return 'ZegoAndroidNotificationConfig:{'
+        'channelID:$channelID, '
+        'channelName:$channelName, '
+        'icon:$icon, '
+        'sound:$sound, '
+        'vibrate:$vibrate, '
+        'messageVibrate:$messageVibrate, '
+        'callIDVisibility:$callIDVisibility, '
+        'messageChannelID:$messageChannelID, '
+        'messageChannelName:$messageChannelName, '
+        'messageIcon:$messageIcon, '
+        'messageSound:$messageSound, '
+        '}';
+  }
 }

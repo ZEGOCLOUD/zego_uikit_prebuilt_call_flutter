@@ -1,7 +1,7 @@
-part of '../call_invitation_service.dart';
+part of '../service.dart';
 
 /// @nodoc
-mixin iOSCallKitService {
+mixin CallInvitationServiceIOSCallKit {
   ///
   bool _iOSCallKitServiceInit = false;
 
@@ -100,43 +100,6 @@ mixin iOSCallKitService {
       tag: 'call',
       subTag: 'iOS callkit service',
     );
-  }
-
-  ZegoIOSNotificationConfig _correctIOSNotificationConfig({
-    bool? isIOSSandboxEnvironment,
-    ZegoIOSNotificationConfig? iOSNotificationConfig,
-  }) {
-    var config = iOSNotificationConfig ?? ZegoIOSNotificationConfig();
-
-    if (isIOSSandboxEnvironment != null) {
-      ZegoLoggerService.logInfo(
-        'isIOSSandboxEnvironment is deprecated! please use iOSNotificationConfig.isSandboxEnvironment now',
-        tag: 'call',
-        subTag: 'call invitation service',
-      );
-      if (iOSNotificationConfig != null) {
-        config = iOSNotificationConfig;
-
-        /// copy isIOSSandboxEnvironment value to iOSNotificationConfig
-        if (config.isSandboxEnvironment != isIOSSandboxEnvironment) {
-          ///  not equal
-          config.isSandboxEnvironment = isIOSSandboxEnvironment;
-        }
-      } else {
-        /// use iOSNotificationConfig in context, isIOSSandboxEnvironment is deprecated
-        config = ZegoIOSNotificationConfig(
-          isSandboxEnvironment: isIOSSandboxEnvironment,
-        );
-      }
-
-      ZegoLoggerService.logInfo(
-        'update iOSNotificationConfig:$iOSNotificationConfig.',
-        tag: 'call',
-        subTag: 'call invitation service',
-      );
-    }
-
-    return config;
   }
 
   void _onCallkitProviderDidResetEvent(

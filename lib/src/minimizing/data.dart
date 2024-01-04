@@ -8,20 +8,21 @@ import 'package:flutter/material.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 /// @nodoc
-class ZegoUIKitPrebuiltCallData {
-  const ZegoUIKitPrebuiltCallData({
+class ZegoUIKitPrebuiltCallMinimizeData {
+  const ZegoUIKitPrebuiltCallMinimizeData({
     required this.appID,
     required this.appSign,
     required this.callID,
     required this.userID,
     required this.userName,
     required this.config,
+    required this.events,
     required this.isPrebuiltFromMinimizing,
     this.durationStartTime,
     this.onDispose,
-    this.controller,
   });
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
@@ -40,10 +41,9 @@ class ZegoUIKitPrebuiltCallData {
   final String userName;
 
   final ZegoUIKitPrebuiltCallConfig config;
+  final ZegoUIKitPrebuiltCallEvents events;
 
   final VoidCallback? onDispose;
-
-  final ZegoUIKitPrebuiltCallController? controller;
 
   final bool isPrebuiltFromMinimizing;
 

@@ -6,8 +6,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_machine.dart';
 
 /// Configuration for initializing the Call
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].
@@ -88,10 +86,6 @@ class ZegoUIKitPrebuiltCallConfig {
     this.foreground,
     this.background,
     this.hangUpConfirmDialogInfo,
-    this.onHangUpConfirmation,
-    this.onHangUp,
-    this.onOnlySelfInRoom,
-    this.onError,
     this.avatarBuilder,
     this.audioVideoContainerBuilder,
   })  : audioVideoViewConfig =
@@ -121,23 +115,6 @@ class ZegoUIKitPrebuiltCallConfig {
   /// The default value is `false`, but it will be set to `true` if the user is in a group call or video call.
   /// If this value is set to `false`, the system's default playback device, such as the earpiece or Bluetooth headset, will be used for audio playback.
   bool useSpeakerWhenJoining;
-
-  /// Configuration options for audio/video views.
-  ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
-
-  /// Configuration options for the top menu bar (toolbar).
-  /// You can use these options to customize the appearance and behavior of the top menu bar.
-  ZegoTopMenuBarConfig topMenuBarConfig;
-
-  /// Configuration options for the bottom menu bar (toolbar).
-  /// You can use these options to customize the appearance and behavior of the bottom menu bar.
-  ZegoBottomMenuBarConfig bottomMenuBarConfig;
-
-  /// Configuration related to the bottom member list, including displaying the member list, member list styles, and more.
-  ZegoMemberListConfig memberListConfig;
-
-  /// advance beauty config
-  ZegoBeautyPluginConfig? beautyConfig;
 
   /// Layout-related configuration. You can choose your layout here.
   ZegoLayout layout;
@@ -200,74 +177,42 @@ class ZegoUIKitPrebuiltCallConfig {
   ///
   ZegoAvatarBuilder? avatarBuilder;
 
-  /// Set advanced engine configuration, Used to enable advanced functions.
-  /// For details, please consult ZEGO technical support.
-  Map<String, String> advanceConfigs;
-
   /// Confirmation dialog information when hang up the call.
   /// If not set, clicking the exit button will directly exit the call.
   /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
   ZegoHangUpConfirmDialogInfo? hangUpConfirmDialogInfo;
-
-  /// Confirmation callback method before hang up the call.
-  ///
-  /// If you want to perform more complex business logic before exiting the call, such as updating some records to the backend, you can use the [onLeaveConfirmation] parameter to set it.
-  /// This parameter requires you to provide a callback method that returns an asynchronous result.
-  /// If you return true in the callback, the prebuilt page will quit and return to your previous page, otherwise it will be ignored.
-  Future<bool?> Function(BuildContext context)? onHangUpConfirmation;
-
-  /// This callback is triggered after you hang up the call, only receive to
-  /// the hang up user.
-  ///
-  /// The default behavior is to return to the previous page.
-  ///
-  /// If you override this callback, you must perform the page navigation
-  /// yourself to return to the previous page!!!
-  /// otherwise the user will remain on the current call page !!!!!
-  ///
-  /// You can perform business-related prompts or other actions in this callback.
-  /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
-  VoidCallback? onHangUp;
-
-  /// This callback is triggered when local user removed from call
-  ///
-  /// The default behavior is to return to the previous page.
-  ///
-  /// If you override this callback, you must perform the page navigation
-  /// yourself to return to the previous page!!!
-  /// otherwise the user will remain on the current call page !!!!!
-  ///
-  /// You can perform business-related prompts or other actions in this callback.
-  /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
-  Future<void> Function(String)? onMeRemovedFromRoom;
-
-  /// During the call, when the other party terminates the call, and then
-  /// only one person remains in the call, that the person will receive this callback.
-  ///
-  /// The default behavior is to return to the previous page.
-  ///
-  /// Callback function triggered when you are alone in the room.
-  ///
-  /// If you override this callback, you must perform the page navigation
-  /// yourself to return to the previous page!!!
-  /// otherwise the user will remain on the current call page !!!!!
-  ///
-  /// You can use this callback function to destroy the preset page and return to the previous page.
-  void Function(BuildContext context)? onOnlySelfInRoom;
-
-  /// Call timing configuration.
-  ZegoCallDurationConfig durationConfig;
 
   /// same as Flutter's Navigator's param
   /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
   /// Useful for pushing contents above all subsequent instances of [Navigator].
   bool rootNavigator;
 
+  /// Configuration options for audio/video views.
+  ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
+
+  /// Configuration options for the top menu bar (toolbar).
+  /// You can use these options to customize the appearance and behavior of the top menu bar.
+  ZegoTopMenuBarConfig topMenuBarConfig;
+
+  /// Configuration options for the bottom menu bar (toolbar).
+  /// You can use these options to customize the appearance and behavior of the bottom menu bar.
+  ZegoBottomMenuBarConfig bottomMenuBarConfig;
+
+  /// Configuration related to the bottom member list, including displaying the member list, member list styles, and more.
+  ZegoMemberListConfig memberListConfig;
+
+  /// advance beauty config
+  ZegoBeautyPluginConfig? beautyConfig;
+
+  /// Set advanced engine configuration, Used to enable advanced functions.
+  /// For details, please consult ZEGO technical support.
+  Map<String, String> advanceConfigs;
+
+  /// Call timing configuration.
+  ZegoCallDurationConfig durationConfig;
+
   /// Configuration related to the bottom-left message list.
   ZegoInRoomChatViewConfig chatViewConfig;
-
-  /// error stream
-  Function(ZegoUIKitError)? onError;
 }
 
 /// Configuration options for audio/video views.
@@ -532,6 +477,31 @@ class ZegoCallDurationConfig {
   });
 }
 
+/// Control options for the bottom-left message list.
+/// This class is used for the [chatViewConfig] property of [ZegoUIKitPrebuiltCallConfig].
+///
+/// If you want to customize chat messages, you can specify the [itemBuilder] in [ZegoInRoomMessageViewConfig].
+///
+/// Example:
+///
+/// ZegoInRoomMessageViewConfig(
+///   itemBuilder: (BuildContext context, ZegoRoomMessage message) {
+///     return ListTile(
+///       title: Text(message.message),
+///       subtitle: Text(message.user.id),
+///     );
+///   },
+/// );
+class ZegoInRoomChatViewConfig {
+  /// Use this to customize the style and content of each chat message list item.
+  /// For example, you can modify the background color, opacity, border radius, or add additional information like the sender's level or role.
+  ZegoInRoomMessageItemBuilder? itemBuilder;
+
+  ZegoInRoomChatViewConfig({
+    this.itemBuilder,
+  });
+}
+
 /// @nodoc
 extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
   static ZegoUIKitPrebuiltCallConfig generate({
@@ -592,42 +562,6 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
         useVideoViewAspectFill: !isGroup,
       ),
       memberListConfig: ZegoMemberListConfig(),
-      onOnlySelfInRoom: isGroup
-          ? null
-          : (context) {
-              if (PrebuiltCallMiniOverlayPageState.idle !=
-                  ZegoUIKitPrebuiltCallMiniOverlayMachine().state()) {
-                /// now is minimizing state, not need to navigate, just switch to idle
-                ZegoUIKitPrebuiltCallMiniOverlayMachine().switchToIdle();
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
     );
   }
-}
-
-/// Control options for the bottom-left message list.
-/// This class is used for the [chatViewConfig] property of [ZegoUIKitPrebuiltCallConfig].
-///
-/// If you want to customize chat messages, you can specify the [itemBuilder] in [ZegoInRoomMessageViewConfig].
-///
-/// Example:
-///
-/// ZegoInRoomMessageViewConfig(
-///   itemBuilder: (BuildContext context, ZegoRoomMessage message) {
-///     return ListTile(
-///       title: Text(message.message),
-///       subtitle: Text(message.user.id),
-///     );
-///   },
-/// );
-class ZegoInRoomChatViewConfig {
-  /// Use this to customize the style and content of each chat message list item.
-  /// For example, you can modify the background color, opacity, border radius, or add additional information like the sender's level or role.
-  ZegoInRoomMessageItemBuilder? itemBuilder;
-
-  ZegoInRoomChatViewConfig({
-    this.itemBuilder,
-  });
 }

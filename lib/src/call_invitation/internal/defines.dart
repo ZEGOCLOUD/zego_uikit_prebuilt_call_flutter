@@ -1,53 +1,70 @@
-// Dart imports:
-import 'dart:convert';
-
 // Package imports:
+import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
+// Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
+
 /// @nodoc
-class InvitationInternalData {
-  String callID = '';
-  List<ZegoUIKitUser> invitees = [];
-  String customData = '';
-  int timeout = 60;
+typedef ContextQuery = BuildContext Function();
 
-  InvitationInternalData.empty();
+/// @nodoc
+class ZegoUIKitPrebuiltCallInvitationData {
+  ZegoUIKitPrebuiltCallInvitationData({
+    required this.appID,
+    required this.appSign,
+    required this.userID,
+    required this.userName,
+    required this.plugins,
+    required this.requireConfig,
+    this.events,
+    this.invitationEvents,
+    this.contextQuery,
+    ZegoCallInvitationInnerText? innerText,
+    ZegoRingtoneConfig? ringtoneConfig,
+    ZegoCallInvitationUIConfig? uiConfig,
+    ZegoCallInvitationNotificationConfig? notificationConfig,
+  })  : ringtoneConfig = ringtoneConfig ?? const ZegoRingtoneConfig(),
+        uiConfig = uiConfig ?? ZegoCallInvitationUIConfig(),
+        innerText = innerText ?? ZegoCallInvitationInnerText(),
+        notificationConfig =
+            notificationConfig ?? ZegoCallInvitationNotificationConfig();
 
-  InvitationInternalData({
-    required this.callID,
-    required this.invitees,
-    required this.timeout,
-    required this.customData,
-  });
+  /// you need to fill in the appID you obtained from console.zegocloud.com
+  final int appID;
 
-  InvitationInternalData.fromJson(String json) {
-    final dict = jsonDecode(json) as Map<String, dynamic>;
-    callID = dict['call_id'] as String;
-    timeout = dict['timeout'] as int? ?? 60;
-    customData = dict['custom_data'] as String;
+  /// for Android/iOS
+  /// you need to fill in the appSign you obtained from console.zegocloud.com
+  final String appSign;
 
-    for (final invitee in dict['invitees'] as List) {
-      final inviteeDict = invitee as Map<String, dynamic>;
-      final user = ZegoUIKitUser(
-        id: inviteeDict['user_id'] as String,
-        name: inviteeDict['user_name'] as String,
-      );
-      invitees.add(user);
-    }
-  }
+  /// local user info
+  final String userID;
+  final String userName;
 
-  String toJson() {
-    final dict = {
-      'call_id': callID,
-      'invitees': invitees
-          .map((user) => {
-                'user_id': user.id,
-                'user_name': user.name,
-              })
-          .toList(),
-      'timeout': timeout,
-      'custom_data': customData,
-    };
-    return const JsonEncoder().convert(dict);
-  }
+  /// we need the [ZegoUIKitPrebuiltCallConfig] to show [ZegoUIKitPrebuiltCall]
+  final PrebuiltConfigQuery requireConfig;
+
+  ZegoUIKitPrebuiltCallEvents? events;
+
+  final ZegoCallInvitationInnerText innerText;
+
+  ///
+  final List<IZegoUIKitPlugin> plugins;
+
+  final ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
+
+  /// you can customize your ringing bell
+  final ZegoRingtoneConfig ringtoneConfig;
+
+  /// ui config
+  final ZegoCallInvitationUIConfig uiConfig;
+
+  final ZegoCallInvitationNotificationConfig notificationConfig;
+
+  /// we need a context object, to push/pop page when receive invitation request
+  ContextQuery? contextQuery;
 }

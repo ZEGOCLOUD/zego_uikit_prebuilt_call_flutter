@@ -24,7 +24,7 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   /// This callback will be triggered to **callee** when callee click decline button in incoming call
   Function()? onIncomingCallDeclineButtonPressed;
 
-  /// This callback will be triggered to **callee** when callee click accept button  in incoming call
+  /// This callback will be triggered to **callee** when callee click accept button in incoming call
   Function()? onIncomingCallAcceptButtonPressed;
 
   /// This callback will be triggered to **callee** when callee receive a call
@@ -37,7 +37,11 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   )? onIncomingCallReceived;
 
   /// This callback will be triggered to **callee** when the caller cancels the call invitation.
-  Function(String callID, ZegoCallUser caller)? onIncomingCallCanceled;
+  Function(
+    String callID,
+    ZegoCallUser caller,
+    String customData,
+  )? onIncomingCallCanceled;
 
   /// The **callee** will receive a notification through this callback when the callee doesn't respond to the call invitation after a timeout duration.
   Function(String callID, ZegoCallUser caller)? onIncomingCallTimeout;
@@ -49,10 +53,18 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   Function(String callID, ZegoCallUser callee)? onOutgoingCallAccepted;
 
   /// The **caller** will receive a notification through this callback when the callee rejects the call invitation (the callee is busy).
-  Function(String callID, ZegoCallUser callee)? onOutgoingCallRejectedCauseBusy;
+  Function(
+    String callID,
+    ZegoCallUser callee,
+    String customData,
+  )? onOutgoingCallRejectedCauseBusy;
 
   /// The **caller** will receive a notification through this callback when the callee declines the call invitation actively.
-  Function(String callID, ZegoCallUser callee)? onOutgoingCallDeclined;
+  Function(
+    String callID,
+    ZegoCallUser callee,
+    String customData,
+  )? onOutgoingCallDeclined;
 
   /// The **caller** will receive a notification through this callback when the call invitation didn't get responses after a timeout duration.
   Function(
@@ -62,6 +74,7 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   )? onOutgoingCallTimeout;
 
   ZegoUIKitPrebuiltCallInvitationEvents({
+    this.onError,
     this.onInvitationUserStateChanged,
     this.onIncomingCallDeclineButtonPressed,
     this.onIncomingCallAcceptButtonPressed,

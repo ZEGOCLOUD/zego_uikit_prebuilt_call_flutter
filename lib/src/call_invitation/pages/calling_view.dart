@@ -9,7 +9,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/toolbar/calling_bottom_toolbar.dart';
@@ -20,7 +19,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
     Key? key,
     required this.pageManager,
-    required this.callInvitationConfig,
+    required this.callInvitationData,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
@@ -28,7 +27,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   }) : super(key: key);
 
   final ZegoInvitationPageManager pageManager;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -58,7 +57,7 @@ class ZegoCallingInviterView extends StatelessWidget {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      return callInvitationConfig.uiConfig?.callingBackgroundBuilder?.call(
+      return callInvitationData.uiConfig.callingBackgroundBuilder?.call(
             context,
             Size(constraints.maxWidth, constraints.maxHeight),
             ZegoCallingBackgroundBuilderInfo(
@@ -100,37 +99,27 @@ class ZegoCallingInviterView extends StatelessWidget {
         ),
         SizedBox(height: 10.zR),
         centralName((isVideo
-                ? ((invitees.length > 1
-                        ? callInvitationConfig
-                            .innerText?.outgoingGroupVideoCallPageTitle
-                        : callInvitationConfig
-                            .innerText?.outgoingVideoCallPageTitle) ??
-                    param_1)
-                : ((invitees.length > 1
-                        ? callInvitationConfig
-                            .innerText?.outgoingGroupVoiceCallPageTitle
-                        : callInvitationConfig
-                            .innerText?.outgoingVoiceCallPageTitle) ??
-                    param_1))
+                ? (invitees.length > 1
+                    ? callInvitationData
+                        .innerText.outgoingGroupVideoCallPageTitle
+                    : callInvitationData.innerText.outgoingVideoCallPageTitle)
+                : (invitees.length > 1
+                    ? callInvitationData
+                        .innerText.outgoingGroupVoiceCallPageTitle
+                    : callInvitationData.innerText.outgoingVoiceCallPageTitle))
             .replaceFirst(param_1, firstInvitee.name)),
         SizedBox(height: 47.zR),
         callingText(isVideo
-            ? ((invitees.length > 1
-                    ? callInvitationConfig
-                        .innerText?.outgoingGroupVideoCallPageMessage
-                    : callInvitationConfig
-                        .innerText?.outgoingVideoCallPageMessage) ??
-                'Calling...')
-            : ((invitees.length > 1
-                    ? callInvitationConfig
-                        .innerText?.outgoingGroupVoiceCallPageMessage
-                    : callInvitationConfig
-                        .innerText?.outgoingVoiceCallPageMessage) ??
-                'Calling...')),
+            ? (invitees.length > 1
+                ? callInvitationData.innerText.outgoingGroupVideoCallPageMessage
+                : callInvitationData.innerText.outgoingVideoCallPageMessage)
+            : (invitees.length > 1
+                ? callInvitationData.innerText.outgoingGroupVoiceCallPageMessage
+                : callInvitationData.innerText.outgoingVoiceCallPageMessage)),
         const Expanded(child: SizedBox()),
         ZegoInviterCallingBottomToolBar(
           pageManager: pageManager,
-          callInvitationConfig: callInvitationConfig,
+          callInvitationData: callInvitationData,
           invitees: invitees,
         ),
         SizedBox(height: 105.zR),
@@ -142,7 +131,7 @@ class ZegoCallingInviterView extends StatelessWidget {
 class ZegoCallingInviteeView extends StatelessWidget {
   const ZegoCallingInviteeView({
     required this.pageManager,
-    required this.callInvitationConfig,
+    required this.callInvitationData,
     required this.inviter,
     required this.invitees,
     required this.invitationType,
@@ -152,7 +141,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }) : super(key: key);
 
   final ZegoInvitationPageManager pageManager;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -170,8 +159,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
         return Stack(
           children: [
             LayoutBuilder(builder: (context, constraints) {
-              return callInvitationConfig.uiConfig?.callingBackgroundBuilder
-                      ?.call(
+              return callInvitationData.uiConfig.callingBackgroundBuilder?.call(
                     context,
                     Size(constraints.maxWidth, constraints.maxHeight),
                     ZegoCallingBackgroundBuilderInfo(
@@ -211,39 +199,29 @@ class ZegoCallingInviteeView extends StatelessWidget {
         ),
         SizedBox(height: 10.zR),
         centralName((isVideo
-                ? ((invitees.length > 1
-                        ? callInvitationConfig
-                            .innerText?.incomingGroupVideoCallPageTitle
-                        : callInvitationConfig
-                            .innerText?.incomingVideoCallPageTitle) ??
-                    param_1)
-                : ((invitees.length > 1
-                        ? callInvitationConfig
-                            .innerText?.incomingGroupVoiceCallPageTitle
-                        : callInvitationConfig
-                            .innerText?.incomingVoiceCallPageTitle) ??
-                    param_1))
+                ? (invitees.length > 1
+                    ? callInvitationData
+                        .innerText.incomingGroupVideoCallPageTitle
+                    : callInvitationData.innerText.incomingVideoCallPageTitle)
+                : (invitees.length > 1
+                    ? callInvitationData
+                        .innerText.incomingGroupVoiceCallPageTitle
+                    : callInvitationData.innerText.incomingVoiceCallPageTitle))
             .replaceFirst(param_1, inviter.name)),
         SizedBox(height: 47.zR),
         callingText(isVideo
             ? (invitees.length > 1
-                ? (callInvitationConfig
-                        .innerText?.incomingGroupVideoCallPageMessage ??
-                    'Incoming group video call...')
-                : (callInvitationConfig
-                        .innerText?.incomingVideoCallPageMessage ??
-                    'Incoming video call...'))
+                ? (callInvitationData
+                    .innerText.incomingGroupVideoCallPageMessage)
+                : (callInvitationData.innerText.incomingVideoCallPageMessage))
             : (invitees.length > 1
-                ? (callInvitationConfig
-                        .innerText?.incomingGroupVoiceCallPageMessage ??
-                    'Incoming group voice call...')
-                : (callInvitationConfig
-                        .innerText?.incomingVoiceCallPageMessage ??
-                    'Incoming voice call...'))),
+                ? (callInvitationData
+                    .innerText.incomingGroupVoiceCallPageMessage)
+                : (callInvitationData.innerText.incomingVoiceCallPageMessage))),
         const Expanded(child: SizedBox()),
         ZegoInviteeCallingBottomToolBar(
           pageManager: pageManager,
-          callInvitationConfig: callInvitationConfig,
+          callInvitationData: callInvitationData,
           inviter: inviter,
           invitationType: invitationType,
           showDeclineButton: showDeclineButton,

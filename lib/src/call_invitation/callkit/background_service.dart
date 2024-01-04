@@ -1,4 +1,5 @@
 // Dart imports:
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 // Flutter imports:
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
@@ -92,7 +94,10 @@ class ZegoCallKitBackgroundService {
         .getSignalingPlugin()
         .refuseInvitation(
           inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-          data: '{"reason":"decline"}',
+          data: const JsonEncoder().convert({
+            CallInvitationProtocolKey.reason:
+                CallInvitationProtocolKey.refuseByDecline,
+          }),
         )
         .then((result) {
       _pageManager?.onLocalRefuseInvitation(
@@ -191,12 +196,12 @@ class ZegoCallKitBackgroundService {
     } else {
       /// background callkit call, not need to navigate
       try {
-        Navigator.of(_pageManager!.callInvitationConfig.contextQuery!.call())
+        Navigator.of(_pageManager!.callInvitationData.contextQuery!.call())
             .pop();
       } catch (e) {
         ZegoLoggerService.logError(
           'Navigator pop exception:$e, '
-          'contextQuery:${_pageManager?.callInvitationConfig.contextQuery}',
+          'contextQuery:${_pageManager?.callInvitationData.contextQuery}',
           tag: 'call',
           subTag: 'call invitation service',
         );

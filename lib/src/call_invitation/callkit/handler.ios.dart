@@ -7,7 +7,7 @@ import 'package:zego_callkit/zego_callkit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 
 UUID? iOSIncomingPushUUID;
@@ -28,7 +28,7 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   final payload = extras['payload'] as String? ?? '';
   final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
   final invitationInternalData =
-      InvitationInternalData.fromJson(extendedMap['data'] as String);
+      InvitationSendRequestData.fromJson(extendedMap['data'] as String);
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger

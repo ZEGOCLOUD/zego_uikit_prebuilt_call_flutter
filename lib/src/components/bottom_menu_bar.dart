@@ -14,14 +14,18 @@ import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/prebuilt_data.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 
 /// @nodoc
 class ZegoBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
+  final ZegoUIKitPrebuiltCallEvents events;
+  final void Function(ZegoUIKitCallEndEvent event) defaultCallEndEvent;
+
   final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
   final int autoHideSeconds;
@@ -32,7 +36,7 @@ class ZegoBottomMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
-  final ZegoUIKitPrebuiltCallData prebuiltData;
+  final ZegoUIKitPrebuiltCallMinimizeData minimizeData;
 
   final ValueNotifier<bool> chatViewVisibleNotifier;
   final ZegoPopUpManager popUpManager;
@@ -40,9 +44,11 @@ class ZegoBottomMenuBar extends StatefulWidget {
   const ZegoBottomMenuBar({
     Key? key,
     required this.config,
+    required this.events,
+    required this.defaultCallEndEvent,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
-    required this.prebuiltData,
+    required this.minimizeData,
     required this.isHangUpRequestingNotifier,
     required this.chatViewVisibleNotifier,
     required this.popUpManager,
@@ -122,7 +128,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     final buttonList = <Widget>[
       ...getDefaultButtons(
         context,
-        cameraDefaultValueFunc: widget.prebuiltData.isPrebuiltFromMinimizing
+        cameraDefaultValueFunc: widget.minimizeData.isPrebuiltFromMinimizing
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
@@ -130,7 +136,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
                     .value;
               }
             : null,
-        microphoneDefaultValueFunc: widget.prebuiltData.isPrebuiltFromMinimizing
+        microphoneDefaultValueFunc: widget.minimizeData.isPrebuiltFromMinimizing
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
@@ -286,7 +292,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             widget.isHangUpRequestingNotifier?.value = true;
 
             final canHangUp =
-                await widget.config.onHangUpConfirmation?.call(context) ?? true;
+                await widget.events.onHangUpConfirmation?.call(context) ?? true;
             if (!canHangUp) {
               /// restore controller's leave status
               widget.isHangUpRequestingNotifier?.value = false;
@@ -303,13 +309,17 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
               PrebuiltCallMiniOverlayPageState.idle,
             );
 
-            if (widget.config.onHangUp != null) {
-              widget.config.onHangUp!.call();
+            final callEndEvent = ZegoUIKitCallEndEvent(
+              reason: ZegoUIKitCallEndReason.localHangUp,
+            );
+            defaultAction() {
+              widget.defaultCallEndEvent(callEndEvent);
+            }
+
+            if (widget.events.onCallEnd != null) {
+              widget.events.onCallEnd!.call(callEndEvent, defaultAction);
             } else {
-              Navigator.of(
-                context,
-                rootNavigator: widget.config.rootNavigator,
-              ).pop();
+              defaultAction.call();
             }
 
             /// restore controller's leave status
@@ -331,7 +341,6 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
         );
       case ZegoMenuBarButtonName.minimizingButton:
         return ZegoMinimizingButton(
-          prebuiltData: widget.prebuiltData,
           rootNavigator: widget.config.rootNavigator,
         );
       case ZegoMenuBarButtonName.beautyEffectButton:

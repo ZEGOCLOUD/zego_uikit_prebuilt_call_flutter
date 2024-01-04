@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
@@ -123,7 +124,7 @@ Future<void> _onBackgroundMessageReceived({
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>? ?? {};
 
   final operationType = BackgroundMessageTypeExtension.fromText(
-      payloadMap[messageTypePayloadKey] as String? ?? '');
+      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '');
 
   final handlerInfoJson =
       await getPreferenceString(serializationKeyHandlerInfo);
@@ -233,7 +234,7 @@ Future<void> _onBackgroundCallMessageReceived({
   required HandlerPrivateInfo? handlerInfo,
 }) async {
   final operationType = BackgroundMessageTypeExtension.fromText(
-      payloadMap[messageTypePayloadKey] as String? ?? '');
+      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '');
 
   ZegoLoggerService.logInfo(
     'call message received, '
@@ -258,7 +259,8 @@ Future<void> _onBackgroundCallMessageReceived({
     ///   "call_id": 4172113646365410763
     /// }
 
-    final callID = payloadMap['call_id'] as String? ?? '';
+    final callID =
+        payloadMap[CallInvitationProtocolKey.callID] as String? ?? '';
     await _onBackgroundInvitationCanceled(callID);
 
     /// when offline is cancelled, you will receive two notifications: one is
@@ -363,14 +365,16 @@ Future<void> _onBackgroundOfflineCall({
     subTag: 'background message',
   );
 
-  final invitationID = messageExtras['call_id'] as String? ?? '';
+  final invitationID =
+      messageExtras[CallInvitationProtocolKey.callID] as String? ?? '';
   final inviter = ZegoUIKitUser(
       id: payloadMap['inviter_id'] as String? ?? '',
       name: payloadMap['inviter_name'] as String? ?? '');
   final callType = ZegoCallTypeExtension.mapValue[payloadMap['type'] as int?] ??
       ZegoCallType.voiceCall;
   final payloadData = payloadMap['data'] as String? ?? '';
-  final invitationInternalData = InvitationInternalData.fromJson(payloadData);
+  final invitationSendRequestData =
+      InvitationSendRequestData.fromJson(payloadData);
 
   final signalingSubscriptions = <StreamSubscription<dynamic>>[];
   _listenFlutterCallkitIncomingEvent(
@@ -385,7 +389,7 @@ Future<void> _onBackgroundOfflineCall({
   _listenSignalingEvents(signalingSubscriptions);
 
   /// cache and do when app run
-  setOfflineCallKitCallID(invitationInternalData.callID);
+  setOfflineCallKitCallID(invitationSendRequestData.callID);
   await setOfflineCallKitParams(jsonEncode({
     'invitation_id': invitationID,
     'inviter': inviter,
@@ -401,7 +405,7 @@ Future<void> _onBackgroundOfflineCall({
     await showCallkitIncoming(
       caller: inviter,
       callType: callType,
-      invitationInternalData: invitationInternalData,
+      invitationSendRequestData: invitationSendRequestData,
       title: messageExtras['title'] as String? ?? '',
       body: messageExtras['body'] as String? ?? '',
     );
@@ -547,7 +551,7 @@ Future<void> _onInvitationCanceled(Map<String, dynamic> params) async {
   );
 
   final dataMap = jsonDecode(data) as Map<String, dynamic>;
-  final callID = dataMap['call_id'] as String? ?? '';
+  final callID = dataMap[CallInvitationProtocolKey.callID] as String? ?? '';
   await _onBackgroundInvitationCanceled(callID);
 }
 
@@ -649,11 +653,13 @@ void _onThroughMessage(
 
   final payload = message.extras['payload'] as String? ?? '';
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
-  final operationType = payloadMap[messageTypePayloadKey] as String? ?? '';
+  final operationType =
+      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '';
 
   /// cancel invitation
   if (BackgroundMessageType.cancelInvitation.text == operationType) {
-    final callID = payloadMap['call_id'] as String? ?? '';
+    final callID =
+        payloadMap[CallInvitationProtocolKey.callID] as String? ?? '';
     _onBackgroundInvitationCanceled(callID);
   }
 }

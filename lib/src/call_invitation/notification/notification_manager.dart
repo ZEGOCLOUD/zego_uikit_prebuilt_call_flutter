@@ -9,7 +9,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
@@ -18,29 +18,33 @@ import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 class ZegoNotificationManager {
   bool isInit = false;
   final bool showDeclineButton;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   ZegoNotificationManager({
     required this.showDeclineButton,
-    required this.callInvitationConfig,
+    required this.callInvitationData,
   });
 
   static bool hasInvitation = false;
 
   String get callChannelKey =>
-      callInvitationConfig.androidNotificationConfig?.channelID ??
+      callInvitationData
+          .notificationConfig.androidNotificationConfig?.channelID ??
       defaultCallChannelKey;
 
   String get callChannelName =>
-      callInvitationConfig.androidNotificationConfig?.channelName ??
+      callInvitationData
+          .notificationConfig.androidNotificationConfig?.channelName ??
       defaultCallChannelName;
 
   String get messageChannelID =>
-      callInvitationConfig.androidNotificationConfig?.messageChannelID ??
+      callInvitationData
+          .notificationConfig.androidNotificationConfig?.messageChannelID ??
       defaultMessageChannelID;
 
   String get messageChannelName =>
-      callInvitationConfig.androidNotificationConfig?.messageChannelName ??
+      callInvitationData
+          .notificationConfig.androidNotificationConfig?.messageChannelName ??
       defaultMessageChannelName;
 
   Future<void> init() async {
@@ -83,10 +87,12 @@ class ZegoNotificationManager {
       ZegoSignalingPluginLocalNotificationChannelConfig(
         channelID: callChannelKey,
         channelName: callChannelName,
-        vibrate:
-            callInvitationConfig.androidNotificationConfig?.vibrate ?? true,
+        vibrate: callInvitationData
+                .notificationConfig.androidNotificationConfig?.vibrate ??
+            true,
         soundSource: getSoundSource(
-          callInvitationConfig.androidNotificationConfig?.sound,
+          callInvitationData
+              .notificationConfig.androidNotificationConfig?.sound,
         ),
       ),
     );
@@ -95,11 +101,12 @@ class ZegoNotificationManager {
       ZegoSignalingPluginLocalNotificationChannelConfig(
         channelID: messageChannelID,
         channelName: messageChannelName,
-        vibrate:
-            callInvitationConfig.androidNotificationConfig?.messageVibrate ??
-                false,
+        vibrate: callInvitationData
+                .notificationConfig.androidNotificationConfig?.messageVibrate ??
+            false,
         soundSource: getSoundSource(
-          callInvitationConfig.androidNotificationConfig?.messageSound,
+          callInvitationData
+              .notificationConfig.androidNotificationConfig?.messageSound,
         ),
       ),
     );
@@ -146,32 +153,29 @@ class ZegoNotificationManager {
       ZegoSignalingPluginLocalCallNotificationConfig(
           id: Random().nextInt(2147483647),
           channelID: callChannelKey,
-          iconSource: getIconSource(
-              callInvitationConfig.androidNotificationConfig?.icon),
-          soundSource: getSoundSource(
-              callInvitationConfig.androidNotificationConfig?.sound),
-          vibrate:
-              callInvitationConfig.androidNotificationConfig?.vibrate ?? true,
+          iconSource: getIconSource(callInvitationData
+              .notificationConfig.androidNotificationConfig?.icon),
+          soundSource: getSoundSource(callInvitationData
+              .notificationConfig.androidNotificationConfig?.sound),
+          vibrate: callInvitationData
+                  .notificationConfig.androidNotificationConfig?.vibrate ??
+              true,
           title: invitationData.inviter?.name ?? 'unknown',
           content: ZegoCallType.videoCall == invitationData.type
               ? ((invitationData.invitees.length > 1
-                      ? callInvitationConfig
-                          .innerText?.incomingGroupVideoCallDialogMessage
-                      : callInvitationConfig
-                          .innerText?.incomingVideoCallDialogMessage) ??
-                  'Incoming video call...')
+                  ? callInvitationData
+                      .innerText.incomingGroupVideoCallDialogMessage
+                  : callInvitationData
+                      .innerText.incomingVideoCallDialogMessage))
               : ((invitationData.invitees.length > 1
-                      ? callInvitationConfig
-                          .innerText?.incomingGroupVoiceCallDialogMessage
-                      : callInvitationConfig
-                          .innerText?.incomingVoiceCallDialogMessage) ??
-                  'Incoming voice call...'),
+                  ? callInvitationData
+                      .innerText.incomingGroupVoiceCallDialogMessage
+                  : callInvitationData
+                      .innerText.incomingVoiceCallDialogMessage)),
           acceptButtonText:
-              callInvitationConfig.innerText?.incomingCallPageAcceptButton ??
-                  'Accept',
+              callInvitationData.innerText.incomingCallPageAcceptButton,
           rejectButtonText:
-              callInvitationConfig.innerText?.incomingCallPageDeclineButton ??
-                  'Decline',
+              callInvitationData.innerText.incomingCallPageDeclineButton,
           acceptCallback: () async {
             ZegoLoggerService.logInfo(
               'LocalNotification, acceptCallback',

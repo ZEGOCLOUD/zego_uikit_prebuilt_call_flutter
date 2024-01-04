@@ -2,8 +2,8 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 
 /// @nodoc
 class ZegoCallInvitationInternalInstance {
@@ -15,7 +15,7 @@ class ZegoCallInvitationInternalInstance {
       ZegoCallInvitationInternalInstance._internal();
 
   ZegoInvitationPageManager? _pageManager;
-  ZegoCallInvitationConfig? _callInvitationConfig;
+  ZegoUIKitPrebuiltCallInvitationData? _callInvitationData;
 
   ZegoInvitationPageManager? get pageManager {
     assert(_pageManager != null,
@@ -23,19 +23,31 @@ class ZegoCallInvitationInternalInstance {
     return _pageManager;
   }
 
-  ZegoCallInvitationConfig? get callInvitationConfig => _callInvitationConfig;
+  ZegoUIKitPrebuiltCallInvitationData? get callInvitationData =>
+      _callInvitationData;
 
   void register({
     required ZegoInvitationPageManager pageManager,
-    required ZegoCallInvitationConfig callInvitationConfig,
+    required ZegoUIKitPrebuiltCallInvitationData callInvitationData,
   }) {
     ZegoLoggerService.logInfo(
-      'register, pageManager:$pageManager, callInvitationConfig:$callInvitationConfig',
+      'register, pageManager:$pageManager, callInvitationData:$callInvitationData',
       tag: 'call',
       subTag: 'internal instance',
     );
 
     _pageManager = pageManager;
-    _callInvitationConfig = callInvitationConfig;
+    _callInvitationData = callInvitationData;
+  }
+
+  void unregister() {
+    ZegoLoggerService.logInfo(
+      'unregister',
+      tag: 'call',
+      subTag: 'internal instance',
+    );
+
+    _pageManager = null;
+    _callInvitationData = null;
   }
 }

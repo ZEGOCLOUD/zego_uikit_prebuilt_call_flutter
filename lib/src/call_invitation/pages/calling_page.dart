@@ -7,16 +7,16 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_view.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 /// @nodoc
 class ZegoCallingPage extends StatefulWidget {
   final ZegoInvitationPageManager pageManager;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
@@ -27,7 +27,7 @@ class ZegoCallingPage extends StatefulWidget {
   const ZegoCallingPage({
     Key? key,
     required this.pageManager,
-    required this.callInvitationConfig,
+    required this.callInvitationData,
     required this.inviter,
     required this.invitees,
     required this.onInitState,
@@ -42,8 +42,7 @@ class ZegoCallingPage extends StatefulWidget {
 class ZegoCallingPageState extends State<ZegoCallingPage> {
   CallingState currentState = CallingState.kIdle;
 
-  VoidCallback? callConfigHandUp;
-  ZegoUIKitPrebuiltCallConfig? callConfig;
+  CallEndCallback? previousOnCallEnd;
 
   ZegoCallingMachine? get machine => widget.pageManager.callingMachine;
 
@@ -72,8 +71,6 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
 
     machine?.onStateChanged = null;
 
-    callConfig = null;
-
     super.dispose();
   }
 
@@ -88,32 +85,32 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
         break;
       case CallingState.kCallingWithVoice:
       case CallingState.kCallingWithVideo:
-        callConfig = null;
-
         final localUserIsInviter = localUserInfo.id == widget.inviter.id;
-        view = localUserIsInviter
-            ? ZegoCallingInviterView(
-                pageManager: widget.pageManager,
-                callInvitationConfig: widget.callInvitationConfig,
-                inviter: widget.inviter,
-                invitees: widget.invitees,
-                invitationType: widget.pageManager.invitationData.type,
-                avatarBuilder: widget.callInvitationConfig
-                    .prebuiltConfigQuery(widget.pageManager.invitationData)
-                    .avatarBuilder,
-              )
-            : ZegoCallingInviteeView(
-                pageManager: widget.pageManager,
-                callInvitationConfig: widget.callInvitationConfig,
-                inviter: widget.inviter,
-                invitees: widget.invitees,
-                invitationType: widget.pageManager.invitationData.type,
-                avatarBuilder: widget.callInvitationConfig
-                    .prebuiltConfigQuery(widget.pageManager.invitationData)
-                    .avatarBuilder,
-                showDeclineButton:
-                    widget.callInvitationConfig.showDeclineButton,
-              );
+        if (localUserIsInviter) {
+          view = ZegoCallingInviterView(
+            pageManager: widget.pageManager,
+            callInvitationData: widget.callInvitationData,
+            inviter: widget.inviter,
+            invitees: widget.invitees,
+            invitationType: widget.pageManager.invitationData.type,
+            avatarBuilder: widget.callInvitationData
+                .requireConfig(widget.pageManager.invitationData)
+                .avatarBuilder,
+          );
+        } else {
+          view = ZegoCallingInviteeView(
+            pageManager: widget.pageManager,
+            callInvitationData: widget.callInvitationData,
+            inviter: widget.inviter,
+            invitees: widget.invitees,
+            invitationType: widget.pageManager.invitationData.type,
+            avatarBuilder: widget.callInvitationData
+                .requireConfig(widget.pageManager.invitationData)
+                .avatarBuilder,
+            showDeclineButton:
+                widget.callInvitationData.uiConfig.showDeclineButton ?? true,
+          );
+        }
         break;
       case CallingState.kOnlineAudioVideo:
         view = prebuiltCallPage();
@@ -128,39 +125,41 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     );
   }
 
-  void onCallHandUp() {
-    callConfigHandUp?.call();
+  Future<void> onCallEnd(
+    ZegoUIKitCallEndEvent event,
+    VoidCallback defaultAction,
+  ) async {
+    previousOnCallEnd?.call(event, defaultAction);
 
     /// If the customer overrides callConfig?.onHangUp and it is not null,
     /// then the customer is responsible for popping the screen.
     widget.pageManager.onHangUp(
-      needPop: null == callConfigHandUp,
+      needPop: null == previousOnCallEnd,
     );
   }
 
   Widget prebuiltCallPage() {
-    callConfig = widget.callInvitationConfig.prebuiltConfigQuery(
-      widget.pageManager.invitationData,
-    );
+    previousOnCallEnd = widget.callInvitationData.events?.onCallEnd;
+    widget.callInvitationData.events?.onCallEnd = onCallEnd;
 
-    callConfigHandUp = callConfig?.onHangUp;
-    callConfig?.onHangUp = onCallHandUp;
-
-    callConfig?.onError ??=
-        widget.callInvitationConfig.invitationEvents?.onError;
+    /// assign if not set
+    widget.callInvitationData.events?.onError ??=
+        widget.callInvitationData.invitationEvents?.onError;
 
     return ZegoUIKitPrebuiltCall(
-      appID: widget.callInvitationConfig.appID,
-      appSign: widget.callInvitationConfig.appSign,
+      appID: widget.callInvitationData.appID,
+      appSign: widget.callInvitationData.appSign,
       callID: widget.pageManager.invitationData.callID,
-      userID: widget.callInvitationConfig.userID,
-      userName: widget.callInvitationConfig.userName,
-      config: callConfig!,
+      userID: widget.callInvitationData.userID,
+      userName: widget.callInvitationData.userName,
+      config: widget.callInvitationData.requireConfig(
+        widget.pageManager.invitationData,
+      ),
+      events: widget.callInvitationData.events,
       onDispose: () {
         widget.pageManager.onPrebuiltCallPageDispose();
       },
-      controller: widget.callInvitationConfig.controller,
-      plugins: widget.callInvitationConfig.plugins,
+      plugins: widget.callInvitationData.plugins,
     );
   }
 }

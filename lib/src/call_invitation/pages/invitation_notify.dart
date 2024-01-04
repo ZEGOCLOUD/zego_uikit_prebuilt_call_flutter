@@ -7,7 +7,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
@@ -26,7 +25,7 @@ class ZegoCallInvitationDialog extends StatefulWidget {
   }) : super(key: key);
 
   final ZegoInvitationPageManager pageManager;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationConfig;
 
   final bool showDeclineButton;
   final ZegoCallInvitationData invitationData;
@@ -118,18 +117,16 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       width: 350.zW,
       child: Text(
         (ZegoCallType.videoCall == widget.invitationData.type
-                ? ((widget.invitationData.invitees.length > 1
-                        ? widget.callInvitationConfig.innerText
-                            ?.incomingGroupVideoCallDialogTitle
-                        : widget.callInvitationConfig.innerText
-                            ?.incomingVideoCallDialogTitle) ??
-                    param_1)
-                : ((widget.invitationData.invitees.length > 1
-                        ? widget.callInvitationConfig.innerText
-                            ?.incomingGroupVoiceCallDialogTitle
-                        : widget.callInvitationConfig.innerText
-                            ?.incomingVoiceCallDialogTitle) ??
-                    param_1))
+                ? (widget.invitationData.invitees.length > 1
+                    ? widget.callInvitationConfig.innerText
+                        .incomingGroupVideoCallDialogTitle
+                    : widget.callInvitationConfig.innerText
+                        .incomingVideoCallDialogTitle)
+                : (widget.invitationData.invitees.length > 1
+                    ? widget.callInvitationConfig.innerText
+                        .incomingGroupVoiceCallDialogTitle
+                    : widget.callInvitationConfig.innerText
+                        .incomingVoiceCallDialogTitle))
             .replaceFirst(param_1, widget.invitationData.inviter?.name ?? ''),
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.left,
@@ -225,19 +222,15 @@ class ZegoCallInvitationDialogState extends State<ZegoCallInvitationDialog> {
       case ZegoCallType.voiceCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
-                    ?.incomingGroupVoiceCallDialogMessage ??
-                'Incoming group voice call...')
-            : (widget.callInvitationConfig.innerText
-                    ?.incomingVoiceCallDialogMessage ??
-                'Incoming voice call...');
+                .incomingGroupVoiceCallDialogMessage)
+            : (widget
+                .callInvitationConfig.innerText.incomingVoiceCallDialogMessage);
       case ZegoCallType.videoCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
-                    ?.incomingGroupVideoCallDialogMessage ??
-                'Incoming group video call...')
-            : (widget.callInvitationConfig.innerText
-                    ?.incomingVideoCallDialogMessage ??
-                'Incoming video call...');
+                .incomingGroupVideoCallDialogMessage)
+            : (widget
+                .callInvitationConfig.innerText.incomingVideoCallDialogMessage);
     }
   }
 }

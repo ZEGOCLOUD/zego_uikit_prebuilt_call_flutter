@@ -6,7 +6,7 @@ import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/call_invitation_config.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
@@ -32,11 +32,11 @@ typedef CallingMachineStateChanged = void Function(CallingState);
 /// State machine in the call
 class ZegoCallingMachine {
   final ZegoInvitationPageManager pageManager;
-  final ZegoCallInvitationConfig callInvitationConfig;
+  final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   ZegoCallingMachine({
     required this.pageManager,
-    required this.callInvitationConfig,
+    required this.callInvitationData,
   });
 
   final machine = sm.Machine<CallingState>();
@@ -111,12 +111,12 @@ class ZegoCallingMachine {
     }
 
     try {
-      final currentContext = callInvitationConfig.contextQuery?.call();
+      final currentContext = callInvitationData.contextQuery?.call();
       Navigator.of(currentContext!).push(
         MaterialPageRoute(
           builder: (context) => ZegoCallingPage(
             pageManager: pageManager,
-            callInvitationConfig: callInvitationConfig,
+            callInvitationData: callInvitationData,
             inviter: pageManager.invitationData.inviter!,
             invitees: pageManager.invitationData.invitees,
             onInitState: () {
@@ -131,7 +131,7 @@ class ZegoCallingMachine {
     } catch (e) {
       ZegoLoggerService.logError(
         'Navigator push exception:$e, '
-        'contextQuery:${callInvitationConfig.contextQuery}, ',
+        'contextQuery:${callInvitationData.contextQuery}, ',
         tag: 'call',
         subTag: 'machine',
       );
