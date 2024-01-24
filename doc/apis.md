@@ -21,21 +21,70 @@
   - [screenSharing](#screensharing)
     - [viewController](#viewcontroller)
     - [showViewInFullscreenMode](#showviewinfullscreenmode)
-
+  
 ---
 
 # [ZegoUIKitPrebuiltCall](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCall-class.html)
 
-> | Key      | Type                         |
-> | -------- | ---------------------------- |
-> | appID    | int                          |
-> | appSign  | String                       |
-> | callID   | String                       |
-> | userID   | String                       |
-> | userName | String                       |
-> | config   | ZegoUIKitPrebuiltCallConfig  |
-> | events   | ZegoUIKitPrebuiltCallEvents? |
-> | plugins  | List\<IZegoUIKitPlugin>?     |
+>
+> Call Widget.
+>
+> You can embed this widget into any page of your project to integrate the functionality of a call.
+>
+> If you need the function of `call invitation`, please use `ZegoUIKitPrebuiltCallInvitationService` together.
+>
+> - function prototype:
+>
+>```dart
+>
+>class ZegoUIKitPrebuiltCall extends StatefulWidget {
+>  const ZegoUIKitPrebuiltCall({
+>    Key? key,
+>    required this.appID,
+>    required this.appSign,
+>    required this.callID,
+>    required this.userID,
+>    required this.userName,
+>    required this.config,
+>    this.events,
+>    this.onDispose,
+>    this.plugins,
+>  }) : super(key: key);
+>
+>  /// You can create a project and obtain an appID from the [ZEGOCLOUD Admin >Console](https://console.zegocloud.com).
+>  final int appID;
+>
+>  /// You can create a project and obtain an appSign from the [ZEGOCLOUD >Admin Console](https://console.zegocloud.com).
+>  final String appSign;
+>
+>  /// The ID of the currently logged-in user.
+>  /// It can be any valid string.
+>  /// Typically, you would use the ID from your own user system, such as >Firebase.
+>  final String userID;
+>
+>  /// The name of the currently logged-in user.
+>  /// It can be any valid string.
+>  /// Typically, you would use the name from your own user system, such as >Firebase.
+>  final String userName;
+>
+>  /// The ID of the call.
+>  /// This ID is a unique identifier for the current call, so you need to >ensure its uniqueness.
+>  /// It can be any valid string.
+>  /// Users who provide the same callID will be logged into the same room >for the call.
+>  final String callID;
+>
+>  /// Initialize the configuration for the call.
+>  final ZegoUIKitPrebuiltCallConfig config;
+>
+>  /// Initialize the events for the call.
+>  final ZegoUIKitPrebuiltCallEvents? events;
+>
+>  /// Callback when the page is destroyed.
+>  final VoidCallback? onDispose;
+>
+>  final List<IZegoUIKitPlugin>? plugins;
+>}
+>```
 
 # [ZegoUIKitPrebuiltCallInvitationService](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallInvitationService-class.html)
 
@@ -51,7 +100,17 @@
 
 ## init
 
-> must call this method as soon as the user logs in  app or re-logged in.
+>
+> you must call this method as soon as the user login(or re-login, auto-login) to your app.
+>
+> You must include [ZegoUIKitSignalingPlugin] in [plugins] to support the invitation feature.
+>
+> If you need to set [ZegoUIKitPrebuiltCallConfig], you can do so through [requireConfig].
+> Each time the [ZegoUIKitPrebuiltCall] starts, it will request this callback to obtain the current call's config.
+>
+> Additionally, you can customize the call ringtone through [ringtoneConfig], and configure notifications through [notificationConfig].
+> You can also customize the invitation interface with [uiConfig]. If you want to modify the related text on the interface, you can set [innerText].
+> If you want to listen for events and perform custom logics, you can use [invitationEvents] to obtain related invitation events, and for call-related events, you need to use [events].
 >
 > - function prototype:
 >
@@ -92,17 +151,17 @@
 
 # [ZegoUIKitPrebuiltCallController](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallController-class.html)
 
-> A singleton class, can be accessed and its APIs can be accessed using either ZegoUIKitPrebuiltCallController() or ZegoUIKitPrebuiltCallController.instance.
+> A singleton class, can be accessed and its APIs can be accessed using either ZegoUIKitPrebuiltCallController().
 
 ## hangUp
 
 > This function is used to end the current call.
 >
-> You can pass the context **context** for any necessary pop-ups or page transitions.
+> You can pass the context `context` for any necessary pop-ups or page transitions.
 >
-> By using the **showConfirmation** parameter, you can control whether to display a confirmation dialog to confirm ending the call.
+> By using the `showConfirmation` parameter, you can control whether to display a confirmation dialog to confirm ending the call.
 >
-> This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the **onHangUpConfirmation** and **onHangUp** settings in the config.
+> This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the `onHangUpConfirmation` and `onHangUp` settings in the config.
 >
 > - function prototype:
 >
@@ -119,21 +178,21 @@
 
 > This function is used to send call invitations to one or more specified users.
 >
-> You can provide a list of target users **invitees** and specify whether it is a video call **isVideoCall**. If it is not a video call, it defaults to an audio call.
+> You can provide a list of target users `invitees` and specify whether it is a video call `isVideoCall`. If it is not a video call, it defaults to an audio call.
 >
-> You can also pass additional custom data **customData** to the invitees.
+> You can also pass additional custom data `customData` to the invitees.
 >
-> Additionally, you can specify the call ID **callID**. If not provided, the system will generate one automatically based on certain rules.
+> Additionally, you can specify the call ID `callID`. If not provided, the system will generate one automatically based on certain rules.
 >
-> If you want to set a ringtone for offline call invitations, set **resourceID** to a value that matches the push resource ID in the ZEGOCLOUD management console.
+> If you want to set a ringtone for offline call invitations, set `resourceID` to a value that matches the push resource ID in the ZEGOCLOUD management console.
 >
-> Note that the **resourceID** setting will only take effect when **notifyWhenAppRunningInBackgroundOrQuit** is true.
+> Note that the `resourceID` setting will only take effect when `notifyWhenAppRunningInBackgroundOrQuit` is true.
 >
-> You can also set the notification title **notificationTitle** and message **notificationMessage**.
+> You can also set the notification title `notificationTitle` and message `notificationMessage`.
 >
-> If the call times out, the call will automatically hang up after the specified timeout duration **timeoutSeconds** (in seconds).
+> If the call times out, the call will automatically hang up after the specified timeout duration `timeoutSeconds` (in seconds).
 >
-> Note that this function behaves the same as **ZegoSendCallInvitationButton**.
+> Note that this function behaves the same as `ZegoSendCallInvitationButton`.
 >
 > - function prototype:
 >
@@ -153,14 +212,14 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.invitation.send(...);
+> ZegoUIKitPrebuiltCallController().invitation.send(...);
 > ```
 
 ### cancel
 
-> To cancel the invitation for **callees** in a call, you can include your cancellation reason using the **customData**.
+> To cancel the invitation for `callees` in a call, you can include your cancellation reason using the `customData`.
 >
-> Additionally, you can receive notifications by listening to **onIncomingCallCanceled** when the incoming call is canceled.
+> Additionally, you can receive notifications by listening to `onIncomingCallCanceled` when the incoming call is canceled.
 >
 > - function prototype:
 >
@@ -174,14 +233,14 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.invitation.cancel(...);
+> ZegoUIKitPrebuiltCallController().invitation.cancel(...);
 > ```
 
 ### reject
 
-> when reject the current call invitation, you can use the **customData** parameter if you need to provide a reason for the rejection to the other party.
+> when reject the current call invitation, you can use the `customData` parameter if you need to provide a reason for the rejection to the other party.
 >
-> Additionally, the inviting party can receive notifications of the rejection by listening to **onOutgoingCallRejectedCauseBusy** or **onOutgoingCallDeclined** when the other party declines the call invitation.
+> Additionally, the inviting party can receive notifications of the rejection by listening to `onOutgoingCallRejectedCauseBusy` or `onOutgoingCallDeclined` when the other party declines the call invitation.
 >
 >> - function prototype:
 >>
@@ -195,14 +254,14 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.invitation.reject();
+> ZegoUIKitPrebuiltCallController().invitation.reject();
 > ```
 
 ### accept
 
-> To accept the current call invitation, you can use the **customData** parameter if you need to provide a reason for the acceptance to the other party.
+> To accept the current call invitation, you can use the `customData` parameter if you need to provide a reason for the acceptance to the other party.
 >
-> Additionally, the inviting party can receive notifications by listening to **onOutgoingCallAccepted** when the other party accepts the call invitation.
+> Additionally, the inviting party can receive notifications by listening to `onOutgoingCallAccepted` when the other party accepts the call invitation.
 >
 > - function prototype:
 >
@@ -215,7 +274,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.invitation.accept();
+> ZegoUIKitPrebuiltCallController().invitation.accept();
 > ```
 
 ## screenSharing
@@ -226,9 +285,9 @@
 
 > This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
 >
-> You need to provide the user's ID **userID** to determine which user to perform the operation on.
+> You need to provide the user's ID `userID` to determine which user to perform the operation on.
 >
-> By using a boolean value **isFullscreen**, you can specify whether the user enters or exits full-screen mode.
+> By using a boolean value `isFullscreen`, you can specify whether the user enters or exits full-screen mode.
 >
 > - function prototype:
 >
@@ -239,7 +298,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.screenSharing.showViewInFullscreenMode(...);
+> ZegoUIKitPrebuiltCallController().screenSharing.showViewInFullscreenMode(...);
 > ```
 
 ## minimize
@@ -251,7 +310,7 @@
 > - example:
 >
 > ```dart
-> final isMinimizing = ZegoUIKitPrebuiltCallController.instance.minimize.isMinimizing;
+> final isMinimizing = ZegoUIKitPrebuiltCallController().minimize.isMinimizing;
 > ```
 
 ### state(PrebuiltCallMiniOverlayPageState)
@@ -276,7 +335,7 @@
 > - example:
 >
 > ```dart
-> final state = ZegoUIKitPrebuiltCallController.instance.minimize.state;
+> final state = ZegoUIKitPrebuiltCallController().minimize.state;
 > ```
 
 ### restore
@@ -296,7 +355,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.minimize.restore(...);
+> ZegoUIKitPrebuiltCallController().minimize.restore(...);
 > ```
 
 ### minimize
@@ -315,7 +374,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.minimize.minimize(...);
+> ZegoUIKitPrebuiltCallController().minimize.minimize(...);
 > ```
 
 ### hide
@@ -327,5 +386,5 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController.instance.minimize.hide();
+> ZegoUIKitPrebuiltCallController().minimize.hide();
 > ```

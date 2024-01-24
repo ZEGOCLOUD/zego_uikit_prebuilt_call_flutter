@@ -13,7 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_i
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// This button is used to send a call invitation to one or more specified users.
 ///
@@ -325,13 +325,15 @@ class _ZegoSendCallInvitationButtonState
     );
 
     pageManager?.onLocalSendInvitation(
-      callIDNotifier.value,
-      List.from(widget.invitees),
-      widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
-      code,
-      message,
-      invitationID,
-      errorInvitees,
+      callID: callIDNotifier.value,
+      invitees: List.from(widget.invitees),
+      invitationType:
+          widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
+      customData: widget.customData,
+      code: code,
+      message: message,
+      invitationID: invitationID,
+      errorInvitees: errorInvitees,
     );
 
     if (widget.onPressed != null) {

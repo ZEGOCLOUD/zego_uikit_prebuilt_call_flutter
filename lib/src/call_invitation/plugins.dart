@@ -151,7 +151,7 @@ class ZegoPrebuiltPlugins {
       'local user:($localUser) '
       'initialized:$initialized, '
       'user state:${pluginUserStateNotifier.value}',
-      tag: 'live streaming',
+      tag: 'call',
       subTag: 'plugin',
     );
 

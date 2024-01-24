@@ -12,14 +12,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';

@@ -15,16 +15,19 @@ import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
 class ZegoTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
   final ZegoUIKitPrebuiltCallEvents events;
-  final void Function(ZegoUIKitCallEndEvent event) defaultCallEndEvent;
+  final void Function(ZegoUIKitCallEndEvent event) defaultEndAction;
+  final Future<bool> Function(ZegoUIKitCallHangUpConfirmationEvent event)
+      defaultHangUpConfirmationAction;
 
   final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
@@ -43,7 +46,8 @@ class ZegoTopMenuBar extends StatefulWidget {
     Key? key,
     required this.config,
     required this.events,
-    required this.defaultCallEndEvent,
+    required this.defaultEndAction,
+    required this.defaultHangUpConfirmationAction,
     required this.visibilityNotifier,
     required this.restartHideTimerNotifier,
     required this.isHangUpRequestingNotifier,
@@ -262,8 +266,25 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
             /// prevent controller's hangUp function call after leave button click
             widget.isHangUpRequestingNotifier?.value = true;
 
-            final canHangUp =
-                await widget.events.onHangUpConfirmation?.call(context) ?? true;
+            final hangUpConfirmationEvent =
+                ZegoUIKitCallHangUpConfirmationEvent(
+              context: context,
+            );
+            defaultAction() async {
+              return widget
+                  .defaultHangUpConfirmationAction(hangUpConfirmationEvent);
+            }
+
+            var canHangUp = true;
+            if (widget.events.onHangUpConfirmation != null) {
+              canHangUp = await widget.events.onHangUpConfirmation?.call(
+                    hangUpConfirmationEvent,
+                    defaultAction,
+                  ) ??
+                  true;
+            } else {
+              canHangUp = await defaultAction.call();
+            }
             if (!canHangUp) {
               /// restore controller's leave status
               widget.isHangUpRequestingNotifier?.value = false;
@@ -281,9 +302,11 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
 
             final callEndEvent = ZegoUIKitCallEndEvent(
               reason: ZegoUIKitCallEndReason.localHangUp,
+              isFromMinimizing: PrebuiltCallMiniOverlayPageState.minimizing ==
+                  ZegoUIKitPrebuiltCallController().minimize.state,
             );
             defaultAction() {
-              widget.defaultCallEndEvent(callEndEvent);
+              widget.defaultEndAction(callEndEvent);
             }
 
             if (widget.events.onCallEnd != null) {

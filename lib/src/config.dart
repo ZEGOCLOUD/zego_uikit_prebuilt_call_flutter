@@ -76,6 +76,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.useSpeakerWhenJoining = false,
     this.rootNavigator = false,
     this.advanceConfigs = const {},
+    ZegoUIKitVideoConfig? videoConfig,
     ZegoPrebuiltAudioVideoViewConfig? audioVideoViewConfig,
     ZegoTopMenuBarConfig? topMenuBarConfig,
     ZegoBottomMenuBarConfig? bottomMenuBarConfig,
@@ -88,14 +89,18 @@ class ZegoUIKitPrebuiltCallConfig {
     this.hangUpConfirmDialogInfo,
     this.avatarBuilder,
     this.audioVideoContainerBuilder,
-  })  : audioVideoViewConfig =
+  })  : videoConfig = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
+        audioVideoViewConfig =
             audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
         topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
         bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
         memberListConfig = memberListConfig ?? ZegoMemberListConfig(),
         durationConfig = durationConfig ?? ZegoCallDurationConfig(),
         chatViewConfig = chatViewConfig ?? ZegoInRoomChatViewConfig(),
-        layout = layout ?? ZegoLayout.pictureInPicture();
+        layout = layout ??
+            ZegoLayout.pictureInPicture(
+              smallViewPosition: ZegoViewPosition.topRight,
+            );
 
   /// Whether to open the camera when joining the call.
   ///
@@ -186,6 +191,10 @@ class ZegoUIKitPrebuiltCallConfig {
   /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
   /// Useful for pushing contents above all subsequent instances of [Navigator].
   bool rootNavigator;
+
+  /// configuration parameters for audio and video streaming, such as Resolution, Frame rate, Bit rate..
+  /// you can set by **videoConfig = ZegoUIKitVideoConfig.presetXX()**
+  ZegoUIKitVideoConfig videoConfig;
 
   /// Configuration options for audio/video views.
   ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
@@ -512,7 +521,11 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
       turnOnCameraWhenJoining: isVideo,
       turnOnMicrophoneWhenJoining: true,
       useSpeakerWhenJoining: isGroup || isVideo,
-      layout: isGroup ? ZegoLayout.gallery() : ZegoLayout.pictureInPicture(),
+      layout: isGroup
+          ? ZegoLayout.gallery()
+          : ZegoLayout.pictureInPicture(
+              smallViewPosition: ZegoViewPosition.topRight,
+            ),
       topMenuBarConfig: isGroup
           ? ZegoTopMenuBarConfig(
               isVisible: true,

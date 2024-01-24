@@ -7,11 +7,10 @@ import 'package:flutter/cupertino.dart';
 // Package imports:
 import 'package:statemachine/statemachine.dart' as sm;
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 
 /// @nodoc
 typedef PrebuiltCallMiniOverlayMachineStateChanged = void Function(

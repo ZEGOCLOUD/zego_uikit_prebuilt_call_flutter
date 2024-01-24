@@ -2,8 +2,8 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 /// @nodoc
 class ZegoCallInvitationInternalInstance {

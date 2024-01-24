@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 
 /// @nodoc

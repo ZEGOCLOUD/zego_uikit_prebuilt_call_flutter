@@ -12,5 +12,4 @@ export 'src/config.dart';
 export 'src/events.dart';
 export 'src/controller.dart';
 export 'src/defines.dart';
-export 'src/minimizing/defines.dart';
-export 'src/minimizing/mini_overlay_page.dart';
+export 'src/minimizing/export.dart';

@@ -2,8 +2,8 @@
 import 'dart:convert';
 
 // Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_callkit/zego_callkit.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';

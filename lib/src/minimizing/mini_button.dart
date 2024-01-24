@@ -50,10 +50,10 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
 
     return GestureDetector(
       onTap: () {
-        if (!ZegoUIKitPrebuiltCallController.instance.minimize.minimize(
-          context,
-          rootNavigator: widget.rootNavigator,
-        )) {
+        if (!ZegoUIKitPrebuiltCallController().minimize.minimize(
+              context,
+              rootNavigator: widget.rootNavigator,
+            )) {
           return;
         }
 

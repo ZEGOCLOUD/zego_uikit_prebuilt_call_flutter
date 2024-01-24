@@ -1,10 +1,44 @@
+## 4.1.6
+
+- Fix issue of the margin/size parameter not taking effect in PIP layout
+
+## 4.1.5
+
+- Fix issue of missing `customData` in the sending end of `ZegoCallInvitationData` in `requireConfig` within Call Invitation.
+
+## 4.1.4
+
+- Update dependency.
+
+## 4.1.3
+
+- Update dependency.
+
+## 4.1.2
+
+- Update dependency.
+
+## 4.1.1
+
+- Optimization warnings from analysis
+
+## 4.1.0
+
+- Support for configurable streaming video and automatic adjustment based on traffic control.
+
+## 4.0.1
+
+- Update documents
+
 ## 4.0.0
 
 The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
 
 Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
 
-💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html) 
+💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html)
+
+- Support user/room/audioVideo series events
 
 ## 3.18.4
 

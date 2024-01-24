@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:permission_handler/permission_handler.dart';
+
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -16,9 +17,9 @@ import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'call_invitation/callkit/background_service.dart';
 import 'events.dart';
 import 'internal/events.dart';
@@ -35,6 +36,7 @@ import 'internal/events.dart';
 /// {@category Events}
 /// {@category Configs}
 /// {@category Migration: from 3.x to 4.0}
+/// {@category Migration: from 4.1.3 to 4.1.4}
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     Key? key,
@@ -106,13 +108,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   final popUpManager = ZegoPopUpManager();
 
-  ZegoUIKitPrebuiltCallEvents get events {
-    final events = widget.events ?? ZegoUIKitPrebuiltCallEvents();
-
-    events.onHangUpConfirmation ??= defaultHangUpConfirmation;
-
-    return events;
-  }
+  ZegoUIKitPrebuiltCallEvents get events =>
+      widget.events ?? ZegoUIKitPrebuiltCallEvents();
 
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController();
@@ -154,7 +151,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.0.0; $version',
+        'version: zego_uikit_prebuilt_call:4.1.6; $version',
         tag: 'call',
         subTag: 'prebuilt',
       );
@@ -169,6 +166,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     } else {
       controller.private.initByPrebuilt(
         prebuiltConfig: widget.config,
+        popUpManager: popUpManager,
         events: events,
       );
       controller.invitation.private.initByPrebuilt(
@@ -238,7 +236,22 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
-          return await events.onHangUpConfirmation!(context) ?? false;
+          final hangUpConfirmationEvent = ZegoUIKitCallHangUpConfirmationEvent(
+            context: context,
+          );
+          defaultAction() async {
+            return defaultHangUpConfirmationAction(hangUpConfirmationEvent);
+          }
+
+          if (events.onHangUpConfirmation != null) {
+            return await events.onHangUpConfirmation?.call(
+                  hangUpConfirmationEvent,
+                  defaultAction,
+                ) ??
+                true;
+          } else {
+            return defaultAction.call();
+          }
         },
         child: ZegoScreenUtilInit(
           designSize: const Size(750, 1334),
@@ -319,17 +332,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     initPermissions().then((value) async {
       ZegoUIKit().login(widget.userID, widget.userName);
 
+      /// first set before create express
       await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
       ZegoUIKit()
           .init(appID: widget.appID, appSign: widget.appSign)
           .then((value) async {
+        /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
-        // enableCustomVideoProcessing
-        if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-          ZegoUIKit().enableCustomVideoProcessing(true);
-        }
+        _setVideoConfig();
+        _setBeautyConfig();
 
         ZegoUIKit()
 
@@ -358,6 +371,35 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     });
   }
 
+  Future<void> _setVideoConfig() async {
+    ZegoLoggerService.logInfo(
+      'video config:${widget.config.videoConfig}',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    await ZegoUIKit().enableTrafficControl(
+      true,
+      [
+        ZegoUIKitTrafficControlProperty.adaptiveResolution,
+        ZegoUIKitTrafficControlProperty.adaptiveFPS,
+      ],
+      minimizeVideoConfig: ZegoUIKitVideoConfig.preset360P(),
+      isFocusOnRemote: true,
+      streamType: ZegoStreamType.main,
+    );
+
+    ZegoUIKit().setVideoConfig(
+      widget.config.videoConfig,
+    );
+  }
+
+  Future<void> _setBeautyConfig() async {
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().enableCustomVideoProcessing(true);
+    }
+  }
+
   Future<void> initEffectsPlugins() async {
     if (widget.plugins != null) {
       ZegoUIKit().installPlugins(widget.plugins!);
@@ -373,7 +415,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           .then((value) {
         ZegoLoggerService.logInfo(
           'effects plugin init done',
-          tag: 'live streaming',
+          tag: 'call',
           subTag: 'plugin',
         );
       });
@@ -399,9 +441,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     //  remote users is empty
     final callEndEvent = ZegoUIKitCallEndEvent(
       reason: ZegoUIKitCallEndReason.remoteHangUp,
+      isFromMinimizing: PrebuiltCallMiniOverlayPageState.minimizing ==
+          ZegoUIKitPrebuiltCallController().minimize.state,
     );
     defaultAction() {
-      defaultCallEndEvent(callEndEvent);
+      defaultEndAction(callEndEvent);
     }
 
     if (events.onCallEnd != null) {
@@ -462,12 +506,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     } else {
       /// audio video container
       if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
-        final layout = (widget.config.layout
-            as ZegoLayoutPictureInPictureConfig)
-          ..smallViewPosition = ZegoViewPosition.topRight
-          ..smallViewSize = Size(190.0.zW, 338.0.zH)
-          ..margin = EdgeInsets.only(
-              left: 20.zR, top: 50.zR, right: 20.zR, bottom: 30.zR);
+        final layout =
+            (widget.config.layout as ZegoLayoutPictureInPictureConfig)
+              ..smallViewSize ??= Size(190.0.zW, 338.0.zH)
+              ..margin ??= EdgeInsets.only(
+                left: 20.zR,
+                top: 50.zR,
+                right: 20.zR,
+                bottom: 30.zR,
+              );
         widget.config.layout = layout;
       }
 
@@ -538,7 +585,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         events: events,
-        defaultCallEndEvent: defaultCallEndEvent,
+        defaultEndAction: defaultEndAction,
+        defaultHangUpConfirmationAction: defaultHangUpConfirmationAction,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         isHangUpRequestingNotifier:
@@ -566,7 +614,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         events: events,
-        defaultCallEndEvent: defaultCallEndEvent,
+        defaultEndAction: defaultEndAction,
+        defaultHangUpConfirmationAction: defaultHangUpConfirmationAction,
         visibilityNotifier: barVisibilityNotifier,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         minimizeData: minimizeData,
@@ -697,9 +746,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     final callEndEvent = ZegoUIKitCallEndEvent(
       kickerUserID: fromUserID,
       reason: ZegoUIKitCallEndReason.kickOut,
+      isFromMinimizing: PrebuiltCallMiniOverlayPageState.minimizing ==
+          controller.minimize.state,
     );
     defaultAction() {
-      defaultCallEndEvent(callEndEvent);
+      defaultEndAction(callEndEvent);
     }
 
     if (null != events.onCallEnd) {
@@ -719,7 +770,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     events.onError?.call(error);
   }
 
-  Future<bool> defaultHangUpConfirmation(BuildContext context) async {
+  Future<bool> defaultHangUpConfirmationAction(
+    ZegoUIKitCallHangUpConfirmationEvent event,
+  ) async {
     if (widget.config.hangUpConfirmDialogInfo == null) {
       return true;
     }
@@ -728,7 +781,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     popUpManager.addAPopUpSheet(key);
 
     return showAlertDialog(
-      context,
+      event.context,
       widget.config.hangUpConfirmDialogInfo!.title,
       widget.config.hangUpConfirmDialogInfo!.message,
       [
@@ -739,10 +792,20 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this dialog
-            Navigator.of(
-              context,
-              rootNavigator: widget.config.rootNavigator,
-            ).pop(false);
+            try {
+              Navigator.of(
+                context,
+                rootNavigator: widget.config.rootNavigator,
+              ).pop(false);
+            } catch (e) {
+              ZegoLoggerService.logError(
+                'call hangup confirmation, '
+                'navigator exception:$e, '
+                'event:$event',
+                tag: 'call',
+                subTag: 'prebuilt',
+              );
+            }
           },
         ),
         CupertinoDialogAction(
@@ -752,10 +815,20 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this dialog
-            Navigator.of(
-              context,
-              rootNavigator: widget.config.rootNavigator,
-            ).pop(true);
+            try {
+              Navigator.of(
+                context,
+                rootNavigator: widget.config.rootNavigator,
+              ).pop(true);
+            } catch (e) {
+              ZegoLoggerService.logError(
+                'call hangup confirmation, '
+                'navigator exception:$e, '
+                'event:$event',
+                tag: 'call',
+                subTag: 'prebuilt',
+              );
+            }
           },
         ),
       ],
@@ -766,7 +839,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     });
   }
 
-  void defaultCallEndEvent(
+  void defaultEndAction(
     ZegoUIKitCallEndEvent event,
   ) {
     ZegoLoggerService.logInfo(

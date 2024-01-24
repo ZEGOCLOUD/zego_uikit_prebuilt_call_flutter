@@ -131,18 +131,20 @@ class ZegoCallControllerInvitationPrivateImpl {
         )
         .then((result) {
       _pageManager?.onLocalSendInvitation(
-        callID,
-        callees
+        callID: callID,
+        invitees: callees
             .map((invitee) => ZegoUIKitUser(
                   id: invitee.id,
                   name: invitee.name,
                 ))
             .toList(),
-        isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
-        result.error?.code ?? '',
-        result.error?.message ?? '',
-        result.invitationID,
-        result.errorInvitees.keys.toList(),
+        invitationType:
+            isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
+        customData: customData,
+        code: result.error?.code ?? '',
+        message: result.error?.message ?? '',
+        invitationID: result.invitationID,
+        errorInvitees: result.errorInvitees.keys.toList(),
       );
 
       return result.error?.code.isNotEmpty ?? true;

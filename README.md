@@ -6,6 +6,7 @@
 > 
 > And it includes the business logic with the UI, you can add or remove features accordingly by customizing UI components.
 > 
+> [YouTube](https://www.youtube.com/embed/mEg32GyIqgI)
 > <div style="position: relative; width: 100%; 
 >   padding-top: calc(100% * 720 / 1280); 
 >   border: 2px black solid;">
@@ -40,8 +41,9 @@
 
 ## Features
 
-- Ready-to-use 1-on-1/group calls
+- 1-on-1/group calls
 - Call invitation/Offline call invitation
+- Screen sharing
 - Customizable UI styles
 - Real-time sound waves display
 - Device management
@@ -49,17 +51,16 @@
 - Extendable menu bar
 - Participant list
 - Custom call ringtones
-- Screen sharing
 
 ## Documentation
 
-- [Getting started](topics/Get%20started-topic.html)
-- [API](topics/APIs-topic.html)
-- [Event](topics/Events-topic.html)
-- [Config](topics/Configs-topic.html)
+- [APIs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/APIs-topic.html)
+- [Events](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Events-topic.html)
+- [Configs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Configs-topic.html)
   
 ## Migration Guides
-- [Migrating to 4.0.0](topics/Migration:%20from%203.x%20to%204.0-topic.html).
+- [Migrating from 3.x to 4.0.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html).
+- [Migrating from 4.1.3 to 4.1.4](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%204.1.3%20to%204.1.4-topic.html).
 
 ## More
 [Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)

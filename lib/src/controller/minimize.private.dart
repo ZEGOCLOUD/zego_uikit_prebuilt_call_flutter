@@ -9,7 +9,6 @@ mixin ZegoCallControllerMinimizePrivate {
 }
 
 /// @nodoc
-/// Here are the APIs related to invitation.
 class ZegoCallControllerMinimizePrivateImpl {
   ZegoUIKitPrebuiltCallMinimizeData? get minimizeData => _minimizeData;
 

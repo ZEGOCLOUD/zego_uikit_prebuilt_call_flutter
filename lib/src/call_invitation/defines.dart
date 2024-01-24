@@ -1,5 +1,7 @@
-// Package imports:
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
+
+// Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -7,7 +9,8 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
 typedef PrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
-    ZegoCallInvitationData);
+  ZegoCallInvitationData,
+);
 
 class ZegoCallingBackgroundBuilderInfo {
   ZegoCallingBackgroundBuilderInfo({
@@ -30,9 +33,13 @@ typedef ZegoCallingBackgroundBuilder = Widget? Function(
 class ZegoCallInvitationUIConfig {
   ZegoCallInvitationUIConfig({
     this.callingBackgroundBuilder,
+    this.prebuiltWithSafeArea = true,
     this.showDeclineButton = true,
     this.showCancelInvitationButton = true,
   });
+
+  /// does [ZegoUIKitPrebuiltCall] display with SafeArea or not
+  bool prebuiltWithSafeArea;
 
   /// whether to display the reject button, default is true
   bool showDeclineButton;

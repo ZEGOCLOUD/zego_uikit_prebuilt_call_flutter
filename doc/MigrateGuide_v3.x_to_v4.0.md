@@ -238,7 +238,11 @@ The related APIs are **no longer exported externally**, the original APIs have b
 
 In version 3.x, the ZegoUIKitPrebuiltCallController required declaring the variable and passing either a ZegoUIKitPrebuiltCall instance or initializing it within the ZegoUIKitPrebuiltCallInvitationService().init method.
 
-However, in version 4.0, the ZegoUIKitPrebuiltCallController has been `changed to a singleton pattern`. This means that you no longer need to declare a separate variable and pass parameters. Instead, you can directly access the singleton instance and make calls to it, assuming you have already `in ZegoUIKitPrebuiltCall` or `called the ZegoUIKitPrebuiltCallInvitationService().init method brfore`.
+However, in version 4.0, the ZegoUIKitPrebuiltCallController has been `changed to a singleton pattern`. 
+
+This means that you no longer need to declare a separate variable and pass parameters. 
+
+Instead, you can directly access the singleton instance and make calls to it.
 
 <details>
 <summary>Migrate Guide</summary>

@@ -86,31 +86,32 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       case CallingState.kCallingWithVoice:
       case CallingState.kCallingWithVideo:
         final localUserIsInviter = localUserInfo.id == widget.inviter.id;
-        if (localUserIsInviter) {
-          view = ZegoCallingInviterView(
-            pageManager: widget.pageManager,
-            callInvitationData: widget.callInvitationData,
-            inviter: widget.inviter,
-            invitees: widget.invitees,
-            invitationType: widget.pageManager.invitationData.type,
-            avatarBuilder: widget.callInvitationData
-                .requireConfig(widget.pageManager.invitationData)
-                .avatarBuilder,
-          );
-        } else {
-          view = ZegoCallingInviteeView(
-            pageManager: widget.pageManager,
-            callInvitationData: widget.callInvitationData,
-            inviter: widget.inviter,
-            invitees: widget.invitees,
-            invitationType: widget.pageManager.invitationData.type,
-            avatarBuilder: widget.callInvitationData
-                .requireConfig(widget.pageManager.invitationData)
-                .avatarBuilder,
-            showDeclineButton:
-                widget.callInvitationData.uiConfig.showDeclineButton ?? true,
-          );
-        }
+        final invitationView = localUserIsInviter
+            ? ZegoCallingInviterView(
+                pageManager: widget.pageManager,
+                callInvitationData: widget.callInvitationData,
+                inviter: widget.inviter,
+                invitees: widget.invitees,
+                invitationType: widget.pageManager.invitationData.type,
+                avatarBuilder: widget.callInvitationData
+                    .requireConfig(widget.pageManager.invitationData)
+                    .avatarBuilder,
+              )
+            : ZegoCallingInviteeView(
+                pageManager: widget.pageManager,
+                callInvitationData: widget.callInvitationData,
+                inviter: widget.inviter,
+                invitees: widget.invitees,
+                invitationType: widget.pageManager.invitationData.type,
+                avatarBuilder: widget.callInvitationData
+                    .requireConfig(widget.pageManager.invitationData)
+                    .avatarBuilder,
+                showDeclineButton:
+                    widget.callInvitationData.uiConfig.showDeclineButton,
+              );
+        view = SafeArea(
+          child: invitationView,
+        );
         break;
       case CallingState.kOnlineAudioVideo:
         view = prebuiltCallPage();
@@ -121,7 +122,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       onWillPop: () async {
         return false;
       },
-      child: SafeArea(child: view),
+      child: view,
     );
   }
 
@@ -146,7 +147,7 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
     widget.callInvitationData.events?.onError ??=
         widget.callInvitationData.invitationEvents?.onError;
 
-    return ZegoUIKitPrebuiltCall(
+    final prebuiltCall = ZegoUIKitPrebuiltCall(
       appID: widget.callInvitationData.appID,
       appSign: widget.callInvitationData.appSign,
       callID: widget.pageManager.invitationData.callID,
@@ -161,5 +162,11 @@ class ZegoCallingPageState extends State<ZegoCallingPage> {
       },
       plugins: widget.callInvitationData.plugins,
     );
+
+    return widget.callInvitationData.uiConfig.prebuiltWithSafeArea
+        ? SafeArea(
+            child: prebuiltCall,
+          )
+        : prebuiltCall;
   }
 }

@@ -1,6 +1,3 @@
-// Dart imports:
-import 'dart:convert';
-
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
@@ -16,14 +14,13 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_i
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
-import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
-
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'call_invitation/callkit/background_service.dart';
+import 'components/pop_up_manager.dart';
 
 part 'package:zego_uikit_prebuilt_call/src/controller/invitation.dart';
 
@@ -96,8 +93,26 @@ class ZegoUIKitPrebuiltCallController
 
       ///  if there is a user-defined event before the click,
       ///  wait the synchronize execution result
-      final canHangUp =
-          await private.events?.onHangUpConfirmation?.call(context) ?? true;
+      final hangUpConfirmationEvent = ZegoUIKitCallHangUpConfirmationEvent(
+        context: context,
+      );
+      defaultAction() async {
+        return private.defaultHangUpConfirmationAction(
+          hangUpConfirmationEvent,
+          context,
+        );
+      }
+
+      var canHangUp = true;
+      if (private.events?.onHangUpConfirmation != null) {
+        canHangUp = await private.events?.onHangUpConfirmation?.call(
+              hangUpConfirmationEvent,
+              defaultAction,
+            ) ??
+            true;
+      } else {
+        canHangUp = await defaultAction.call();
+      }
       if (!canHangUp) {
         ZegoLoggerService.logInfo(
           'hang up, reject',
@@ -111,6 +126,17 @@ class ZegoUIKitPrebuiltCallController
       }
     }
 
+    ZegoLoggerService.logInfo(
+      'hang up, restore mini state by hang up',
+      tag: 'call',
+      subTag: 'controller',
+    );
+    minimize.hide();
+
+    private.uninitByPrebuilt();
+    invitation.private.uninitByPrebuilt();
+    minimize.private.uninitByPrebuilt();
+
     final result = await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(
         'hang up, leave room result, ${result.errorCode} ${result.extendedData}',
@@ -120,37 +146,26 @@ class ZegoUIKitPrebuiltCallController
       return 0 == result.errorCode;
     });
 
-    final callEndEvent = ZegoUIKitCallEndEvent(
-      reason: ZegoUIKitCallEndReason.localHangUp,
-    );
-    defaultAction() {
-      private.defaultCallEndEvent(callEndEvent, context, true);
-    }
-
-    if (private.events?.onCallEnd != null) {
-      private.events?.onCallEnd?.call(callEndEvent, defaultAction);
-    } else {
-      defaultAction.call();
-    }
-
-    ZegoLoggerService.logInfo(
-      'hang up, restore mini state by hang up',
-      tag: 'call',
-      subTag: 'controller',
-    );
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-      PrebuiltCallMiniOverlayPageState.idle,
-    );
-
-    private.uninitByPrebuilt();
-    invitation.private.uninitByPrebuilt();
-    minimize.private.uninitByPrebuilt();
-
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
       ZegoUIKit().getBeautyPlugin().uninit();
     }
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
+
+    final endEvent = ZegoUIKitCallEndEvent(
+      reason: ZegoUIKitCallEndReason.localHangUp,
+      isFromMinimizing:
+          PrebuiltCallMiniOverlayPageState.minimizing == minimize.state,
+    );
+    defaultAction() {
+      private.defaultEndEvent(endEvent, context);
+    }
+
+    if (private.events?.onCallEnd != null) {
+      private.events?.onCallEnd?.call(endEvent, defaultAction);
+    } else {
+      defaultAction.call();
+    }
 
     ZegoLoggerService.logInfo(
       'hang up, finished',

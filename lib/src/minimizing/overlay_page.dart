@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
 /// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
@@ -26,6 +26,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
     Key? key,
     required this.contextQuery,
+    this.rootNavigator = true,
+    this.navigatorWithSafeArea = true,
     this.size,
     this.topLeft = const Offset(100, 100),
     this.borderRadius = 6.0,
@@ -64,6 +66,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
 
   /// You need to return the `context` of NavigatorState in this callback
   final BuildContext Function() contextQuery;
+  final bool rootNavigator;
+  final bool navigatorWithSafeArea;
 
   @override
   ZegoUIKitPrebuiltCallMiniOverlayPageState createState() =>
@@ -94,7 +98,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Size get buttonSize => Size(itemSize.width * 0.2, itemSize.width * 0.2);
 
   ZegoUIKitPrebuiltCallMinimizeData? get minimizeData =>
-      ZegoUIKitPrebuiltCallController.instance.minimize.private.minimizeData;
+      ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
 
   @override
   void initState() {
@@ -187,10 +191,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       case PrebuiltCallMiniOverlayPageState.minimizing:
         return GestureDetector(
           onTap: () {
-            ZegoUIKitPrebuiltCallController.instance.minimize.restore(
-              widget.contextQuery(),
-              rootNavigator: true,
-            );
+            ZegoUIKitPrebuiltCallController().minimize.restore(
+                  widget.contextQuery(),
+                  rootNavigator: widget.rootNavigator,
+                  withSafeArea: widget.navigatorWithSafeArea,
+                );
           },
           child: ValueListenableBuilder<String?>(
             valueListenable: activeUserIDNotifier,
@@ -248,8 +253,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             ),
         backgroundColor: Colors.white,
       ),
-      onPressed: () {
-        ZegoUIKitPrebuiltCallController.instance.hangUp(
+      onPressed: () async {
+        await ZegoUIKitPrebuiltCallController.instance.hangUp(
           context,
           showConfirmation: false,
         );
@@ -510,6 +515,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       minimizeData?.events.onCallEnd?.call(
           ZegoUIKitCallEndEvent(
             reason: ZegoUIKitCallEndReason.remoteHangUp,
+            isFromMinimizing: true,
           ), () {
         /// now is minimizing state, not need to navigate, just switch to idle
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(

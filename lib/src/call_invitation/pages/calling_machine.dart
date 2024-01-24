@@ -10,7 +10,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.da
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 // Project imports:
 

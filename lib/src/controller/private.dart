@@ -21,12 +21,14 @@ class ZegoCallControllerPrivateImpl {
 
   ZegoUIKitPrebuiltCallEvents? get events => _events;
 
+  ZegoPopUpManager? _popUpManager;
   ZegoUIKitPrebuiltCallConfig? _prebuiltConfig;
   ZegoUIKitPrebuiltCallEvents? _events;
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void initByPrebuilt({
     required ZegoUIKitPrebuiltCallConfig prebuiltConfig,
+    required ZegoPopUpManager popUpManager,
     required ZegoUIKitPrebuiltCallEvents? events,
   }) {
     ZegoLoggerService.logInfo(
@@ -36,6 +38,7 @@ class ZegoCallControllerPrivateImpl {
     );
 
     _prebuiltConfig = prebuiltConfig;
+    _popUpManager = _popUpManager;
     _events = events;
   }
 
@@ -50,13 +53,85 @@ class ZegoCallControllerPrivateImpl {
     isHangUpRequestingNotifier.value = false;
 
     _prebuiltConfig = null;
+    _popUpManager = null;
     _events = null;
   }
 
-  Future<void> defaultCallEndEvent(
+  Future<bool> defaultHangUpConfirmationAction(
+    ZegoUIKitCallHangUpConfirmationEvent event,
+    BuildContext context,
+  ) async {
+    if (_prebuiltConfig?.hangUpConfirmDialogInfo == null) {
+      return true;
+    }
+
+    final key = DateTime.now().millisecondsSinceEpoch;
+    _popUpManager?.addAPopUpSheet(key);
+
+    final dialogInfo = _prebuiltConfig?.hangUpConfirmDialogInfo ??
+        ZegoHangUpConfirmDialogInfo();
+    return showAlertDialog(
+      event.context,
+      dialogInfo.title,
+      dialogInfo.message,
+      [
+        CupertinoDialogAction(
+          child: Text(
+            dialogInfo.cancelButtonName,
+            style: TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
+          ),
+          onPressed: () {
+            //  pop this dialog
+            try {
+              Navigator.of(
+                context,
+                rootNavigator: _prebuiltConfig?.rootNavigator ?? false,
+              ).pop(false);
+            } catch (e) {
+              ZegoLoggerService.logError(
+                'call hangup confirmation, '
+                'navigator exception:$e, '
+                'event:$event',
+                tag: 'call',
+                subTag: 'controller.p',
+              );
+            }
+          },
+        ),
+        CupertinoDialogAction(
+          child: Text(
+            dialogInfo.confirmButtonName,
+            style: TextStyle(fontSize: 26.zR, color: Colors.white),
+          ),
+          onPressed: () {
+            //  pop this dialog
+            try {
+              Navigator.of(
+                context,
+                rootNavigator: _prebuiltConfig?.rootNavigator ?? false,
+              ).pop(true);
+            } catch (e) {
+              ZegoLoggerService.logError(
+                'call hangup confirmation, '
+                'navigator exception:$e, '
+                'event:$event',
+                tag: 'call',
+                subTag: 'controller.p',
+              );
+            }
+          },
+        ),
+      ],
+    ).then((result) {
+      _popUpManager?.removeAPopUpSheet(key);
+
+      return result;
+    });
+  }
+
+  Future<void> defaultEndEvent(
     ZegoUIKitCallEndEvent event,
     BuildContext context,
-    bool rootNavigator,
   ) async {
     ZegoLoggerService.logInfo(
       'default call end event, event:$event',
@@ -67,14 +142,12 @@ class ZegoCallControllerPrivateImpl {
     if (PrebuiltCallMiniOverlayPageState.idle !=
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       /// now is minimizing state, not need to navigate, just switch to idle
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-        PrebuiltCallMiniOverlayPageState.idle,
-      );
+      ZegoUIKitPrebuiltCallController().minimize.hide();
     } else {
       try {
         Navigator.of(
           context,
-          rootNavigator: rootNavigator,
+          rootNavigator: _prebuiltConfig?.rootNavigator ?? false,
         ).pop(true);
       } catch (e) {
         ZegoLoggerService.logError(

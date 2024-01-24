@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 /// @nodoc

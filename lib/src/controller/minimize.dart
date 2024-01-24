@@ -22,8 +22,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     bool rootNavigator = true,
     bool withSafeArea = false,
   }) {
-    if (PrebuiltCallMiniOverlayPageState.minimizing !=
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
+    if (PrebuiltCallMiniOverlayPageState.minimizing != state) {
       ZegoLoggerService.logInfo(
         'is not minimizing, ignore',
         tag: 'call',
@@ -52,7 +51,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     try {
       Navigator.of(context, rootNavigator: rootNavigator).push(
         MaterialPageRoute(builder: (context) {
-          final callPage = ZegoUIKitPrebuiltCall(
+          final prebuiltCall = ZegoUIKitPrebuiltCall(
             appID: minimizeData.appID,
             appSign: minimizeData.appSign,
             userID: minimizeData.userID,
@@ -63,9 +62,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
           );
           return withSafeArea
               ? SafeArea(
-                  child: callPage,
+                  child: prebuiltCall,
                 )
-              : callPage;
+              : prebuiltCall;
         }),
       );
     } catch (e) {

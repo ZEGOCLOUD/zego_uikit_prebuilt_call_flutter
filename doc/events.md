@@ -32,6 +32,7 @@
 
 ## onError
 
+>
 >- function prototype:
 >```dart
 >Function(ZegoUIKitError)? onError
@@ -57,6 +58,7 @@
 
 ## onHangUpConfirmation
 
+>
 > Confirmation callback method before hang up the call.
 >
 > If you want to perform more complex business logic before exiting the call, such as updating some records to the backend, you can use the **onLeaveConfirmation** parameter to set it.
@@ -90,6 +92,7 @@
 
 ## onCallEnd
 
+>
 > This callback is triggered when call end, you can differentiate the reasons for call ended by using the **event.reason**, if the call ended reason is due to being kicked, you can determine who initiated the kick by using the variable **event.kickerUserID**.
 >
 > The default action is to return to the previous page like following:
@@ -107,9 +110,9 @@
 >
 >  /// OR perform the page navigation yourself to return to the previous page.
 >  /// if (PrebuiltCallMiniOverlayPageState.idle !=
->  ///     ZegoUIKitPrebuiltCallController.instance.minimize.state) {
+>  ///     ZegoUIKitPrebuiltCallController().minimize.state) {
 >  ///   /// now is minimizing state, not need to navigate, just hide
->  ///   ZegoUIKitPrebuiltCallController.instance.minimize.hide();
+>  ///   ZegoUIKitPrebuiltCallController().minimize.hide();
 >  /// } else {
 >  ///   Navigator.of(context).pop();
 >  /// }
@@ -174,10 +177,13 @@
 >```
 
 ## user(ZegoUIKitPrebuiltCallUserEvents)
+
+>
 > events about user
 
 ### onEnter
 
+>
 > This callback is triggered when user enter
 >
 >- function prototype:
@@ -213,6 +219,7 @@
 
 ### onLeave
 
+>
 > This callback is triggered when user leave
 >- function prototype:
 >```dart
@@ -246,10 +253,13 @@
 >```
 
 ## room(ZegoUIKitPrebuiltCallRoomEvents)
+
+> 
 > events about room
 
 ### onStateChanged
 
+> 
 > This callback is triggered when room state changed, you can get the current call room entry status by using the **state.reason**.
 >
 >- function prototype:
@@ -325,10 +335,13 @@
 >```
 
 ## audioVideo(ZegoUIKitPrebuiltCallAudioVideoEvents)
+
+> 
 > events about audio video
 
 ### onCameraStateChanged
 
+> 
 > This callback is triggered when camera state changed
 >
 >- function prototype:
@@ -364,6 +377,7 @@
 
 ### onFrontFacingCameraStateChanged
 
+>
 > This callback is triggered when front camera state changed
 >
 >- function prototype:
@@ -399,6 +413,7 @@
 
 ### onMicrophoneStateChanged
 
+>
 > This callback is triggered when microphone state changed
 >
 >- function prototype:
@@ -434,6 +449,7 @@
 
 ### onAudioOutputChanged
 
+>
 > This callback is triggered when audio output device changed
 >
 >- function prototype:
@@ -471,6 +487,7 @@
 
 ## onError
 
+>
 >- function prototype:
 >```dart
 >Function(ZegoUIKitError)? onError;
@@ -489,6 +506,7 @@
 
 ## onInvitationUserStateChanged
 
+>
 > This callback will be triggered to **caller** or **callee** in current calling inviting when the other calling member accepts, rejects, or exits, or the response times out.
 >
 > If the user is not the inviter who initiated this call invitation or is not online, the callback will not be received.
@@ -523,6 +541,7 @@
 
 ## onIncomingCallDeclineButtonPressed
 
+>
 > This callback will be triggered to **callee** when callee click decline button in incoming call
 >
 >- function prototype:
@@ -544,6 +563,7 @@
 
 ## onIncomingCallAcceptButtonPressed
 
+>
 > This callback will be triggered to **callee** when callee click accept button in incoming call
 >
 >- function prototype:
@@ -565,6 +585,7 @@
 
 ## onIncomingCallReceived
 
+>
 > This callback will be triggered to **callee** when callee receive a call
 >
 >- function prototype:
@@ -591,6 +612,7 @@
 
 ## onIncomingCallCanceled
 
+>
 > This callback will be triggered to **callee** when the caller cancels the call invitation.
 >
 >- function prototype:
@@ -615,6 +637,7 @@
 
 ## onIncomingCallTimeout
 
+>
 > The **callee** will receive a notification through this callback when the callee doesn't respond to the call invitation after a timeout duration.
 >
 >- function prototype:
@@ -635,6 +658,7 @@
 
 ## onOutgoingCallCancelButtonPressed
 
+>
 > This callback will be triggered to **caller** when caller cancels the call invitation by click the cancel button
 >
 >- function prototype:
@@ -655,6 +679,7 @@
 
 ## onOutgoingCallAccepted
 
+>
 > The **caller** will receive a notification through this callback when the callee accepts the call invitation.
 >
 >- function prototype:
@@ -675,6 +700,7 @@
 
 ## onOutgoingCallRejectedCauseBusy
 
+>
 > The **caller** will receive a notification through this callback when the callee rejects the call invitation (the callee is busy).
 >
 >- function prototype:
@@ -699,6 +725,7 @@
 
 ## onOutgoingCallDeclined
 
+>
 > The **caller** will receive a notification through this callback when the callee declines the call invitation actively.
 >
 >- function prototype:
@@ -723,6 +750,7 @@
 
 ## onOutgoingCallTimeout
 
+>
 > The **caller** will receive a notification through this callback when the call invitation didn't get responses after a timeout duration.
 >
 >- function prototype:

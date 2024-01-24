@@ -26,9 +26,9 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.ios
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/shared_pref_defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
@@ -169,7 +169,16 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
-  ///   you must call this method as soon as the user logs in to your app or re-logged in.
+  /// you must call this method as soon as the user login(or re-login, auto-login) to your app.
+  ///
+  /// You must include [ZegoUIKitSignalingPlugin] in [plugins] to support the invitation feature.
+  ///
+  /// If you need to set [ZegoUIKitPrebuiltCallConfig], you can do so through [requireConfig].
+  /// Each time the [ZegoUIKitPrebuiltCall] starts, it will request this callback to obtain the current call's config.
+  ///
+  /// Additionally, you can customize the call ringtone through [ringtoneConfig], and configure notifications through [notificationConfig].
+  /// You can also customize the invitation interface with [uiConfig]. If you want to modify the related text on the interface, you can set [innerText].
+  /// If you want to listen for events and perform custom logics, you can use [invitationEvents] to obtain related invitation events, and for call-related events, you need to use [events].
   Future<void> init({
     required int appID,
     required String appSign,
@@ -196,7 +205,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.0.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.1.6; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );

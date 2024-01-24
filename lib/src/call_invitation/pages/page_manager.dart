@@ -7,15 +7,14 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_callkit/zego_callkit.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
@@ -24,7 +23,7 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/notification/notifi
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/invitation_notify.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_overlay_internal_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
 class ZegoInvitationPageManager {
@@ -283,26 +282,34 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onLocalSendInvitation(
-    String callID,
-    List<ZegoUIKitUser> invitees,
-    ZegoCallType invitationType,
-    String code,
-    String message,
-    String invitationID,
-    List<String> errorInvitees,
-  ) {
+  void onLocalSendInvitation({
+    required String callID,
+    required List<ZegoUIKitUser> invitees,
+    required ZegoCallType invitationType,
+    required String customData,
+    required String code,
+    required String message,
+    required String invitationID,
+    required List<String> errorInvitees,
+  }) {
     ZegoLoggerService.logInfo(
-      'local send invitation, call id:$callID, invitees:$invitees, '
-      'type: $invitationType, code:$code, message:$message, '
-      'error invitees:$errorInvitees, invitation id:$invitationID',
+      'local send invitation, '
+      'call id:$callID, '
+      'invitees:$invitees, '
+      'type:$invitationType, '
+      'customData:$customData, '
+      'code:$code, '
+      'message:$message, '
+      'error invitees:$errorInvitees, '
+      'invitation id:$invitationID',
       tag: 'call',
       subTag: 'page manager',
     );
 
     if (code.isNotEmpty) {
       ZegoLoggerService.logInfo(
-        'send invitation error!!! code:$code, message:$message',
+        'send invitation error!!! '
+        'code:$code, message:$message',
         tag: 'call',
         subTag: 'page manager',
       );
@@ -310,15 +317,17 @@ class ZegoInvitationPageManager {
     }
 
     _invitingInvitees = List.from(invitees);
-    _invitingInvitees
-        .removeWhere((invitee) => errorInvitees.contains(invitee.id));
+    _invitingInvitees.removeWhere(
+      (invitee) => errorInvitees.contains(invitee.id),
+    );
 
     _invitationData
       ..callID = callID
       ..invitationID = invitationID
       ..inviter = ZegoUIKit().getLocalUser()
       ..invitees = List.from(invitees)
-      ..type = invitationType;
+      ..type = invitationType
+      ..customData = customData;
 
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
@@ -826,8 +835,10 @@ class ZegoInvitationPageManager {
       return;
     }
 
-    callInvitationData.invitationEvents?.onOutgoingCallAccepted
-        ?.call(_invitationData.callID, ZegoCallUser(invitee.id, invitee.name));
+    callInvitationData.invitationEvents?.onOutgoingCallAccepted?.call(
+      _invitationData.callID,
+      ZegoCallUser(invitee.id, invitee.name),
+    );
 
     _invitingInvitees.removeAt(inviteeIndex);
 
@@ -849,8 +860,10 @@ class ZegoInvitationPageManager {
       subTag: 'page manager',
     );
 
-    callInvitationData.invitationEvents?.onIncomingCallTimeout
-        ?.call(_invitationData.callID, ZegoCallUser(inviter.id, inviter.name));
+    callInvitationData.invitationEvents?.onIncomingCallTimeout?.call(
+      _invitationData.callID,
+      ZegoCallUser(inviter.id, inviter.name),
+    );
 
     _invitingInvitees.clear();
 
@@ -1135,8 +1148,7 @@ class ZegoInvitationPageManager {
           invitationData: _invitationData,
           avatarBuilder:
               callInvitationData.requireConfig(_invitationData).avatarBuilder,
-          showDeclineButton:
-              callInvitationData.uiConfig.showDeclineButton ?? true,
+          showDeclineButton: callInvitationData.uiConfig.showDeclineButton,
         ),
       ),
       barrierDismissible: false,

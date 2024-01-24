@@ -4,11 +4,20 @@ import 'package:flutter/cupertino.dart';
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
+/// @nodoc
 typedef CallEndCallback = void Function(
   ZegoUIKitCallEndEvent event,
 
   /// defaultAction to return to the previous page
   VoidCallback defaultAction,
+);
+
+/// @nodoc
+typedef CallHangUpConfirmationCallback = Future<bool> Function(
+  ZegoUIKitCallHangUpConfirmationEvent event,
+
+  /// defaultAction to return to the previous page
+  Future<bool> Function() defaultAction,
 );
 
 class ZegoUIKitPrebuiltCallEvents {
@@ -50,7 +59,6 @@ class ZegoUIKitPrebuiltCallEvents {
   ///   ///   Navigator.of(context).pop();
   ///   /// }
   /// }
-  ///
   /// ```
   ///
   /// so if you override this callback, you MUST perform the page navigation
@@ -66,7 +74,22 @@ class ZegoUIKitPrebuiltCallEvents {
   /// If you want to perform more complex business logic before exiting the call, such as updating some records to the backend, you can use the [onLeaveConfirmation] parameter to set it.
   /// This parameter requires you to provide a callback method that returns an asynchronous result.
   /// If you return true in the callback, the prebuilt page will quit and return to your previous page, otherwise it will be ignored.
-  Future<bool?> Function(BuildContext context)? onHangUpConfirmation;
+  ///
+  /// Sample Code:
+  ///
+  /// ``` dart
+  /// onHangUpConfirmation: (
+  ///     ZegoUIKitCallHangUpConfirmationEvent event,
+  ///     /// defaultAction to return to the previous page
+  ///     Future<bool> Function() defaultAction,
+  /// ) {
+  ///   debugPrint('onHangUpConfirmation, do whatever you want');
+  ///
+  ///   /// you can call this defaultAction to return to the previous page,
+  ///   return defaultAction.call();
+  /// }
+  /// ```
+  CallHangUpConfirmationCallback? onHangUpConfirmation;
 
   /// events about user
   ZegoUIKitPrebuiltCallUserEvents? user;
@@ -139,6 +162,21 @@ enum ZegoUIKitCallEndReason {
   kickOut,
 }
 
+class ZegoUIKitCallHangUpConfirmationEvent {
+  BuildContext context;
+
+  ZegoUIKitCallHangUpConfirmationEvent({
+    required this.context,
+  });
+
+  @override
+  String toString() {
+    return 'ZegoUIKitCallHangUpConfirmationEvent{'
+        'context:$context, mounted:${context.mounted}, '
+        '}';
+  }
+}
+
 class ZegoUIKitCallEndEvent {
   /// the user ID of who kick you out
   String? kickerUserID;
@@ -146,8 +184,19 @@ class ZegoUIKitCallEndEvent {
   /// end reason
   ZegoUIKitCallEndReason reason;
 
+  /// The [isFromMinimizing] it means that the user left the live streaming
+  /// while it was in a minimized state.
+  ///
+  /// You **can not** return to the previous page while it was **in a minimized state**!!!
+  /// just hide the minimize page by [ZegoUIKitPrebuiltCallController().minimize.hide()]
+  ///
+  /// On the other hand, if the value of the parameter is false, it means
+  /// that the user left the live streaming while it was not minimized.
+  bool isFromMinimizing;
+
   ZegoUIKitCallEndEvent({
     required this.reason,
+    required this.isFromMinimizing,
     this.kickerUserID,
   });
 

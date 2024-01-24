@@ -5,7 +5,7 @@ const String param_1 = '%0';
 /// Control the text on the UI.
 /// Modify the values of the corresponding properties to modify the text on the UI.
 /// You can also change it to other languages.
-/// This class is used for the ZegoUIKitPrebuiltLiveAudioRoomConfig.innerText property.
+/// This class is used for the ZegoUIKitPrebuiltCall.innerText property.
 /// **Note that the placeholder %0 in the text will be replaced with the corresponding username.**
 class ZegoCallInvitationInnerText {
   /// The title of the incoming video call dialog,
