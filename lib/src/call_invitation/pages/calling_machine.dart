@@ -90,7 +90,7 @@ class ZegoCallingMachine {
   }
 
   void onCallingEntry() {
-    if (PrebuiltCallMiniOverlayPageState.calling ==
+    if (ZegoCallMiniOverlayPageState.calling ==
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',

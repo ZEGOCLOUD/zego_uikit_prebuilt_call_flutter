@@ -7,6 +7,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
+import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
@@ -14,25 +15,25 @@ import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_i
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'call_invitation/callkit/background_service.dart';
-import 'components/pop_up_manager.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/invitation.dart';
+part 'controller/invitation.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/invitation.private.dart';
+part 'controller/private/invitation.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/screen_sharing.dart';
+part 'controller/screen_sharing.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/minimize.dart';
+part 'controller/minimize.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/minimize.private.dart';
+part 'controller/private/minimize.dart';
 
-part 'package:zego_uikit_prebuilt_call/src/controller/private.dart';
+part 'controller/private/private.dart';
 
 /// Used to control the call functionality.
 ///
@@ -155,7 +156,7 @@ class ZegoUIKitPrebuiltCallController
     final endEvent = ZegoUIKitCallEndEvent(
       reason: ZegoUIKitCallEndReason.localHangUp,
       isFromMinimizing:
-          PrebuiltCallMiniOverlayPageState.minimizing == minimize.state,
+          ZegoCallMiniOverlayPageState.minimizing == minimize.state,
     );
     defaultAction() {
       private.defaultEndEvent(endEvent, context);

@@ -2,8 +2,10 @@
 >
 > The 4.0 version has standardized and optimized the [API](APIs-topic.html) and [Event](Events-topic.html), simplifying the usage of most APIs.
 >
-> Most of the changes involve modifications to the calling path, such as changing from `ZegoUIKitPrebuiltCallController().isMinimizing()` to `ZegoUIKitPrebuiltCallController().minimize.isMinimizing`.
->
+> Most of the changes involve modifications to the calling path, such as:
+> - Changing from `ZegoUIKitPrebuiltCallController().isMinimizing()` to `ZegoUIKitPrebuiltCallController().minimize.isMinimizing`.
+> - Move the event callback in the **ZegoUIKitPrebuiltCallConfig** to the [Event](Events-topic.html).
+> 
 > After upgrading the call kit, you can refer to the directory index to see how specific APIs from the old version can be migrated to the new version.
 
 ---

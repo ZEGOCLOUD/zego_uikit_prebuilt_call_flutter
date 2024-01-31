@@ -79,8 +79,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     extends State<ZegoUIKitPrebuiltCallMiniOverlayPage> {
   late Size itemSize;
 
-  PrebuiltCallMiniOverlayPageState currentState =
-      PrebuiltCallMiniOverlayPageState.idle;
+  ZegoCallMiniOverlayPageState currentState = ZegoCallMiniOverlayPageState.idle;
 
   bool visibility = true;
   late Offset topLeft;
@@ -185,10 +184,10 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   Widget overlayItem() {
     switch (currentState) {
-      case PrebuiltCallMiniOverlayPageState.idle:
-      case PrebuiltCallMiniOverlayPageState.calling:
+      case ZegoCallMiniOverlayPageState.idle:
+      case ZegoCallMiniOverlayPageState.calling:
         return Container();
-      case PrebuiltCallMiniOverlayPageState.minimizing:
+      case ZegoCallMiniOverlayPageState.minimizing:
         return GestureDetector(
           onTap: () {
             ZegoUIKitPrebuiltCallController().minimize.restore(
@@ -308,7 +307,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   Widget durationTimeBoard() {
-    if (!(minimizeData?.config.durationConfig.isVisible ?? true)) {
+    if (!(minimizeData?.config.duration.isVisible ?? true)) {
       return Container();
     }
 
@@ -333,11 +332,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return Container();
     }
 
-    final cameraEnabled = minimizeData?.config.bottomMenuBarConfig.buttons
-            .contains(ZegoMenuBarButtonName.toggleCameraButton) ??
+    final cameraEnabled = minimizeData?.config.bottomMenuBar.buttons
+            .contains(ZegoCallMenuBarButtonName.toggleCameraButton) ??
         true;
-    final microphoneEnabled = minimizeData?.config.bottomMenuBarConfig.buttons
-            .contains(ZegoMenuBarButtonName.toggleMicrophoneButton) ??
+    final microphoneEnabled = minimizeData?.config.bottomMenuBar.buttons
+            .contains(ZegoCallMenuBarButtonName.toggleMicrophoneButton) ??
         true;
     return Positioned(
       left: 0,
@@ -434,7 +433,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   void syncState() {
     setState(() {
       currentState = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
-      visibility = currentState == PrebuiltCallMiniOverlayPageState.minimizing;
+      visibility = currentState == ZegoCallMiniOverlayPageState.minimizing;
 
       if (visibility) {
         listenAudioVideoList();
@@ -496,8 +495,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     rangeSoundLevels.clear();
   }
 
-  void onMiniOverlayMachineStateChanged(
-      PrebuiltCallMiniOverlayPageState state) {
+  void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
     /// Overlay and setState may be in different contexts, causing the framework to be unable to update.
     ///
     /// The purpose of Future.delayed(Duration.zero, callback) is to execute the callback function in the next frame,
@@ -519,7 +517,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
           ), () {
         /// now is minimizing state, not need to navigate, just switch to idle
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-          PrebuiltCallMiniOverlayPageState.idle,
+          ZegoCallMiniOverlayPageState.idle,
         );
       });
     }

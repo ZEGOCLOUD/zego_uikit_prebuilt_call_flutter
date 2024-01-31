@@ -1064,7 +1064,7 @@ class ZegoInvitationPageManager {
     _callerRingtone.stopRing();
     _calleeRingtone.stopRing();
 
-    if (PrebuiltCallMiniOverlayPageState.minimizing !=
+    if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoUIKit.instance.turnCameraOn(false);
     }
@@ -1279,9 +1279,8 @@ class ZegoInvitationPageManager {
     }
   }
 
-  void onMiniOverlayMachineStateChanged(
-      PrebuiltCallMiniOverlayPageState state) {
-    if (PrebuiltCallMiniOverlayPageState.calling == state) {
+  void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
+    if (ZegoCallMiniOverlayPageState.calling == state) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
   }

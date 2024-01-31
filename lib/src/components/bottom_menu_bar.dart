@@ -13,9 +13,9 @@ import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_butto
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
@@ -102,8 +102,8 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     return ValueNotifierSliderVisibility(
       visibilityNotifier: widget.visibilityNotifier,
       child: Container(
-        margin: widget.config.bottomMenuBarConfig.margin,
-        padding: widget.config.bottomMenuBarConfig.padding,
+        margin: widget.config.bottomMenuBar.margin,
+        padding: widget.config.bottomMenuBar.padding,
         height: widget.height ?? (widget.buttonSize.height + 2 * 3),
         decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.transparent,
@@ -149,16 +149,16 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
               }
             : null,
       ),
-      ...widget.config.bottomMenuBarConfig.extendButtons
+      ...widget.config.bottomMenuBar.extendButtons
           .map((extendButton) => buttonWrapper(child: extendButton))
     ];
 
     var displayButtonList = <Widget>[];
-    if (buttonList.length > widget.config.bottomMenuBarConfig.maxCount) {
+    if (buttonList.length > widget.config.bottomMenuBar.maxCount) {
       /// the list count exceeds the limit, so divided into two parts,
       /// one part display in the Menu bar, the other part display in the menu with more buttons
       displayButtonList = buttonList.sublist(
-          0, widget.config.bottomMenuBarConfig.maxCount - 1)
+          0, widget.config.bottomMenuBar.maxCount - 1)
         ..add(
           buttonWrapper(
             child: ZegoMoreButton(menuButtonListFunc: () {
@@ -172,11 +172,11 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
                       .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
                       .value;
                 }),
-                ...widget.config.bottomMenuBarConfig.extendButtons
+                ...widget.config.bottomMenuBar.extendButtons
                     .map((extendButton) => buttonWrapper(child: extendButton))
               ]..removeRange(
                   0,
-                  widget.config.bottomMenuBarConfig.maxCount - 1,
+                  widget.config.bottomMenuBar.maxCount - 1,
                 );
 
               return buttonList;
@@ -204,7 +204,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
   }
 
   void countdownToHideBar() {
-    if (!widget.config.bottomMenuBarConfig.hideAutomatically) {
+    if (!widget.config.bottomMenuBar.hideAutomatically) {
       return;
     }
 
@@ -231,11 +231,11 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     bool Function()? cameraDefaultValueFunc,
     bool Function()? microphoneDefaultValueFunc,
   }) {
-    if (widget.config.bottomMenuBarConfig.buttons.isEmpty) {
+    if (widget.config.bottomMenuBar.buttons.isEmpty) {
       return [];
     }
 
-    return widget.config.bottomMenuBarConfig.buttons
+    return widget.config.bottomMenuBar.buttons
         .map((buttonName) => buttonWrapper(
               child: generateDefaultButtonsByEnum(
                 context,
@@ -249,7 +249,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
 
   Widget generateDefaultButtonsByEnum(
     BuildContext context,
-    ZegoMenuBarButtonName buttonName, {
+    ZegoCallMenuBarButtonName buttonName, {
     bool Function()? cameraDefaultValueFunc,
     bool Function()? microphoneDefaultValueFunc,
   }) {
@@ -257,27 +257,27 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
     final iconSize = Size(56.zR, 56.zR);
 
     switch (buttonName) {
-      case ZegoMenuBarButtonName.toggleMicrophoneButton:
+      case ZegoCallMenuBarButtonName.toggleMicrophoneButton:
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultOn: microphoneDefaultValueFunc?.call() ??
               widget.config.turnOnMicrophoneWhenJoining,
         );
-      case ZegoMenuBarButtonName.switchAudioOutputButton:
+      case ZegoCallMenuBarButtonName.switchAudioOutputButton:
         return ZegoSwitchAudioOutputButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultUseSpeaker: widget.config.useSpeakerWhenJoining,
         );
-      case ZegoMenuBarButtonName.toggleCameraButton:
+      case ZegoCallMenuBarButtonName.toggleCameraButton:
         return ZegoToggleCameraButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultOn: cameraDefaultValueFunc?.call() ??
               widget.config.turnOnCameraWhenJoining,
         );
-      case ZegoMenuBarButtonName.switchCameraButton:
+      case ZegoCallMenuBarButtonName.switchCameraButton:
         return ZegoSwitchCameraButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
@@ -286,7 +286,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
                   ZegoUIKit().getLocalUser().id)
               .value,
         );
-      case ZegoMenuBarButtonName.hangUpButton:
+      case ZegoCallMenuBarButtonName.hangUpButton:
         return ZegoLeaveButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
@@ -327,12 +327,12 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
               subTag: 'bottom bar',
             );
             ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-              PrebuiltCallMiniOverlayPageState.idle,
+              ZegoCallMiniOverlayPageState.idle,
             );
 
             final callEndEvent = ZegoUIKitCallEndEvent(
               reason: ZegoUIKitCallEndReason.localHangUp,
-              isFromMinimizing: PrebuiltCallMiniOverlayPageState.minimizing ==
+              isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
             );
             defaultAction() {
@@ -349,35 +349,35 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             widget.isHangUpRequestingNotifier?.value = false;
           },
         );
-      case ZegoMenuBarButtonName.showMemberListButton:
+      case ZegoCallMenuBarButtonName.showMemberListButton:
         return ZegoMemberListButton(
-          config: widget.config.memberListConfig,
+          config: widget.config.memberList,
           avatarBuilder: widget.config.avatarBuilder,
           buttonSize: buttonSize,
           iconSize: iconSize,
         );
-      case ZegoMenuBarButtonName.toggleScreenSharingButton:
+      case ZegoCallMenuBarButtonName.toggleScreenSharingButton:
         return ZegoScreenSharingToggleButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           onPressed: (isScreenSharing) {},
         );
-      case ZegoMenuBarButtonName.minimizingButton:
+      case ZegoCallMenuBarButtonName.minimizingButton:
         return ZegoMinimizingButton(
           rootNavigator: widget.config.rootNavigator,
         );
-      case ZegoMenuBarButtonName.beautyEffectButton:
+      case ZegoCallMenuBarButtonName.beautyEffectButton:
         return ZegoBeautyEffectButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
         );
-      case ZegoMenuBarButtonName.chatButton:
+      case ZegoCallMenuBarButtonName.chatButton:
         return ZegoInRoomMessageButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           avatarBuilder: widget.config.avatarBuilder,
-          itemBuilder: widget.config.chatViewConfig.itemBuilder,
+          itemBuilder: widget.config.chatView.itemBuilder,
           viewVisibleNotifier: widget.chatViewVisibleNotifier,
           popUpManager: widget.popUpManager,
         );

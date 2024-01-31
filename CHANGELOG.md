@@ -1,3 +1,21 @@
+## 4.1.9
+
+💥 [migrate tips](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#419).
+- rename some variables 
+
+> 
+> 
+
+- Update documents
+
+## 4.1.8
+
+- Update documents
+
+## 4.1.7
+
+- Update documents
+
 ## 4.1.6
 
 - Fix issue of the margin/size parameter not taking effect in PIP layout
@@ -7,6 +25,12 @@
 - Fix issue of missing `customData` in the sending end of `ZegoCallInvitationData` in `requireConfig` within Call Invitation.
 
 ## 4.1.4
+
+💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#414)
+- add **defaultAction** in `onHangUpConfirmation`
+
+>
+>
 
 - Update dependency.
 
@@ -32,11 +56,14 @@
 
 ## 4.0.0
 
+💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html)
+
 The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
 
 Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
 
-💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html)
+>
+>
 
 - Support user/room/audioVideo series events
 

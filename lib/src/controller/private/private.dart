@@ -69,7 +69,7 @@ class ZegoCallControllerPrivateImpl {
     _popUpManager?.addAPopUpSheet(key);
 
     final dialogInfo = _prebuiltConfig?.hangUpConfirmDialogInfo ??
-        ZegoHangUpConfirmDialogInfo();
+        ZegoCallHangUpConfirmDialogInfo();
     return showAlertDialog(
       event.context,
       dialogInfo.title,
@@ -139,7 +139,7 @@ class ZegoCallControllerPrivateImpl {
       subTag: 'controller.p',
     );
 
-    if (PrebuiltCallMiniOverlayPageState.idle !=
+    if (ZegoCallMiniOverlayPageState.idle !=
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       /// now is minimizing state, not need to navigate, just switch to idle
       ZegoUIKitPrebuiltCallController().minimize.hide();

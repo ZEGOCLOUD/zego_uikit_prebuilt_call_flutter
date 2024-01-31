@@ -26,7 +26,7 @@ class ZegoMemberListButton extends StatefulWidget {
 
   final bool rootNavigator;
 
-  final ZegoMemberListConfig? config;
+  final ZegoCallMemberListConfig? config;
 
   final ButtonIcon? icon;
 

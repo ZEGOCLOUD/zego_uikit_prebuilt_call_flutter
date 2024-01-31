@@ -5,11 +5,126 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'deprecated/deprecated.dart';
 
 /// Configuration for initializing the Call
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].
 class ZegoUIKitPrebuiltCallConfig {
+  /// configuration parameters for audio and video streaming, such as Resolution, Frame rate, Bit rate..
+  /// you can set by **videoConfig = ZegoUIKitVideoConfig.presetXX()**
+  ZegoUIKitVideoConfig video;
+
+  /// Configuration options for audio/video views.
+  ZegoCallAudioVideoViewConfig audioVideoView;
+
+  /// Configuration options for the top menu bar (toolbar).
+  /// You can use these options to customize the appearance and behavior of the top menu bar.
+  ZegoCallTopMenuBarConfig topMenuBar;
+
+  /// Configuration options for the bottom menu bar (toolbar).
+  /// You can use these options to customize the appearance and behavior of the bottom menu bar.
+  ZegoCallBottomMenuBarConfig bottomMenuBar;
+
+  /// Configuration related to the bottom member list, including displaying the member list, member list styles, and more.
+  ZegoCallMemberListConfig memberList;
+
+  /// advance beauty config
+  ZegoBeautyPluginConfig? beauty;
+
+  /// Call timing configuration.
+  ZegoCallDurationConfig duration;
+
+  /// Configuration related to the bottom-left message list.
+  ZegoCallInRoomChatViewConfig chatView;
+
+  /// Set advanced engine configuration, Used to enable advanced functions.
+  /// For details, please consult ZEGO technical support.
+  Map<String, String> advanceConfigs;
+
+  /// Whether to open the camera when joining the call.
+  ///
+  /// If you want to join the call with your camera closed, set this value to false;
+  /// if you want to join the call with your camera open, set this value to true.
+  /// The default value is `true`.
+  bool turnOnCameraWhenJoining;
+
+  /// Whether to open the microphone when joining the call.
+  ///
+  /// If you want to join the call with your microphone closed, set this value to false;
+  /// if you want to join the call with your microphone open, set this value to true.
+  /// The default value is `true`.
+  bool turnOnMicrophoneWhenJoining;
+
+  /// Whether to use the speaker to play audio when joining the call.
+  /// The default value is `false`, but it will be set to `true` if the user is in a group call or video call.
+  /// If this value is set to `false`, the system's default playback device, such as the earpiece or Bluetooth headset, will be used for audio playback.
+  bool useSpeakerWhenJoining;
+
+  /// Layout-related configuration. You can choose your layout here.
+  ZegoLayout layout;
+
+  /// The foreground of the call.
+  ///
+  /// If you need to nest some widgets in [ZegoUIKitPrebuiltCall], please use [foreground] nesting, otherwise these widgets will be lost when you minimize and restore the [ZegoUIKitPrebuiltCall]
+  Widget? foreground;
+
+  /// The background of the call.
+  ///
+  /// You can use any Widget as the background of the call, such as a video, a GIF animation, an image, a web page, etc.
+  /// If you need to dynamically change the background content, you will need to implement the logic for dynamic modification within the Widget you return.
+  ///
+  /// ```dart
+  ///
+  ///  // eg:
+  /// ..background = Container(
+  ///     width: size.width,
+  ///     height: size.height,
+  ///     decoration: const BoxDecoration(
+  ///       image: DecorationImage(
+  ///         fit: BoxFit.fitHeight,
+  ///         image: ,
+  ///       )));
+  /// ```
+  Widget? background;
+
+  /// Use this to customize the avatar, and replace the default avatar with it.
+  ///
+  /// Example：
+  ///
+  /// ```dart
+  ///
+  ///  // eg:
+  ///  avatarBuilder: (BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
+  ///    return user != null
+  ///        ? Container(
+  ///            decoration: BoxDecoration(
+  ///              shape: BoxShape.circle,
+  ///              image: DecorationImage(
+  ///                image: NetworkImage(
+  ///                  'https://your_server/app/avatar/${user.id}.png',
+  ///                ),
+  ///              ),
+  ///            ),
+  ///          )
+  ///        : const SizedBox();
+  ///  },
+  ///
+  /// ```
+  ///
+  ZegoAvatarBuilder? avatarBuilder;
+
+  /// Confirmation dialog information when hang up the call.
+  /// If not set, clicking the exit button will directly exit the call.
+  /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
+  ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo;
+
+  /// same as Flutter's Navigator's param
+  /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
+  /// Useful for pushing contents above all subsequent instances of [Navigator].
+  bool rootNavigator;
+
   /// Default initialization parameters for the group video call.
   /// If a configuration item does not meet your expectations, you can directly override its value.
   ///
@@ -77,159 +192,45 @@ class ZegoUIKitPrebuiltCallConfig {
     this.rootNavigator = false,
     this.advanceConfigs = const {},
     ZegoUIKitVideoConfig? videoConfig,
-    ZegoPrebuiltAudioVideoViewConfig? audioVideoViewConfig,
-    ZegoTopMenuBarConfig? topMenuBarConfig,
-    ZegoBottomMenuBarConfig? bottomMenuBarConfig,
-    ZegoMemberListConfig? memberListConfig,
+    ZegoCallAudioVideoViewConfig? audioVideoViewConfig,
+    ZegoCallTopMenuBarConfig? topMenuBarConfig,
+    ZegoCallBottomMenuBarConfig? bottomMenuBarConfig,
+    ZegoCallMemberListConfig? memberListConfig,
     ZegoCallDurationConfig? durationConfig,
-    ZegoInRoomChatViewConfig? chatViewConfig,
+    ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoLayout? layout,
     this.foreground,
     this.background,
     this.hangUpConfirmDialogInfo,
     this.avatarBuilder,
-    this.audioVideoContainerBuilder,
-  })  : videoConfig = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoViewConfig =
-            audioVideoViewConfig ?? ZegoPrebuiltAudioVideoViewConfig(),
-        topMenuBarConfig = topMenuBarConfig ?? ZegoTopMenuBarConfig(),
-        bottomMenuBarConfig = bottomMenuBarConfig ?? ZegoBottomMenuBarConfig(),
-        memberListConfig = memberListConfig ?? ZegoMemberListConfig(),
-        durationConfig = durationConfig ?? ZegoCallDurationConfig(),
-        chatViewConfig = chatViewConfig ?? ZegoInRoomChatViewConfig(),
+    @Deprecated(
+        'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
+    ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
+  })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
+        audioVideoView = (audioVideoViewConfig ??
+            ZegoCallAudioVideoViewConfig())
+          ..containerBuilder = audioVideoContainerBuilder,
+        topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
+        bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
+        memberList = memberListConfig ?? ZegoCallMemberListConfig(),
+        duration = durationConfig ?? ZegoCallDurationConfig(),
+        chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
             );
-
-  /// Whether to open the camera when joining the call.
-  ///
-  /// If you want to join the call with your camera closed, set this value to false;
-  /// if you want to join the call with your camera open, set this value to true.
-  /// The default value is `true`.
-  bool turnOnCameraWhenJoining;
-
-  /// Whether to open the microphone when joining the call.
-  ///
-  /// If you want to join the call with your microphone closed, set this value to false;
-  /// if you want to join the call with your microphone open, set this value to true.
-  /// The default value is `true`.
-  bool turnOnMicrophoneWhenJoining;
-
-  /// Whether to use the speaker to play audio when joining the call.
-  /// The default value is `false`, but it will be set to `true` if the user is in a group call or video call.
-  /// If this value is set to `false`, the system's default playback device, such as the earpiece or Bluetooth headset, will be used for audio playback.
-  bool useSpeakerWhenJoining;
-
-  /// Layout-related configuration. You can choose your layout here.
-  ZegoLayout layout;
-
-  /// The foreground of the call.
-  ///
-  /// If you need to nest some widgets in [ZegoUIKitPrebuiltCall], please use [foreground] nesting, otherwise these widgets will be lost when you minimize and restore the [ZegoUIKitPrebuiltCall]
-  Widget? foreground;
-
-  /// The background of the call.
-  ///
-  /// You can use any Widget as the background of the call, such as a video, a GIF animation, an image, a web page, etc.
-  /// If you need to dynamically change the background content, you will need to implement the logic for dynamic modification within the Widget you return.
-  ///
-  /// ```dart
-  ///
-  ///  // eg:
-  /// ..background = Container(
-  ///     width: size.width,
-  ///     height: size.height,
-  ///     decoration: const BoxDecoration(
-  ///       image: DecorationImage(
-  ///         fit: BoxFit.fitHeight,
-  ///         image: ,
-  ///       )));
-  /// ```
-  Widget? background;
-
-  /// Custom audio/video view.
-  /// If you don't want to use the default view components, you can pass a custom component through this parameter.
-  Widget Function(
-    BuildContext,
-    List<ZegoUIKitUser> allUsers,
-    List<ZegoUIKitUser> audioVideoUsers,
-  )? audioVideoContainerBuilder;
-
-  /// Use this to customize the avatar, and replace the default avatar with it.
-  ///
-  /// Example：
-  ///
-  /// ```dart
-  ///
-  ///  // eg:
-  ///  avatarBuilder: (BuildContext context, Size size, ZegoUIKitUser? user, Map extraInfo) {
-  ///    return user != null
-  ///        ? Container(
-  ///            decoration: BoxDecoration(
-  ///              shape: BoxShape.circle,
-  ///              image: DecorationImage(
-  ///                image: NetworkImage(
-  ///                  'https://your_server/app/avatar/${user.id}.png',
-  ///                ),
-  ///              ),
-  ///            ),
-  ///          )
-  ///        : const SizedBox();
-  ///  },
-  ///
-  /// ```
-  ///
-  ZegoAvatarBuilder? avatarBuilder;
-
-  /// Confirmation dialog information when hang up the call.
-  /// If not set, clicking the exit button will directly exit the call.
-  /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
-  ZegoHangUpConfirmDialogInfo? hangUpConfirmDialogInfo;
-
-  /// same as Flutter's Navigator's param
-  /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
-  /// Useful for pushing contents above all subsequent instances of [Navigator].
-  bool rootNavigator;
-
-  /// configuration parameters for audio and video streaming, such as Resolution, Frame rate, Bit rate..
-  /// you can set by **videoConfig = ZegoUIKitVideoConfig.presetXX()**
-  ZegoUIKitVideoConfig videoConfig;
-
-  /// Configuration options for audio/video views.
-  ZegoPrebuiltAudioVideoViewConfig audioVideoViewConfig;
-
-  /// Configuration options for the top menu bar (toolbar).
-  /// You can use these options to customize the appearance and behavior of the top menu bar.
-  ZegoTopMenuBarConfig topMenuBarConfig;
-
-  /// Configuration options for the bottom menu bar (toolbar).
-  /// You can use these options to customize the appearance and behavior of the bottom menu bar.
-  ZegoBottomMenuBarConfig bottomMenuBarConfig;
-
-  /// Configuration related to the bottom member list, including displaying the member list, member list styles, and more.
-  ZegoMemberListConfig memberListConfig;
-
-  /// advance beauty config
-  ZegoBeautyPluginConfig? beautyConfig;
-
-  /// Set advanced engine configuration, Used to enable advanced functions.
-  /// For details, please consult ZEGO technical support.
-  Map<String, String> advanceConfigs;
-
-  /// Call timing configuration.
-  ZegoCallDurationConfig durationConfig;
-
-  /// Configuration related to the bottom-left message list.
-  ZegoInRoomChatViewConfig chatViewConfig;
 }
 
 /// Configuration options for audio/video views.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[audioVideoViewConfig] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig].[audioVideoView] property to set the properties inside this class.
 /// These options allow you to customize the display effects of the audio/video views, such as showing microphone status and usernames.
 /// If you need to customize the foreground or background of the audio/video view, you can use foregroundBuilder and backgroundBuilder.
 /// If you want to hide user avatars or sound waveforms in audio mode, you can set showAvatarInAudioMode and showSoundWavesInAudioMode to false.
-class ZegoPrebuiltAudioVideoViewConfig {
+class ZegoCallAudioVideoViewConfig {
+  /// Custom audio/video view.
+  /// If you don't want to use the default view components, you can pass a custom component through this parameter.
+  ZegoCallAudioVideoContainerBuilder? containerBuilder;
+
   /// Whether to mirror the displayed video captured by the camera.
   /// This mirroring effect only applies to the front-facing camera.
   /// Set it to true to enable mirroring, which flips the image horizontally.
@@ -269,7 +270,8 @@ class ZegoPrebuiltAudioVideoViewConfig {
   /// Set it to false if you don't want to show sound waveforms in audio mode.
   bool showSoundWavesInAudioMode;
 
-  ZegoPrebuiltAudioVideoViewConfig({
+  ZegoCallAudioVideoViewConfig({
+    this.containerBuilder,
     this.isVideoMirror = true,
     this.showMicrophoneStateOnView = true,
     this.showCameraStateOnView = false,
@@ -283,8 +285,8 @@ class ZegoPrebuiltAudioVideoViewConfig {
 }
 
 /// Configuration options for the top menu bar (toolbar).
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[topMenuBarConfig] property to set the properties inside this class.
-class ZegoTopMenuBarConfig {
+/// You can use the [ZegoUIKitPrebuiltCallConfig].[topMenuBar] property to set the properties inside this class.
+class ZegoCallTopMenuBarConfig {
   /// Whether to display the top menu bar.
   bool isVisible;
 
@@ -298,7 +300,7 @@ class ZegoTopMenuBarConfig {
   bool hideByClick;
 
   /// Buttons displayed on the menu bar. The buttons will be arranged in the order specified in the list.
-  List<ZegoMenuBarButtonName> buttons;
+  List<ZegoCallMenuBarButtonName> buttons;
 
   /// Extension buttons that allow you to add your own buttons to the top toolbar.
   /// These buttons will be added to the menu bar in the specified order.
@@ -320,7 +322,7 @@ class ZegoTopMenuBarConfig {
   /// height for the top menu bar.
   double? height;
 
-  ZegoTopMenuBarConfig({
+  ZegoCallTopMenuBarConfig({
     this.isVisible = true,
     this.title = '',
     this.hideAutomatically = true,
@@ -336,8 +338,8 @@ class ZegoTopMenuBarConfig {
 }
 
 /// Configuration options for the bottom menu bar (toolbar).
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[bottomMenuBarConfig] property to set the properties inside this class.
-class ZegoBottomMenuBarConfig {
+/// You can use the [ZegoUIKitPrebuiltCallConfig].[bottomMenuBar] property to set the properties inside this class.
+class ZegoCallBottomMenuBarConfig {
   /// Whether to automatically collapse the top menu bar after 5 seconds of inactivity.
 
   bool hideAutomatically;
@@ -346,7 +348,7 @@ class ZegoBottomMenuBarConfig {
   bool hideByClick;
 
   /// Buttons displayed on the menu bar. The buttons will be arranged in the order specified in the list.
-  List<ZegoMenuBarButtonName> buttons;
+  List<ZegoCallMenuBarButtonName> buttons;
 
   /// Controls the maximum number of buttons to be displayed in the menu bar (toolbar).
   /// When the number of buttons exceeds the `maxCount` limit, a "More" button will appear.
@@ -373,15 +375,15 @@ class ZegoBottomMenuBarConfig {
   /// If the limit of [maxCount] is exceeded, additional buttons will be automatically added to the overflow menu.
   List<Widget> extendButtons;
 
-  ZegoBottomMenuBarConfig({
+  ZegoCallBottomMenuBarConfig({
     this.hideAutomatically = true,
     this.hideByClick = true,
     this.buttons = const [
-      ZegoMenuBarButtonName.toggleCameraButton,
-      ZegoMenuBarButtonName.toggleMicrophoneButton,
-      ZegoMenuBarButtonName.hangUpButton,
-      ZegoMenuBarButtonName.switchAudioOutputButton,
-      ZegoMenuBarButtonName.switchCameraButton,
+      ZegoCallMenuBarButtonName.toggleCameraButton,
+      ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+      ZegoCallMenuBarButtonName.hangUpButton,
+      ZegoCallMenuBarButtonName.switchAudioOutputButton,
+      ZegoCallMenuBarButtonName.switchCameraButton,
     ],
     this.extendButtons = const [],
     this.maxCount = 5,
@@ -406,7 +408,7 @@ enum ZegoMenuBarStyle {
 }
 
 /// Configuration for the member list.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[memberListConfig] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig].[memberList] property to set the properties inside this class.
 ///
 /// If you want to use a custom member list item view, you can set the `itemBuilder` property in `ZegoMemberListConfig`
 /// and pass your custom view's builder function to it.
@@ -423,7 +425,7 @@ enum ZegoMenuBarStyle {
 /// In this example, we set `showMicrophoneState` to true, so the microphone state will be displayed in the member list item.
 /// `showCameraState` is set to false, so the camera state will not be displayed.
 /// Finally, we pass the builder function of the custom view, `CustomMemberListItem`, to the `itemBuilder` property so that the member list item will be rendered using the custom component.
-class ZegoMemberListConfig {
+class ZegoCallMemberListConfig {
   /// Whether to show the microphone state of the member. Defaults to true, which means it will be shown.
   bool showMicrophoneState;
 
@@ -433,38 +435,15 @@ class ZegoMemberListConfig {
   /// Custom member list item view.
   ZegoMemberListItemBuilder? itemBuilder;
 
-  ZegoMemberListConfig({
+  ZegoCallMemberListConfig({
     this.showMicrophoneState = true,
     this.showCameraState = true,
     this.itemBuilder,
   });
 }
 
-///  the configuration for the hang-up confirmation dialog
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[hangUpConfirmDialogInfo] property to set the properties inside this class.
-class ZegoHangUpConfirmDialogInfo {
-  /// The title of the dialog
-  String title;
-
-  /// The message content of the dialog
-  String message;
-
-  /// The text for the cancel button
-  String cancelButtonName;
-
-  /// The text for the confirm button
-  String confirmButtonName;
-
-  ZegoHangUpConfirmDialogInfo({
-    this.title = 'Hangup Confirmation',
-    this.message = 'Do you want to hangup?',
-    this.cancelButtonName = 'Cancel',
-    this.confirmButtonName = 'OK',
-  });
-}
-
 /// Call timing configuration.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[durationConfig] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig].[duration] property to set the properties inside this class.
 class ZegoCallDurationConfig {
   /// Whether to display call timing.
   bool isVisible;
@@ -472,8 +451,8 @@ class ZegoCallDurationConfig {
   /// Call timing callback function, called every second.
   ///
   /// Example: Set to automatically hang up after 5 minutes.
-  /// ..durationConfig.isVisible = true
-  /// ..durationConfig.onDurationUpdate = (Duration duration) {
+  /// ..duration.isVisible = true
+  /// ..duration.onDurationUpdate = (Duration duration) {
   ///   if (duration.inSeconds >= 5 * 60) {
   ///     callController?.hangUp(context);
   ///   }
@@ -487,7 +466,7 @@ class ZegoCallDurationConfig {
 }
 
 /// Control options for the bottom-left message list.
-/// This class is used for the [chatViewConfig] property of [ZegoUIKitPrebuiltCallConfig].
+/// This class is used for the [chatView] property of [ZegoUIKitPrebuiltCallConfig].
 ///
 /// If you want to customize chat messages, you can specify the [itemBuilder] in [ZegoInRoomMessageViewConfig].
 ///
@@ -501,12 +480,12 @@ class ZegoCallDurationConfig {
 ///     );
 ///   },
 /// );
-class ZegoInRoomChatViewConfig {
+class ZegoCallInRoomChatViewConfig {
   /// Use this to customize the style and content of each chat message list item.
   /// For example, you can modify the background color, opacity, border radius, or add additional information like the sender's level or role.
   ZegoInRoomMessageItemBuilder? itemBuilder;
 
-  ZegoInRoomChatViewConfig({
+  ZegoCallInRoomChatViewConfig({
     this.itemBuilder,
   });
 }
@@ -527,54 +506,54 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
               smallViewPosition: ZegoViewPosition.topRight,
             ),
       topMenuBarConfig: isGroup
-          ? ZegoTopMenuBarConfig(
+          ? ZegoCallTopMenuBarConfig(
               isVisible: true,
               style: ZegoMenuBarStyle.dark,
               buttons: [
-                ZegoMenuBarButtonName.showMemberListButton,
+                ZegoCallMenuBarButtonName.showMemberListButton,
               ],
             )
-          : ZegoTopMenuBarConfig(
+          : ZegoCallTopMenuBarConfig(
               isVisible: false,
               buttons: [],
             ),
       bottomMenuBarConfig: isGroup
-          ? ZegoBottomMenuBarConfig(
+          ? ZegoCallBottomMenuBarConfig(
               style: ZegoMenuBarStyle.dark,
               buttons: isVideo
                   ? [
-                      ZegoMenuBarButtonName.toggleCameraButton,
-                      ZegoMenuBarButtonName.switchCameraButton,
-                      ZegoMenuBarButtonName.hangUpButton,
-                      ZegoMenuBarButtonName.toggleMicrophoneButton,
-                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                      ZegoCallMenuBarButtonName.toggleCameraButton,
+                      ZegoCallMenuBarButtonName.switchCameraButton,
+                      ZegoCallMenuBarButtonName.hangUpButton,
+                      ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoCallMenuBarButtonName.switchAudioOutputButton,
                     ]
                   : [
-                      ZegoMenuBarButtonName.toggleMicrophoneButton,
-                      ZegoMenuBarButtonName.hangUpButton,
-                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                      ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoCallMenuBarButtonName.hangUpButton,
+                      ZegoCallMenuBarButtonName.switchAudioOutputButton,
                     ],
             )
-          : ZegoBottomMenuBarConfig(
+          : ZegoCallBottomMenuBarConfig(
               style: ZegoMenuBarStyle.light,
               buttons: isVideo
                   ? [
-                      ZegoMenuBarButtonName.toggleCameraButton,
-                      ZegoMenuBarButtonName.switchCameraButton,
-                      ZegoMenuBarButtonName.hangUpButton,
-                      ZegoMenuBarButtonName.toggleMicrophoneButton,
-                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                      ZegoCallMenuBarButtonName.toggleCameraButton,
+                      ZegoCallMenuBarButtonName.switchCameraButton,
+                      ZegoCallMenuBarButtonName.hangUpButton,
+                      ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoCallMenuBarButtonName.switchAudioOutputButton,
                     ]
                   : [
-                      ZegoMenuBarButtonName.toggleMicrophoneButton,
-                      ZegoMenuBarButtonName.hangUpButton,
-                      ZegoMenuBarButtonName.switchAudioOutputButton,
+                      ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+                      ZegoCallMenuBarButtonName.hangUpButton,
+                      ZegoCallMenuBarButtonName.switchAudioOutputButton,
                     ],
             ),
-      audioVideoViewConfig: ZegoPrebuiltAudioVideoViewConfig(
+      audioVideoViewConfig: ZegoCallAudioVideoViewConfig(
         useVideoViewAspectFill: !isGroup,
       ),
-      memberListConfig: ZegoMemberListConfig(),
+      memberListConfig: ZegoCallMemberListConfig(),
     );
   }
 }

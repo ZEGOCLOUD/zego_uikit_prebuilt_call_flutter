@@ -49,15 +49,6 @@ class ZegoUIKitPrebuiltCallEvents {
   ///
   ///   /// you can call this defaultAction to return to the previous page,
   ///   defaultAction.call();
-  ///
-  ///   /// OR perform the page navigation yourself to return to the previous page.
-  ///   /// if (PrebuiltCallMiniOverlayPageState.idle !=
-  ///   ///     ZegoUIKitPrebuiltCallController.instance.minimize.state) {
-  ///   ///   /// now is minimizing state, not need to navigate, just hide
-  ///   ///   ZegoUIKitPrebuiltCallController.instance.minimize.hide();
-  ///   /// } else {
-  ///   ///   Navigator.of(context).pop();
-  ///   /// }
   /// }
   /// ```
   ///

@@ -9,7 +9,7 @@ mixin ZegoCallControllerMinimizing {
 
 class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   /// minimize state
-  PrebuiltCallMiniOverlayPageState get state =>
+  ZegoCallMiniOverlayPageState get state =>
       ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
 
   /// Is it currently in the minimized state or not
@@ -22,7 +22,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     bool rootNavigator = true,
     bool withSafeArea = false,
   }) {
-    if (PrebuiltCallMiniOverlayPageState.minimizing != state) {
+    if (ZegoCallMiniOverlayPageState.minimizing != state) {
       ZegoLoggerService.logInfo(
         'is not minimizing, ignore',
         tag: 'call',
@@ -45,7 +45,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
     /// re-enter prebuilt call
     ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-      PrebuiltCallMiniOverlayPageState.calling,
+      ZegoCallMiniOverlayPageState.calling,
     );
 
     try {
@@ -85,7 +85,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     BuildContext context, {
     bool rootNavigator = true,
   }) {
-    if (PrebuiltCallMiniOverlayPageState.minimizing ==
+    if (ZegoCallMiniOverlayPageState.minimizing ==
         ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
       ZegoLoggerService.logInfo(
         'is minimizing, ignore',
@@ -97,7 +97,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     }
 
     ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-      PrebuiltCallMiniOverlayPageState.minimizing,
+      ZegoCallMiniOverlayPageState.minimizing,
     );
 
     try {
@@ -122,7 +122,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   /// if call ended in minimizing state, not need to navigate, just hide the minimize widget.
   void hide() {
     ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-      PrebuiltCallMiniOverlayPageState.idle,
+      ZegoCallMiniOverlayPageState.idle,
     );
   }
 }

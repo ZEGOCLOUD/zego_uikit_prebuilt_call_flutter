@@ -3,7 +3,7 @@
 /// This enum type is used in ZegoUIKitPrebuiltCallConfig.bottomMenuBarConfig and ZegoUIKitPrebuiltCallConfig.topMenuBarConfig.
 ///
 /// For example, if you don't want the minimize button, you can exclude the minimizingButton from ZegoBottomMenuBarConfig.buttons.
-enum ZegoMenuBarButtonName {
+enum ZegoCallMenuBarButtonName {
   /// Button for controlling the camera switch.
   toggleCameraButton,
 
