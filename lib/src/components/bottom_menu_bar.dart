@@ -16,17 +16,18 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
-class ZegoBottomMenuBar extends StatefulWidget {
+class ZegoCallBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
   final ZegoUIKitPrebuiltCallEvents events;
-  final void Function(ZegoUIKitCallEndEvent event) defaultEndAction;
-  final Future<bool> Function(ZegoUIKitCallHangUpConfirmationEvent event)
+  final void Function(ZegoCallEndEvent event) defaultEndAction;
+  final Future<bool> Function(ZegoCallHangUpConfirmationEvent event)
       defaultHangUpConfirmationAction;
 
   final Size buttonSize;
@@ -39,12 +40,12 @@ class ZegoBottomMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
-  final ZegoUIKitPrebuiltCallMinimizeData minimizeData;
+  final ZegoCallMinimizeData minimizeData;
 
   final ValueNotifier<bool> chatViewVisibleNotifier;
-  final ZegoPopUpManager popUpManager;
+  final ZegoCallPopUpManager popUpManager;
 
-  const ZegoBottomMenuBar({
+  const ZegoCallBottomMenuBar({
     Key? key,
     required this.config,
     required this.events,
@@ -64,11 +65,11 @@ class ZegoBottomMenuBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ZegoBottomMenuBar> createState() => _ZegoBottomMenuBarState();
+  State<ZegoCallBottomMenuBar> createState() => _ZegoCallBottomMenuBarState();
 }
 
 /// @nodoc
-class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
+class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
   Timer? hideTimerOfMenuBar;
 
   final hangupButtonClickableNotifier = ValueNotifier<bool>(true);
@@ -295,8 +296,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
             /// prevent controller's hangUp function call after leave button click
             widget.isHangUpRequestingNotifier?.value = true;
 
-            final hangUpConfirmationEvent =
-                ZegoUIKitCallHangUpConfirmationEvent(
+            final hangUpConfirmationEvent = ZegoCallHangUpConfirmationEvent(
               context: context,
             );
             defaultAction() async {
@@ -326,12 +326,12 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
               tag: 'call',
               subTag: 'bottom bar',
             );
-            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+            ZegoCallMiniOverlayMachine().changeState(
               ZegoCallMiniOverlayPageState.idle,
             );
 
-            final callEndEvent = ZegoUIKitCallEndEvent(
-              reason: ZegoUIKitCallEndReason.localHangUp,
+            final callEndEvent = ZegoCallEndEvent(
+              reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
             );
@@ -350,7 +350,7 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           },
         );
       case ZegoCallMenuBarButtonName.showMemberListButton:
-        return ZegoMemberListButton(
+        return ZegoCallMemberListButton(
           config: widget.config.memberList,
           avatarBuilder: widget.config.avatarBuilder,
           buttonSize: buttonSize,
@@ -363,17 +363,17 @@ class _ZegoBottomMenuBarState extends State<ZegoBottomMenuBar> {
           onPressed: (isScreenSharing) {},
         );
       case ZegoCallMenuBarButtonName.minimizingButton:
-        return ZegoMinimizingButton(
+        return ZegoCallMinimizingButton(
           rootNavigator: widget.config.rootNavigator,
         );
       case ZegoCallMenuBarButtonName.beautyEffectButton:
-        return ZegoBeautyEffectButton(
+        return ZegoCallBeautyEffectButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
         );
       case ZegoCallMenuBarButtonName.chatButton:
-        return ZegoInRoomMessageButton(
+        return ZegoCallInRoomMessageButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           avatarBuilder: widget.config.avatarBuilder,

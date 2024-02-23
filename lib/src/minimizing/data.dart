@@ -10,8 +10,8 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 /// @nodoc
-class ZegoUIKitPrebuiltCallMinimizeData {
-  const ZegoUIKitPrebuiltCallMinimizeData({
+class ZegoCallMinimizeData {
+  const ZegoCallMinimizeData({
     required this.appID,
     required this.appSign,
     required this.callID,

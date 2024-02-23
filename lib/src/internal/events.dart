@@ -7,11 +7,11 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
-class ZegoUIKitCallEventListener {
+class ZegoCallEventListener {
   final ZegoUIKitPrebuiltCallEvents? events;
   final List<StreamSubscription<dynamic>?> _subscriptions = [];
 
-  ZegoUIKitCallEventListener(this.events);
+  ZegoCallEventListener(this.events);
 
   void init() {
     _subscriptions

@@ -6,13 +6,12 @@
   - [uninit](#uninit)
   - [setNavigatorKey](#setnavigatorkey)
   - [useSystemCallingUI](#usesystemcallingui)
+  - [send](#send)
+  - [cancel](#cancel)
+  - [reject](#reject)
+  - [accept](#accept)
 - [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontrollerzego_uikit_prebuilt_callzegouikitprebuiltcallcontroller-classhtml)
   - [hangUp](#hangup)
-  - [invitation](#invitation)
-    - [send](#send)
-    - [cancel](#cancel)
-    - [reject](#reject)
-    - [accept](#accept)
   - [minimize](#minimize)
     - [isMinimizing](#isminimizing)
     - [state](#state)
@@ -122,8 +121,8 @@
 >    required String userID,
 >    required String userName,
 >    required List<IZegoUIKitPlugin> plugins,
->    PrebuiltConfigQuery? requireConfig,
->    ZegoRingtoneConfig? ringtoneConfig,
+>    ZegoCallPrebuiltConfigQuery? requireConfig,
+>    ZegoCallRingtoneConfig? ringtoneConfig,
 >    ZegoCallInvitationUIConfig? uiConfig,
 >    ZegoCallInvitationNotificationConfig? notificationConfig,
 >    ZegoCallInvitationInnerText? innerText,
@@ -150,30 +149,6 @@
 > void useSystemCallingUI(List<IZegoUIKitPlugin> plugins)
 > ```
 
-# [ZegoUIKitPrebuiltCallController](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallController-class.html)
-
-> A singleton class, can be accessed and its APIs can be accessed using either ZegoUIKitPrebuiltCallController().
-
-## hangUp
-
-> This function is used to end the current call.
->
-> You can pass the context `context` for any necessary pop-ups or page transitions.
->
-> By using the `showConfirmation` parameter, you can control whether to display a confirmation dialog to confirm ending the call.
->
-> This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the `onHangUpConfirmation` and `onHangUp` settings in the config.
->
-> - function prototype:
->
-> ```dart
->  Future<bool> hangUp(
->    BuildContext context, {
->    bool showConfirmation = false,
->  }) async
-> ```
-
-## invitation
 
 ### send
 
@@ -186,8 +161,6 @@
 > Additionally, you can specify the call ID `callID`. If not provided, the system will generate one automatically based on certain rules.
 >
 > If you want to set a ringtone for offline call invitations, set `resourceID` to a value that matches the push resource ID in the ZEGOCLOUD management console.
->
-> Note that the `resourceID` setting will only take effect when `notifyWhenAppRunningInBackgroundOrQuit` is true.
 >
 > You can also set the notification title `notificationTitle` and message `notificationMessage`.
 >
@@ -213,7 +186,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController().invitation.send(...);
+> ZegoUIKitPrebuiltCallInvitationService().send(...);
 > ```
 
 ### cancel
@@ -234,7 +207,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController().invitation.cancel(...);
+> ZegoUIKitPrebuiltCallInvitationService().cancel(...);
 > ```
 
 ### reject
@@ -255,7 +228,7 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController().invitation.reject();
+> ZegoUIKitPrebuiltCallInvitationService().reject();
 > ```
 
 ### accept
@@ -275,7 +248,30 @@
 > - example:
 >
 > ```dart
-> ZegoUIKitPrebuiltCallController().invitation.accept();
+> ZegoUIKitPrebuiltCallInvitationService().accept();
+> ```
+
+# [ZegoUIKitPrebuiltCallController](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallController-class.html)
+
+> A singleton class, can be accessed and its APIs can be accessed using either ZegoUIKitPrebuiltCallController().
+
+## hangUp
+
+> This function is used to end the current call.
+>
+> You can pass the context `context` for any necessary pop-ups or page transitions.
+>
+> By using the `showConfirmation` parameter, you can control whether to display a confirmation dialog to confirm ending the call.
+>
+> This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the `onHangUpConfirmation` and `onHangUp` settings in the config.
+>
+> - function prototype:
+>
+> ```dart
+>  Future<bool> hangUp(
+>    BuildContext context, {
+>    bool showConfirmation = false,
+>  }) async
 > ```
 
 ## screenSharing
@@ -314,7 +310,7 @@
 > final isMinimizing = ZegoUIKitPrebuiltCallController().minimize.isMinimizing;
 > ```
 
-### state(PrebuiltCallMiniOverlayPageState)
+### state(ZegoCallMiniOverlayPageState)
 
 > current state of the minimized
 >
@@ -326,7 +322,7 @@
 > /// [idle]: in a blank state, not yet minimized, or has been restored to the original Widget.
 > /// [calling]: in the process of being restored from the minimized state.
 > /// [minimizing]: in the minimized state.
-> enum PrebuiltCallMiniOverlayPageState {
+> enum ZegoCallMiniOverlayPageState {
 >  idle,
 >  calling,
 >  minimizing,

@@ -17,19 +17,19 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
-class ZegoTopMenuBar extends StatefulWidget {
+class ZegoCallTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallConfig config;
   final ZegoUIKitPrebuiltCallEvents events;
-  final void Function(ZegoUIKitCallEndEvent event) defaultEndAction;
-  final Future<bool> Function(ZegoUIKitCallHangUpConfirmationEvent event)
+  final void Function(ZegoCallEndEvent event) defaultEndAction;
+  final Future<bool> Function(ZegoCallHangUpConfirmationEvent event)
       defaultHangUpConfirmationAction;
 
-  final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
   final int autoHideSeconds;
   final ValueNotifier<int> restartHideTimerNotifier;
@@ -40,9 +40,9 @@ class ZegoTopMenuBar extends StatefulWidget {
   final Color? backgroundColor;
 
   final ValueNotifier<bool> chatViewVisibleNotifier;
-  final ZegoPopUpManager popUpManager;
+  final ZegoCallPopUpManager popUpManager;
 
-  const ZegoTopMenuBar({
+  const ZegoCallTopMenuBar({
     Key? key,
     required this.config,
     required this.events,
@@ -54,21 +54,28 @@ class ZegoTopMenuBar extends StatefulWidget {
     required this.chatViewVisibleNotifier,
     required this.popUpManager,
     this.autoHideSeconds = 3,
-    this.buttonSize = const Size(60, 60),
     this.height,
     this.borderRadius,
     this.backgroundColor,
   }) : super(key: key);
 
   @override
-  State<ZegoTopMenuBar> createState() => _ZegoTopMenuBarState();
+  State<ZegoCallTopMenuBar> createState() => _ZegoCallTopMenuBarState();
 }
 
 /// @nodoc
-class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
+class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   Timer? hideTimerOfMenuBar;
 
   final hangupButtonClickableNotifier = ValueNotifier<bool>(true);
+
+  double get defaultHeight => 98.zR;
+
+  double get height => widget.height ?? defaultHeight;
+
+  Size get buttonDisplaySize => Size(height, height);
+
+  double get buttonHeightRatio => 0.8;
 
   @override
   void initState() {
@@ -102,7 +109,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
       child: Container(
         margin: widget.config.topMenuBar.margin,
         padding: widget.config.topMenuBar.padding,
-        height: widget.height ?? (widget.buttonSize.height + 2 * 3),
+        height: height,
         decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.transparent,
           borderRadius: BorderRadius.only(
@@ -131,9 +138,10 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
         Text(
           widget.config.topMenuBar.title,
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 36.zR,
-              fontWeight: FontWeight.w500),
+            color: Colors.white,
+            fontSize: 36.zR,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -198,8 +206,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
 
   Widget buttonWrapper({required Widget child}) {
     return SizedBox(
-      width: widget.buttonSize.width,
-      height: widget.buttonSize.height,
+      width: buttonDisplaySize.width,
+      height: buttonDisplaySize.height,
       child: child,
     );
   }
@@ -220,8 +228,8 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
     BuildContext context,
     ZegoCallMenuBarButtonName buttonName,
   ) {
-    final buttonSize = Size(70.zR, 70.zR);
-    final iconSize = Size(64.zR, 64.zR);
+    final buttonSize = buttonDisplaySize;
+    final iconSize = buttonDisplaySize * buttonHeightRatio;
 
     switch (buttonName) {
       case ZegoCallMenuBarButtonName.toggleMicrophoneButton:
@@ -247,8 +255,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(
-            icon:
-                PrebuiltCallImage.asset(PrebuiltCallIconUrls.topCameraOverturn),
+            icon: ZegoCallImage.asset(ZegoCallIconUrls.topCameraOverturn),
             backgroundColor: Colors.transparent,
           ),
           defaultUseFrontFacingCamera: ZegoUIKit()
@@ -266,8 +273,7 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
             /// prevent controller's hangUp function call after leave button click
             widget.isHangUpRequestingNotifier?.value = true;
 
-            final hangUpConfirmationEvent =
-                ZegoUIKitCallHangUpConfirmationEvent(
+            final hangUpConfirmationEvent = ZegoCallHangUpConfirmationEvent(
               context: context,
             );
             defaultAction() async {
@@ -297,11 +303,11 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
               tag: 'call',
               subTag: 'top bar',
             );
-            ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
+            ZegoCallMiniOverlayMachine()
                 .changeState(ZegoCallMiniOverlayPageState.idle);
 
-            final callEndEvent = ZegoUIKitCallEndEvent(
-              reason: ZegoUIKitCallEndReason.localHangUp,
+            final callEndEvent = ZegoCallEndEvent(
+              reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
             );
@@ -320,14 +326,14 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           },
         );
       case ZegoCallMenuBarButtonName.showMemberListButton:
-        return ZegoMemberListButton(
+        return ZegoCallMemberListButton(
           config: widget.config.memberList,
           rootNavigator: widget.config.rootNavigator,
           avatarBuilder: widget.config.avatarBuilder,
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(
-            icon: PrebuiltCallImage.asset(PrebuiltCallIconUrls.topMemberNormal),
+            icon: ZegoCallImage.asset(ZegoCallIconUrls.topMemberNormal),
           ),
         );
       case ZegoCallMenuBarButtonName.toggleScreenSharingButton:
@@ -337,21 +343,23 @@ class _ZegoTopMenuBarState extends State<ZegoTopMenuBar> {
           onPressed: (isScreenSharing) {},
         );
       case ZegoCallMenuBarButtonName.minimizingButton:
-        return ZegoMinimizingButton(
+        return ZegoCallMinimizingButton(
+          buttonSize: buttonSize,
+          iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
         );
       case ZegoCallMenuBarButtonName.beautyEffectButton:
-        return ZegoBeautyEffectButton(
+        return ZegoCallBeautyEffectButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           rootNavigator: widget.config.rootNavigator,
         );
       case ZegoCallMenuBarButtonName.chatButton:
-        return ZegoInRoomMessageButton(
+        return ZegoCallInRoomMessageButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(
-            icon: PrebuiltCallImage.asset(PrebuiltCallIconUrls.topMemberIM),
+            icon: ZegoCallImage.asset(ZegoCallIconUrls.topMemberIM),
             backgroundColor: Colors.transparent,
           ),
           avatarBuilder: widget.config.avatarBuilder,

@@ -2,22 +2,21 @@
 import 'package:flutter/material.dart';
 
 /// @nodoc
-class CallDurationTimeBoard extends StatefulWidget {
+class ZegoCallDurationTimeBoard extends StatefulWidget {
   final ValueNotifier<Duration> durationNotifier;
   final double fontSize;
 
-  const CallDurationTimeBoard({
+  const ZegoCallDurationTimeBoard({
     Key? key,
     required this.durationNotifier,
     this.fontSize = 15,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => CallDurationTimeBoardState();
+  State<StatefulWidget> createState() => _ZegoCallDurationTimeBoardState();
 }
 
-/// @nodoc
-class CallDurationTimeBoardState extends State<CallDurationTimeBoard> {
+class _ZegoCallDurationTimeBoardState extends State<ZegoCallDurationTimeBoard> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Duration>(

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 /// @nodoc
-class ZegoAudioVideoForeground extends StatelessWidget {
+class ZegoCallAudioVideoForeground extends StatelessWidget {
   final Size size;
   final ZegoUIKitUser? user;
 
@@ -15,7 +15,7 @@ class ZegoAudioVideoForeground extends StatelessWidget {
   final bool showCameraStateOnView;
   final bool showUserNameOnView;
 
-  const ZegoAudioVideoForeground({
+  const ZegoCallAudioVideoForeground({
     Key? key,
     this.user,
     required this.size,

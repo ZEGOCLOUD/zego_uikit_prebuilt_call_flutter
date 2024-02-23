@@ -1,10 +1,41 @@
+## 4.3.0
+
+- Support full-screen display configuration for offline notification under screen locked, see details[Document](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Enable%20fullscreen%20incoming%20call/2886fbb3)
+
+## 4.2.5
+
+- Update dependency.
+
+## 4.2.4
+
+- Update dependency.
+
+## 4.2.3
+
+- Fix the issue of ineffective clicking in a portion of the top toolbar buttons.
+
+## 4.2.2
+
+- Fix the issue of updating innerText by **ZegoUIKitPrebuiltCallInvitationService.innerText** before **ZegoUIKitPrebuiltCallInvitationService.init()** being called.
+
+## 4.2.1
+
+- Update documents
+
+## 4.2.0
+
+- Support custom invitation UI by [ZegoCallInvitationUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
+
+## 4.1.10
+
+- move API in `ZegoUIKitPrebuiltCallController().invitation` to `ZegoUIKitPrebuiltCallInvitationService()` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110)
+- rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110).
+
+- Add configs document
+
 ## 4.1.9
 
-💥 [migrate tips](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#419).
-- rename some variables 
-
-> 
-> 
+- rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#419).
 
 - Update documents
 
@@ -26,11 +57,10 @@
 
 ## 4.1.4
 
-💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#414)
-- add **defaultAction** in `onHangUpConfirmation`
-
+- > 
+> add **defaultAction** in `onHangUpConfirmation`
 >
->
+> 💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#414)
 
 - Update dependency.
 
@@ -56,14 +86,12 @@
 
 ## 4.0.0
 
-💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html)
-
-The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
-
-Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
-
+- >
+> The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
 >
+> Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
 >
+> 💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400)
 
 - Support user/room/audioVideo series events
 

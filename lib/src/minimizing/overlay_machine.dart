@@ -13,12 +13,12 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 
 /// @nodoc
-typedef PrebuiltCallMiniOverlayMachineStateChanged = void Function(
+typedef ZegoCallMiniOverlayMachineStateChanged = void Function(
     ZegoCallMiniOverlayPageState);
 
 /// @nodoc
-class ZegoUIKitPrebuiltCallMiniOverlayInternalMachine {
-  factory ZegoUIKitPrebuiltCallMiniOverlayInternalMachine() => _instance;
+class ZegoCallMiniOverlayMachine {
+  factory ZegoCallMiniOverlayMachine() => _instance;
 
   sm.Machine<ZegoCallMiniOverlayPageState> get machine => _machine;
 
@@ -36,7 +36,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayInternalMachine {
     return _durationNotifier;
   }
 
-  void listenStateChanged(PrebuiltCallMiniOverlayMachineStateChanged listener) {
+  void listenStateChanged(ZegoCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.add(listener);
 
     ZegoLoggerService.logInfo(
@@ -47,7 +47,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayInternalMachine {
   }
 
   void removeListenStateChanged(
-      PrebuiltCallMiniOverlayMachineStateChanged listener) {
+      ZegoCallMiniOverlayMachineStateChanged listener) {
     _onStateChangedListeners.remove(listener);
 
     ZegoLoggerService.logInfo(
@@ -134,16 +134,16 @@ class ZegoUIKitPrebuiltCallMiniOverlayInternalMachine {
 
   /// private variables
 
-  ZegoUIKitPrebuiltCallMiniOverlayInternalMachine._internal() {
+  ZegoCallMiniOverlayMachine._internal() {
     init();
   }
 
-  static final ZegoUIKitPrebuiltCallMiniOverlayInternalMachine _instance =
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine._internal();
+  static final ZegoCallMiniOverlayMachine _instance =
+      ZegoCallMiniOverlayMachine._internal();
 
   final _machine = sm.Machine<ZegoCallMiniOverlayPageState>();
-  final List<PrebuiltCallMiniOverlayMachineStateChanged>
-      _onStateChangedListeners = [];
+  final List<ZegoCallMiniOverlayMachineStateChanged> _onStateChangedListeners =
+      [];
 
   late sm.State<ZegoCallMiniOverlayPageState> _stateIdle;
   late sm.State<ZegoCallMiniOverlayPageState> _stateCalling;

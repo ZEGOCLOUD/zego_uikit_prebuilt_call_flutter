@@ -7,25 +7,18 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/inner_text.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal_instance.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/protocols.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/calling_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 part 'controller/invitation.dart';
-
-part 'controller/private/invitation.dart';
 
 part 'controller/screen_sharing.dart';
 
@@ -94,7 +87,7 @@ class ZegoUIKitPrebuiltCallController
 
       ///  if there is a user-defined event before the click,
       ///  wait the synchronize execution result
-      final hangUpConfirmationEvent = ZegoUIKitCallHangUpConfirmationEvent(
+      final hangUpConfirmationEvent = ZegoCallHangUpConfirmationEvent(
         context: context,
       );
       defaultAction() async {
@@ -135,7 +128,6 @@ class ZegoUIKitPrebuiltCallController
     minimize.hide();
 
     private.uninitByPrebuilt();
-    invitation.private.uninitByPrebuilt();
     minimize.private.uninitByPrebuilt();
 
     final result = await ZegoUIKit().leaveRoom().then((result) {
@@ -153,8 +145,8 @@ class ZegoUIKitPrebuiltCallController
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
-    final endEvent = ZegoUIKitCallEndEvent(
-      reason: ZegoUIKitCallEndReason.localHangUp,
+    final endEvent = ZegoCallEndEvent(
+      reason: ZegoCallEndReason.localHangUp,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.minimizing == minimize.state,
     );

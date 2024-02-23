@@ -10,13 +10,13 @@ mixin ZegoCallControllerMinimizePrivate {
 
 /// @nodoc
 class ZegoCallControllerMinimizePrivateImpl {
-  ZegoUIKitPrebuiltCallMinimizeData? get minimizeData => _minimizeData;
+  ZegoCallMinimizeData? get minimizeData => _minimizeData;
 
-  ZegoUIKitPrebuiltCallMinimizeData? _minimizeData;
+  ZegoCallMinimizeData? _minimizeData;
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void initByPrebuilt({
-    required ZegoUIKitPrebuiltCallMinimizeData minimizeData,
+    required ZegoCallMinimizeData minimizeData,
   }) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',

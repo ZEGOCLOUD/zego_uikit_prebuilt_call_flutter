@@ -21,14 +21,14 @@ class ZegoCallControllerPrivateImpl {
 
   ZegoUIKitPrebuiltCallEvents? get events => _events;
 
-  ZegoPopUpManager? _popUpManager;
+  ZegoCallPopUpManager? _popUpManager;
   ZegoUIKitPrebuiltCallConfig? _prebuiltConfig;
   ZegoUIKitPrebuiltCallEvents? _events;
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void initByPrebuilt({
     required ZegoUIKitPrebuiltCallConfig prebuiltConfig,
-    required ZegoPopUpManager popUpManager,
+    required ZegoCallPopUpManager popUpManager,
     required ZegoUIKitPrebuiltCallEvents? events,
   }) {
     ZegoLoggerService.logInfo(
@@ -58,7 +58,7 @@ class ZegoCallControllerPrivateImpl {
   }
 
   Future<bool> defaultHangUpConfirmationAction(
-    ZegoUIKitCallHangUpConfirmationEvent event,
+    ZegoCallHangUpConfirmationEvent event,
     BuildContext context,
   ) async {
     if (_prebuiltConfig?.hangUpConfirmDialogInfo == null) {
@@ -130,7 +130,7 @@ class ZegoCallControllerPrivateImpl {
   }
 
   Future<void> defaultEndEvent(
-    ZegoUIKitCallEndEvent event,
+    ZegoCallEndEvent event,
     BuildContext context,
   ) async {
     ZegoLoggerService.logInfo(
@@ -140,7 +140,7 @@ class ZegoCallControllerPrivateImpl {
     );
 
     if (ZegoCallMiniOverlayPageState.idle !=
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
+        ZegoCallMiniOverlayMachine().state()) {
       /// now is minimizing state, not need to navigate, just switch to idle
       ZegoUIKitPrebuiltCallController().minimize.hide();
     } else {

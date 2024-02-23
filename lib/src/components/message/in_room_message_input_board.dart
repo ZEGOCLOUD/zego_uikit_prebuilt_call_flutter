@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 /// @nodoc
-class ZegoInRoomMessageInputBoard extends ModalRoute<String> {
+class ZegoCallInRoomMessageInputBoard extends ModalRoute<String> {
   final ValueNotifier<String>? valueNotifier;
   final ValueNotifier<bool>? focusNotifier;
   final String placeHolder;
   final bool rootNavigator;
 
-  ZegoInRoomMessageInputBoard({
+  ZegoCallInRoomMessageInputBoard({
     this.placeHolder = 'Say something...',
     this.valueNotifier,
     this.focusNotifier,

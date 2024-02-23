@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 
 /// @nodoc
 class ZegoCallMessageListSheet extends StatefulWidget {
@@ -139,7 +139,7 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
             child: SizedBox(
               width: 70.zR,
               height: 70.zR,
-              child: PrebuiltCallImage.asset(PrebuiltCallIconUrls.back),
+              child: ZegoCallImage.asset(ZegoCallIconUrls.back),
             ),
           ),
           SizedBox(width: 10.zR),
@@ -172,7 +172,7 @@ void showMessageSheet(
   ZegoInRoomMessageItemBuilder? itemBuilder,
   ScrollController? scrollController,
   bool rootNavigator = false,
-  required ZegoPopUpManager popUpManager,
+  required ZegoCallPopUpManager popUpManager,
   required ValueNotifier<bool> visibleNotifier,
 }) {
   visibleNotifier.value = true;

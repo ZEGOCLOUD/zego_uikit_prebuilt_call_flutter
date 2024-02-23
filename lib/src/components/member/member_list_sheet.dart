@@ -8,8 +8,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
 /// @nodoc
-class ZegoMemberListSheet extends StatefulWidget {
-  const ZegoMemberListSheet({
+class ZegoCallMemberListSheet extends StatefulWidget {
+  const ZegoCallMemberListSheet({
     Key? key,
     this.showMicrophoneState = true,
     this.showCameraState = true,
@@ -25,11 +25,12 @@ class ZegoMemberListSheet extends StatefulWidget {
   final bool rootNavigator;
 
   @override
-  State<ZegoMemberListSheet> createState() => _ZegoMemberListSheetState();
+  State<ZegoCallMemberListSheet> createState() =>
+      _ZegoCallMemberListSheetState();
 }
 
 /// @nodoc
-class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
+class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
   @override
   void initState() {
     super.initState();
@@ -76,7 +77,7 @@ class _ZegoMemberListSheetState extends State<ZegoMemberListSheet> {
             child: SizedBox(
               width: 70.zR,
               height: 70.zR,
-              child: PrebuiltCallImage.asset(PrebuiltCallIconUrls.back),
+              child: ZegoCallImage.asset(ZegoCallIconUrls.back),
             ),
           ),
           SizedBox(width: 10.zR),
@@ -122,7 +123,7 @@ void showMemberListSheet(
           duration: const Duration(milliseconds: 50),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: ZegoMemberListSheet(
+            child: ZegoCallMemberListSheet(
               showCameraState: showCameraState,
               showMicrophoneState: showMicrophoneState,
               itemBuilder: itemBuilder,

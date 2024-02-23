@@ -2,7 +2,7 @@
 /// By configuring these options, users can customize their own top menu bar or bottom toolbar.
 /// This enum type is used in ZegoUIKitPrebuiltCallConfig.bottomMenuBarConfig and ZegoUIKitPrebuiltCallConfig.topMenuBarConfig.
 ///
-/// For example, if you don't want the minimize button, you can exclude the minimizingButton from ZegoBottomMenuBarConfig.buttons.
+/// For example, if you don't want the minimize button, you can exclude the minimizingButton from [ZegoCallBottomMenuBarConfig.buttons].
 enum ZegoCallMenuBarButtonName {
   /// Button for controlling the camera switch.
   toggleCameraButton,
@@ -38,13 +38,4 @@ enum ZegoCallMenuBarButtonName {
 
   /// Button to open/hide the chat UI.
   chatButton,
-}
-
-/// Sound wave effect types.
-enum SoundWaveType {
-  /// Hide the sound wave effect.
-  none,
-
-  /// Display sound wave animation around the avatar based on the volume.
-  aroundAvatar,
 }

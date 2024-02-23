@@ -7,7 +7,6 @@ mixin ZegoCallControllerScreenSharing {
   ZegoCallControllerScreenSharingImpl get screenSharing => _impl;
 }
 
-/// @nodoc
 class ZegoCallControllerScreenSharingImpl {
   final _viewController = ZegoScreenSharingViewController();
 

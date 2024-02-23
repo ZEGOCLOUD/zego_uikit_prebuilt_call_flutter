@@ -8,8 +8,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-class ZegoBeautyEffectButton extends StatefulWidget {
-  const ZegoBeautyEffectButton({
+class ZegoCallBeautyEffectButton extends StatefulWidget {
+  const ZegoCallBeautyEffectButton({
     Key? key,
     this.iconSize,
     this.buttonSize,
@@ -24,10 +24,11 @@ class ZegoBeautyEffectButton extends StatefulWidget {
   final bool rootNavigator;
 
   @override
-  State<StatefulWidget> createState() => _ZegoBeautyEffectButtonState();
+  State<StatefulWidget> createState() => _ZegoCallBeautyEffectButtonState();
 }
 
-class _ZegoBeautyEffectButtonState extends State<ZegoBeautyEffectButton> {
+class _ZegoCallBeautyEffectButtonState
+    extends State<ZegoCallBeautyEffectButton> {
   @override
   Widget build(BuildContext context) {
     final containerSize = widget.buttonSize ?? Size(96.zR, 96.zR);
@@ -49,8 +50,8 @@ class _ZegoBeautyEffectButtonState extends State<ZegoBeautyEffectButton> {
         child: SizedBox.fromSize(
           size: sizeBoxSize,
           child: widget.icon?.icon ??
-              PrebuiltCallImage.asset(
-                PrebuiltCallIconUrls.toolbarBeautyEffect,
+              ZegoCallImage.asset(
+                ZegoCallIconUrls.toolbarBeautyEffect,
               ),
         ),
       ),

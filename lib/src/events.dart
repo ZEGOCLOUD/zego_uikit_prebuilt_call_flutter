@@ -1,24 +1,8 @@
-// Flutter imports:
-import 'package:flutter/cupertino.dart';
-
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
-/// @nodoc
-typedef CallEndCallback = void Function(
-  ZegoUIKitCallEndEvent event,
-
-  /// defaultAction to return to the previous page
-  VoidCallback defaultAction,
-);
-
-/// @nodoc
-typedef CallHangUpConfirmationCallback = Future<bool> Function(
-  ZegoUIKitCallHangUpConfirmationEvent event,
-
-  /// defaultAction to return to the previous page
-  Future<bool> Function() defaultAction,
-);
+// Project imports:
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 
 class ZegoUIKitPrebuiltCallEvents {
   ZegoUIKitPrebuiltCallEvents({
@@ -41,7 +25,7 @@ class ZegoUIKitPrebuiltCallEvents {
   /// The default behavior is to return to the previous page like following:
   /// ``` dart
   /// onCallEnd: (
-  ///     ZegoUIKitCallEndEvent event,
+  ///     ZegoCallEndEvent event,
   ///     /// defaultAction to return to the previous page
   ///     VoidCallback defaultAction,
   /// ) {
@@ -58,7 +42,7 @@ class ZegoUIKitPrebuiltCallEvents {
   ///
   /// You can perform business-related prompts or other actions in this callback.
   /// For example, you can perform custom logic during the hang-up operation, such as recording log information, stopping recording, etc.
-  CallEndCallback? onCallEnd;
+  ZegoCallEndCallback? onCallEnd;
 
   /// Confirmation callback method before hang up the call.
   ///
@@ -70,7 +54,7 @@ class ZegoUIKitPrebuiltCallEvents {
   ///
   /// ``` dart
   /// onHangUpConfirmation: (
-  ///     ZegoUIKitCallHangUpConfirmationEvent event,
+  ///     ZegoCallHangUpConfirmationEvent event,
   ///     /// defaultAction to return to the previous page
   ///     Future<bool> Function() defaultAction,
   /// ) {
@@ -80,20 +64,32 @@ class ZegoUIKitPrebuiltCallEvents {
   ///   return defaultAction.call();
   /// }
   /// ```
-  CallHangUpConfirmationCallback? onHangUpConfirmation;
+  ZegoCallHangUpConfirmationCallback? onHangUpConfirmation;
 
   /// events about user
-  ZegoUIKitPrebuiltCallUserEvents? user;
+  ZegoCallUserEvents? user;
 
   /// events about room
-  ZegoUIKitPrebuiltCallRoomEvents? room;
+  ZegoCallRoomEvents? room;
 
   /// events about audio video
-  ZegoUIKitPrebuiltCallAudioVideoEvents? audioVideo;
+  ZegoCallAudioVideoEvents? audioVideo;
+
+  @override
+  String toString() {
+    return 'ZegoUIKitPrebuiltCallEvents:{'
+        'onCallEnd:$onCallEnd, '
+        'onHangUpConfirmation:$onHangUpConfirmation, '
+        'onError:$onError, '
+        'user:$user, '
+        'room:$room, '
+        'audioVideo:$audioVideo, '
+        '}';
+  }
 }
 
 /// events about audio-video
-class ZegoUIKitPrebuiltCallAudioVideoEvents {
+class ZegoCallAudioVideoEvents {
   /// This callback is triggered when camera state changed
   void Function(bool)? onCameraStateChanged;
 
@@ -106,96 +102,58 @@ class ZegoUIKitPrebuiltCallAudioVideoEvents {
   /// This callback is triggered when audio output device changed
   void Function(ZegoUIKitAudioRoute)? onAudioOutputChanged;
 
-  ZegoUIKitPrebuiltCallAudioVideoEvents({
+  ZegoCallAudioVideoEvents({
     this.onCameraStateChanged,
     this.onFrontFacingCameraStateChanged,
     this.onMicrophoneStateChanged,
     this.onAudioOutputChanged,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallAudioVideoEvents:{'
+        'onCameraStateChanged:$onCameraStateChanged, '
+        'onFrontFacingCameraStateChanged:$onFrontFacingCameraStateChanged, '
+        'onMicrophoneStateChanged:$onMicrophoneStateChanged, '
+        'onAudioOutputChanged:$onAudioOutputChanged, '
+        '}';
+  }
 }
 
 /// events about user
-class ZegoUIKitPrebuiltCallUserEvents {
+class ZegoCallUserEvents {
   /// This callback is triggered when user enter
   void Function(ZegoUIKitUser)? onEnter;
 
   /// This callback is triggered when user leave
   void Function(ZegoUIKitUser)? onLeave;
 
-  ZegoUIKitPrebuiltCallUserEvents({
+  ZegoCallUserEvents({
     this.onEnter,
     this.onLeave,
-  });
-}
-
-/// events about room
-class ZegoUIKitPrebuiltCallRoomEvents {
-  void Function(ZegoUIKitRoomState)? onStateChanged;
-
-  ZegoUIKitPrebuiltCallRoomEvents({
-    this.onStateChanged,
-  });
-}
-
-/// The default behavior is to return to the previous page.
-///
-/// If you override this callback, you must perform the page navigation
-/// yourself to return to the previous page!!!
-/// otherwise the user will remain on the current call page !!!!!
-enum ZegoUIKitCallEndReason {
-  /// the call ended due to a local hang-up
-  localHangUp,
-
-  /// the call ended when the remote user hung up, leaving only one local user in the call
-  remoteHangUp,
-
-  /// the call ended due to being kicked out
-  kickOut,
-}
-
-class ZegoUIKitCallHangUpConfirmationEvent {
-  BuildContext context;
-
-  ZegoUIKitCallHangUpConfirmationEvent({
-    required this.context,
   });
 
   @override
   String toString() {
-    return 'ZegoUIKitCallHangUpConfirmationEvent{'
-        'context:$context, mounted:${context.mounted}, '
+    return 'ZegoCallUserEvents:{'
+        'onEnter:$onEnter, '
+        'onLeave:$onLeave, '
         '}';
   }
 }
 
-class ZegoUIKitCallEndEvent {
-  /// the user ID of who kick you out
-  String? kickerUserID;
+/// events about room
+class ZegoCallRoomEvents {
+  void Function(ZegoUIKitRoomState)? onStateChanged;
 
-  /// end reason
-  ZegoUIKitCallEndReason reason;
-
-  /// The [isFromMinimizing] it means that the user left the live streaming
-  /// while it was in a minimized state.
-  ///
-  /// You **can not** return to the previous page while it was **in a minimized state**!!!
-  /// just hide the minimize page by [ZegoUIKitPrebuiltCallController().minimize.hide()]
-  ///
-  /// On the other hand, if the value of the parameter is false, it means
-  /// that the user left the live streaming while it was not minimized.
-  bool isFromMinimizing;
-
-  ZegoUIKitCallEndEvent({
-    required this.reason,
-    required this.isFromMinimizing,
-    this.kickerUserID,
+  ZegoCallRoomEvents({
+    this.onStateChanged,
   });
 
   @override
   String toString() {
-    return 'ZegoUIKitCallEndEvent{'
-        'kickerUserID:$kickerUserID,'
-        ' reason:$reason, '
+    return 'ZegoCallRoomEvents:{'
+        'onStateChanged:$onStateChanged, '
         '}';
   }
 }

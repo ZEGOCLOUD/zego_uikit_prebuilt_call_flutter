@@ -8,20 +8,79 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
-/// @nodoc
-/// @deprecated Use ZegoUIKitPrebuiltCallMiniOverlayPage
-typedef ZegoMiniOverlayPage = ZegoUIKitPrebuiltCallMiniOverlayPage;
-
-/// @nodoc
+/// The page can be minimized within the app
+///
+/// To support the minimize functionality in the app:
+///
+/// 1. Add a minimize button.
+/// ```dart
+/// ZegoUIKitPrebuiltCallConfig.topMenuBar.buttons.add(ZegoCallMenuBarButtonName.minimizingButton)
+/// ```
+/// Alternatively, if you have defined your own button, you can call:
+/// ```dart
+/// ZegoUIKitPrebuiltCallController().minimize.minimize().
+/// ```
+///
+/// 2. Nest the `ZegoUIKitPrebuiltCallMiniOverlayPage` within your MaterialApp widget. Make sure to return the correct context in the `contextQuery` parameter.
+///
+/// How to add in MaterialApp, example:
+/// ```dart
+///
+/// void main() {
+///   WidgetsFlutterBinding.ensureInitialized();
+///
+///   final navigatorKey = GlobalKey<NavigatorState>();
+///   runApp(MyApp(
+///     navigatorKey: navigatorKey,
+///   ));
+/// }
+///
+/// class MyApp extends StatefulWidget {
+///   final GlobalKey<NavigatorState> navigatorKey;
+///
+///   const MyApp({
+///     required this.navigatorKey,
+///     Key? key,
+///   }) : super(key: key);
+///
+///   @override
+///   State<StatefulWidget> createState() => MyAppState();
+/// }
+///
+/// class MyAppState extends State<MyApp> {
+///   @override
+///   Widget build(BuildContext context) {
+///     return MaterialApp(
+///       title: 'Flutter Demo',
+///       home: HomePage(),
+///       navigatorKey: widget.navigatorKey,
+///       builder: (BuildContext context, Widget? child) {
+///         return Stack(
+///           children: [
+///             child!,
+///
+///             /// support minimizing
+///             ZegoUIKitPrebuiltCallMiniOverlayPage(
+///               contextQuery: () {
+///                 return widget.navigatorKey.currentState!.context;
+///               },
+///             ),
+///           ],
+///         );
+///       },
+///     );
+///   }
+/// }
+/// ```
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
     Key? key,
@@ -96,7 +155,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   Size get buttonSize => Size(itemSize.width * 0.2, itemSize.width * 0.2);
 
-  ZegoUIKitPrebuiltCallMinimizeData? get minimizeData =>
+  ZegoCallMinimizeData? get minimizeData =>
       ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
 
   @override
@@ -106,11 +165,10 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     topLeft = widget.topLeft;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
+      ZegoCallMiniOverlayMachine()
           .listenStateChanged(onMiniOverlayMachineStateChanged);
 
-      if (null !=
-          ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().machine.current) {
+      if (null != ZegoCallMiniOverlayMachine().machine.current) {
         syncState();
       }
     });
@@ -129,7 +187,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     userListStreamSubscription?.cancel();
     audioVideoListSubscription?.cancel();
 
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
+    ZegoCallMiniOverlayMachine()
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
   }
 
@@ -245,7 +303,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       icon: ButtonIcon(
         icon: widget.leaveButtonIcon ??
             Image(
-              image: PrebuiltCallImage.asset(
+              image: ZegoCallImage.asset(
                 InvitationStyleIconUrls.toolbarBottomCancel,
               ).image,
               fit: BoxFit.fill,
@@ -315,9 +373,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       left: 0,
       right: 0,
       top: 1,
-      child: CallDurationTimeBoard(
-        durationNotifier: ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-            .durationNotifier(),
+      child: ZegoCallDurationTimeBoard(
+        durationNotifier: ZegoCallMiniOverlayMachine().durationNotifier(),
         fontSize: 8,
       ),
     );
@@ -432,7 +489,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   void syncState() {
     setState(() {
-      currentState = ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
+      currentState = ZegoCallMiniOverlayMachine().state();
       visibility = currentState == ZegoCallMiniOverlayPageState.minimizing;
 
       if (visibility) {
@@ -507,20 +564,31 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   void onUserLeave(List<ZegoUIKitUser> users) {
-    if (ZegoUIKit().getRemoteUsers().isEmpty) {
-      //  remote users is empty
+    if (ZegoCallMiniOverlayPageState.minimizing != ZegoUIKitPrebuiltCallController().minimize.state) {
+      ZegoLoggerService.logInfo(
+        'onUserLeave, not in minimizing',
+        tag: 'call',
+        subTag: 'overlay page',
+      );
 
-      minimizeData?.events.onCallEnd?.call(
-          ZegoUIKitCallEndEvent(
-            reason: ZegoUIKitCallEndReason.remoteHangUp,
-            isFromMinimizing: true,
-          ), () {
-        /// now is minimizing state, not need to navigate, just switch to idle
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
-          ZegoCallMiniOverlayPageState.idle,
-        );
-      });
+      return;
     }
+
+    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
+      return;
+    }
+
+    //  remote users is empty
+    minimizeData?.events.onCallEnd?.call(
+        ZegoCallEndEvent(
+          reason: ZegoCallEndReason.remoteHangUp,
+          isFromMinimizing: true,
+        ), () {
+      /// now is minimizing state, not need to navigate, just switch to idle
+      ZegoCallMiniOverlayMachine().changeState(
+        ZegoCallMiniOverlayPageState.idle,
+      );
+    });
   }
 
   Image uikitImage(String name) {

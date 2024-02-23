@@ -16,12 +16,13 @@ import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'call_invitation/callkit/background_service.dart';
-import 'events.dart';
-import 'internal/events.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -33,8 +34,8 @@ import 'internal/events.dart';
 ///
 /// {@category APIs}
 /// {@category Events}
-/// {@category Migration: from 3.x to 4.0}
-/// {@category Migration: 4.x}
+/// {@category Configs}
+/// {@category Migration_v4.x}
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     Key? key,
@@ -82,12 +83,10 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
   final List<IZegoUIKitPlugin>? plugins;
 
-  /// @nodoc
   @override
   State<ZegoUIKitPrebuiltCall> createState() => _ZegoUIKitPrebuiltCallState();
 }
 
-/// @nodoc
 class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     with SingleTickerProviderStateMixin {
   var barVisibilityNotifier = ValueNotifier<bool>(true);
@@ -96,15 +95,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   StreamSubscription<dynamic>? userListStreamSubscription;
   List<StreamSubscription<dynamic>?> subscriptions = [];
-  ZegoUIKitCallEventListener? _eventListener;
+  ZegoCallEventListener? _eventListener;
 
-  late ZegoUIKitPrebuiltCallMinimizeData minimizeData;
+  late ZegoCallMinimizeData minimizeData;
 
   Timer? durationTimer;
   DateTime? durationStartTime;
   var durationNotifier = ValueNotifier<Duration>(Duration.zero);
 
-  final popUpManager = ZegoPopUpManager();
+  final popUpManager = ZegoCallPopUpManager();
 
   ZegoUIKitPrebuiltCallEvents get events =>
       widget.events ?? ZegoUIKitPrebuiltCallEvents();
@@ -116,17 +115,27 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   void initState() {
     super.initState();
 
+    ZegoUIKit().getZegoUIKitVersion().then((version) {
+      ZegoLoggerService.logInfo(
+        'version: zego_uikit_prebuilt_call:4.3.0; $version, \n'
+        'config:${widget.config}, \n'
+        'events:${widget.events}, \n',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+    });
+
     ZegoLoggerService.logInfo(
-      'mini machine state is ${ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()}',
+      'mini machine state is ${ZegoCallMiniOverlayMachine().state()}',
       tag: 'call',
       subTag: 'prebuilt',
     );
 
-    _eventListener = ZegoUIKitCallEventListener(widget.events);
+    _eventListener = ZegoCallEventListener(widget.events);
     _eventListener?.init();
 
     final isPrebuiltFromMinimizing = ZegoCallMiniOverlayPageState.idle !=
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
+        ZegoCallMiniOverlayMachine().state();
 
     initDurationTimer(
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
@@ -134,7 +143,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     correctConfigValue();
 
-    minimizeData = ZegoUIKitPrebuiltCallMinimizeData(
+    minimizeData = ZegoCallMinimizeData(
       appID: widget.appID,
       appSign: widget.appSign,
       callID: widget.callID,
@@ -146,14 +155,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
       durationStartTime: durationStartTime,
     );
-
-    ZegoUIKit().getZegoUIKitVersion().then((version) {
-      ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.1.9; $version',
-        tag: 'call',
-        subTag: 'prebuilt',
-      );
-    });
 
     if (isPrebuiltFromMinimizing) {
       ZegoLoggerService.logInfo(
@@ -167,10 +168,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         popUpManager: popUpManager,
         events: events,
       );
-      controller.invitation.private.initByPrebuilt(
-        prebuiltConfig: widget.config,
-        events: events,
-      );
       controller.minimize.private.initByPrebuilt(
         minimizeData: minimizeData,
       );
@@ -178,8 +175,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// not wake from mini page
       initContext();
     }
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine()
-        .changeState(ZegoCallMiniOverlayPageState.idle);
+    ZegoCallMiniOverlayMachine().changeState(ZegoCallMiniOverlayPageState.idle);
 
     subscriptions
       ..add(
@@ -206,9 +202,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     durationTimer?.cancel();
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
+        ZegoCallMiniOverlayMachine().state()) {
       controller.private.uninitByPrebuilt();
-      controller.invitation.private.uninitByPrebuilt();
       controller.minimize.private.uninitByPrebuilt();
 
       ZegoUIKit().leaveRoom();
@@ -234,7 +229,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
-          final hangUpConfirmationEvent = ZegoUIKitCallHangUpConfirmationEvent(
+          final hangUpConfirmationEvent = ZegoCallHangUpConfirmationEvent(
             context: context,
           );
           defaultAction() async {
@@ -268,12 +263,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                           constraints.maxWidth,
                           constraints.maxHeight,
                         ),
+                        durationTimeBoard(),
                         if (widget.config.topMenuBar.isVisible)
                           topMenuBar()
                         else
                           Container(),
                         bottomMenuBar(),
-                        durationTimeBoard(),
                         foreground(context, constraints.maxHeight),
                       ],
                     ),
@@ -299,7 +294,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
 
     durationStartTime = isPrebuiltFromMinimizing
-        ? ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().durationStartTime()
+        ? ZegoCallMiniOverlayMachine().durationStartTime()
         : DateTime.now();
     durationNotifier.value = DateTime.now().difference(durationStartTime!);
     durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -435,9 +430,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return;
     }
 
+    ZegoLoggerService.logInfo(
+      'onUserLeave',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
     //  remote users is empty
-    final callEndEvent = ZegoUIKitCallEndEvent(
-      reason: ZegoUIKitCallEndReason.remoteHangUp,
+    final callEndEvent = ZegoCallEndEvent(
+      reason: ZegoCallEndReason.remoteHangUp,
       isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
           ZegoUIKitPrebuiltCallController().minimize.state,
     );
@@ -570,15 +571,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget topMenuBar() {
     final isLightStyle =
-        ZegoMenuBarStyle.light == widget.config.topMenuBar.style;
+        ZegoCallMenuBarStyle.light == widget.config.topMenuBar.style;
     final safeAreaInsets = MediaQuery.of(context).padding;
 
     return Positioned(
       left: 0,
       right: 0,
       top: safeAreaInsets.top,
-      child: ZegoTopMenuBar(
-        buttonSize: Size(96.zR, 96.zR),
+      child: ZegoCallTopMenuBar(
+        height: widget.config.topMenuBar.height ?? 98.zR,
         config: widget.config,
         events: events,
         defaultEndAction: defaultEndAction,
@@ -587,7 +588,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         isHangUpRequestingNotifier:
             controller.private.isHangUpRequestingNotifier,
-        height: widget.config.topMenuBar.height ?? 88.zR,
         backgroundColor: widget.config.topMenuBar.backgroundColor ??
             (isLightStyle ? null : ZegoUIKitDefaultTheme.viewBackgroundColor),
         chatViewVisibleNotifier: chatViewVisibleNotifier,
@@ -598,7 +598,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget bottomMenuBar() {
     final isLightStyle =
-        ZegoMenuBarStyle.light == widget.config.bottomMenuBar.style;
+        ZegoCallMenuBarStyle.light == widget.config.bottomMenuBar.style;
     final safeAreaInsets = MediaQuery.of(context).padding;
 
     return Positioned(
@@ -606,7 +606,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       bottom:
           isLightStyle ? safeAreaInsets.bottom + 10.zR : safeAreaInsets.bottom,
-      child: ZegoBottomMenuBar(
+      child: ZegoCallBottomMenuBar(
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         events: events,
@@ -639,7 +639,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       top: safeAreaInsets.top + 10.zR,
       left: 0,
       right: 0,
-      child: CallDurationTimeBoard(
+      child: ZegoCallDurationTimeBoard(
         durationNotifier: durationNotifier,
         fontSize: 25.zR,
       ),
@@ -663,7 +663,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         widget.config.audioVideoView.foregroundBuilder
                 ?.call(context, size, user, extraInfo) ??
             Container(color: Colors.transparent),
-        ZegoAudioVideoForeground(
+        ZegoCallAudioVideoForeground(
           size: size,
           user: user,
           showMicrophoneStateOnView:
@@ -738,9 +738,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ///more button, member list, chat dialog
     popUpManager.autoPop(context, widget.config.rootNavigator);
 
-    final callEndEvent = ZegoUIKitCallEndEvent(
+    final callEndEvent = ZegoCallEndEvent(
       kickerUserID: fromUserID,
-      reason: ZegoUIKitCallEndReason.kickOut,
+      reason: ZegoCallEndReason.kickOut,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.minimizing == controller.minimize.state,
     );
@@ -766,7 +766,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   Future<bool> defaultHangUpConfirmationAction(
-    ZegoUIKitCallHangUpConfirmationEvent event,
+    ZegoCallHangUpConfirmationEvent event,
   ) async {
     if (widget.config.hangUpConfirmDialogInfo == null) {
       return true;
@@ -835,7 +835,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   void defaultEndAction(
-    ZegoUIKitCallEndEvent event,
+    ZegoCallEndEvent event,
   ) {
     ZegoLoggerService.logInfo(
       'default call end event, event:$event',

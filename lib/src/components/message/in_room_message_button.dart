@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/call_invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_list_sheet.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 
 /// @nodoc
 /// switch cameras
-class ZegoInRoomMessageButton extends StatefulWidget {
-  const ZegoInRoomMessageButton({
+class ZegoCallInRoomMessageButton extends StatefulWidget {
+  const ZegoCallInRoomMessageButton({
     Key? key,
     required this.popUpManager,
     required this.viewVisibleNotifier,
@@ -46,15 +46,16 @@ class ZegoInRoomMessageButton extends StatefulWidget {
 
   final ValueNotifier<bool> viewVisibleNotifier;
 
-  final ZegoPopUpManager popUpManager;
+  final ZegoCallPopUpManager popUpManager;
 
   @override
-  State<ZegoInRoomMessageButton> createState() =>
-      _ZegoInRoomMessageButtonState();
+  State<ZegoCallInRoomMessageButton> createState() =>
+      _ZegoCallInRoomMessageButtonState();
 }
 
 /// @nodoc
-class _ZegoInRoomMessageButtonState extends State<ZegoInRoomMessageButton> {
+class _ZegoCallInRoomMessageButtonState
+    extends State<ZegoCallInRoomMessageButton> {
   /// keep scroll position
   var scrollController = ScrollController();
 
@@ -92,8 +93,7 @@ class _ZegoInRoomMessageButtonState extends State<ZegoInRoomMessageButton> {
         ),
         child: SizedBox.fromSize(
           size: sizeBoxSize,
-          child: widget.icon?.icon ??
-              PrebuiltCallImage.asset(PrebuiltCallIconUrls.im),
+          child: widget.icon?.icon ?? ZegoCallImage.asset(ZegoCallIconUrls.im),
         ),
       ),
     );

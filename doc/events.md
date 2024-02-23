@@ -99,7 +99,7 @@
 >
 >```dart
 >onCallEnd: (
->    ZegoUIKitCallEndEvent event,
+>    ZegoCallEndEvent event,
 >    /// defaultAction to return to the previous page
 >    VoidCallback defaultAction,
 >) {
@@ -109,7 +109,7 @@
 >  defaultAction.call();
 >
 >  /// OR perform the page navigation yourself to return to the previous page.
->  /// if (PrebuiltCallMiniOverlayPageState.idle !=
+>  /// if (ZegoCallMiniOverlayPageState.idle !=
 >  ///     ZegoUIKitPrebuiltCallController().minimize.state) {
 >  ///   /// now is minimizing state, not need to navigate, just hide
 >  ///   ZegoUIKitPrebuiltCallController().minimize.hide();
@@ -126,19 +126,19 @@
 >- function prototype:
 >```dart
 >void Function(
->  ZegoUIKitCallEndEvent event,
+>  ZegoCallEndEvent event,
 >
 >  /// defaultAction to return to the previous page
 >  VoidCallback defaultAction,
 >)? onCallEnd;
 >
 >
->class ZegoUIKitCallEndEvent {
+>class ZegoCallEndEvent {
 >  /// the user ID of who kick you out
 >  String? kickerUserID;
 >
 >  /// end reason
->  ZegoUIKitCallEndReason reason;
+>  ZegoCallEndReason reason;
 >}
 >
 >/// The default behavior is to return to the previous page.
@@ -146,7 +146,7 @@
 >/// If you override this callback, you must perform the page navigation
 >/// yourself to return to the previous page!!!
 >/// otherwise the user will remain on the current call page !!!!!
->enum ZegoUIKitCallEndReason {
+>enum ZegoCallEndReason {
 >  /// the call ended due to a local hang-up
 >  localHangUp,
 >
@@ -176,7 +176,7 @@
 >);
 >```
 
-## user(ZegoUIKitPrebuiltCallUserEvents)
+## user(ZegoCallUserEvents)
 
 >
 > events about user
@@ -195,7 +195,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       user: ZegoUIKitPrebuiltCallUserEvents(
+>       user: ZegoCallUserEvents(
 >           onEnter: (user) {
 >               ...
 >           },
@@ -208,7 +208,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       user: ZegoUIKitPrebuiltCallUserEvents(
+>       user: ZegoCallUserEvents(
 >           onEnter: (user) {
 >               ...
 >           },
@@ -230,7 +230,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       user: ZegoUIKitPrebuiltCallUserEvents(
+>       user: ZegoCallUserEvents(
 >           onLeave: (user) {
 >               ...
 >           },
@@ -243,7 +243,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       user: ZegoUIKitPrebuiltCallUserEvents(
+>       user: ZegoCallUserEvents(
 >           onLeave: (user) {
 >               ...
 >           },
@@ -252,7 +252,7 @@
 >);
 >```
 
-## room(ZegoUIKitPrebuiltCallRoomEvents)
+## room(ZegoCallRoomEvents)
 
 > 
 > events about room
@@ -312,7 +312,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       room: ZegoUIKitPrebuiltCallRoomEvents(
+>       room: ZegoCallRoomEvents(
 >           onStateChanged: (state) {
 >               ...
 >           },
@@ -325,7 +325,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       room: ZegoUIKitPrebuiltCallRoomEvents(
+>       room: ZegoCallRoomEvents(
 >           onStateChanged: (state) {
 >               ...
 >           },
@@ -334,7 +334,7 @@
 >);
 >```
 
-## audioVideo(ZegoUIKitPrebuiltCallAudioVideoEvents)
+## audioVideo(ZegoCallAudioVideoEvents)
 
 > 
 > events about audio video
@@ -353,7 +353,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onCameraStateChanged: (isOpened) {
 >               ...
 >           },
@@ -366,7 +366,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onCameraStateChanged: (isOpened) {
 >               ...
 >           },
@@ -389,7 +389,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onFrontFacingCameraStateChanged: (isFronted) {
 >               ...
 >           },
@@ -402,7 +402,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onFrontFacingCameraStateChanged: (isFronted) {
 >               ...
 >           },
@@ -425,7 +425,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onMicrophoneStateChanged: (isOpened) {
 >               ...
 >           },
@@ -438,7 +438,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onMicrophoneStateChanged: (isOpened) {
 >               ...
 >           },
@@ -461,7 +461,7 @@
 >ZegoUIKitPrebuiltCallInvitationService().init(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onAudioOutputChanged: (audioRoute) {
 >               ...
 >           },
@@ -474,7 +474,7 @@
 >ZegoUIKitPrebuiltCall(
 >   ...
 >   events: ZegoUIKitPrebuiltCallEvents(
->       audioVideo: ZegoUIKitPrebuiltCallAudioVideoEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
 >           onAudioOutputChanged: (audioRoute) {
 >               ...
 >           },

@@ -10,11 +10,10 @@ mixin ZegoCallControllerMinimizing {
 class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   /// minimize state
   ZegoCallMiniOverlayPageState get state =>
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state();
+      ZegoCallMiniOverlayMachine().state();
 
   /// Is it currently in the minimized state or not
-  bool get isMinimizing =>
-      ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().isMinimizing;
+  bool get isMinimizing => ZegoCallMiniOverlayMachine().isMinimizing;
 
   /// restore the ZegoUIKitPrebuiltCall from minimize
   bool restore(
@@ -44,7 +43,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     }
 
     /// re-enter prebuilt call
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+    ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.calling,
     );
 
@@ -86,7 +85,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     bool rootNavigator = true,
   }) {
     if (ZegoCallMiniOverlayPageState.minimizing ==
-        ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().state()) {
+        ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
         'is minimizing, ignore',
         tag: 'call',
@@ -96,7 +95,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       return false;
     }
 
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+    ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.minimizing,
     );
 
@@ -121,7 +120,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
   /// if call ended in minimizing state, not need to navigate, just hide the minimize widget.
   void hide() {
-    ZegoUIKitPrebuiltCallMiniOverlayInternalMachine().changeState(
+    ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.idle,
     );
   }

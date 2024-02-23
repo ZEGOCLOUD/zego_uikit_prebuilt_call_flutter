@@ -10,8 +10,8 @@ import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_sheet
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
-class ZegoMemberListButton extends StatefulWidget {
-  const ZegoMemberListButton({
+class ZegoCallMemberListButton extends StatefulWidget {
+  const ZegoCallMemberListButton({
     Key? key,
     this.afterClicked,
     this.icon,
@@ -40,11 +40,12 @@ class ZegoMemberListButton extends StatefulWidget {
   final Size? buttonSize;
 
   @override
-  State<ZegoMemberListButton> createState() => _ZegoMemberListButtonState();
+  State<ZegoCallMemberListButton> createState() =>
+      _ZegoCallMemberListButtonState();
 }
 
 /// @nodoc
-class _ZegoMemberListButtonState extends State<ZegoMemberListButton> {
+class _ZegoCallMemberListButtonState extends State<ZegoCallMemberListButton> {
   @override
   void initState() {
     super.initState();
@@ -81,7 +82,7 @@ class _ZegoMemberListButtonState extends State<ZegoMemberListButton> {
         child: SizedBox.fromSize(
           size: sizeBoxSize,
           child: widget.icon?.icon ??
-              PrebuiltCallImage.asset(PrebuiltCallIconUrls.topMemberNormal),
+              ZegoCallImage.asset(ZegoCallIconUrls.topMemberNormal),
         ),
       ),
     );

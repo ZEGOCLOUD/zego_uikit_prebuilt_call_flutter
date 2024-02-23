@@ -45,7 +45,7 @@ And it includes the business logic with the UI, you can add or remove features a
 
 - [APIs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/APIs-topic.html)
 - [Events](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Events-topic.html)
-- [Configs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallConfig-class.html)
+- [Configs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Configs-topic.html)
 
 > 
 > 
@@ -64,14 +64,13 @@ And it includes the business logic with the UI, you can add or remove features a
   - [Minimize call window](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Calling%20config/Minimize%20call%20window/4a12fd9e)
   - [Set video config](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Calling%20config/Set%20video%20config/da12304d)
 - Invitation Configs
+  - [Customize UI](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html) 
   - [Customize the ringtone](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Customize%20the%20ringtone/0fcda8ea)
   - [Hide the decline/cancel button](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Hide%20the%20decline/cancel%20button/6be662b7)
   - [Customizing Calling Background](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Customizing%20Calling%20Background/a8673748)
   - [Auto re-send call invitation after call timeout](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Auto%20re-send%20call%20invitation%20after%20call%20timeout/c8736cd7)
   - [Modify User Interface text](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Modify%20User%20Interface%20text/49aac7d2)
   - [Customizing the icon for the iOS CallKit UI](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Customizing%20the%20icon%20for%20the%20iOS%20CallKit%20UI/1dc1fc86)
-  - [API for call invitation](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/API%20for%20call%20invitation/b417a083)
-  - [Callbacks for call invitation](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Callbacks%20for%20call%20invitation/763b69a7)
   - [FAQ](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/FAQ/0d1a020c)
 - Advance Features
   - [Screen sharing](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Advanced%20Features/Screen%20sharing/4fb3f574)
@@ -81,10 +80,9 @@ And it includes the business logic with the UI, you can add or remove features a
 
 ## Migration Guides
 
-- [Migrating from 3.x to 4.0.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%20from%203.x%20to%204.0-topic.html).
-- [Migrating from 4.1.3 to 4.1.4](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#414).
-- [Migrating from 4.1.8 to 4.1.9](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration:%204.x-topic.html#419).
-
+- [Migrating from 3.x to 4.0.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400).
+- [Migrating from 4.1.3 to 4.1.4](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#414).
+  
 ## More
 [Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
 

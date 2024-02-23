@@ -13,7 +13,7 @@ import 'deprecated/deprecated.dart';
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].
 class ZegoUIKitPrebuiltCallConfig {
   /// configuration parameters for audio and video streaming, such as Resolution, Frame rate, Bit rate..
-  /// you can set by **videoConfig = ZegoUIKitVideoConfig.presetXX()**
+  /// you can set by **video = ZegoUIKitVideoConfig.presetXX()**
   ZegoUIKitVideoConfig video;
 
   /// Configuration options for audio/video views.
@@ -219,10 +219,33 @@ class ZegoUIKitPrebuiltCallConfig {
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
             );
+
+  @override
+  String toString() {
+    return 'ZegoUIKitPrebuiltCallConfig:{'
+        'video:$video, '
+        'audioVideoView:$audioVideoView, '
+        'topMenuBar:$topMenuBar, '
+        'bottomMenuBar:$bottomMenuBar, '
+        'memberList:$memberList, '
+        'duration:$duration, '
+        'chatView:$chatView, '
+        'layout:$layout, '
+        'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
+        'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
+        'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
+        'rootNavigator:$rootNavigator, '
+        'advanceConfigs:$advanceConfigs, '
+        'foreground:$foreground, '
+        'background:$background, '
+        'hangUpConfirmDialogInfo:$hangUpConfirmDialogInfo, '
+        'avatarBuilder:$avatarBuilder, '
+        '}';
+  }
 }
 
 /// Configuration options for audio/video views.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[audioVideoView] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig.audioVideoView] property to set the properties inside this class.
 /// These options allow you to customize the display effects of the audio/video views, such as showing microphone status and usernames.
 /// If you need to customize the foreground or background of the audio/video view, you can use foregroundBuilder and backgroundBuilder.
 /// If you want to hide user avatars or sound waveforms in audio mode, you can set showAvatarInAudioMode and showSoundWavesInAudioMode to false.
@@ -282,10 +305,26 @@ class ZegoCallAudioVideoViewConfig {
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
   });
+
+  @override
+  toString() {
+    return 'ZegoCallAudioVideoViewConfig:{'
+        'containerBuilder:$containerBuilder, '
+        'isVideoMirror:$isVideoMirror, '
+        'showMicrophoneStateOnView:$showMicrophoneStateOnView, '
+        'showCameraStateOnView:$showCameraStateOnView, '
+        'showUserNameOnView:$showUserNameOnView, '
+        'foregroundBuilder:$foregroundBuilder, '
+        'backgroundBuilder:$backgroundBuilder, '
+        'useVideoViewAspectFill:$useVideoViewAspectFill, '
+        'showAvatarInAudioMode:$showAvatarInAudioMode, '
+        'showSoundWavesInAudioMode:$showSoundWavesInAudioMode, '
+        '}';
+  }
 }
 
 /// Configuration options for the top menu bar (toolbar).
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[topMenuBar] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig.topMenuBar] property to set the properties inside this class.
 class ZegoCallTopMenuBarConfig {
   /// Whether to display the top menu bar.
   bool isVisible;
@@ -308,7 +347,7 @@ class ZegoCallTopMenuBarConfig {
   List<Widget> extendButtons;
 
   /// Style of the top menu bar.
-  ZegoMenuBarStyle style;
+  ZegoCallMenuBarStyle style;
 
   /// padding for the top menu bar.
   EdgeInsetsGeometry? padding;
@@ -329,16 +368,33 @@ class ZegoCallTopMenuBarConfig {
     this.hideByClick = true,
     this.buttons = const [],
     this.extendButtons = const [],
-    this.style = ZegoMenuBarStyle.light,
+    this.style = ZegoCallMenuBarStyle.light,
     this.padding,
     this.margin,
     this.backgroundColor,
     this.height,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallTopMenuBarConfig:{'
+        'isVisible:$isVisible, '
+        'title:$title, '
+        'hideAutomatically:$hideAutomatically, '
+        'hideByClick:$hideByClick, '
+        'buttons:$buttons, '
+        'extendButtons:$extendButtons, '
+        'style:$style, '
+        'padding:$padding, '
+        'margin:$margin, '
+        'backgroundColor:$backgroundColor, '
+        'height:$height, '
+        '}';
+  }
 }
 
 /// Configuration options for the bottom menu bar (toolbar).
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[bottomMenuBar] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig.bottomMenuBar] property to set the properties inside this class.
 class ZegoCallBottomMenuBarConfig {
   /// Whether to automatically collapse the top menu bar after 5 seconds of inactivity.
 
@@ -356,7 +412,7 @@ class ZegoCallBottomMenuBarConfig {
   int maxCount;
 
   /// Button style for the bottom menu bar.
-  ZegoMenuBarStyle style;
+  ZegoCallMenuBarStyle style;
 
   /// padding for the bottom menu bar.
   EdgeInsetsGeometry? padding;
@@ -387,19 +443,35 @@ class ZegoCallBottomMenuBarConfig {
     ],
     this.extendButtons = const [],
     this.maxCount = 5,
-    this.style = ZegoMenuBarStyle.light,
+    this.style = ZegoCallMenuBarStyle.light,
     this.padding,
     this.margin,
     this.backgroundColor,
     this.height,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallBottomMenuBarConfig:{'
+        'hideAutomatically:$hideAutomatically, '
+        'hideByClick:$hideByClick, '
+        'buttons:$buttons, '
+        'extendButtons:$extendButtons, '
+        'maxCount:$maxCount, '
+        'style:$style, '
+        'padding:$padding, '
+        'margin:$margin, '
+        'backgroundColor:$backgroundColor, '
+        'height:$height, '
+        '}';
+  }
 }
 
 /// This enum consists of two style options: light and dark. T
 /// he light style represents a light theme with a transparent background,
 /// while the dark style represents a dark theme with a black background.
 /// You can use these options to set the desired theme style for the menu bar.
-enum ZegoMenuBarStyle {
+enum ZegoCallMenuBarStyle {
   /// Light theme with transparent background
   light,
 
@@ -408,13 +480,13 @@ enum ZegoMenuBarStyle {
 }
 
 /// Configuration for the member list.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[memberList] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig.memberList] property to set the properties inside this class.
 ///
-/// If you want to use a custom member list item view, you can set the `itemBuilder` property in `ZegoMemberListConfig`
+/// If you want to use a custom member list item view, you can set the `itemBuilder` property in `ZegoCallMemberListConfig`
 /// and pass your custom view's builder function to it.
 /// For example, suppose you have implemented a `CustomMemberListItem` component that can render a member list item view based on the user information. You can set it up like this:
 ///
-/// ZegoMemberListConfig(
+/// ZegoCallMemberListConfig(
 ///   showMicrophoneState: true,
 ///   showCameraState: false,
 ///   itemBuilder: (BuildContext context, Size size, ZegoUIKitUser user, Map<String, dynamic> extraInfo) {
@@ -440,10 +512,19 @@ class ZegoCallMemberListConfig {
     this.showCameraState = true,
     this.itemBuilder,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallMemberListConfig:{'
+        'showMicrophoneState:$showMicrophoneState, '
+        'showCameraState:$showCameraState, '
+        'itemBuilder:$itemBuilder, '
+        '}';
+  }
 }
 
 /// Call timing configuration.
-/// You can use the [ZegoUIKitPrebuiltCallConfig].[duration] property to set the properties inside this class.
+/// You can use the [ZegoUIKitPrebuiltCallConfig.duration] property to set the properties inside this class.
 class ZegoCallDurationConfig {
   /// Whether to display call timing.
   bool isVisible;
@@ -451,18 +532,29 @@ class ZegoCallDurationConfig {
   /// Call timing callback function, called every second.
   ///
   /// Example: Set to automatically hang up after 5 minutes.
+  ///
+  /// ``` dart
   /// ..duration.isVisible = true
   /// ..duration.onDurationUpdate = (Duration duration) {
   ///   if (duration.inSeconds >= 5 * 60) {
   ///     callController?.hangUp(context);
   ///   }
   /// }
+  /// ```
   void Function(Duration)? onDurationUpdate;
 
   ZegoCallDurationConfig({
     this.isVisible = true,
     this.onDurationUpdate,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallDurationConfig:{'
+        'isVisible:$isVisible, '
+        'onDurationUpdate:$onDurationUpdate, '
+        '}';
+  }
 }
 
 /// Control options for the bottom-left message list.
@@ -488,9 +580,15 @@ class ZegoCallInRoomChatViewConfig {
   ZegoCallInRoomChatViewConfig({
     this.itemBuilder,
   });
+
+  @override
+  String toString() {
+    return 'ZegoCallInRoomChatViewConfig:{'
+        'itemBuilder:$itemBuilder, '
+        '}';
+  }
 }
 
-/// @nodoc
 extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
   static ZegoUIKitPrebuiltCallConfig generate({
     required bool isGroup,
@@ -508,7 +606,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
       topMenuBarConfig: isGroup
           ? ZegoCallTopMenuBarConfig(
               isVisible: true,
-              style: ZegoMenuBarStyle.dark,
+              style: ZegoCallMenuBarStyle.dark,
               buttons: [
                 ZegoCallMenuBarButtonName.showMemberListButton,
               ],
@@ -519,7 +617,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
             ),
       bottomMenuBarConfig: isGroup
           ? ZegoCallBottomMenuBarConfig(
-              style: ZegoMenuBarStyle.dark,
+              style: ZegoCallMenuBarStyle.dark,
               buttons: isVideo
                   ? [
                       ZegoCallMenuBarButtonName.toggleCameraButton,
@@ -535,7 +633,7 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
                     ],
             )
           : ZegoCallBottomMenuBarConfig(
-              style: ZegoMenuBarStyle.light,
+              style: ZegoCallMenuBarStyle.light,
               buttons: isVideo
                   ? [
                       ZegoCallMenuBarButtonName.toggleCameraButton,

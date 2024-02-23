@@ -9,8 +9,8 @@ import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 /// @nodoc
-class ZegoMinimizingButton extends StatefulWidget {
-  const ZegoMinimizingButton({
+class ZegoCallMinimizingButton extends StatefulWidget {
+  const ZegoCallMinimizingButton({
     Key? key,
     this.afterClicked,
     this.icon,
@@ -33,11 +33,12 @@ class ZegoMinimizingButton extends StatefulWidget {
   final Size? buttonSize;
 
   @override
-  State<ZegoMinimizingButton> createState() => _ZegoMinimizingButtonState();
+  State<ZegoCallMinimizingButton> createState() =>
+      _ZegoCallMinimizingButtonState();
 }
 
 /// @nodoc
-class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
+class _ZegoCallMinimizingButtonState extends State<ZegoCallMinimizingButton> {
   @override
   void initState() {
     super.initState();
@@ -72,7 +73,7 @@ class _ZegoMinimizingButtonState extends State<ZegoMinimizingButton> {
         child: SizedBox.fromSize(
           size: sizeBoxSize,
           child: widget.icon?.icon ??
-              PrebuiltCallImage.asset(PrebuiltCallIconUrls.minimizing),
+              ZegoCallImage.asset(ZegoCallIconUrls.minimizing),
         ),
       ),
     );
