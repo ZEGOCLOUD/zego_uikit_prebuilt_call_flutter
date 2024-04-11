@@ -37,6 +37,7 @@ class ZegoCallInvitationServicePrivateImpl
     required String userName,
     required List<IZegoUIKitPlugin> plugins,
     ZegoCallPrebuiltConfigQuery? requireConfig,
+    ZegoCallInvitationConfig? config,
     ZegoCallRingtoneConfig? ringtoneConfig,
     ZegoCallInvitationUIConfig? uiConfig,
     ZegoCallInvitationNotificationConfig? notificationConfig,
@@ -51,6 +52,7 @@ class ZegoCallInvitationServicePrivateImpl
       'userName:$userName, '
       'plugins:$plugins, '
       'ringtoneConfig:$ringtoneConfig, '
+      'config:$config, '
       'uiConfig:$uiConfig, '
       'notificationConfig:$notificationConfig, ',
       tag: 'call',
@@ -78,6 +80,7 @@ class ZegoCallInvitationServicePrivateImpl
       invitationEvents: invitationEvents,
       innerText: innerText,
       ringtoneConfig: ringtoneConfig,
+      config: config,
       uiConfig: uiConfig,
       notificationConfig: notificationConfig,
     );
@@ -271,19 +274,20 @@ class ZegoCallInvitationServicePrivateImpl
           if (paramsJson?.isEmpty ?? true) {
             return;
           }
-
+          final paramsMap = jsonDecode(paramsJson!);
+          bool? accept = paramsMap['accept'];
           ZegoLoggerService.logInfo(
-            'exist offline call accept',
+            'exist offline call, accept:$accept',
             tag: 'call',
             subTag: 'call invitation service(${identityHashCode(this)})',
           );
 
-          /// exist accepted offline call, wait auto enter room
+          /// exist offline call, wait auto enter room, or popup incoming call dialog
           _pageManager
                   ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-              true;
+              accept ?? false;
 
-          _pageManager?.onInvitationReceived(jsonDecode(paramsJson!));
+          _pageManager?.onInvitationReceived(paramsMap);
         });
       }
     });
@@ -308,8 +312,16 @@ class ZegoCallInvitationServicePrivateImpl
       subTag: 'call invitation service',
     );
 
-    await requestPermission(Permission.camera);
-    await requestPermission(Permission.microphone);
+    if (_data?.config.permissions
+            .contains(ZegoCallInvitationPermission.camera) ??
+        true) {
+      await requestPermission(Permission.camera);
+    }
+    if (_data?.config.permissions
+            .contains(ZegoCallInvitationPermission.microphone) ??
+        true) {
+      await requestPermission(Permission.microphone);
+    }
   }
 
   Future<void> _initContext() async {
@@ -332,13 +344,48 @@ class ZegoCallInvitationServicePrivateImpl
   }
 
   void _registerOfflineCallIsolateNameServer() {
+    // Here we need to clear the status of background isolate and subscription.
+    // The problem occurs when an offline call is received, but the user
+    // directly clicks the appIcon to open the application. mainIsolate will create the zim,
+    // and fcmIsolate will accidentally destroy the zim.
+    ZegoLoggerService.logInfo(
+      'Cancel The flutterCallkitIncomingStreamSubscription or not:'
+      '(${flutterCallkitIncomingStreamSubscription?.hashCode})',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+    if (flutterCallkitIncomingStreamSubscription != null) {
+      flutterCallkitIncomingStreamSubscription?.cancel();
+      flutterCallkitIncomingStreamSubscription = null;
+    }
+    final lookupIsolate =
+        IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
+    final isMainIsolatePort =
+        (_backgroundPort?.sendPort.hashCode == lookupIsolate.hashCode);
+    final needClose = !isMainIsolatePort && (lookupIsolate != null);
+    ZegoLoggerService.logInfo(
+      'Close The lookupIsolate or not, needClose:$needClose, '
+      'hash(${lookupIsolate?.hashCode}), isMainIsolatePort:$isMainIsolatePort',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+    if (needClose) {
+      lookupIsolate.send('close');
+    }
+
+    // register MainIsolatePort
     _backgroundPort = ReceivePort();
 
     IsolateNameServer.registerPortWithName(
       _backgroundPort!.sendPort,
       backgroundMessageIsolatePortName,
     );
-
+    ZegoLoggerService.logInfo(
+      'isolate: register, _backgroundPort(${_backgroundPort.hashCode}), '
+      '_backgroundPort!.sendPort(${_backgroundPort!.sendPort.hashCode})',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
     _backgroundPort!.listen((dynamic message) async {
       ZegoLoggerService.logInfo(
         'isolate: current port(${_backgroundPort!.hashCode}) receive, message:$message',
@@ -358,9 +405,16 @@ class ZegoCallInvitationServicePrivateImpl
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
 
-      /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
-      await ZegoCallPluginPlatform.instance.activeAppToForeground();
-      await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+      // final payload = messageExtras['payload'] as String? ?? '';
+      // final payloadMap = jsonDecode(payload) as Map<String, dynamic>? ?? {};
+      // var isKitProtocol = payloadMap.containsKey('inviter_name');
+
+      var isKitProtocol = messageExtras.containsKey('zego');
+      if (isKitProtocol) {
+        /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
+        await ZegoCallPluginPlatform.instance.activeAppToForeground();
+        await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+      }
 
       /// There is no need for additional processing.
       /// When the app is suspended after being screen-locked for more than 10
@@ -424,6 +478,16 @@ class ZegoCallInvitationServicePrivateImpl
             : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
 
     return config;
+  }
+
+  void cancelGroupCallInvitation() {
+    ZegoLoggerService.logInfo(
+      'cancelGroupCallInvitation',
+      tag: 'call',
+      subTag: 'call invitation service(${identityHashCode(this)})',
+    );
+
+    _pageManager?.cancelGroupCallInvitation();
   }
 }
 

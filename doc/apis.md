@@ -121,12 +121,15 @@
 >    required String userID,
 >    required String userName,
 >    required List<IZegoUIKitPlugin> plugins,
+>    /// call abouts.
 >    ZegoCallPrebuiltConfigQuery? requireConfig,
+>    ZegoUIKitPrebuiltCallEvents? events,
+>    /// invitation abouts.
+>    ZegoCallInvitationConfig? config,
 >    ZegoCallRingtoneConfig? ringtoneConfig,
 >    ZegoCallInvitationUIConfig? uiConfig,
 >    ZegoCallInvitationNotificationConfig? notificationConfig,
 >    ZegoCallInvitationInnerText? innerText,
->    ZegoUIKitPrebuiltCallEvents? events,
 >    ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
 >  }) async
 > ```

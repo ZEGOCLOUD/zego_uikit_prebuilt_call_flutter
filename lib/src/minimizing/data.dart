@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
+
+import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
@@ -20,6 +22,7 @@ class ZegoCallMinimizeData {
     required this.config,
     required this.events,
     required this.isPrebuiltFromMinimizing,
+    required this.plugins,
     this.durationStartTime,
     this.onDispose,
   });
@@ -49,6 +52,7 @@ class ZegoCallMinimizeData {
   /// call duration
   final DateTime? durationStartTime;
 
+  final List<IZegoUIKitPlugin>? plugins;
   @override
   String toString() {
     return 'app id:$appID, app sign:$appSign, call id:$callID, '

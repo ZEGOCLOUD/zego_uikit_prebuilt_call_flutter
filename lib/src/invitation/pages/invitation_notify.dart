@@ -179,6 +179,7 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoRefuseInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        targetInvitationID:widget.invitationData.invitationID,
         // customization is not supported
         data: '{"reason":"decline"}',
         textStyle: widget.declineButtonConfig.textStyle,
@@ -205,6 +206,7 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoAcceptInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        targetInvitationID: widget.invitationData.invitationID,
         textStyle: widget.acceptButtonConfig.textStyle,
         icon: ButtonIcon(
           icon: widget.acceptButtonConfig.icon ??

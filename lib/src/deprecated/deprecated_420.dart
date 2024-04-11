@@ -6,7 +6,8 @@ const deprecatedTipsV420 = ', '
     'will be removed after 4.5.0,'
     'Migrate Guide:https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_4.x-topic.html#4111';
 
-extension ZegoCallInvitationUIConfigDeprecated on ZegoCallInvitationUIConfig {
+extension ZegoCallInvitationUIConfigDeprecated420
+    on ZegoCallInvitationUIConfig {
   @Deprecated('use declineButton.visible instead$deprecatedTipsV420')
   bool get showDeclineButton => declineButton.visible;
 

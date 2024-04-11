@@ -5,6 +5,34 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
+class ZegoCallInvitationConfig {
+  ZegoCallInvitationConfig({
+    this.permissions = const [
+      ZegoCallInvitationPermission.camera,
+      ZegoCallInvitationPermission.microphone,
+    ],
+  });
+
+  /// If you want to a pure audio call with invitation without popping up
+  /// camera permission requests, you can remove the camera in [permissions]
+  /// and set [ZegoUIKitPrebuiltCallConfig turnOnCameraWhenJoining] to false
+  ///
+  /// ``` dart
+  /// ZegoUIKitPrebuiltCallInvitationService().init(
+  ///   ...
+  ///   config: ZegoCallInvitationConfig(permissions: [
+  ///     ZegoCallInvitationPermission.microphone,
+  ///   ]),
+  ///   requireConfig: (ZegoCallInvitationData data) {
+  ///     ...
+  ///     config.turnOnCameraWhenJoining = false;
+  ///     ...
+  ///   },
+  /// );
+  /// ```
+  List<ZegoCallInvitationPermission> permissions;
+}
+
 class ZegoCallInvitationUIConfig {
   ZegoCallInvitationUIConfig({
     this.prebuiltWithSafeArea = true,
@@ -13,8 +41,10 @@ class ZegoCallInvitationUIConfig {
     ZegoCallButtonUIConfig? acceptButton,
     ZegoCallButtonUIConfig? cancelButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
-    @Deprecated('use declineButton.visible instead$deprecatedTipsV420') bool showDeclineButton = true,
-    @Deprecated('use cancelButton.visible instead$deprecatedTipsV420') bool showCancelInvitationButton = true,
+    @Deprecated('use declineButton.visible instead$deprecatedTipsV420')
+    bool showDeclineButton = true,
+    @Deprecated('use cancelButton.visible instead$deprecatedTipsV420')
+    bool showCancelInvitationButton = true,
   })  : popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
         declineButton = declineButton ??
             ZegoCallButtonUIConfig(
@@ -126,7 +156,8 @@ class ZegoCallIOSNotificationConfig {
 
   ZegoCallIOSNotificationConfig({
     this.appName = '',
-    this.certificateIndex = ZegoSignalingPluginMultiCertificate.firstCertificate,
+    this.certificateIndex =
+        ZegoSignalingPluginMultiCertificate.firstCertificate,
     this.isSandboxEnvironment,
     this.systemCallingIconName = '',
   });
@@ -191,6 +222,10 @@ class ZegoCallAndroidNotificationConfig {
 
   bool messageVibrate;
 
+  // If fullScreen is enabled, you can use this parameter to configure the background image
+  // such as fullScreenBackground: 'assets/image/call.png'
+  String? fullScreenBackground;
+
   ZegoCallAndroidNotificationConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
@@ -204,6 +239,7 @@ class ZegoCallAndroidNotificationConfig {
     this.messageChannelName = 'Message',
     this.messageIcon = '',
     this.messageSound = '',
+    this.fullScreenBackground = '',
   });
 
   @override

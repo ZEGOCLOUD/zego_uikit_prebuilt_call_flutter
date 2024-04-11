@@ -47,15 +47,29 @@ class ZegoUIKitPrebuiltCallController
   factory ZegoUIKitPrebuiltCallController() => instance;
 
   /// This function is used to end the current call.
+  ///
   /// You can pass the context [context] for any necessary pop-ups or page transitions.
   /// By using the [showConfirmation] parameter, you can control whether to display a confirmation dialog to confirm ending the call.
-  /// This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the [onHangUpConfirmation] and [onHangUp] settings in the config.
   ///
   /// if you want hangUp in minimize state, please call [minimize.hangUp]
+  ///
+  /// Related APIs:
+  /// [ZegoUIKitPrebuiltCallEvents.onHangUpConfirmation]
+  /// [ZegoUIKitPrebuiltCallEvents.onCallEnd]
   Future<bool> hangUp(
     BuildContext context, {
     bool showConfirmation = false,
   }) async {
+    if (ZegoUIKit().getRoom().id.isEmpty) {
+      ZegoLoggerService.logInfo(
+        'hang up, not in call',
+        tag: 'call',
+        subTag: 'controller',
+      );
+
+      return false;
+    }
+
     if (null == private.prebuiltConfig) {
       ZegoLoggerService.logInfo(
         'hang up, config is null',

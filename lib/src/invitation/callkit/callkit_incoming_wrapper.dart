@@ -72,7 +72,8 @@ Future<CallKitParams> _makeCallKitParam({
   }
 
   final isShowFullScreen =
-      (prefs.getBool(CallKitInnerVariable.showFullScreen.cacheKey) ?? CallKitInnerVariable.showFullScreen.defaultValue);
+      (prefs.getBool(CallKitInnerVariable.showFullScreen.cacheKey) ??
+          CallKitInnerVariable.showFullScreen.defaultValue);
 
   return CallKitParams(
     id: const Uuid().v4(),

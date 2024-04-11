@@ -415,6 +415,19 @@
 >);
 >```
 
+### [ZegoCallHangUpConfirmDialogConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallHangUpConfirmDialogConfig-class.html)? hangUpConfirmDialog
+>
+> Confirmation dialog when hang up the call.
+>
+> - `ZegoCallHangUpConfirmDialogInfo? info`:
+> dialog information,
+> If not set, clicking the exit button will directly exit the call.
+> If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
+> - `TextStyle? titleStyle`: title text style
+> - `TextStyle? contentStyle`: content text style
+> - `TextStyle? actionTextStyle`: action button text style
+> - `Brightness? backgroundBrightness`: background brightness
+
 ### Map<String, String> advanceConfigs
 >
 > Set advanced engine configuration, Used to enable advanced functions.
@@ -502,14 +515,6 @@
 >},
 >```
 >
-
-### [ZegoCallHangUpConfirmDialogInfo](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallHangUpConfirmDialogInfo-class.html)? hangUpConfirmDialogInfo
->
-> Confirmation dialog information when hang up the call.
->
-> If not set, clicking the exit button will directly exit the call.
->
-> If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
 
 ### bool rootNavigator
 >

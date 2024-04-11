@@ -10,6 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/effects/sound_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
@@ -18,6 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
@@ -69,7 +71,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
 
   final hangupButtonClickableNotifier = ValueNotifier<bool>(true);
 
-  double get defaultHeight => 98.zR;
+  double get defaultHeight => 96.zR;
 
   double get height => widget.height ?? defaultHeight;
 
@@ -205,7 +207,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   }
 
   Widget buttonWrapper({required Widget child}) {
-    return SizedBox(
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 0, 10.zR, 0),
       width: buttonDisplaySize.width,
       height: buttonDisplaySize.height,
       child: child,
@@ -306,6 +309,12 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             ZegoCallMiniOverlayMachine()
                 .changeState(ZegoCallMiniOverlayPageState.idle);
 
+            /// because group call invitation enter call directly,
+            /// so need cancel if end call
+            ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .cancelGroupCallInvitation();
+
             final callEndEvent = ZegoCallEndEvent(
               reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
@@ -365,6 +374,17 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
           avatarBuilder: widget.config.avatarBuilder,
           itemBuilder: widget.config.chatView.itemBuilder,
           viewVisibleNotifier: widget.chatViewVisibleNotifier,
+          popUpManager: widget.popUpManager,
+        );
+      case ZegoCallMenuBarButtonName.soundEffectButton:
+        return ZegoCallSoundEffectButton(
+          effectConfig: widget.config.audioEffect,
+          translationText: widget.config.translationText,
+          voiceChangeEffect: widget.config.audioEffect.voiceChangeEffect,
+          reverbEffect: widget.config.audioEffect.reverbEffect,
+          buttonSize: buttonSize,
+          iconSize: iconSize,
+          rootNavigator: widget.config.rootNavigator,
           popUpManager: widget.popUpManager,
         );
     }

@@ -121,3 +121,8 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
         '}';
   }
 }
+
+enum ZegoCallInvitationPermission {
+  camera,
+  microphone,
+}

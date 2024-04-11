@@ -20,11 +20,29 @@
 
 # Versions
 
+- [4.4.0](#440)
 - [4.2.0](#420)
 - [4.1.10](#4110)
 - [4.1.9](#419)
 - [4.1.4](#414)  **(💥 breaking changes)**
 - [4.0.0](#400)  **(💥 breaking changes)**
+
+<br />
+<br />
+
+
+# 4.4.0
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.3.2 to the latest 4.4.0 version.
+
+# Major Interface Changes
+
+- ZegoUIKitPrebuiltCallConfig
+  - move **hangUpConfirmDialogInfo** to `hangUpConfirmDialog?.dialogInfo`
 
 <br />
 <br />
@@ -41,8 +59,8 @@
 # Major Interface Changes
 
 - ZegoCallInvitationUIConfig
-  - rename **showDeclineButton** to `declineButton.visible`
-  - rename **showCancelInvitationButton** to `cancelButton.visible`
+  - move **showDeclineButton** to `declineButton.visible`
+  - move **showCancelInvitationButton** to `cancelButton.visible`
 - ZegoCallRingtoneConfig
   - remove useless parameters `packageName`
 
@@ -231,7 +249,7 @@
 ---
 
 * [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
-    * [init](#init)
+    * [init](#init--breaking-changes)
 * [ZegoUIKitPrebuiltCallMiniOverlayMachine(ZegoMiniOverlayMachine)](#zegouikitprebuiltcallminioverlaymachinezegominioverlaymachine)
 * [Controller](#controller)
     * [screenSharingViewController](#screensharingviewcontroller)
@@ -243,12 +261,12 @@
     * [isMinimizing => minimize.isMinimizing](#isminimizing--minimizeisminimizing)
 * Events
     * [ZegoUIKitPrebuiltCallConfig](#zegouikitprebuiltcallconfig)
-        * [onError](#onerror)
-        * [onHangUpConfirmation](#onhangupconfirmation)
-        * [onHangUp/onOnlySelfInRoom/onMeRemovedFromRoom](#onhangupononlyselfinroomonmeremovedfromroom)
+        * [onError](#onerror--breaking-changes)
+        * [onHangUpConfirmation](#onhangupconfirmation--breaking-changes)
+        * [onHangUp/onOnlySelfInRoom/onMeRemovedFromRoom](#onhangupononlyselfinroomonmeremovedfromroom--breaking-changes)
     * [ZegoUIKitPrebuiltCallInvitationEvents](#zegouikitprebuiltcallinvitationevents)
-        * [onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined](#onoutgoingcallrejectedcausebusyonoutgoingcalldeclined)
-
+        * [onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined](#onoutgoingcallrejectedcausebusyonoutgoingcalldeclined--breaking-changes)
+          
 ---
 
 # Introduction
@@ -823,9 +841,10 @@ Instead, you can directly access the singleton instance and make calls to it.
 
 #### onHangUp/onOnlySelfInRoom/onMeRemovedFromRoom **(💥 breaking changes)**
 
-Due to the fact that all three events indicate the end of a call, they will be consolidated into **ZegoUIKitPrebuiltCallEvents.onCallEnd** and differentiated by the **ZegoUIKitCallEndEvent.reason**.
-
-And you can use **defaultAction.call()** to perform the internal default action, which returns to the previous page.
+>
+> Due to the fact that all three events indicate the end of a call, they will be consolidated into **ZegoUIKitPrebuiltCallEvents.onCallEnd** and differentiated by the **ZegoUIKitCallEndEvent.reason**.
+>
+> And you can use **defaultAction.call()** to perform the internal default action, which returns to the previous page.
 
 - move **onHangUp** from `ZegoUIKitPrebuiltCallConfig` to ZegoUIKitPrebuiltCallEvents.**onCallEnd**(ZegoUIKitCallEndEvent(reason:ZegoUIKitCallEndReason.**localHangUp**), defaultAction)
 - move **onOnlySelfInRoom** from `ZegoUIKitPrebuiltCallConfig`to ZegoUIKitPrebuiltCallEvents.**onCallEnd**(ZegoUIKitCallEndEvent(reason:ZegoUIKitCallEndReason.**remoteHangUp**), defaultAction)

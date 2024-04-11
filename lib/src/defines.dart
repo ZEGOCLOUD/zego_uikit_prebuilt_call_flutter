@@ -38,4 +38,7 @@ enum ZegoCallMenuBarButtonName {
 
   /// Button to open/hide the chat UI.
   chatButton,
+
+  /// Button for controlling the display or hiding of the sound effect adjustment panel.
+  soundEffectButton,
 }

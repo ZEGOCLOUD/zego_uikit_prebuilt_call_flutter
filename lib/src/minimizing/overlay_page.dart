@@ -564,7 +564,12 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   void onUserLeave(List<ZegoUIKitUser> users) {
-    if (ZegoCallMiniOverlayPageState.minimizing != ZegoUIKitPrebuiltCallController().minimize.state) {
+    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
+      return;
+    }
+
+    if (ZegoCallMiniOverlayPageState.minimizing !=
+        ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoLoggerService.logInfo(
         'onUserLeave, not in minimizing',
         tag: 'call',
@@ -574,21 +579,27 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return;
     }
 
-    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
-      return;
-    }
+    ZegoLoggerService.logInfo(
+      'onUserLeave',
+      tag: 'call',
+      subTag: 'overlay page',
+    );
 
     //  remote users is empty
-    minimizeData?.events.onCallEnd?.call(
-        ZegoCallEndEvent(
-          reason: ZegoCallEndReason.remoteHangUp,
-          isFromMinimizing: true,
-        ), () {
+    final callEndEvent = ZegoCallEndEvent(
+      reason: ZegoCallEndReason.remoteHangUp,
+      isFromMinimizing: true,
+    );
+    defaultAction() {
       /// now is minimizing state, not need to navigate, just switch to idle
-      ZegoCallMiniOverlayMachine().changeState(
-        ZegoCallMiniOverlayPageState.idle,
-      );
-    });
+      ZegoUIKitPrebuiltCallController().minimize.hide();
+    }
+
+    if (minimizeData?.events.onCallEnd != null) {
+      minimizeData?.events.onCallEnd?.call(callEndEvent, defaultAction);
+    } else {
+      defaultAction.call();
+    }
   }
 
   Image uikitImage(String name) {

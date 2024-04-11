@@ -7,6 +7,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/inner_text.dart';
 import 'deprecated/deprecated.dart';
 
 /// Configuration for initializing the Call
@@ -38,6 +39,8 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// Configuration related to the bottom-left message list.
   ZegoCallInRoomChatViewConfig chatView;
+
+  ZegoCallHangUpConfirmDialogConfig hangUpConfirmDialog;
 
   /// Set advanced engine configuration, Used to enable advanced functions.
   /// For details, please consult ZEGO technical support.
@@ -115,10 +118,13 @@ class ZegoUIKitPrebuiltCallConfig {
   ///
   ZegoAvatarBuilder? avatarBuilder;
 
-  /// Confirmation dialog information when hang up the call.
-  /// If not set, clicking the exit button will directly exit the call.
-  /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
-  ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo;
+  /// Configuration options for modifying all calling page's text content on the UI.
+  /// All visible text content on the UI can be modified using this single property.
+  ZegoUIKitPrebuiltCallInnerText translationText;
+
+
+  /// Configuration options for voice changer and reverberation effects.
+  ZegoLiveStreamingAudioEffectConfig audioEffect;
 
   /// same as Flutter's Navigator's param
   /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
@@ -198,14 +204,19 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallMemberListConfig? memberListConfig,
     ZegoCallDurationConfig? durationConfig,
     ZegoCallInRoomChatViewConfig? chatViewConfig,
+    ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
+    @Deprecated(
+        'use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440')
+    ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
     ZegoLayout? layout,
     this.foreground,
     this.background,
-    this.hangUpConfirmDialogInfo,
     this.avatarBuilder,
     @Deprecated(
         'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
     ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
+    ZegoUIKitPrebuiltCallInnerText? translationText,
+    ZegoLiveStreamingAudioEffectConfig? audioEffect,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
         audioVideoView = (audioVideoViewConfig ??
             ZegoCallAudioVideoViewConfig())
@@ -215,10 +226,16 @@ class ZegoUIKitPrebuiltCallConfig {
         memberList = memberListConfig ?? ZegoCallMemberListConfig(),
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
+        hangUpConfirmDialog = (hangUpConfirmDialog ??
+            ZegoCallHangUpConfirmDialogConfig())
+          ..info = hangUpConfirmDialogInfo,
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
-            );
+            ),
+        translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
+        audioEffect = audioEffect ?? ZegoLiveStreamingAudioEffectConfig();
+
 
   @override
   String toString() {
@@ -238,7 +255,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'advanceConfigs:$advanceConfigs, '
         'foreground:$foreground, '
         'background:$background, '
-        'hangUpConfirmDialogInfo:$hangUpConfirmDialogInfo, '
+        'hangUpConfirmDialog:$hangUpConfirmDialog, '
         'avatarBuilder:$avatarBuilder, '
         '}';
   }
@@ -589,6 +606,37 @@ class ZegoCallInRoomChatViewConfig {
   }
 }
 
+/// Confirmation dialog when hang up the call.
+class ZegoCallHangUpConfirmDialogConfig {
+  /// dialog information
+  /// If not set, clicking the exit button will directly exit the call.
+  /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
+  ZegoCallHangUpConfirmDialogInfo? info;
+  TextStyle? titleStyle;
+  TextStyle? contentStyle;
+  TextStyle? actionTextStyle;
+  Brightness? backgroundBrightness;
+
+  ZegoCallHangUpConfirmDialogConfig({
+    this.info,
+    this.titleStyle,
+    this.contentStyle,
+    this.actionTextStyle,
+    this.backgroundBrightness,
+  });
+
+  @override
+  String toString() {
+    return 'ZegoCallHangUpConfirmDialogConfig:{'
+        'info:$info, '
+        'titleStyle:$titleStyle, '
+        'contentStyle:$contentStyle, '
+        'actionTextStyle:$actionTextStyle, '
+        'backgroundBrightness:$backgroundBrightness, '
+        '}';
+  }
+}
+
 extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
   static ZegoUIKitPrebuiltCallConfig generate({
     required bool isGroup,
@@ -654,4 +702,130 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
       memberListConfig: ZegoCallMemberListConfig(),
     );
   }
+}
+
+/// Configuration options for voice changer, beauty effects and reverberation effects.
+///
+/// This class is used for the [ZegoUIKitPrebuiltCallConfig.effect] property.
+///
+/// If you want to replace icons and colors to sheet or slider, some of our widgets also provide modification options.
+///
+/// Example:
+///
+/// ```dart
+/// ZegoLiveStreamingAudioEffectConfig(
+///   backgroundColor: Colors.black.withOpacity(0.5),
+///   backIcon: Icon(Icons.arrow_back),
+///   sliderTextBackgroundColor: Colors.black.withOpacity(0.5),
+/// );
+/// ```
+class ZegoLiveStreamingAudioEffectConfig {
+  /// List of voice changer effects.
+  /// If you don't want a certain effect, simply remove it from the list.
+  List<VoiceChangerType> voiceChangeEffect;
+
+  /// List of revert effects types.
+  /// If you don't want a certain effect, simply remove it from the list.
+  List<ReverbType> reverbEffect;
+
+  /// the background color of the sheet.
+  Color? backgroundColor;
+
+  /// the text style of the head title sheet.
+  TextStyle? headerTitleTextStyle;
+
+  /// back button icon on the left side of the title.
+  Widget? backIcon;
+
+  /// reset button icon on the right side of the title.
+  Widget? resetIcon;
+
+  /// color of the icons in the normal (unselected) state.
+  Color? normalIconColor;
+
+  /// color of the icons in the highlighted (selected) state.
+  Color? selectedIconColor;
+
+  /// border color of the icons in the normal (unselected) state.
+  Color? normalIconBorderColor;
+
+  /// border color of the icons in the highlighted (selected) state.
+  Color? selectedIconBorderColor;
+
+  /// text-style of buttons in the highlighted (selected) state.
+  TextStyle? selectedTextStyle;
+
+  /// text-style of buttons in the normal (unselected) state.
+  TextStyle? normalTextStyle;
+
+  /// the style of the text displayed on the Slider's thumb
+  TextStyle? sliderTextStyle;
+
+  /// the background color of the text displayed on the Slider's thumb.
+  Color? sliderTextBackgroundColor;
+
+  ///  the color of the track that is active when sliding the Slider.
+  Color? sliderActiveTrackColor;
+
+  /// the color of the track that is inactive when sliding the Slider.
+  Color? sliderInactiveTrackColor;
+
+  /// the color of the Slider's thumb.
+  Color? sliderThumbColor;
+
+  /// the radius of the Slider's thumb.
+  double? sliderThumbRadius;
+
+  ZegoLiveStreamingAudioEffectConfig({
+    this.voiceChangeEffect = const [
+      VoiceChangerType.littleGirl,
+      VoiceChangerType.deep,
+      VoiceChangerType.robot,
+      VoiceChangerType.ethereal,
+      VoiceChangerType.littleBoy,
+      VoiceChangerType.female,
+      VoiceChangerType.male,
+      VoiceChangerType.optimusPrime,
+      VoiceChangerType.crystalClear,
+      VoiceChangerType.cMajor,
+      VoiceChangerType.aMajor,
+      VoiceChangerType.harmonicMinor,
+    ],
+    this.reverbEffect = const [
+      ReverbType.ktv,
+      ReverbType.hall,
+      ReverbType.concert,
+      ReverbType.rock,
+      ReverbType.smallRoom,
+      ReverbType.largeRoom,
+      ReverbType.valley,
+      ReverbType.recordingStudio,
+      ReverbType.basement,
+      ReverbType.popular,
+      ReverbType.gramophone,
+    ],
+    this.backgroundColor,
+    this.headerTitleTextStyle,
+    this.backIcon,
+    this.resetIcon,
+    this.selectedIconBorderColor,
+    this.normalIconBorderColor,
+    this.selectedTextStyle,
+    this.normalTextStyle,
+    this.sliderTextStyle,
+    this.sliderTextBackgroundColor,
+    this.sliderActiveTrackColor,
+    this.sliderInactiveTrackColor,
+    this.sliderThumbColor,
+    this.sliderThumbRadius,
+  });
+
+  ZegoLiveStreamingAudioEffectConfig.none({
+    this.voiceChangeEffect = const [],
+    this.reverbEffect = const [],
+  });
+
+  bool get isSupportVoiceChange => voiceChangeEffect.isNotEmpty;
+
+  bool get isSupportReverb => reverbEffect.isNotEmpty;
 }

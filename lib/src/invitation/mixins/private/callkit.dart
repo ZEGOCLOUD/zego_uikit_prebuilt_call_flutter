@@ -56,9 +56,13 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     _myPageManager = pageManager;
 
     _setCallKitVariables({
-      CallKitInnerVariable.callIDVisibility: androidNotificationConfig?.callIDVisibility ?? true,
-      CallKitInnerVariable.showFullScreen: androidNotificationConfig?.showFullScreen ?? false,
+      CallKitInnerVariable.callIDVisibility:
+          androidNotificationConfig?.callIDVisibility ?? true,
+      CallKitInnerVariable.showFullScreen:
+          androidNotificationConfig?.showFullScreen ?? false,
       CallKitInnerVariable.ringtonePath: androidNotificationConfig?.sound,
+      CallKitInnerVariable.backgroundUrl:
+          androidNotificationConfig?.fullScreenBackground ?? ''
     });
 
     ZegoLoggerService.logInfo(

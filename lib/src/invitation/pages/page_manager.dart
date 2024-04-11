@@ -666,6 +666,12 @@ class ZegoCallInvitationPageManager {
       ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
       ..type = ZegoCallTypeExtension.mapValue[type] ?? ZegoCallType.voiceCall;
 
+    ZegoLoggerService.logInfo(
+      '_invitationData:$_invitationData',
+      tag: 'call',
+      subTag: 'page manager',
+    );
+
     if (_waitCallPageDisposeFlagInIOSCallKit.value) {
       cacheInvitationDataForWaitCallPageDisposeInIOSCallKit(true);
     }
@@ -677,13 +683,12 @@ class ZegoCallInvitationPageManager {
       tag: 'call',
       subTag: 'page manager',
     );
-    if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
-        (callKitCallID != null && callKitCallID == _invitationData.callID)) {
-      if (Platform.isAndroid ||
-          _waitingCallInvitationReceivedAfterCallKitIncomingAccepted) {
+
+    if (Platform.isAndroid) {
+      if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted) {
+        _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
         ZegoLoggerService.logInfo(
-          'auto agree, cause exist callkit params same as current call or '
-          ' waiting invitation received after callkit accept',
+          'auto agree, cause waiting invitation received after callkit accept',
           tag: 'call',
           subTag: 'page manager',
         );
@@ -693,7 +698,6 @@ class ZegoCallInvitationPageManager {
           clearAllCallKitCalls();
         }
 
-        _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
         clearOfflineCallKitCallID();
         clearOfflineCallKitParams();
 
@@ -706,12 +710,29 @@ class ZegoCallInvitationPageManager {
             )
             .then((result) {
           onLocalAcceptInvitation(
-            result.error?.code ?? '',
-            result.error?.message ?? '',
-          );
+              result.error?.code ?? '', result.error?.message ?? '');
         });
       } else {
-        /// only iOS
+        if (_appInBackground) {
+          ZegoLoggerService.logInfo(
+            'app in background, app in background:$_appInBackground, create notification',
+            tag: 'call',
+            subTag: 'page manager',
+          );
+
+          hasCallkitIncomingCauseAppInBackground = true;
+          // ZegoUIKit().getSignalingPlugin().addLocalCallNotification();
+          /// android 先弹prebuilt 呼叫邀请弹框
+          _notificationManager?.showInvitationNotification(invitationData);
+        } else {
+          showNotificationOnInvitationReceived();
+        }
+      }
+    } else {
+      // ios
+      // The logic here is a bit confusing. Todo requires adam to look at this part of the logic.
+      if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
+          (callKitCallID != null && callKitCallID == _invitationData.callID)) {
         if (_waitingCallInvitationReceivedAfterCallKitIncomingRejected) {
           _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
 
@@ -744,24 +765,20 @@ class ZegoCallInvitationPageManager {
           );
           hasCallkitIncomingCauseAppInBackground = true;
         }
-      }
-    } else {
-      final iOSCallKitBackground = Platform.isIOS &&
-          AppLifecycleState.inactive == WidgetsBinding.instance.lifecycleState;
+      } else {
+        final iOSCallKitBackground = Platform.isIOS &&
+            AppLifecycleState.inactive ==
+                WidgetsBinding.instance.lifecycleState;
 
-      if (_appInBackground || iOSCallKitBackground) {
-        ZegoLoggerService.logInfo(
-          'app in background, app in background:$_appInBackground, iOS callkit background:$iOSCallKitBackground, create notification',
-          tag: 'call',
-          subTag: 'page manager',
-        );
+        if (_appInBackground || iOSCallKitBackground) {
+          ZegoLoggerService.logInfo(
+            'app in background, app in background:$_appInBackground, iOS callkit background:$iOSCallKitBackground, create notification',
+            tag: 'call',
+            subTag: 'page manager',
+          );
 
-        hasCallkitIncomingCauseAppInBackground = true;
-        if (Platform.isAndroid) {
-          // ZegoUIKit().getSignalingPlugin().addLocalCallNotification();
-          /// android 先弹prebuilt 呼叫邀请弹框
-          _notificationManager?.showInvitationNotification(invitationData);
-        } else {
+          hasCallkitIncomingCauseAppInBackground = true;
+
           await getOfflineCallKitCallID().then((offlineCallID) {
             ZegoLoggerService.logInfo(
               'offlineCallID:$offlineCallID, _invitationData.callID:${_invitationData.callID}',
@@ -784,9 +801,9 @@ class ZegoCallInvitationPageManager {
               );
             }
           });
+        } else {
+          showNotificationOnInvitationReceived();
         }
-      } else {
-        showNotificationOnInvitationReceived();
       }
     }
   }
@@ -1006,11 +1023,9 @@ class ZegoCallInvitationPageManager {
     restoreToIdle();
   }
 
-  void onHangUp({
-    bool needPop = true,
-  }) {
+  void cancelGroupCallInvitation() {
     ZegoLoggerService.logInfo(
-      'on hang up, needPop:$needPop',
+      'on hang up',
       tag: 'call',
       subTag: 'page manager',
     );
@@ -1035,7 +1050,7 @@ class ZegoCallInvitationPageManager {
       });
     }
 
-    restoreToIdle(needPop: needPop);
+    restoreToIdle(needPop: false);
   }
 
   void onPrebuiltCallPageDispose() {

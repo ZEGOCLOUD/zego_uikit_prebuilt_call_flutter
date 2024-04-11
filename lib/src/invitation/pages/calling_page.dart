@@ -7,7 +7,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
-import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling_view.dart';
@@ -41,8 +40,6 @@ class ZegoCallingPage extends StatefulWidget {
 class _ZegoCallingPageState extends State<ZegoCallingPage> {
   CallingState currentState = CallingState.kIdle;
 
-  ZegoCallEndCallback? previousOnCallEnd;
-
   ZegoCallingMachine? get machine => widget.pageManager.callingMachine;
 
   @override
@@ -55,6 +52,13 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
       machine?.onStateChanged = (CallingState state) {
         setState(() {
           currentState = state;
+
+          ZegoLoggerService.logInfo(
+            'onStateChanged, '
+            'currentState:$currentState, ',
+            tag: 'call',
+            subTag: 'calling page',
+          );
         });
       };
 
@@ -127,38 +131,12 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     );
   }
 
-  Future<void> onCallEnd(
-    ZegoCallEndEvent event,
-    VoidCallback defaultAction,
-  ) async {
-    ZegoLoggerService.logInfo(
-      'onCallEnd, '
-      'event:$event, ',
-      tag: 'call',
-      subTag: 'calling page',
-    );
-
-    previousOnCallEnd?.call(event, defaultAction);
-
-    /// If the customer overrides callConfig?.onHangUp and it is not null,
-    /// then the customer is responsible for popping the screen.
-    widget.pageManager.onHangUp(
-      needPop: null == previousOnCallEnd,
-    );
-
-    /// restore event handle
-    widget.callInvitationData.events?.onCallEnd = previousOnCallEnd;
-  }
-
   Widget prebuiltCallPage() {
     ZegoLoggerService.logInfo(
       'create prebuilt call page',
       tag: 'call',
       subTag: 'calling page',
     );
-
-    previousOnCallEnd = widget.callInvitationData.events?.onCallEnd;
-    widget.callInvitationData.events?.onCallEnd = onCallEnd;
 
     /// assign if not set
     widget.callInvitationData.events?.onError ??=

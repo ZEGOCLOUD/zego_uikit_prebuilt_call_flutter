@@ -18,5 +18,6 @@ class ZegoCallIconUrls {
   static const String topCameraOverturn =
       'assets/icons/top_camera_overturn.png';
   static const String toolbarBeautyEffect = 'assets/icons/toolbar_beauty.png';
+  static const String toolbarSoundEffect = 'assets/icons/toolbar_sound.png';
   static const String topMemberIM = 'assets/icons/top_im.png';
 }

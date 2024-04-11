@@ -57,6 +57,8 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
             userName: minimizeData.userName,
             callID: minimizeData.callID,
             config: minimizeData.config,
+            events: minimizeData.events,
+            plugins: minimizeData.plugins,
             onDispose: minimizeData.onDispose,
           );
           return withSafeArea

@@ -1,6 +1,74 @@
+
+## 4.7.3
+
+- Update dependency.
+
+## 4.7.2
+
+- Fixed the issue of events being lost after back from minimization
+
+## 4.7.1
+
+- Update dependency.
+
+## 4.7.0
+
+- Support pure audio call invitations without popping up the camera's request permission dialog. [Document](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationConfig/permissions.html)
+
+## 4.6.0
+
+ - Support customize full screen background.
+
+## 4.5.4
+
+ - fix offline accept issue.(in 4.5.2~4.5.3)
+
+## 4.5.3
+
+ - update deps.
+
+## 4.5.2
+
+ - Fix: background isolate destroying zim unexpectedly issue.
+
+## 4.5.1
+
+ - Fix the issue of automatically accepting call due to FCM.
+
+## 4.5.0
+
+ - Support audio effects.
+
+## 4.4.3
+
+- Update dependency.
+
+## 4.4.2
+
+- Ignore with non-uikit notification protocols
+
+## 4.4.1
+
+- Update dependency.
+
+## 4.4.0
+
+- Support setting hang-up dialog box style by `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialog`
+- move API in `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialogInfo`
+  to `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialog.info` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#440)
+
+## 4.3.2
+
+- Fix the issue of minimize window no closed by default when remote user end call
+- Fix the issue of the android return button will directly end call when return to the large call page from minimizing page
+
+## 4.3.1
+
+- Fix bugs.
+
 ## 4.3.0
 
-- Support full-screen display configuration for offline notification under screen locked, see details[Document](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Enable%20fullscreen%20incoming%20call/2886fbb3)
+- Support full-screen display configuration for offline notification under screen locked, see [Document](https://zegocloud.spreading.io/doc/callkit/Call%20Kit/main/Invitation%20config/Enable%20fullscreen%20incoming%20call/2886fbb3)
 
 ## 4.2.5
 

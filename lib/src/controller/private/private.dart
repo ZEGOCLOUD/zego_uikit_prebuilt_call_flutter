@@ -61,14 +61,14 @@ class ZegoCallControllerPrivateImpl {
     ZegoCallHangUpConfirmationEvent event,
     BuildContext context,
   ) async {
-    if (_prebuiltConfig?.hangUpConfirmDialogInfo == null) {
+    if (_prebuiltConfig?.hangUpConfirmDialog.info == null) {
       return true;
     }
 
     final key = DateTime.now().millisecondsSinceEpoch;
     _popUpManager?.addAPopUpSheet(key);
 
-    final dialogInfo = _prebuiltConfig?.hangUpConfirmDialogInfo ??
+    final dialogInfo = _prebuiltConfig?.hangUpConfirmDialog.info ??
         ZegoCallHangUpConfirmDialogInfo();
     return showAlertDialog(
       event.context,
@@ -122,6 +122,10 @@ class ZegoCallControllerPrivateImpl {
           },
         ),
       ],
+      titleStyle: _prebuiltConfig?.hangUpConfirmDialog.titleStyle,
+      contentStyle: _prebuiltConfig?.hangUpConfirmDialog.contentStyle,
+      backgroundBrightness:
+          _prebuiltConfig?.hangUpConfirmDialog.backgroundBrightness,
     ).then((result) {
       _popUpManager?.removeAPopUpSheet(key);
 

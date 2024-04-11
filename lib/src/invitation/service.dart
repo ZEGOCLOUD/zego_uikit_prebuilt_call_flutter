@@ -28,6 +28,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.android.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
@@ -157,7 +158,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
     ZegoLoggerService.logInfo(
       'setNavigatorKey, '
-      'isInit:$private._isInit,'
+      'isInit:${private._isInit},'
       'navigatorKey:$navigatorKey',
       tag: 'call',
       subTag: 'call invitation service(${identityHashCode(this)})',
@@ -190,12 +191,17 @@ class ZegoUIKitPrebuiltCallInvitationService
     required String userID,
     required String userName,
     required List<IZegoUIKitPlugin> plugins,
+
+    /// call abouts.
     ZegoCallPrebuiltConfigQuery? requireConfig,
+    ZegoUIKitPrebuiltCallEvents? events,
+
+    /// invitation abouts.
+    ZegoCallInvitationConfig? config,
     ZegoCallRingtoneConfig? ringtoneConfig,
     ZegoCallInvitationUIConfig? uiConfig,
     ZegoCallInvitationNotificationConfig? notificationConfig,
     ZegoCallInvitationInnerText? innerText,
-    ZegoUIKitPrebuiltCallEvents? events,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
   }) async {
     if (private._isInit) {
@@ -210,7 +216,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.3.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.7.3; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -232,6 +238,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       plugins: plugins,
       requireConfig: requireConfig,
       ringtoneConfig: ringtoneConfig,
+      config: config,
       uiConfig: uiConfig,
       notificationConfig: notificationConfig,
       innerText: innerText,

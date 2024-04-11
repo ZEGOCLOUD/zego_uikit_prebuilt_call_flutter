@@ -30,8 +30,10 @@ class ZegoUIKitPrebuiltCallInvitationData {
     ZegoCallInvitationInnerText? innerText,
     ZegoCallRingtoneConfig? ringtoneConfig,
     ZegoCallInvitationUIConfig? uiConfig,
+    ZegoCallInvitationConfig? config,
     ZegoCallInvitationNotificationConfig? notificationConfig,
   })  : ringtoneConfig = ringtoneConfig ?? ZegoCallRingtoneConfig(),
+        config = config ?? ZegoCallInvitationConfig(),
         uiConfig = uiConfig ?? ZegoCallInvitationUIConfig(),
         innerText = innerText ?? ZegoCallInvitationInnerText(),
         notificationConfig =
@@ -65,6 +67,9 @@ class ZegoUIKitPrebuiltCallInvitationData {
 
   /// ui config
   final ZegoCallInvitationUIConfig uiConfig;
+
+  /// config
+  final ZegoCallInvitationConfig config;
 
   final ZegoCallInvitationNotificationConfig notificationConfig;
 

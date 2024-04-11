@@ -117,7 +117,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.3.0; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.7.3; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -151,6 +151,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       userName: widget.userName,
       config: widget.config,
       events: events,
+      plugins: widget.plugins,
       onDispose: widget.onDispose,
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
       durationStartTime: durationStartTime,
@@ -229,22 +230,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
-          final hangUpConfirmationEvent = ZegoCallHangUpConfirmationEvent(
-            context: context,
-          );
-          defaultAction() async {
-            return defaultHangUpConfirmationAction(hangUpConfirmationEvent);
-          }
-
-          if (events.onHangUpConfirmation != null) {
-            return await events.onHangUpConfirmation?.call(
-                  hangUpConfirmationEvent,
-                  defaultAction,
-                ) ??
-                true;
-          } else {
-            return defaultAction.call();
-          }
+          /// not support end by return button
+          return false;
         },
         child: ZegoScreenUtilInit(
           designSize: const Size(750, 1334),
@@ -579,7 +566,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       top: safeAreaInsets.top,
       child: ZegoCallTopMenuBar(
-        height: widget.config.topMenuBar.height ?? 98.zR,
+        height: widget.config.topMenuBar.height ?? 80.zR,
         config: widget.config,
         events: events,
         defaultEndAction: defaultEndAction,
@@ -768,7 +755,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   Future<bool> defaultHangUpConfirmationAction(
     ZegoCallHangUpConfirmationEvent event,
   ) async {
-    if (widget.config.hangUpConfirmDialogInfo == null) {
+    if (widget.config.hangUpConfirmDialog.info == null) {
       return true;
     }
 
@@ -777,13 +764,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     return showAlertDialog(
       event.context,
-      widget.config.hangUpConfirmDialogInfo!.title,
-      widget.config.hangUpConfirmDialogInfo!.message,
+      widget.config.hangUpConfirmDialog.info!.title,
+      widget.config.hangUpConfirmDialog.info!.message,
       [
         CupertinoDialogAction(
           child: Text(
-            widget.config.hangUpConfirmDialogInfo!.cancelButtonName,
-            style: TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
+            widget.config.hangUpConfirmDialog.info!.cancelButtonName,
+            style: widget.config.hangUpConfirmDialog.actionTextStyle ??
+                TextStyle(
+                  fontSize: 26.zR,
+                  color: const Color(0xff0055FF),
+                ),
           ),
           onPressed: () {
             //  pop this dialog
@@ -805,7 +796,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ),
         CupertinoDialogAction(
           child: Text(
-            widget.config.hangUpConfirmDialogInfo!.confirmButtonName,
+            widget.config.hangUpConfirmDialog.info!.confirmButtonName,
             style: TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
@@ -827,6 +818,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           },
         ),
       ],
+      titleStyle: widget.config.hangUpConfirmDialog.titleStyle,
+      contentStyle: widget.config.hangUpConfirmDialog.contentStyle,
+      backgroundBrightness:
+          widget.config.hangUpConfirmDialog.backgroundBrightness,
     ).then((result) {
       popUpManager.removeAPopUpSheet(key);
 

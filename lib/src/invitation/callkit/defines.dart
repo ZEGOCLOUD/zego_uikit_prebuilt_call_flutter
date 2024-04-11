@@ -79,7 +79,7 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
       case CallKitInnerVariable.backgroundColor:
         return '#0955fa';
       case CallKitInnerVariable.backgroundUrl:
-        return 'assets/test.png';
+        return '';
       case CallKitInnerVariable.actionColor:
         return '#4CAF50';
       case CallKitInnerVariable.textAppName:
