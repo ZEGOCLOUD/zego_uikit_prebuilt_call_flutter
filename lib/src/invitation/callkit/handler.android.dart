@@ -44,7 +44,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     subTag: 'background message',
   );
 
-  if(!message.extras.containsKey('zego')){
+  if (!message.extras.containsKey('zego')) {
     ZegoLoggerService.logInfo(
       'is not zego protocol, droped',
       tag: 'call',
@@ -94,7 +94,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     tag: 'call',
     subTag: 'background message',
   );
-  
+
   backgroundPort.listen((dynamic message) async {
     ZegoLoggerService.logInfo(
       'isolate: current port(${backgroundPort.hashCode}) receive, backgroundPort.sendPort(${backgroundPort.sendPort.hashCode})'
@@ -104,7 +104,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     );
 
     /// this will fix the issue that when offline call dialog popup, user click appicon to open app,
-    if(message is String && message == 'close'){
+    if (message is String && message == 'close') {
       ZegoLoggerService.logInfo(
         'isolate: close port command received, also cancel the flutterCallkitIncomingStreamSubscription(${flutterCallkitIncomingStreamSubscription?.hashCode})',
         tag: 'call',
@@ -461,18 +461,21 @@ void _listenFlutterCallkitIncomingEvent({
   required List<StreamSubscription<dynamic>> signalingSubscriptions,
   required ReceivePort backgroundPort,
 }) {
-  flutterCallkitIncomingStreamSubscription = FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
+  flutterCallkitIncomingStreamSubscription =
+      FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
     // check isolate
-    // After receiving the offline pop-up window, 
-    // if the user directly clicks the app icon to open the app, the main isolate will register the desired isolate 
+    // After receiving the offline pop-up window,
+    // if the user directly clicks the app icon to open the app, the main isolate will register the desired isolate
     // to the IsolateNameServer. So here we can use this to determine whether we need to ignore the old event.
-    final lookup = IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
+    final lookup =
+        IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
     ZegoLoggerService.logInfo(
       'isolate: FlutterCallkitIncoming.onEvent, lookupPortResult(${lookup?.hashCode}),backgroundPort(${backgroundPort.hashCode}),backgroundPort!.sendPort(${backgroundPort.sendPort.hashCode})',
       tag: 'call',
       subTag: 'background message',
     );
-    if((lookup!=null) && (lookup.hashCode!= backgroundPort.sendPort.hashCode)){
+    if ((lookup != null) &&
+        (lookup.hashCode != backgroundPort.sendPort.hashCode)) {
       ZegoLoggerService.logWarn(
         'isolate: isolate changed, cause of app opened! ignore this event',
         tag: 'call',

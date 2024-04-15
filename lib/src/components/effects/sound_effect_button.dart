@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/sound_effect_sheet.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
@@ -39,7 +39,8 @@ class ZegoCallSoundEffectButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ZegoCallSoundEffectButton> createState() => _ZegoCallSoundEffectButtonState();
+  State<ZegoCallSoundEffectButton> createState() =>
+      _ZegoCallSoundEffectButtonState();
 }
 
 /// @nodoc
@@ -69,12 +70,14 @@ class _ZegoCallSoundEffectButtonState extends State<ZegoCallSoundEffectButton> {
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ?? ZegoUIKitDefaultTheme.buttonBackgroundColor,
+          color: widget.icon?.backgroundColor ??
+              ZegoUIKitDefaultTheme.buttonBackgroundColor,
           shape: BoxShape.circle,
         ),
         child: SizedBox.fromSize(
           size: sizeBoxSize,
-          child: widget.icon?.icon ?? ZegoCallImage.asset(ZegoCallIconUrls.toolbarSoundEffect),
+          child: widget.icon?.icon ??
+              ZegoCallImage.asset(ZegoCallIconUrls.toolbarSoundEffect),
         ),
       ),
     );

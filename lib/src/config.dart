@@ -122,7 +122,6 @@ class ZegoUIKitPrebuiltCallConfig {
   /// All visible text content on the UI can be modified using this single property.
   ZegoUIKitPrebuiltCallInnerText translationText;
 
-
   /// Configuration options for voice changer and reverberation effects.
   ZegoLiveStreamingAudioEffectConfig audioEffect;
 
@@ -236,7 +235,6 @@ class ZegoUIKitPrebuiltCallConfig {
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
         audioEffect = audioEffect ?? ZegoLiveStreamingAudioEffectConfig();
 
-
   @override
   String toString() {
     return 'ZegoUIKitPrebuiltCallConfig:{'
@@ -267,10 +265,6 @@ class ZegoUIKitPrebuiltCallConfig {
 /// If you need to customize the foreground or background of the audio/video view, you can use foregroundBuilder and backgroundBuilder.
 /// If you want to hide user avatars or sound waveforms in audio mode, you can set showAvatarInAudioMode and showSoundWavesInAudioMode to false.
 class ZegoCallAudioVideoViewConfig {
-  /// Custom audio/video view.
-  /// If you don't want to use the default view components, you can pass a custom component through this parameter.
-  ZegoCallAudioVideoContainerBuilder? containerBuilder;
-
   /// Whether to mirror the displayed video captured by the camera.
   /// This mirroring effect only applies to the front-facing camera.
   /// Set it to true to enable mirroring, which flips the image horizontally.
@@ -310,17 +304,27 @@ class ZegoCallAudioVideoViewConfig {
   /// Set it to false if you don't want to show sound waveforms in audio mode.
   bool showSoundWavesInAudioMode;
 
+  /// Custom audio/video view.
+  /// If you don't want to use the default view components, you can pass a custom component through this parameter.
+  /// and if return null, will be display the default view
+  ZegoCallAudioVideoContainerBuilder? containerBuilder;
+
+  /// Specify the rect of the audio & video container.
+  /// If not specified, it defaults to display full.
+  Rect Function()? containerRect;
+
   ZegoCallAudioVideoViewConfig({
-    this.containerBuilder,
     this.isVideoMirror = true,
     this.showMicrophoneStateOnView = true,
     this.showCameraStateOnView = false,
     this.showUserNameOnView = true,
-    this.foregroundBuilder,
-    this.backgroundBuilder,
     this.useVideoViewAspectFill = false,
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
+    this.foregroundBuilder,
+    this.backgroundBuilder,
+    this.containerBuilder,
+    this.containerRect,
   });
 
   @override
@@ -413,8 +417,10 @@ class ZegoCallTopMenuBarConfig {
 /// Configuration options for the bottom menu bar (toolbar).
 /// You can use the [ZegoUIKitPrebuiltCallConfig.bottomMenuBar] property to set the properties inside this class.
 class ZegoCallBottomMenuBarConfig {
-  /// Whether to automatically collapse the top menu bar after 5 seconds of inactivity.
+  /// Whether to display the bottom menu bar.
+  bool isVisible;
 
+  /// Whether to automatically collapse the top menu bar after 5 seconds of inactivity.
   bool hideAutomatically;
 
   /// Whether to collapse the top menu bar when clicking on the blank area.
@@ -449,6 +455,7 @@ class ZegoCallBottomMenuBarConfig {
   List<Widget> extendButtons;
 
   ZegoCallBottomMenuBarConfig({
+    this.isVisible = true,
     this.hideAutomatically = true,
     this.hideByClick = true,
     this.buttons = const [

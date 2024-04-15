@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +15,13 @@ import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
+
+part 'controller/audio_video.dart';
 
 part 'controller/invitation.dart';
 
@@ -24,7 +29,17 @@ part 'controller/screen_sharing.dart';
 
 part 'controller/minimize.dart';
 
+part 'controller/permission.dart';
+
+part 'controller/user.dart';
+
+part 'controller/private/audio_video.dart';
+
 part 'controller/private/minimize.dart';
+
+part 'controller/private/user.dart';
+
+part 'controller/private/permission.dart';
 
 part 'controller/private/private.dart';
 
@@ -43,6 +58,9 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerScreenSharing,
         ZegoCallControllerInvitation,
         ZegoCallControllerMinimizing,
+        ZegoCallControllerAudioVideo,
+        ZegoCallControllerUser,
+        ZegoCallControllerPermission,
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
@@ -142,6 +160,8 @@ class ZegoUIKitPrebuiltCallController
     minimize.hide();
 
     private.uninitByPrebuilt();
+    user.private.uninitByPrebuilt();
+    audioVideo.private.uninitByPrebuilt();
     minimize.private.uninitByPrebuilt();
 
     final result = await ZegoUIKit().leaveRoom().then((result) {

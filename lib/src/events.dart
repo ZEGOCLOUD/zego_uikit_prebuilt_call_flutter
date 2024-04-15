@@ -102,11 +102,30 @@ class ZegoCallAudioVideoEvents {
   /// This callback is triggered when audio output device changed
   void Function(ZegoUIKitAudioRoute)? onAudioOutputChanged;
 
+  /// local camera device exceptions
+  void Function(ZegoUIKitDeviceExceptionType?)? onLocalCameraExceptionOccurred;
+
+  /// local microphone device exceptions
+  void Function(ZegoUIKitDeviceExceptionType?)?
+      onLocalMicrophoneExceptionOccurred;
+
+  /// remote camera device exceptions
+  void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
+      onRemoteCameraExceptionOccurred;
+
+  /// remote microphone device exceptions
+  void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
+      onRemoteMicrophoneExceptionOccurred;
+
   ZegoCallAudioVideoEvents({
     this.onCameraStateChanged,
     this.onFrontFacingCameraStateChanged,
     this.onMicrophoneStateChanged,
     this.onAudioOutputChanged,
+    this.onLocalCameraExceptionOccurred,
+    this.onLocalMicrophoneExceptionOccurred,
+    this.onRemoteCameraExceptionOccurred,
+    this.onRemoteMicrophoneExceptionOccurred,
   });
 
   @override
@@ -116,6 +135,10 @@ class ZegoCallAudioVideoEvents {
         'onFrontFacingCameraStateChanged:$onFrontFacingCameraStateChanged, '
         'onMicrophoneStateChanged:$onMicrophoneStateChanged, '
         'onAudioOutputChanged:$onAudioOutputChanged, '
+        'onLocalCameraExceptionOccurred:$onLocalCameraExceptionOccurred, '
+        'onLocalMicrophoneExceptionOccurred:$onLocalMicrophoneExceptionOccurred, '
+        'onRemoteCameraExceptionOccurred:$onRemoteCameraExceptionOccurred, '
+        'onRemoteMicrophoneExceptionOccurred:$onRemoteMicrophoneExceptionOccurred, '
         '}';
   }
 }

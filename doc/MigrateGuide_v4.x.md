@@ -20,6 +20,7 @@
 
 # Versions
 
+- [4.8.0](#480)  **(💥 breaking changes)**
 - [4.4.0](#440)
 - [4.2.0](#420)
 - [4.1.10](#4110)
@@ -31,6 +32,53 @@
 <br />
 
 
+# 4.8.0
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.7.+ to the latest 4.8.0 version.
+
+# Major Interface Changes
+
+- ZegoCallAudioVideoViewConfig
+    - add **audioVideoViewCreator** in `ZegoCallAudioVideoContainerBuilder(type of containerBuilder)`
+    <details>
+    <summary>Migrate Guide</summary>
+    
+    > Modify your code based on the following guidelines to make it compatible with version 4.8.0:
+    >
+    > 4.7.+ Version Code:
+    >
+    >```dart
+    >typedef ZegoCallAudioVideoContainerBuilder = Widget Function(
+    >  BuildContext,
+    >  List<ZegoUIKitUser> allUsers,
+    >  List<ZegoUIKitUser> audioVideoUsers,
+    >);
+    >```
+    >
+    >4.8.0 Version Code:
+    >
+    >```dart
+    >typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
+    >BuildContext context,
+    >List<ZegoUIKitUser> allUsers,
+    >List<ZegoUIKitUser> audioVideoUsers,
+    >
+    >/// The default audio-video view creator, you can also use [ZegoAudioVideoView] as a child control to continue encapsulating
+    >ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator,
+    >);
+    >```
+    
+    </details>
+
+<br />
+<br />
+
+
+> 
 # 4.4.0
 ---
 

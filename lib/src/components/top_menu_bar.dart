@@ -11,7 +11,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/sound_effect_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_button.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/member/list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';

@@ -8,4 +8,6 @@ mixin ZegoCallControllerInvitation {
 }
 
 /// Here are the APIs related to invitation.
-class ZegoCallControllerInvitationImpl {}
+class ZegoCallControllerInvitationImpl {
+  /// deprecated details see [ZegoCallControllerInvitationImplDeprecated]
+}

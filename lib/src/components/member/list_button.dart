@@ -6,7 +6,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/member/member_list_sheet.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/member/list_sheet.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
@@ -46,11 +46,6 @@ class ZegoCallMemberListButton extends StatefulWidget {
 
 /// @nodoc
 class _ZegoCallMemberListButtonState extends State<ZegoCallMemberListButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final containerSize = widget.buttonSize ?? Size(96.zR, 96.zR);

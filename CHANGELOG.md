@@ -1,3 +1,17 @@
+## 4.8.0
+
+- News
+  - Configs
+    - Support customizing the **display area of the audio video container** through `ZegoUIKitPrebuiltCallConfig.audioVideoView.containerRect`
+    - `ZegoCallAudioVideoContainerBuilder` adds the `ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator` parameter to construct the **default audio & video view widget**💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#480)
+    - Support hiding the bottom toolbar through `ZegoUIKitPrebuiltCallConfig.bottomMenuBar.isVisible`
+  - Controller
+    - Add **audioVideo** in `ZegoUIKitPrebuiltCallController()`, which can access the APIs and callbacks related to camera, microphone, and audioOutput
+    - Add **user** in `ZegoUIKitPrebuiltCallController()`
+  - Events
+    - `ZegoUIKitPrebuiltCallEvents.audioVideo` adds the event for device exception status
+- Bugs
+  - Fixed the issue where the default call id was missing the user id in the first call of `ZegoSendCallInvitationButton`
 
 ## 4.7.3
 

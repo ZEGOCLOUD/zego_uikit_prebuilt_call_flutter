@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -138,6 +140,8 @@ class _ZegoSendCallInvitationButtonState
   bool requesting = false;
   ValueNotifier<String> callIDNotifier = ValueNotifier<String>('');
 
+  StreamSubscription<dynamic>? localUserJoinedSubscriptiong;
+
   ZegoCallInvitationPageManager? get pageManager =>
       ZegoCallInvitationInternalInstance.instance.pageManager;
 
@@ -150,12 +154,19 @@ class _ZegoSendCallInvitationButtonState
   void initState() {
     super.initState();
 
-    updateCallID();
+    if (ZegoUIKit().getLocalUser().id.isEmpty) {
+      localUserJoinedSubscriptiong =
+          ZegoUIKit().getUserJoinStream().listen(onUserJoined);
+    } else {
+      updateCallID();
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+
+    localUserJoinedSubscriptiong?.cancel();
   }
 
   @override
@@ -346,5 +357,23 @@ class _ZegoSendCallInvitationButtonState
       tag: 'call',
       subTag: 'start call button',
     );
+  }
+
+  void onUserJoined(List<ZegoUIKitUser> users) {
+    final index = users.indexWhere((user) {
+      if (user.id.isEmpty) {
+        return false;
+      }
+
+      return user.id == ZegoUIKit().getLocalUser().id;
+    });
+
+    if (-1 == index) {
+      return;
+    }
+
+    /// local user joined
+    localUserJoinedSubscriptiong?.cancel();
+    updateCallID();
   }
 }

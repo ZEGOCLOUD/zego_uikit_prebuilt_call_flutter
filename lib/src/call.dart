@@ -117,7 +117,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.7.3; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.8.0; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -169,6 +169,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         popUpManager: popUpManager,
         events: events,
       );
+      controller.user.private.initByPrebuilt(config: widget.config);
+      controller.audioVideo.private.initByPrebuilt(
+        config: widget.config,
+        events: widget.events,
+      );
       controller.minimize.private.initByPrebuilt(
         minimizeData: minimizeData,
       );
@@ -205,6 +210,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
       controller.private.uninitByPrebuilt();
+      controller.user.private.uninitByPrebuilt();
+      controller.audioVideo.private.uninitByPrebuilt();
       controller.minimize.private.uninitByPrebuilt();
 
       ZegoUIKit().leaveRoom();
@@ -255,7 +262,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                           topMenuBar()
                         else
                           Container(),
-                        bottomMenuBar(),
+                        if (widget.config.bottomMenuBar.isVisible)
+                          bottomMenuBar()
+                        else
+                          Container(),
                         foreground(context, constraints.maxHeight),
                       ],
                     ),
@@ -270,9 +280,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   void initDurationTimer({required bool isPrebuiltFromMinimizing}) {
-    if (!widget.config.duration.isVisible) {
-      return;
-    }
+    // if (!widget.config.duration.isVisible) {
+    //   return;
+    // }
 
     ZegoLoggerService.logInfo(
       'init duration',
@@ -466,93 +476,104 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget audioVideoContainer(
     BuildContext context,
-    double width,
-    double height,
+    double preferWidth,
+    double preferHeight,
   ) {
-    late Widget avContainer;
-    if (widget.config.audioVideoView.containerBuilder != null) {
-      /// custom
-      avContainer = StreamBuilder<List<ZegoUIKitUser>>(
-        stream: ZegoUIKit().getUserListStream(),
-        builder: (context, snapshot) {
-          final allUsers = ZegoUIKit().getAllUsers();
-          return StreamBuilder<List<ZegoUIKitUser>>(
-            stream: ZegoUIKit().getAudioVideoListStream(),
-            builder: (context, snapshot) {
-              return widget.config.audioVideoView.containerBuilder!.call(
-                context,
-                allUsers,
-                ZegoUIKit().getAudioVideoList(),
-              );
-            },
-          );
-        },
-      );
-    } else {
-      /// audio video container
-      if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
-        final layout =
-            (widget.config.layout as ZegoLayoutPictureInPictureConfig)
-              ..smallViewSize ??= Size(190.0.zW, 338.0.zH)
-              ..margin ??= EdgeInsets.only(
-                left: 20.zR,
-                top: 50.zR,
-                right: 20.zR,
-                bottom: 30.zR,
-              );
-        widget.config.layout = layout;
-      }
-
-      avContainer = ZegoAudioVideoContainer(
-        layout: widget.config.layout,
-        sources: const [
-          ZegoAudioVideoContainerSource.user,
-          ZegoAudioVideoContainerSource.audioVideo,
-          ZegoAudioVideoContainerSource.screenSharing,
-        ],
+    audioVideoViewCreator(ZegoUIKitUser user) {
+      return ZegoAudioVideoView(
+        user: user,
+        borderRadius: 18.0.zW,
+        borderColor: Colors.transparent,
         backgroundBuilder: audioVideoViewBackground,
         foregroundBuilder: audioVideoViewForeground,
-        screenSharingViewController: controller.screenSharing.viewController,
         avatarConfig: ZegoAvatarConfig(
           showInAudioMode: widget.config.audioVideoView.showAvatarInAudioMode,
           showSoundWavesInAudioMode:
               widget.config.audioVideoView.showSoundWavesInAudioMode,
           builder: widget.config.avatarBuilder,
         ),
-        sortAudioVideo: (List<ZegoUIKitUser> users) {
-          if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
-            if (users.length > 1) {
-              if (users.first.id == ZegoUIKit().getLocalUser().id) {
-                /// local display small view
-                users
-                  ..removeAt(0)
-                  ..insert(1, ZegoUIKit().getLocalUser());
-              }
-            }
-          } else {
-            final localUserIndex = users
-                .indexWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
-            if (-1 != localUserIndex) {
-              users.removeAt(localUserIndex);
-              users = [
-                ZegoUIKit().getLocalUser(),
-                ...List<ZegoUIKitUser>.from(users.reversed)
-              ];
-            }
-          }
-          return users;
-        },
       );
     }
 
-    return Positioned(
-      top: 0,
-      left: 0,
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: avContainer,
+    return Positioned.fromRect(
+      rect: widget.config.audioVideoView.containerRect?.call() ??
+          Rect.fromLTWH(0, 0, preferWidth, preferHeight),
+      child: widget.config.audioVideoView.containerBuilder != null
+          ? StreamBuilder<List<ZegoUIKitUser>>(
+              stream: ZegoUIKit().getUserListStream(),
+              builder: (context, snapshot) {
+                final allUsers = ZegoUIKit().getAllUsers();
+                return StreamBuilder<List<ZegoUIKitUser>>(
+                  stream: ZegoUIKit().getAudioVideoListStream(),
+                  builder: (context, snapshot) {
+                    return widget.config.audioVideoView.containerBuilder!.call(
+                          context,
+                          allUsers,
+                          ZegoUIKit().getAudioVideoList(),
+                          audioVideoViewCreator,
+                        ) ??
+                        defaultAudioVideoContainer();
+                  },
+                );
+              },
+            )
+          : defaultAudioVideoContainer(),
+    );
+  }
+
+  Widget defaultAudioVideoContainer() {
+    /// audio video container
+    if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+      final layout = (widget.config.layout as ZegoLayoutPictureInPictureConfig)
+        ..smallViewSize ??= Size(190.0.zW, 338.0.zH)
+        ..margin ??= EdgeInsets.only(
+          left: 20.zR,
+          top: 50.zR,
+          right: 20.zR,
+          bottom: 30.zR,
+        );
+      widget.config.layout = layout;
+    }
+
+    return ZegoAudioVideoContainer(
+      layout: widget.config.layout,
+      sources: const [
+        ZegoAudioVideoContainerSource.user,
+        ZegoAudioVideoContainerSource.audioVideo,
+        ZegoAudioVideoContainerSource.screenSharing,
+      ],
+      backgroundBuilder: audioVideoViewBackground,
+      foregroundBuilder: audioVideoViewForeground,
+      screenSharingViewController: controller.screenSharing.viewController,
+      avatarConfig: ZegoAvatarConfig(
+        showInAudioMode: widget.config.audioVideoView.showAvatarInAudioMode,
+        showSoundWavesInAudioMode:
+            widget.config.audioVideoView.showSoundWavesInAudioMode,
+        builder: widget.config.avatarBuilder,
       ),
+      sortAudioVideo: (List<ZegoUIKitUser> users) {
+        if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+          if (users.length > 1) {
+            if (users.first.id == ZegoUIKit().getLocalUser().id) {
+              /// local display small view
+              users
+                ..removeAt(0)
+                ..insert(1, ZegoUIKit().getLocalUser());
+            }
+          }
+        } else {
+          final localUserIndex = users
+              .indexWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
+          if (-1 != localUserIndex) {
+            users.removeAt(localUserIndex);
+            users = [
+              ZegoUIKit().getLocalUser(),
+              ...List<ZegoUIKitUser>.from(users.reversed)
+            ];
+          }
+        }
+        return users;
+      },
     );
   }
 

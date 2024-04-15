@@ -121,20 +121,25 @@ class ZegoUIKitPrebuiltCallInnerText {
     String? reverbTypeGramophoneTitle,
   })  : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
         audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',
-        audioEffectVoiceChangingTitle = audioEffectVoiceChangingTitle ?? 'Voice changing',
+        audioEffectVoiceChangingTitle =
+            audioEffectVoiceChangingTitle ?? 'Voice changing',
         voiceChangerNoneTitle = voiceChangerNoneTitle ?? 'None',
         voiceChangerLittleBoyTitle = voiceChangerLittleBoyTitle ?? 'Little boy',
-        voiceChangerLittleGirlTitle = voiceChangerLittleGirlTitle ?? 'Little girl',
+        voiceChangerLittleGirlTitle =
+            voiceChangerLittleGirlTitle ?? 'Little girl',
         voiceChangerDeepTitle = voiceChangerDeepTitle ?? 'Deep',
-        voiceChangerCrystalClearTitle = voiceChangerCrystalClearTitle ?? 'Crystal-clear',
+        voiceChangerCrystalClearTitle =
+            voiceChangerCrystalClearTitle ?? 'Crystal-clear',
         voiceChangerRobotTitle = voiceChangerRobotTitle ?? 'Robot',
         voiceChangerEtherealTitle = voiceChangerEtherealTitle ?? 'Ethereal',
         voiceChangerFemaleTitle = voiceChangerFemaleTitle ?? 'Female',
         voiceChangerMaleTitle = voiceChangerMaleTitle ?? 'Male',
-        voiceChangerOptimusPrimeTitle = voiceChangerOptimusPrimeTitle ?? 'Optimus Prime',
+        voiceChangerOptimusPrimeTitle =
+            voiceChangerOptimusPrimeTitle ?? 'Optimus Prime',
         voiceChangerCMajorTitle = voiceChangerCMajorTitle ?? 'C major',
         voiceChangerAMajorTitle = voiceChangerAMajorTitle ?? 'A major',
-        voiceChangerHarmonicMinorTitle = voiceChangerHarmonicMinorTitle ?? 'Harmonic minor',
+        voiceChangerHarmonicMinorTitle =
+            voiceChangerHarmonicMinorTitle ?? 'Harmonic minor',
         reverbTypeNoneTitle = reverbTypeNoneTitle ?? 'None',
         reverbTypeKTVTitle = reverbTypeKTVTitle ?? 'Karaoke',
         reverbTypeHallTitle = reverbTypeHallTitle ?? 'Hall',
@@ -143,7 +148,8 @@ class ZegoUIKitPrebuiltCallInnerText {
         reverbTypeSmallRoomTitle = reverbTypeSmallRoomTitle ?? 'Small room',
         reverbTypeLargeRoomTitle = reverbTypeLargeRoomTitle ?? 'Large room',
         reverbTypeValleyTitle = reverbTypeValleyTitle ?? 'Valley',
-        reverbTypeRecordingStudioTitle = reverbTypeRecordingStudioTitle ?? 'Recording studio',
+        reverbTypeRecordingStudioTitle =
+            reverbTypeRecordingStudioTitle ?? 'Recording studio',
         reverbTypeBasementTitle = reverbTypeBasementTitle ?? 'Basement',
         reverbTypePopularTitle = reverbTypePopularTitle ?? 'Pop',
         reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone';

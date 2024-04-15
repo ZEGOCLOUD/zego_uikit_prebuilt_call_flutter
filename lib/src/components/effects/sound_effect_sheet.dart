@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/effects/effect_grid.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
@@ -36,7 +36,8 @@ class ZegoCallSoundEffectSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ZegoCallSoundEffectSheet> createState() => _ZegoCallSoundEffectSheetState();
+  State<ZegoCallSoundEffectSheet> createState() =>
+      _ZegoCallSoundEffectSheetState();
 }
 
 /// @nodoc
@@ -44,9 +45,11 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
   late ZegoEffectGridModel voiceChangerModel;
   late ZegoEffectGridModel reverbPresetModel;
 
-  String voiceChangerIconPath(String name) => 'assets/icons/voice_changer_$name.png';
+  String voiceChangerIconPath(String name) =>
+      'assets/icons/voice_changer_$name.png';
 
-  String reverbPresetIconPath(String name) => 'assets/icons/reverb_preset_$name.png';
+  String reverbPresetIconPath(String name) =>
+      'assets/icons/reverb_preset_$name.png';
 
   @override
   void initState() {
@@ -108,7 +111,8 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
             child: SizedBox(
               width: 70.zR,
               height: 70.zR,
-              child: widget.config.backIcon ?? ZegoCallImage.asset(ZegoCallIconUrls.back),
+              child: widget.config.backIcon ??
+                  ZegoCallImage.asset(ZegoCallIconUrls.back),
             ),
           ),
           SizedBox(width: 10.zR),
@@ -127,11 +131,13 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
   }
 
   void initVoiceChangerData() {
-    final voiceChangerEffect = List<VoiceChangerType>.from(widget.voiceChangerEffect)
-      ..removeWhere((effect) => effect == VoiceChangerType.none)
-      ..insert(0, VoiceChangerType.none);
+    final voiceChangerEffect =
+        List<VoiceChangerType>.from(widget.voiceChangerEffect)
+          ..removeWhere((effect) => effect == VoiceChangerType.none)
+          ..insert(0, VoiceChangerType.none);
     if (widget.voiceChangerSelectedIDNotifier.value.isEmpty) {
-      widget.voiceChangerSelectedIDNotifier.value = voiceChangerEffect.first.index.toString();
+      widget.voiceChangerSelectedIDNotifier.value =
+          voiceChangerEffect.first.index.toString();
     }
 
     voiceChangerModel = ZegoEffectGridModel(
@@ -179,7 +185,8 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
       ..removeWhere((effect) => effect == ReverbType.none)
       ..insert(0, ReverbType.none);
     if (widget.reverbSelectedIDNotifier.value.isEmpty) {
-      widget.reverbSelectedIDNotifier.value = reverbEffect.first.index.toString();
+      widget.reverbSelectedIDNotifier.value =
+          reverbEffect.first.index.toString();
     }
 
     reverbPresetModel = ZegoEffectGridModel(
@@ -272,14 +279,15 @@ void showSoundEffectSheet(
   required List<ReverbType> reverbEffect,
   required ValueNotifier<String> voiceChangerSelectedIDNotifier,
   required ValueNotifier<String> reverbSelectedIDNotifier,
-  required ZegoLiveStreamingAudioEffectConfig config, 
+  required ZegoLiveStreamingAudioEffectConfig config,
   required ZegoCallPopUpManager popUpManager,
 }) {
   final key = DateTime.now().millisecondsSinceEpoch;
   popUpManager.addAPopUpSheet(key);
   showModalBottomSheet(
     barrierColor: ZegoUIKitDefaultTheme.viewBarrierColor,
-    backgroundColor: config.backgroundColor ?? ZegoUIKitDefaultTheme.viewBackgroundColor,
+    backgroundColor:
+        config.backgroundColor ?? ZegoUIKitDefaultTheme.viewBackgroundColor,
     context: context,
     useRootNavigator: rootNavigator,
     shape: const RoundedRectangleBorder(

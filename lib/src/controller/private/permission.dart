@@ -1,30 +1,28 @@
 part of 'package:zego_uikit_prebuilt_call/src/controller.dart';
 
 /// @nodoc
-mixin ZegoCallControllerMinimizePrivate {
-  final _private = ZegoCallControllerMinimizePrivateImpl();
+mixin ZegoCallControllerPermissionImplPrivate {
+  final _private = ZegoCallControllerPermissionImplPrivateImpl();
 
   /// Don't call that
-  ZegoCallControllerMinimizePrivateImpl get private => _private;
+  ZegoCallControllerPermissionImplPrivateImpl get private => _private;
 }
 
 /// @nodoc
-class ZegoCallControllerMinimizePrivateImpl {
-  ZegoCallMinimizeData? get minimizeData => _minimizeData;
-
-  ZegoCallMinimizeData? _minimizeData;
+class ZegoCallControllerPermissionImplPrivateImpl {
+  ZegoUIKitPrebuiltCallConfig? config;
 
   /// Please do not call this interface. It is the internal logic of Prebuilt.
   void initByPrebuilt({
-    required ZegoCallMinimizeData minimizeData,
+    required ZegoUIKitPrebuiltCallConfig? config,
   }) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',
       tag: 'call',
-      subTag: 'controller.minimize.p',
+      subTag: 'controller.user.p',
     );
 
-    _minimizeData = minimizeData;
+    this.config = config;
   }
 
   /// Please do not call this interface. It is the internal logic of Prebuilt.
@@ -32,9 +30,9 @@ class ZegoCallControllerMinimizePrivateImpl {
     ZegoLoggerService.logInfo(
       'un-init by prebuilt',
       tag: 'call',
-      subTag: 'controller.minimize.p',
+      subTag: 'controller.user.p',
     );
 
-    _minimizeData = null;
+    config = null;
   }
 }

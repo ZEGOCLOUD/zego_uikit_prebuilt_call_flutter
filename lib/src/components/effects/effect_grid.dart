@@ -140,7 +140,8 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
             children: widget.model.items
                 .map((item) {
                   var buttonSize = widget.buttonSize ?? Size(88.zR, 133.zR);
-                  final bestButtonWidth = getTextSize(item.iconText, gridItemTextStyle).width;
+                  final bestButtonWidth =
+                      getTextSize(item.iconText, gridItemTextStyle).width;
                   buttonSize = Size(
                     bestButtonWidth + 20.zR,
                     buttonSize.height,
@@ -148,7 +149,10 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
                   return gridItem(item, buttonSize);
                 })
                 .map((item) => Row(
-                      children: [item, Container(width: widget.itemSpacing ?? 40.zR)],
+                      children: [
+                        item,
+                        Container(width: widget.itemSpacing ?? 40.zR)
+                      ],
                     ))
                 .toList(),
           ),
@@ -158,8 +162,10 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
   }
 
   Widget gridItem(ZegoCallEffectGridItem<dynamic> item, Size buttonSize) {
-    final selectedIconBorderColor = widget.selectedIconBorderColor ?? const Color(0xffA653FF);
-    final normalIconBorderColor = widget.normalIconBorderColor ?? Colors.transparent;
+    final selectedIconBorderColor =
+        widget.selectedIconBorderColor ?? const Color(0xffA653FF);
+    final normalIconBorderColor =
+        widget.normalIconBorderColor ?? Colors.transparent;
     final selectedTextStyle = widget.selectedTextStyle ??
         TextStyle(
           color: const Color(0xffA653FF),
@@ -183,12 +189,18 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
       buttonSize: buttonSize,
       iconSize: widget.iconSize ?? Size(72.zR, 72.zR),
       iconTextSpacing: 12.zR,
-      icon: item.id == widget.model.selectedID.value ? (item.selectIcon ?? item.icon) : item.icon,
+      icon: item.id == widget.model.selectedID.value
+          ? (item.selectIcon ?? item.icon)
+          : item.icon,
       iconBorderColor: widget.withBorderColor
-          ? (item.id == widget.model.selectedID.value ? selectedIconBorderColor : normalIconBorderColor)
+          ? (item.id == widget.model.selectedID.value
+              ? selectedIconBorderColor
+              : normalIconBorderColor)
           : normalIconBorderColor,
       text: item.iconText,
-      textStyle: item.id == widget.model.selectedID.value ? selectedTextStyle : normalTextStyle,
+      textStyle: item.id == widget.model.selectedID.value
+          ? selectedTextStyle
+          : normalTextStyle,
       softWrap: false,
     );
   }
