@@ -18,8 +18,7 @@ class ZegoCallKitBackgroundService {
 
   ZegoCallKitBackgroundService._internal();
 
-  static final ZegoCallKitBackgroundService instance =
-      ZegoCallKitBackgroundService._internal();
+  static final ZegoCallKitBackgroundService instance = ZegoCallKitBackgroundService._internal();
 
   ZegoCallInvitationPageManager? _pageManager;
 
@@ -45,19 +44,13 @@ class ZegoCallKitBackgroundService {
         subTag: 'call invitation service',
       );
 
-      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-          true;
+      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted = true;
 
       return;
     }
 
     if (_pageManager?.invitationData.callID.isNotEmpty ?? false) {
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
-              inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-              data: '')
-          .then((result) {
+      ZegoUIKit().getSignalingPlugin().acceptInvitation(inviterID: _pageManager?.invitationData.inviter?.id ?? '', data: '').then((result) {
         _pageManager?.onLocalAcceptInvitation(
           result.error?.code ?? '',
           result.error?.message ?? '',
@@ -76,8 +69,7 @@ class ZegoCallKitBackgroundService {
         subTag: 'call invitation service',
       );
 
-      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingRejected =
-          true;
+      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingRejected = true;
 
       return;
     }
@@ -95,8 +87,7 @@ class ZegoCallKitBackgroundService {
         .refuseInvitation(
           inviterID: _pageManager?.invitationData.inviter?.id ?? '',
           data: const JsonEncoder().convert({
-            CallInvitationProtocolKey.reason:
-                CallInvitationProtocolKey.refuseByDecline,
+            ZegoCallInvitationProtocolKey.reason: ZegoCallInvitationProtocolKey.refuseByDecline,
           }),
         )
         .then((result) {
@@ -118,8 +109,7 @@ class ZegoCallKitBackgroundService {
         subTag: 'call invitation service',
       );
 
-      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-          true;
+      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted = true;
 
       return;
     }
@@ -130,20 +120,14 @@ class ZegoCallKitBackgroundService {
       subTag: 'call invitation service',
     );
 
-    if (callKitCallID != null &&
-        callKitCallID == _pageManager?.invitationData.callID) {
+    if (callKitCallID != null && callKitCallID == _pageManager?.invitationData.callID) {
       ZegoLoggerService.logInfo(
         'accept invitation, auto agree, cause exist callkit params same as current call',
         tag: 'call',
         subTag: 'call invitation service',
       );
 
-      await ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
-              inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-              data: '')
-          .then((result) {
+      await ZegoUIKit().getSignalingPlugin().acceptInvitation(inviterID: _pageManager?.invitationData.inviter?.id ?? '', data: '').then((result) {
         _pageManager?.onLocalAcceptInvitation(
           result.error?.code ?? '',
           result.error?.message ?? '',
@@ -189,15 +173,12 @@ class ZegoCallKitBackgroundService {
       );
     });
 
-    if (Platform.isIOS &&
-        ((_pageManager?.inCallingByIOSBackgroundLock ?? false) ||
-            (_pageManager?.appInBackground ?? false))) {
+    if (Platform.isIOS && ((_pageManager?.inCallingByIOSBackgroundLock ?? false) || (_pageManager?.appInBackground ?? false))) {
       _pageManager?.restoreToIdle();
     } else {
       /// background callkit call, not need to navigate
       try {
-        Navigator.of(_pageManager!.callInvitationData.contextQuery!.call())
-            .pop();
+        Navigator.of(_pageManager!.callInvitationData.contextQuery!.call()).pop();
       } catch (e) {
         ZegoLoggerService.logError(
           'Navigator pop exception:$e, '

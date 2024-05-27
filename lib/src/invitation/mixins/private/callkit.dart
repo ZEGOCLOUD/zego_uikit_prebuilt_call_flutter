@@ -95,7 +95,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     FlutterCallkitIncoming.onEvent.listen(null);
 
     clearOfflineCallKitCallID();
-    clearOfflineCallKitParams();
+    clearOfflineCallKitCacheParams();
   }
 
   void _setCallKitVariables(Map<CallKitInnerVariable, dynamic> variables) {

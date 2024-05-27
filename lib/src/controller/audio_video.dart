@@ -104,12 +104,12 @@ class ZegoCallControllerAudioVideoCameraImpl
     turnOn(!currentCameraState, userID: targetUserID);
   }
 
-  /// local use front facing camera
+  /// local use front facing camera or back
   void switchFrontFacing(bool isFrontFacing) {
     ZegoUIKit().useFrontFacingCamera(isFrontFacing);
   }
 
-  /// set video mirror mode
+  /// switch video mirror mode
   void switchVideoMirroring(bool isVideoMirror) {
     ZegoUIKit().enableVideoMirroring(isVideoMirror);
   }

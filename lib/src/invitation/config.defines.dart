@@ -7,8 +7,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
-class ZegoCallingBackgroundBuilderInfo {
-  ZegoCallingBackgroundBuilderInfo({
+class ZegoCallingBuilderInfo {
+  ZegoCallingBuilderInfo({
     required this.inviter,
     required this.invitees,
     required this.callType,
@@ -22,7 +22,18 @@ class ZegoCallingBackgroundBuilderInfo {
 typedef ZegoCallingBackgroundBuilder = Widget? Function(
   BuildContext context,
   Size size,
-  ZegoCallingBackgroundBuilderInfo info,
+  ZegoCallingBuilderInfo info,
+);
+
+typedef ZegoCallingForegroundBuilder = Widget? Function(
+  BuildContext context,
+  Size size,
+  ZegoCallingBuilderInfo info,
+);
+
+typedef ZegoCallingPageBuilder = Widget? Function(
+  BuildContext context,
+  ZegoCallingBuilderInfo info,
 );
 
 class ZegoCallButtonUIConfig {
@@ -118,6 +129,8 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
         'height: $height, '
         'decoration: $decoration, '
         'padding: $padding, '
+        'builder: $builder, '
+        'visible: $visible, '
         '}';
   }
 }

@@ -21,6 +21,30 @@
   - [screenSharing](#screensharing)
     - [viewController](#viewcontroller)
     - [showViewInFullscreenMode](#showviewinfullscreenmode)
+  - [audioVideo](#audiovideo)
+    - [camera](#camera)
+      - [localState](#localstate)
+      - [localStateNotifier](#localstatenotifier)
+      - [state](#state)
+      - [stateNotifier](#statenotifier)
+      - [turnOn](#turnon)
+      - [switchState](#switchstate)
+      - [switchFrontFacing](#switchfrontfacing)
+      - [switchVideoMirroring](#switchvideomirroring)
+    - [microphone](#microphone)
+      - [localState](#localstate-1)
+      - [localStateNotifier](#localstatenotifier-1)
+      - [state](#state-1)
+      - [stateNotifier](#statenotifier-1)
+      - [turnOn](#turnon-1)
+      - [switchState](#switchstate-1)
+    - [audioOutput](#audiooutput)
+      - [localNotifier](#localnotifier)
+      - [notifier](#notifier)
+      - [switchToSpeaker](#switchtospeaker)
+  - [user]
+    - [stream](#stream)
+    - [remove](#remove)
   
 ---
 
@@ -97,6 +121,15 @@
 > ```dart
 > void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey)
 > ```
+
+## isInCalling
+
+> - function prototype:
+>
+> ```dart
+> bool get isInCalling
+> ```
+> 
 
 ## init
 
@@ -387,4 +420,236 @@
 >
 > ```dart
 > ZegoUIKitPrebuiltCallController().minimize.hide();
+> ```
+
+## audioVideo
+
+### camera
+
+#### localState
+
+> camera state of local user
+>
+> - function prototype:
+>
+> ```dart
+> bool get localState
+> ```
+#### localStateNotifier
+
+> camera state notifier of local user
+> 
+> - function prototype:
+>
+> ```dart
+> ValueNotifier<bool> get localStateNotifier
+> ```
+#### state
+
+> camera state of [userID]
+>
+> - function prototype:
+>
+> ```dart
+> bool state(String userID)
+> ```
+#### stateNotifier
+
+> camera state notifier of [userID]
+> 
+> - function prototype:
+>
+> ```dart
+> ValueNotifier<bool> stateNotifier(String userID)
+> ```
+
+#### turnOn
+
+> turn on/off [userID] camera, if [userID] is empty, then it refers to local user
+>
+> - function prototype:
+>
+> ```dart
+> void turnOn(bool isOn, {String? userID})
+> ```
+
+#### switchState
+
+> switch [userID] camera state, if [userID] is empty, then it refers to local user
+>
+> - function prototype:
+>
+> ```dart
+> void switchState({String? userID})
+> ```
+
+#### switchFrontFacing
+> local use front facing camera or back
+> 
+> - function prototype:
+>
+> ```dart
+> void switchFrontFacing(bool isFrontFacing)
+> ```
+
+#### switchVideoMirroring
+> switch video mirror mode
+>
+> - function prototype:
+>
+> ```dart
+> void switchVideoMirroring(bool isVideoMirror)
+> ```
+
+### microphone
+
+#### localState
+
+> microphone state of local user
+>
+> - function prototype:
+>
+> ```dart
+> bool get localState
+> ```
+
+#### localStateNotifier
+
+> microphone state notifier of local user
+>
+> - function prototype:
+>
+> ```dart
+> ValueNotifier<bool> get localStateNotifier
+> ```
+
+#### state
+
+> microphone state of [userID]
+>
+> - function prototype:
+>
+> ```dart
+> bool state(String userID)
+> ```
+
+#### stateNotifier
+
+> microphone state notifier of [userID]
+>
+> - function prototype:
+>
+> ```dart
+> ValueNotifier<bool> stateNotifier(String userID)
+> ```
+
+#### turnOn
+
+> turn on/off [userID] microphone, if [userID] is empty, then it refers to local user
+>
+> - function prototype:
+>
+> ```dart
+> void turnOn(bool isOn, {String? userID})
+> ```
+
+#### switchState
+
+> switch [userID] microphone state, if [userID] is empty, then it refers to local user
+>
+> - function prototype:
+>
+> ```dart
+> void switchState({String? userID})
+> ```
+
+### audioOutput
+
+```dart
+/// Audio route
+enum ZegoUIKitAudioRoute {
+  speaker,
+  headphone,
+
+  /// bluetooth device
+  bluetooth,
+
+  /// telephone receiver
+  receiver,
+
+  /// external USB audio device
+  externalUSB,
+
+  /// apple AirPlay
+  airPlay,
+}
+```
+
+#### localNotifier
+
+> local audio output device notifier
+>
+> - function prototype:
+>
+> ```dart
+> ValueNotifier<ZegoUIKitAudioRoute> get localNotifier
+> ```
+#### notifier
+
+> audio output device notifier of [userID]
+>
+> - function prototype:
+>
+> ```dart
+>  ValueNotifier<ZegoUIKitAudioRoute> notifier(String userID)
+> ```
+#### switchToSpeaker
+
+> set audio output to speaker or earpiece(telephone receiver)
+>
+> - function prototype:
+>
+> ```dart
+> void switchToSpeaker(bool isSpeaker)
+> ```
+  
+## user
+
+### stream
+>  user list stream notifier
+>
+> - function prototype:
+>
+> ```dart
+> Stream<List<ZegoUIKitUser>> get stream
+> ```
+>
+> - example:
+> 
+> ```dart
+> StreamBuilder<List<ZegoUIKitUser>>(
+>   stream: ZegoUIKit().getUserListStream(),
+>   builder: (context, snapshot) {
+>     final allUsers = ZegoUIKit().getAllUsers();
+>     ...
+>   },
+> )
+> ```
+
+### remove
+
+> remove user from call, kick out
+>
+> - function prototype:
+>
+> ```dart
+> Future<bool> remove(List<String> userIDs) async
+> ```
+>
+> @return Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+>
+> - example:
+>
+> ```dart
+> ZegoUIKitPrebuiltCallController().user.remove();
 > ```

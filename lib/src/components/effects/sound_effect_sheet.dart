@@ -22,7 +22,7 @@ class ZegoCallSoundEffectSheet extends StatefulWidget {
   final List<ReverbType> reverbEffect;
   final ValueNotifier<String> reverbSelectedIDNotifier;
 
-  final ZegoLiveStreamingAudioEffectConfig config;
+  final ZegoCallAudioEffectConfig config;
 
   const ZegoCallSoundEffectSheet({
     Key? key,
@@ -279,7 +279,7 @@ void showSoundEffectSheet(
   required List<ReverbType> reverbEffect,
   required ValueNotifier<String> voiceChangerSelectedIDNotifier,
   required ValueNotifier<String> reverbSelectedIDNotifier,
-  required ZegoLiveStreamingAudioEffectConfig config,
+  required ZegoCallAudioEffectConfig config,
   required ZegoCallPopUpManager popUpManager,
 }) {
   final key = DateTime.now().millisecondsSinceEpoch;

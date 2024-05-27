@@ -56,7 +56,7 @@ class ZegoCallInvitationServicePrivateImpl
       'uiConfig:$uiConfig, '
       'notificationConfig:$notificationConfig, ',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _registerOfflineCallIsolateNameServer();
@@ -89,14 +89,13 @@ class ZegoCallInvitationServicePrivateImpl
       ZegoLoggerService.logInfo(
         'update contextQuery in call invitation config',
         tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
+        subTag: 'call invitation service private(${identityHashCode(this)})',
       );
 
       _data!.contextQuery = _contextQuery;
     }
 
     _notificationManager = ZegoCallInvitationNotificationManager(
-      declineButtonConfig: _data!.uiConfig.declineButton,
       callInvitationData: _data!,
     );
     await _notificationManager!.init();
@@ -119,7 +118,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'uninit private',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _unregisterOfflineCallIsolateNameServer();
@@ -144,7 +143,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'init plugins',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _plugins = ZegoCallPrebuiltPlugins(
@@ -161,7 +160,7 @@ class ZegoCallInvitationServicePrivateImpl
         'iOSNotificationConfig:${_data!.notificationConfig.iOSNotificationConfig}, '
         'enableIOSVoIP:$_enableIOSVoIP ',
         tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
+        subTag: 'call invitation service private(${identityHashCode(this)})',
       );
 
       final androidChannelID =
@@ -210,6 +209,14 @@ class ZegoCallInvitationServicePrivateImpl
         ).toJsonString(),
       );
 
+      ZegoSignalingPluginMultiCertificate? certificateIndex;
+      if (Platform.isAndroid) {
+        certificateIndex = _data!
+            .notificationConfig.androidNotificationConfig?.certificateIndex;
+      } else if (Platform.isIOS) {
+        certificateIndex =
+            _data!.notificationConfig.iOSNotificationConfig?.certificateIndex;
+      }
       ZegoUIKit()
           .getSignalingPlugin()
           .enableNotifyWhenAppRunningInBackgroundOrQuit(
@@ -217,8 +224,7 @@ class ZegoCallInvitationServicePrivateImpl
             isIOSSandboxEnvironment: _data!
                 .notificationConfig.iOSNotificationConfig?.isSandboxEnvironment,
             enableIOSVoIP: _enableIOSVoIP,
-            certificateIndex: (_data!.notificationConfig.iOSNotificationConfig
-                        ?.certificateIndex ??
+            certificateIndex: (certificateIndex ??
                     ZegoSignalingPluginMultiCertificate.firstCertificate)
                 .id,
             appName:
@@ -251,43 +257,43 @@ class ZegoCallInvitationServicePrivateImpl
         ZegoLoggerService.logInfo(
           'enable notification result: $result',
           tag: 'call',
-          subTag: 'call invitation service(${identityHashCode(this)})',
+          subTag: 'call invitation service private(${identityHashCode(this)})',
         );
       });
     }).then((value) {
       ZegoLoggerService.logInfo(
         'plugin init finished',
         tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
+        subTag: 'call invitation service private(${identityHashCode(this)})',
       );
 
       _pageManager?.listenStream();
 
       if (Platform.isAndroid) {
-        getCurrentCallKitParams().then((paramsJson) {
+        getOfflineCallKitCacheParams().then((offlineCallKitCacheParameter) {
           ZegoLoggerService.logInfo(
-            'offline callkit param: $paramsJson',
+            'offline callkit params: ${offlineCallKitCacheParameter.dict}',
             tag: 'call',
-            subTag: 'call invitation service(${identityHashCode(this)})',
+            subTag:
+                'call invitation service private(${identityHashCode(this)})',
           );
 
-          if (paramsJson?.isEmpty ?? true) {
+          if (offlineCallKitCacheParameter.isEmpty) {
             return;
           }
-          final paramsMap = jsonDecode(paramsJson!);
-          bool? accept = paramsMap['accept'];
           ZegoLoggerService.logInfo(
-            'exist offline call, accept:$accept',
+            'exist offline call, accept:${offlineCallKitCacheParameter.accept}',
             tag: 'call',
-            subTag: 'call invitation service(${identityHashCode(this)})',
+            subTag:
+                'call invitation service private(${identityHashCode(this)})',
           );
 
           /// exist offline call, wait auto enter room, or popup incoming call dialog
           _pageManager
                   ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-              accept ?? false;
+              offlineCallKitCacheParameter.accept;
 
-          _pageManager?.onInvitationReceived(paramsMap);
+          _pageManager?.onInvitationReceived(offlineCallKitCacheParameter.dict);
         });
       }
     });
@@ -297,7 +303,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'uninit plugins',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     await ZegoUIKit().getSignalingPlugin().logout();
@@ -352,7 +358,7 @@ class ZegoCallInvitationServicePrivateImpl
       'Cancel The flutterCallkitIncomingStreamSubscription or not:'
       '(${flutterCallkitIncomingStreamSubscription?.hashCode})',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
     if (flutterCallkitIncomingStreamSubscription != null) {
       flutterCallkitIncomingStreamSubscription?.cancel();
@@ -367,7 +373,7 @@ class ZegoCallInvitationServicePrivateImpl
       'Close The lookupIsolate or not, needClose:$needClose, '
       'hash(${lookupIsolate?.hashCode}), isMainIsolatePort:$isMainIsolatePort',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
     if (needClose) {
       lookupIsolate.send('close');
@@ -384,13 +390,13 @@ class ZegoCallInvitationServicePrivateImpl
       'isolate: register, _backgroundPort(${_backgroundPort.hashCode}), '
       '_backgroundPort!.sendPort(${_backgroundPort!.sendPort.hashCode})',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
     _backgroundPort!.listen((dynamic message) async {
       ZegoLoggerService.logInfo(
         'isolate: current port(${_backgroundPort!.hashCode}) receive, message:$message',
         tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
+        subTag: 'call invitation service private(${identityHashCode(this)})',
       );
 
       final messageMap = jsonDecode(message) as Map<String, dynamic>;
@@ -402,7 +408,7 @@ class ZegoCallInvitationServicePrivateImpl
         'title:$messageTitle, '
         'extra:$messageExtras',
         tag: 'call',
-        subTag: 'call invitation service(${identityHashCode(this)})',
+        subTag: 'call invitation service private(${identityHashCode(this)})',
       );
 
       // final payload = messageExtras['payload'] as String? ?? '';
@@ -430,7 +436,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'isolate: register offline call isolate name server, port:${_backgroundPort?.hashCode}',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
   }
 
@@ -438,7 +444,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'isolate: unregister offline call  isolate name server, port:${_backgroundPort?.hashCode}',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _backgroundPort?.close();
@@ -461,7 +467,7 @@ class ZegoCallInvitationServicePrivateImpl
       'isAppInBackground:$isAppInBackground, '
       'isScreenLockEnabled:$isScreenLockEnabled',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _pageManager?.didChangeAppLifecycleState(isAppInBackground);
@@ -484,7 +490,7 @@ class ZegoCallInvitationServicePrivateImpl
     ZegoLoggerService.logInfo(
       'cancelGroupCallInvitation',
       tag: 'call',
-      subTag: 'call invitation service(${identityHashCode(this)})',
+      subTag: 'call invitation service private(${identityHashCode(this)})',
     );
 
     _pageManager?.cancelGroupCallInvitation();

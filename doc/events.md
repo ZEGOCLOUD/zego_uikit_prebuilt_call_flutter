@@ -12,6 +12,10 @@
      - [onFrontFacingCameraStateChanged](#onfrontfacingcamerastatechanged)
      - [onMicrophoneStateChanged](#onmicrophonestatechanged)
      - [onAudioOutputChanged](#onaudiooutputchanged)
+     - [onLocalCameraExceptionOccurred](#onlocalcameraexceptionoccurred)
+     - [onLocalMicrophoneExceptionOccurred](#onlocalmicrophoneexceptionoccurred)
+     - [onRemoteCameraExceptionOccurred](#onremotecameraexceptionoccurred)
+     - [onRemoteMicrophoneExceptionOccurred](#onremotemicrophoneexceptionoccurred)
 - [Invitation Events](#invitation-events)
   - [onError](#onerror-2)
   - [onInvitationUserStateChanged](#oninvitationuserstatechanged)
@@ -482,6 +486,214 @@
 >   ),
 >);
 >```
+
+<details>
+<summary>ZegoUIKitDeviceExceptionType</summary>
+
+```dart
+enum ZegoUIKitDeviceExceptionType {
+  /// Unknown device exception.
+  unknown,
+
+  /// Generic device exception.
+  generic,
+
+  /// Invalid device ID exception.
+  invalidId,
+
+  /// Device permission is not granted.
+  permissionNotGranted,
+
+  /// The capture frame rate of the device is 0.
+  zeroCaptureFps,
+
+  /// The device is being occupied.
+  deviceOccupied,
+
+  /// The device is unplugged (not plugged in).
+  deviceUnplugged,
+
+  /// The device requires the system to restart before it can work (Windows platform only).
+  rebootRequired,
+
+  /// The system media service is unavailable, e.g. when the iOS system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services (Apple platform only).
+  mediaServicesWereLost,
+
+  /// The device is being occupied by Siri (Apple platform only).
+  siriIsRecording,
+
+  /// The device captured sound level is too low (Windows platform only).
+  soundLevelTooLow,
+
+  /// The device is being occupied, and maybe cause by iPad magnetic case (Apple platform only).
+  magneticCase,
+
+  /// Audio session deactivate (Apple platform only).
+  audioSessionDeactivate,
+
+  /// Audio session category change (Apple platform only).
+  audioSessionCategoryChange,
+
+  /// The device is interrupted, such as a phone call interruption, etc.
+  interruption,
+
+  /// There are multiple apps at the same time in the foreground, such as the iPad app split screen, the system will prohibit all apps from using the camera.
+  inBackground,
+
+  /// CDN server actively disconnected
+  multiForegroundApp,
+
+  /// The system is under high load pressure and may cause abnormal equipment.
+  bySystemPressure,
+}
+```
+
+</details>
+
+### onLocalCameraExceptionOccurred
+
+>
+> This callback is triggered when local camera device exceptions happen
+>
+>- function prototype:
+>``` dart
+>void Function(ZegoUIKitDeviceExceptionType?)? onLocalCameraExceptionOccurred
+>```
+>- example in service:
+>```dart
+>ZegoUIKitPrebuiltCallInvitationService().init(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onLocalCameraExceptionOccurred: (exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+>- example in prebuilt:
+>```dart
+>ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onLocalCameraExceptionOccurred: (exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+
+### onLocalMicrophoneExceptionOccurred
+
+>
+> This callback is triggered when local microphone device exceptions happen
+>
+>- function prototype:
+>``` dart
+>void Function(ZegoUIKitDeviceExceptionType?)? onLocalMicrophoneExceptionOccurred
+>```
+>- example in service:
+>```dart
+>ZegoUIKitPrebuiltCallInvitationService().init(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onLocalMicrophoneExceptionOccurred: (exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+>- example in prebuilt:
+>```dart
+>ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onLocalMicrophoneExceptionOccurred: (exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+
+### onRemoteCameraExceptionOccurred
+
+>
+> This callback is triggered when remote user's camera device exceptions happen
+>
+>- function prototype:
+>``` dart
+>void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)? onRemoteCameraExceptionOccurred
+>```
+>- example in service:
+>```dart
+>ZegoUIKitPrebuiltCallInvitationService().init(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onRemoteCameraExceptionOccurred: (user, exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+>- example in prebuilt:
+>```dart
+>ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onRemoteCameraExceptionOccurred: (user, exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+
+### onRemoteMicrophoneExceptionOccurred
+
+>
+> This callback is triggered when remote user's microphone device exceptions happen
+>
+>- function prototype:
+>``` dart
+>void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)? onRemoteMicrophoneExceptionOccurred
+>```
+>- example in service:
+>```dart
+>ZegoUIKitPrebuiltCallInvitationService().init(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onRemoteMicrophoneExceptionOccurred: (user, exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+>- example in prebuilt:
+>```dart
+>ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       audioVideo: ZegoCallAudioVideoEvents(
+>           onRemoteMicrophoneExceptionOccurred: (user, exception) {
+>               ...
+>           },
+>       ),
+>   ),
+>);
+>```
+
 
 # Invitation Events
 

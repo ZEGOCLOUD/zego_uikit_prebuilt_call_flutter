@@ -1,3 +1,46 @@
+## 4.11.0
+
+- Features
+  - Parameters in the `ZegoCallInvitationInviterUIConfig` is placed in `inviter` and `invitee` according to the role; at the same time.💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110)
+  - `showAvatar`, `showCentralName` and `showCallingText` are added in the `inviter` and `invitee` of `ZegoCallInvitationInviterUIConfig`.
+
+## 4.10.0
+
+- Features
+  - Add `callingPageBuilder` in `ZegoCallInvitationConfig`, now you can customize the entire calling view if you want.
+  - Add `callingForegroundBuilder` in `ZegoCallInvitationConfig`, you can add some custom controls on the foreground of the calling view
+
+## 4.9.1
+
+- Bugs
+  - Fix the issue that the invitee hangs up at the same time when the invitee answers, causing the invitee to make a call alone. It is not enabled by default, but can be enabled by 
+    [ZegoUIKitPrebuiltCallConfig.user.requiredUsers.enabled].
+
+## 4.9.0
+
+- Features
+  - Add `callID` in `ZegoUIKitPrebuiltCallEvents.onCallEnd.event`
+
+## 4.8.5
+
+- Update dependency.
+
+## 4.8.4
+
+- Update doc.
+
+## 4.8.3
+
+- Update dependency.
+
+## 4.8.2
+
+- Update dependency.
+
+## 4.8.1
+
+- Update dependency.
+
 ## 4.8.0
 
 - News

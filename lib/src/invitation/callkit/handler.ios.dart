@@ -27,8 +27,8 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   // final invitationID = extras['call_id'] as String? ?? '';
   final payload = extras['payload'] as String? ?? '';
   final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
-  final invitationInternalData =
-      InvitationSendRequestData.fromJson(extendedMap['data'] as String);
+  final invitationInternalData = ZegoCallInvitationSendRequestProtocol.fromJson(
+      extendedMap['data'] as String);
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger

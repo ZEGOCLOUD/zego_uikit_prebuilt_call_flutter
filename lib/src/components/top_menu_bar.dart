@@ -20,6 +20,7 @@ import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
+import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
@@ -41,6 +42,8 @@ class ZegoCallTopMenuBar extends StatefulWidget {
   final double? borderRadius;
   final Color? backgroundColor;
 
+  final ZegoCallMinimizeData minimizeData;
+
   final ValueNotifier<bool> chatViewVisibleNotifier;
   final ZegoCallPopUpManager popUpManager;
 
@@ -55,6 +58,7 @@ class ZegoCallTopMenuBar extends StatefulWidget {
     required this.isHangUpRequestingNotifier,
     required this.chatViewVisibleNotifier,
     required this.popUpManager,
+    required this.minimizeData,
     this.autoHideSeconds = 3,
     this.height,
     this.borderRadius,
@@ -316,6 +320,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
                 .cancelGroupCallInvitation();
 
             final callEndEvent = ZegoCallEndEvent(
+              callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,

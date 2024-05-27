@@ -339,6 +339,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
                 .cancelGroupCallInvitation();
 
             final callEndEvent = ZegoCallEndEvent(
+              callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,

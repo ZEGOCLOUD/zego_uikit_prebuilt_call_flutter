@@ -4,6 +4,7 @@ import 'dart:core';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -93,7 +94,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
   var chatViewVisibleNotifier = ValueNotifier<bool>(false);
 
-  StreamSubscription<dynamic>? userListStreamSubscription;
   List<StreamSubscription<dynamic>?> subscriptions = [];
   ZegoCallEventListener? _eventListener;
 
@@ -105,11 +105,22 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   final popUpManager = ZegoCallPopUpManager();
 
+  Map<String, bool> requiredUsersEnteredStatus = {};
+
   ZegoUIKitPrebuiltCallEvents get events =>
       widget.events ?? ZegoUIKitPrebuiltCallEvents();
 
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController();
+
+  bool get isRequiredUserAllEntered {
+    bool isAllEntered = true;
+    requiredUsersEnteredStatus.forEach((userID, isEntered) {
+      isAllEntered = isAllEntered && isEntered;
+    });
+
+    return isAllEntered;
+  }
 
   @override
   void initState() {
@@ -117,7 +128,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.8.0; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.11.0; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -187,9 +198,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ..add(
         ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
       )
-      ..add(ZegoUIKit().getErrorStream().listen(onUIKitError));
-    userListStreamSubscription =
-        ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
+      ..add(ZegoUIKit().getErrorStream().listen(onUIKitError))
+      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+
+    checkRequiredParticipant();
   }
 
   @override
@@ -201,7 +213,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     for (final subscription in subscriptions) {
       subscription?.cancel();
     }
-    userListStreamSubscription?.cancel();
 
     widget.onDispose?.call();
 
@@ -229,6 +240,42 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
+  }
+
+  void checkRequiredParticipant() {
+    if (!widget.config.user.requiredUsers.enabled) {
+      ZegoLoggerService.logInfo(
+        'requiredUsers not enabled',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      return;
+    }
+
+    var isChecking = true;
+    if (kDebugMode) {
+      isChecking = widget.config.user.requiredUsers.detectInDebugMode;
+    }
+    if (isChecking) {
+      updateRequiredUsersEnteredStatus();
+      if (!isRequiredUserAllEntered) {
+        Timer(
+          Duration(
+            seconds: widget.config.user.requiredUsers.detectSeconds,
+          ),
+          hangUpIfRequiredUsersNotAllEntered,
+        );
+      }
+    } else {
+      ZegoLoggerService.logInfo(
+        'requiredUsers not need checking, '
+        'kDebugMode:$kDebugMode, '
+        'detectInDebugMode:${widget.config.user.requiredUsers.detectInDebugMode}',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+    }
   }
 
   @override
@@ -435,6 +482,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     //  remote users is empty
     final callEndEvent = ZegoCallEndEvent(
+      callID: widget.callID,
       reason: ZegoCallEndReason.remoteHangUp,
       isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
           ZegoUIKitPrebuiltCallController().minimize.state,
@@ -593,6 +641,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         defaultEndAction: defaultEndAction,
         defaultHangUpConfirmationAction: defaultHangUpConfirmationAction,
         visibilityNotifier: barVisibilityNotifier,
+        minimizeData: minimizeData,
         restartHideTimerNotifier: barRestartHideTimerNotifier,
         isHangUpRequestingNotifier:
             controller.private.isHangUpRequestingNotifier,
@@ -747,6 +796,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     popUpManager.autoPop(context, widget.config.rootNavigator);
 
     final callEndEvent = ZegoCallEndEvent(
+      callID: widget.callID,
       kickerUserID: fromUserID,
       reason: ZegoCallEndReason.kickOut,
       isFromMinimizing:
@@ -875,6 +925,45 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           subTag: 'prebuilt',
         );
       }
+    }
+  }
+
+  void updateRequiredUsersEnteredStatus() {
+    if (widget.config.user.requiredUsers.users.isEmpty) {
+      return;
+    }
+
+    final remoteUsers = ZegoUIKit().getRemoteUsers();
+    final requiredParticipants =
+        List<ZegoUIKitUser>.from(widget.config.user.requiredUsers.users);
+    for (var requiredParticipant in requiredParticipants) {
+      final index =
+          remoteUsers.indexWhere((user) => user.id == requiredParticipant.id);
+      requiredUsersEnteredStatus[requiredParticipant.id] = -1 != index;
+    }
+  }
+
+  void hangUpIfRequiredUsersNotAllEntered() {
+    updateRequiredUsersEnteredStatus();
+
+    if (!isRequiredUserAllEntered) {
+      ZegoLoggerService.logWarn(
+        'not all requiredUsers entered($requiredUsersEnteredStatus), call end.',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      ZegoUIKitPrebuiltCallController().hangUp(
+        context,
+        showConfirmation: false,
+        reason: ZegoCallEndReason.abandoned,
+      );
+    } else {
+      ZegoLoggerService.logInfo(
+        'all requiredUsers entered($requiredUsersEnteredStatus)',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
     }
   }
 }

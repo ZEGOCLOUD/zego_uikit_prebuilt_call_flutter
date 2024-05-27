@@ -16,11 +16,9 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 /// @nodoc
 class ZegoCallInvitationNotificationManager {
   bool isInit = false;
-  final ZegoCallButtonUIConfig declineButtonConfig;
   final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
   ZegoCallInvitationNotificationManager({
-    required this.declineButtonConfig,
     required this.callInvitationData,
   });
 

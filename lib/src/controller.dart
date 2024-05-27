@@ -1,6 +1,7 @@
-// Flutter imports:
+// Dart imports:
 import 'dart:async';
 
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,6 @@ import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
@@ -77,6 +77,7 @@ class ZegoUIKitPrebuiltCallController
   Future<bool> hangUp(
     BuildContext context, {
     bool showConfirmation = false,
+    ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
   }) async {
     if (ZegoUIKit().getRoom().id.isEmpty) {
       ZegoLoggerService.logInfo(
@@ -180,7 +181,8 @@ class ZegoUIKitPrebuiltCallController
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
     final endEvent = ZegoCallEndEvent(
-      reason: ZegoCallEndReason.localHangUp,
+      callID: ZegoUIKit().getRoom().id,
+      reason: reason,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.minimizing == minimize.state,
     );
@@ -195,7 +197,7 @@ class ZegoUIKitPrebuiltCallController
     }
 
     ZegoLoggerService.logInfo(
-      'hang up, finished',
+      'hang up, finished, test:${private.events}',
       tag: 'call',
       subTag: 'controller',
     );

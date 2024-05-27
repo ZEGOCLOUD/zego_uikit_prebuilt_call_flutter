@@ -29,10 +29,18 @@ enum ZegoCallEndReason {
 
   /// the call ended due to being kicked out
   kickOut,
+
+  /// Due to some reasons, the call is automatically hung up by local
+  /// such as [ZegoCallParticipantConfig.requiredParticipants] is not in call
+  abandoned,
 }
 
 class ZegoCallEndEvent {
+  /// current call id
+  String callID;
+
   /// the user ID of who kick you out
+  /// same user login if value is empty
   String? kickerUserID;
 
   /// end reason
@@ -49,6 +57,7 @@ class ZegoCallEndEvent {
   bool isFromMinimizing;
 
   ZegoCallEndEvent({
+    required this.callID,
     required this.reason,
     required this.isFromMinimizing,
     this.kickerUserID,
@@ -57,6 +66,7 @@ class ZegoCallEndEvent {
   @override
   String toString() {
     return 'ZegoCallEndEvent{'
+        'callID:$callID, '
         'kickerUserID:$kickerUserID,'
         ' reason:$reason, '
         '}';

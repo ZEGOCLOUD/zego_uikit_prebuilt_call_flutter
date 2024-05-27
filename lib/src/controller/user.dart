@@ -6,12 +6,12 @@ mixin ZegoCallControllerUser {
   ZegoCallControllerUserImpl get user => _userImpl;
 }
 
-/// Here are the APIs related to audio video.
+/// Here are the APIs related to user
 class ZegoCallControllerUserImpl with ZegoCallControllerUserImplPrivate {
   /// user list stream notifier
   Stream<List<ZegoUIKitUser>> get stream => ZegoUIKit().getUserListStream();
 
-  /// remove user from live, kick out
+  /// remove user from call, kick out
   ///
   /// @return Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   ///

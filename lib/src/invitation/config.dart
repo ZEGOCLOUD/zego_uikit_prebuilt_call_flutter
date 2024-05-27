@@ -3,6 +3,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
 class ZegoCallInvitationConfig {
@@ -36,34 +37,94 @@ class ZegoCallInvitationConfig {
 class ZegoCallInvitationUIConfig {
   ZegoCallInvitationUIConfig({
     this.prebuiltWithSafeArea = true,
-    this.callingBackgroundBuilder,
-    ZegoCallButtonUIConfig? declineButton,
-    ZegoCallButtonUIConfig? acceptButton,
-    ZegoCallButtonUIConfig? cancelButton,
-    ZegoCallInvitationNotifyPopUpUIConfig? popUp,
-    @Deprecated('use declineButton.visible instead$deprecatedTipsV420')
-    bool showDeclineButton = true,
-    @Deprecated('use cancelButton.visible instead$deprecatedTipsV420')
-    bool showCancelInvitationButton = true,
-  })  : popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
-        declineButton = declineButton ??
-            ZegoCallButtonUIConfig(
-              visible: showDeclineButton,
-            ),
-        acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
-        cancelButton = cancelButton ??
-            ZegoCallButtonUIConfig(
-              visible: showCancelInvitationButton,
-            );
+    ZegoCallInvitationInviterUIConfig? inviter,
+    ZegoCallInvitationInviteeUIConfig? invitee,
+  })  : inviter = inviter ?? ZegoCallInvitationInviterUIConfig(),
+        invitee = invitee ?? ZegoCallInvitationInviteeUIConfig();
 
   /// does [ZegoUIKitPrebuiltCall] display with SafeArea or not
   bool prebuiltWithSafeArea;
 
+  ZegoCallInvitationInviterUIConfig inviter;
+  ZegoCallInvitationInviteeUIConfig invitee;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationUIConfig:{'
+        'prebuiltWithSafeArea:$prebuiltWithSafeArea, '
+        'inviter:$inviter, '
+        'invitee:$invitee, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationInviterUIConfig {
+  ZegoCallInvitationInviterUIConfig({
+    this.foregroundBuilder,
+    this.pageBuilder,
+    this.backgroundBuilder,
+    this.showAvatar = true,
+    this.showCentralName = true,
+    this.showCallingText = true,
+    ZegoCallButtonUIConfig? cancelButton,
+  }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig();
+
+  /// The foreground of the calling.
+  ZegoCallingForegroundBuilder? foregroundBuilder;
+
+  /// It will replace the (invitee/inviter)'s call view
+  ZegoCallingPageBuilder? pageBuilder;
+
+  /// background builder, default is a image
+  ZegoCallingBackgroundBuilder? backgroundBuilder;
+
+  /// cancel button
+  ZegoCallButtonUIConfig cancelButton;
+
+  bool showAvatar;
+  bool showCentralName;
+  bool showCallingText;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationInviterUIConfig:{'
+        'showAvatar:$showAvatar, '
+        'showCentralName:$showCentralName, '
+        'showCallingText:$showCallingText, '
+        'foregroundBuilder:$foregroundBuilder, '
+        'pageBuilder:$pageBuilder, '
+        'backgroundBuilder:$backgroundBuilder, '
+        'cancelButton:$cancelButton, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationInviteeUIConfig {
+  ZegoCallInvitationInviteeUIConfig({
+    this.foregroundBuilder,
+    this.pageBuilder,
+    this.backgroundBuilder,
+    this.showAvatar = true,
+    this.showCentralName = true,
+    this.showCallingText = true,
+    ZegoCallButtonUIConfig? declineButton,
+    ZegoCallButtonUIConfig? acceptButton,
+    ZegoCallInvitationNotifyPopUpUIConfig? popUp,
+  })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
+        acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
+        popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig();
+
   /// config of call invitation pop-up dialog
   ZegoCallInvitationNotifyPopUpUIConfig popUp;
 
+  /// The foreground of the calling.
+  ZegoCallingForegroundBuilder? foregroundBuilder;
+
+  /// It will replace the (invitee/inviter)'s call view
+  ZegoCallingPageBuilder? pageBuilder;
+
   /// background builder, default is a image
-  ZegoCallingBackgroundBuilder? callingBackgroundBuilder;
+  ZegoCallingBackgroundBuilder? backgroundBuilder;
 
   /// decline button
   ZegoCallButtonUIConfig declineButton;
@@ -71,17 +132,22 @@ class ZegoCallInvitationUIConfig {
   /// accept button
   ZegoCallButtonUIConfig acceptButton;
 
-  /// cancel button
-  ZegoCallButtonUIConfig cancelButton;
+  bool showAvatar;
+  bool showCentralName;
+  bool showCallingText;
 
   @override
   String toString() {
-    return 'ZegoCallInvitationUIConfig:{'
-        'prebuiltWithSafeArea:$prebuiltWithSafeArea, '
-        'declineButton:$declineButton, '
+    return 'ZegoCallInvitationInviteeUIConfig:{'
+        'showAvatar:$showAvatar, '
+        'showCentralName:$showCentralName, '
+        'showCallingText:$showCallingText, '
+        'foregroundBuilder:$foregroundBuilder, '
+        'pageBuilder:$pageBuilder, '
+        'backgroundBuilder:$backgroundBuilder, '
+        'popUp:$popUp, '
         'acceptButton:$acceptButton, '
-        'cancelButton:$cancelButton, '
-        'callingBackgroundBuilder:$callingBackgroundBuilder, '
+        'declineButton:$declineButton, '
         '}';
   }
 }
@@ -133,7 +199,7 @@ class ZegoCallRingtoneConfig {
 class ZegoCallIOSNotificationConfig {
   String appName;
 
-  /// is iOS sandbox or not
+  /// is iOS sandbox or not. default is null which is auto mode.
   bool? isSandboxEnvironment;
 
   /// Corresponding certificate index configured by zego console
@@ -204,6 +270,14 @@ class ZegoCallAndroidNotificationConfig {
   ///  of ${project_root}/android/app/src/main/AndroidManifest.xml
   bool showFullScreen;
 
+  /// Corresponding certificate index configured by zego console
+  ZegoSignalingPluginMultiCertificate certificateIndex;
+
+  /// If fullScreen is enabled, you can use this parameter to configure the
+  /// background image
+  /// such as fullScreenBackground: 'assets/image/call.png'
+  String? fullScreenBackground;
+
   /// specify the channel id of message notification, which is same in 'Zego Console'
   String messageChannelID;
 
@@ -222,10 +296,6 @@ class ZegoCallAndroidNotificationConfig {
 
   bool messageVibrate;
 
-  // If fullScreen is enabled, you can use this parameter to configure the background image
-  // such as fullScreenBackground: 'assets/image/call.png'
-  String? fullScreenBackground;
-
   ZegoCallAndroidNotificationConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
@@ -240,6 +310,8 @@ class ZegoCallAndroidNotificationConfig {
     this.messageIcon = '',
     this.messageSound = '',
     this.fullScreenBackground = '',
+    this.certificateIndex =
+        ZegoSignalingPluginMultiCertificate.firstCertificate,
   });
 
   @override
@@ -256,6 +328,7 @@ class ZegoCallAndroidNotificationConfig {
         'messageChannelName:$messageChannelName, '
         'messageIcon:$messageIcon, '
         'messageSound:$messageSound, '
+        'certificateIndex:$certificateIndex, '
         '}';
   }
 }

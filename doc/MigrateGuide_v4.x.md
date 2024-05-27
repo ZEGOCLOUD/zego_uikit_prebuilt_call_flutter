@@ -20,13 +20,121 @@
 
 # Versions
 
+- [4.11.0](#4110)  **(💥 breaking changes)**
 - [4.8.0](#480)  **(💥 breaking changes)**
 - [4.4.0](#440)
 - [4.2.0](#420)
-- [4.1.10](#4110)
+- [4.1.10](#4110-2)
 - [4.1.9](#419)
 - [4.1.4](#414)  **(💥 breaking changes)**
 - [4.0.0](#400)  **(💥 breaking changes)**
+
+<br />
+<br />
+
+
+# 4.11.0
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.10.+ to the latest 4.11.0 version.
+
+# Major Interface Changes
+
+- ZegoCallInvitationUIConfig
+  - inviter  
+    - move **cancelButton** to `ZegoCallInvitationUIConfig.inviter`
+    - rename **callingForegroundBuilder** to `ZegoCallInvitationUIConfig.inviter.foregroundBuilder`
+    - rename **callingPageBuilder** to `ZegoCallInvitationUIConfig.inviter.pageBuilder`
+    - rename **callingBackgroundBuilder** to `ZegoCallInvitationUIConfig.inviter.backgroundBuilder`
+  - invitee
+    - move **declineButton** to `ZegoCallInvitationUIConfig.invitee`
+    - move **acceptButton** to `ZegoCallInvitationUIConfig.invitee`
+    - move **popUp** to `ZegoCallInvitationUIConfig.invitee`
+    - rename **callingForegroundBuilder** to `ZegoCallInvitationUIConfig.invitee.foregroundBuilder`
+    - rename **callingPageBuilder** to `ZegoCallInvitationUIConfig.invitee.pageBuilder`
+    - rename **callingBackgroundBuilder** to `ZegoCallInvitationUIConfig.invitee.backgroundBuilder`
+    <details>
+    <summary>Migrate Guide</summary>
+
+  > Modify your code based on the following guidelines to make it compatible with version 4.11.0:
+  >
+  > 4.10.+ Version Code:
+  >
+  >```dart
+  > ZegoUIKitPrebuiltCallInvitationService().init(
+  >   ...
+  >   uiConfig: ZegoCallInvitationUIConfig(
+  >     acceptButton: ZegoCallButtonUIConfig(),
+  >     declineButton: ZegoCallButtonUIConfig(),
+  >     callingForegroundBuilder: (
+  >       BuildContext context,
+  >       Size size,
+  >       ZegoCallingBuilderInfo info,
+  >     ) {},
+  >     callingPageBuilder: (
+  >       BuildContext context,
+  >       ZegoCallingBuilderInfo info,
+  >     ) {},
+  >     callingBackgroundBuilder: (
+  >       BuildContext context,
+  >       Size size,
+  >       ZegoCallingBuilderInfo info,
+  >     ) {},
+  >   ),
+  > );
+  > }
+  >```
+  >
+  >4.11.0 Version Code:
+  >
+  >```dart
+  > ZegoUIKitPrebuiltCallInvitationService().init(
+  >   ...
+  >   uiConfig: ZegoCallInvitationUIConfig(
+  >     inviter: ZegoCallInvitationInviterUIConfig(
+  >       cancelButton: ZegoCallButtonUIConfig(),
+  >       foregroundBuilder: (
+  >         BuildContext context,
+  >         Size size,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >       pageBuilder: (
+  >         BuildContext context,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >       backgroundBuilder: (
+  >         BuildContext context,
+  >         Size size,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >     ),
+  >     invitee: ZegoCallInvitationInviteeUIConfig(
+  >       acceptButton: ZegoCallButtonUIConfig(),
+  >       declineButton: ZegoCallButtonUIConfig(),
+  >       foregroundBuilder: (
+  >         BuildContext context,
+  >         Size size,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >       pageBuilder: (
+  >         BuildContext context,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >       backgroundBuilder: (
+  >         BuildContext context,
+  >         Size size,
+  >         ZegoCallingBuilderInfo info,
+  >       ) {},
+  >     ),
+  >   ),
+  > );
+  > }
+  >```
+
+    </details>
 
 <br />
 <br />
@@ -78,7 +186,6 @@
 <br />
 
 
-> 
 # 4.4.0
 ---
 

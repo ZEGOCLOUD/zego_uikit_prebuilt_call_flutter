@@ -42,9 +42,15 @@ class ZegoUIKitPrebuiltCallConfig {
 
   ZegoCallHangUpConfirmDialogConfig hangUpConfirmDialog;
 
+  /// Configuration options for voice changer and reverberation effects.
+  ZegoCallAudioEffectConfig audioEffect;
+
   /// Set advanced engine configuration, Used to enable advanced functions.
   /// For details, please consult ZEGO technical support.
   Map<String, String> advanceConfigs;
+
+  /// config about users.
+  ZegoCallUserConfig user;
 
   /// Whether to open the camera when joining the call.
   ///
@@ -122,9 +128,6 @@ class ZegoUIKitPrebuiltCallConfig {
   /// All visible text content on the UI can be modified using this single property.
   ZegoUIKitPrebuiltCallInnerText translationText;
 
-  /// Configuration options for voice changer and reverberation effects.
-  ZegoLiveStreamingAudioEffectConfig audioEffect;
-
   /// same as Flutter's Navigator's param
   /// If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
   /// Useful for pushing contents above all subsequent instances of [Navigator].
@@ -139,8 +142,7 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.groupVideoCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() =>
-      ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: true,
         isVideo: true,
       );
@@ -154,8 +156,7 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.groupVoiceCall() =>
-      ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.groupVoiceCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: true,
         isVideo: false,
       );
@@ -169,8 +170,7 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() =>
-      ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: false,
         isVideo: true,
       );
@@ -184,8 +184,7 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall() =>
-      ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: false,
         isVideo: false,
       );
@@ -204,36 +203,30 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallDurationConfig? durationConfig,
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
-    @Deprecated(
-        'use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440')
-    ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
+    ZegoCallUserConfig? userConfig,
+    @Deprecated('use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440') ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
     ZegoLayout? layout,
     this.foreground,
     this.background,
     this.avatarBuilder,
-    @Deprecated(
-        'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
-    ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
+    @Deprecated('use audioVideoView.containerBuilder instead$deprecatedTipsV419') ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
-    ZegoLiveStreamingAudioEffectConfig? audioEffect,
+    ZegoCallAudioEffectConfig? audioEffect,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoView = (audioVideoViewConfig ??
-            ZegoCallAudioVideoViewConfig())
-          ..containerBuilder = audioVideoContainerBuilder,
+        audioVideoView = (audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig())..containerBuilder = audioVideoContainerBuilder,
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
         bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
         memberList = memberListConfig ?? ZegoCallMemberListConfig(),
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
-        hangUpConfirmDialog = (hangUpConfirmDialog ??
-            ZegoCallHangUpConfirmDialogConfig())
-          ..info = hangUpConfirmDialogInfo,
+        user = userConfig ?? ZegoCallUserConfig(),
+        hangUpConfirmDialog = (hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig())..info = hangUpConfirmDialogInfo,
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
             ),
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
-        audioEffect = audioEffect ?? ZegoLiveStreamingAudioEffectConfig();
+        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig();
 
   @override
   String toString() {
@@ -245,6 +238,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'memberList:$memberList, '
         'duration:$duration, '
         'chatView:$chatView, '
+        'user:$user, '
         'layout:$layout, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
@@ -720,13 +714,13 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
 /// Example:
 ///
 /// ```dart
-/// ZegoLiveStreamingAudioEffectConfig(
+/// ZegoCallAudioEffectConfig(
 ///   backgroundColor: Colors.black.withOpacity(0.5),
 ///   backIcon: Icon(Icons.arrow_back),
 ///   sliderTextBackgroundColor: Colors.black.withOpacity(0.5),
 /// );
 /// ```
-class ZegoLiveStreamingAudioEffectConfig {
+class ZegoCallAudioEffectConfig {
   /// List of voice changer effects.
   /// If you don't want a certain effect, simply remove it from the list.
   List<VoiceChangerType> voiceChangeEffect;
@@ -783,7 +777,7 @@ class ZegoLiveStreamingAudioEffectConfig {
   /// the radius of the Slider's thumb.
   double? sliderThumbRadius;
 
-  ZegoLiveStreamingAudioEffectConfig({
+  ZegoCallAudioEffectConfig({
     this.voiceChangeEffect = const [
       VoiceChangerType.littleGirl,
       VoiceChangerType.deep,
@@ -827,7 +821,7 @@ class ZegoLiveStreamingAudioEffectConfig {
     this.sliderThumbRadius,
   });
 
-  ZegoLiveStreamingAudioEffectConfig.none({
+  ZegoCallAudioEffectConfig.none({
     this.voiceChangeEffect = const [],
     this.reverbEffect = const [],
   });
@@ -835,4 +829,63 @@ class ZegoLiveStreamingAudioEffectConfig {
   bool get isSupportVoiceChange => voiceChangeEffect.isNotEmpty;
 
   bool get isSupportReverb => reverbEffect.isNotEmpty;
+}
+
+class ZegoCallUserConfig {
+  ZegoCallUserConfig({
+    ZegoCallRequiredUserConfig? requiredUsers,
+  }) : requiredUsers = requiredUsers ?? ZegoCallRequiredUserConfig();
+
+  /// necessary user in the call.
+  ZegoCallRequiredUserConfig requiredUsers;
+}
+
+/// Necessary participants to participate in the call.
+///
+/// If the participant have not joined after
+/// [requiredParticipantCheckTimeoutSeconds] after entering the call,
+/// the call will be triggered [ZegoUIKitPrebuiltCallEvents.onCallEnd] with [ZegoCallEndReason.abandoned]
+class ZegoCallRequiredUserConfig {
+  ZegoCallRequiredUserConfig({
+    this.users = const [],
+    this.detectSeconds = 5,
+    this.detectInDebugMode = false,
+    this.enabled = false,
+  });
+
+  /// is enable detection or not
+  bool enabled;
+
+  /// The time to start the detection, when it arrives, it will start to detect whether all members have entered the call.
+  ///
+  /// Note that this duration cannot be too short,
+  /// otherwise if the remote users enters the call relatively late under poor
+  /// network conditions, it will cause current call to be ended.
+  int detectSeconds;
+
+  /// Necessary participants to participate in the call.
+  ///
+  /// If the participant have not joined after [detectSeconds] after entering the call,
+  /// the call will be triggered to end by
+  /// [ZegoUIKitPrebuiltCallEvents.onCallEnd] with [ZegoCallEndReason.abandoned]
+  ///
+  /// Usually, you DON'T need to specify.
+  /// By default, in the 1v1 call scenario, we will set [users] as the Caller(Inviter) of the cal.
+  List<ZegoUIKitUser> users;
+
+  /// Is detection of [participants] enabled in debugging mode?
+  ///
+  /// Due to hitting breakpoints during debugging, it is easy to cause
+  /// timeout issues([checkTimeoutSeconds] is timeout),
+  /// which can lead to call exits
+  bool detectInDebugMode;
+
+  @override
+  String toString() {
+    return 'ZegoCallRequiredUserConfig:{'
+        'users:$users, '
+        'detectSeconds:$detectSeconds, '
+        'detectInDebugMode:$detectInDebugMode, '
+        '}';
+  }
 }

@@ -587,6 +587,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
     //  remote users is empty
     final callEndEvent = ZegoCallEndEvent(
+      callID: minimizeData?.callID ?? ZegoUIKit().getRoom().id,
       reason: ZegoCallEndReason.remoteHangUp,
       isFromMinimizing: true,
     );

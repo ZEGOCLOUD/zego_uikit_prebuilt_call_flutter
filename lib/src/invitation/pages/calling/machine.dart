@@ -7,7 +7,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling_page.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
@@ -79,19 +79,15 @@ class ZegoCallingMachine {
         },
       ); // default state
 
-    stateCallingWithVoice = machine.newState(CallingState.kCallingWithVoice)
-      ..onEntry(onCallingEntry);
-    stateCallingWithVideo = machine.newState(CallingState.kCallingWithVideo)
-      ..onEntry(onCallingEntry);
-    stateOnlineAudioVideo = machine.newState(CallingState.kOnlineAudioVideo)
-      ..onEntry(onCallingEntry);
+    stateCallingWithVoice = machine.newState(CallingState.kCallingWithVoice)..onEntry(onCallingEntry);
+    stateCallingWithVideo = machine.newState(CallingState.kCallingWithVideo)..onEntry(onCallingEntry);
+    stateOnlineAudioVideo = machine.newState(CallingState.kOnlineAudioVideo)..onEntry(onCallingEntry);
 
     machine.current = stateIdle;
   }
 
   void onCallingEntry() {
-    if (ZegoCallMiniOverlayPageState.calling ==
-        ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.calling == ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',
         tag: 'call',

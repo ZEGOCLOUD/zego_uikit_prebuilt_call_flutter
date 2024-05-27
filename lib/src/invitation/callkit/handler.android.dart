@@ -39,14 +39,15 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     'on background message received: '
     'title:${message.title}, '
     'content:${message.content}, '
-    'extras:${message.extras}',
+    'extras:${message.extras}, ',
     tag: 'call',
     subTag: 'background message',
   );
 
-  if (!message.extras.containsKey('zego')) {
+  final isZegoMessage = message.extras.keys.contains('zego');
+  if (!isZegoMessage) {
     ZegoLoggerService.logInfo(
-      'is not zego protocol, droped',
+      'is not zego protocol, drop it',
       tag: 'call',
       subTag: 'background message',
     );
@@ -150,10 +151,19 @@ Future<void> _onBackgroundMessageReceived({
   required ReceivePort backgroundPort,
 }) async {
   final payload = messageExtras['payload'] as String? ?? '';
-  final payloadMap = jsonDecode(payload) as Map<String, dynamic>? ?? {};
+  var payloadMap = <String, dynamic>{};
+  try {
+    payloadMap = jsonDecode(payload) as Map<String, dynamic>? ?? {};
+  } catch (e) {
+    ZegoLoggerService.logError(
+      'payload， json decode data exception:$e',
+      tag: 'call',
+      subTag: 'background message',
+    );
+  }
 
   final operationType = BackgroundMessageTypeExtension.fromText(
-      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '');
+      payloadMap[ZegoCallInvitationProtocolKey.operationType] as String? ?? '');
 
   final handlerInfoJson =
       await getPreferenceString(serializationKeyHandlerInfo);
@@ -178,6 +188,7 @@ Future<void> _onBackgroundMessageReceived({
     return;
   }
 
+  /// operation type is empty, is send/cancel request
   _onBackgroundCallMessageReceived(
     messageTitle: messageTitle,
     messageExtras: messageExtras,
@@ -263,11 +274,11 @@ Future<void> _onBackgroundCallMessageReceived({
   required HandlerPrivateInfo? handlerInfo,
 }) async {
   final operationType = BackgroundMessageTypeExtension.fromText(
-      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '');
+      payloadMap[ZegoCallInvitationProtocolKey.operationType] as String? ?? '');
 
   ZegoLoggerService.logInfo(
     'call message received, '
-    'operationType:${operationType.text}',
+    'operationType:${operationType.text}, ',
     tag: 'call',
     subTag: 'background message',
   );
@@ -290,9 +301,8 @@ Future<void> _onBackgroundCallMessageReceived({
     ///   },
     ///   "call_id": 4172113646365410763
     /// }
-
     final callID =
-        payloadMap[CallInvitationProtocolKey.callID] as String? ?? '';
+        payloadMap[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
     await _onBackgroundInvitationCanceled(callID);
 
     /// when offline is cancelled, you will receive two notifications: one is
@@ -398,23 +408,42 @@ Future<void> _onBackgroundOfflineCall({
   /// }
 
   ZegoLoggerService.logInfo(
-    'background offline call, from other isolate:$fromOtherIsolate',
+    'background offline call, '
+    'from other isolate:$fromOtherIsolate, '
+    'messageExtras:$messageExtras, '
+    'payloadMap:$payloadMap, ',
+    tag: 'call',
+    subTag: 'background message',
+  );
+  // messageExtras:{
+  // zego: {"call_id":"8827488227325211473","version":1,"zpns_request_id":"8252960554030856365"},
+  // body: Incoming voice call...,
+  // title: user_870125,
+  // payload: {"inviter_id":"870125","inviter_name":"user_870125","type":0,"data":"{\"call_id\":\"call_870125_1715156717811\",\"invitees\":[{\"user_id\":\"946042\",\"user_name\":\"user_946042\"}],\"timeout\":60,\"timestamp\":1715156716097,\"custom_data\":\"\"}"}, call_id: 8827488227325211473},
+  // payloadMap:{inviter_id: 870125, inviter_name: user_870125, type: 0, data: {"call_id":"call_870125_1715156717811","invitees":[{"user_id":"946042","user_name":"user_946042"}],"timeout":60,""custom_data":""}}, }  {08/05/2024 16:25:36}  {INFO}
+
+  ///  todo invitationID.isEmpty non uikit protocol?
+  final invitationID =
+      messageExtras[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
+
+  /// todo check debug
+  ZegoLoggerService.logInfo(
+    'background offline call, '
+    'invitationID:$invitationID, ',
     tag: 'call',
     subTag: 'background message',
   );
 
-  ///  todo invitationID.isEmpty non uikit protocol?
-  final invitationID =
-      messageExtras[CallInvitationProtocolKey.callID] as String? ?? '';
-
   final inviter = ZegoUIKitUser(
-      id: payloadMap['inviter_id'] as String? ?? '',
-      name: payloadMap['inviter_name'] as String? ?? '');
+    id: payloadMap['inviter_id'] as String? ?? '',
+    name: payloadMap['inviter_name'] as String? ?? '',
+  );
   final callType = ZegoCallTypeExtension.mapValue[payloadMap['type'] as int?] ??
       ZegoCallType.voiceCall;
   final payloadData = payloadMap['data'] as String? ?? '';
-  final invitationSendRequestData =
-      InvitationSendRequestData.fromJson(payloadData);
+  final sendRequestProtocol = ZegoCallInvitationSendRequestProtocol.fromJson(
+    payloadData,
+  );
 
   final signalingSubscriptions = <StreamSubscription<dynamic>>[];
   _listenFlutterCallkitIncomingEvent(
@@ -429,13 +458,15 @@ Future<void> _onBackgroundOfflineCall({
   _listenSignalingEvents(signalingSubscriptions);
 
   /// cache and do when app run
-  setOfflineCallKitCallID(invitationSendRequestData.callID);
-  await setOfflineCallKitParams(jsonEncode({
-    'invitation_id': invitationID,
-    'inviter': inviter,
-    'type': callType.value,
-    'data': payloadData,
-  }));
+  setOfflineCallKitCallID(sendRequestProtocol.callID);
+  await setOfflineCallKitCacheParams(
+    ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
+      invitationID: invitationID,
+      inviter: inviter,
+      callType: callType,
+      payloadData: payloadData,
+    ),
+  );
 
   if (fromOtherIsolate) {
     /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
@@ -445,7 +476,7 @@ Future<void> _onBackgroundOfflineCall({
     await showCallkitIncoming(
       caller: inviter,
       callType: callType,
-      invitationSendRequestData: invitationSendRequestData,
+      sendRequestProtocol: sendRequestProtocol,
       title: messageExtras['title'] as String? ?? '',
       body: messageExtras['body'] as String? ?? '',
     );
@@ -511,15 +542,14 @@ void _listenFlutterCallkitIncomingEvent({
           tag: 'call',
           subTag: 'background message',
         );
-        final paramsJson = await getCurrentCallKitParams();
-        final paramsMap = jsonDecode(paramsJson!);
-        paramsMap['accept'] = true;
-        await setOfflineCallKitParams(jsonEncode(paramsMap));
+        var offlineCallKitCacheParams = await getOfflineCallKitCacheParams();
+        offlineCallKitCacheParams.accept = true;
+        await setOfflineCallKitCacheParams(offlineCallKitCacheParams);
 
         break;
       case Event.actionCallDecline:
         await clearOfflineCallKitCallID();
-        await clearOfflineCallKitParams();
+        await clearOfflineCallKitCacheParams();
 
         await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
               invitationID: invitationID,
@@ -528,7 +558,7 @@ void _listenFlutterCallkitIncomingEvent({
         break;
       case Event.actionCallTimeout:
         await clearOfflineCallKitCallID();
-        await clearOfflineCallKitParams();
+        await clearOfflineCallKitCacheParams();
         break;
       default:
         break;
@@ -617,7 +647,7 @@ Future<void> _onInvitationCanceled(Map<String, dynamic> params) async {
   );
 
   final dataMap = jsonDecode(data) as Map<String, dynamic>;
-  final callID = dataMap[CallInvitationProtocolKey.callID] as String? ?? '';
+  final callID = dataMap[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
   await _onBackgroundInvitationCanceled(callID);
 }
 
@@ -720,12 +750,12 @@ void _onThroughMessage(
   final payload = message.extras['payload'] as String? ?? '';
   final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
   final operationType =
-      payloadMap[CallInvitationProtocolKey.operationType] as String? ?? '';
+      payloadMap[ZegoCallInvitationProtocolKey.operationType] as String? ?? '';
 
   /// cancel invitation
   if (BackgroundMessageType.cancelInvitation.text == operationType) {
     final callID =
-        payloadMap[CallInvitationProtocolKey.callID] as String? ?? '';
+        payloadMap[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
     _onBackgroundInvitationCanceled(callID);
   }
 }

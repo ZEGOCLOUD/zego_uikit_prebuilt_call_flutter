@@ -86,7 +86,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
           type: ZegoCallTypeExtension(
             isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
           ).value,
-          data: InvitationSendRequestData(
+          data: ZegoCallInvitationSendRequestProtocol(
             callID: callID,
             invitees: callees
                 .map((invitee) => ZegoUIKitUser(
@@ -159,7 +159,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         .getSignalingPlugin()
         .cancelInvitation(
           invitees: callees.map((e) => e.id).toList(),
-          data: InvitationCancelRequestData(
+          data: ZegoCallInvitationCancelRequestProtocol(
             callID: _pageManager?.currentCallID ?? '',
             customData: customData,
           ).toJson(),
@@ -191,8 +191,8 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         .getSignalingPlugin()
         .refuseInvitation(
           inviterID: callerID,
-          data: InvitationRejectRequestData(
-            reason: CallInvitationProtocolKey.refuseByDecline,
+          data: ZegoCallInvitationRejectRequestProtocol(
+            reason: ZegoCallInvitationProtocolKey.refuseByDecline,
             customData: customData,
           ).toJson(),
         )
@@ -222,7 +222,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         .getSignalingPlugin()
         .acceptInvitation(
           inviterID: callerID,
-          data: InvitationAcceptRequestData(
+          data: ZegoCallInvitationAcceptRequestProtocol(
             customData: customData,
           ).toJson(),
         )

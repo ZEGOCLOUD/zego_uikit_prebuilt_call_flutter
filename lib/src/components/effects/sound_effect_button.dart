@@ -23,7 +23,7 @@ class ZegoCallSoundEffectButton extends StatefulWidget {
   final bool rootNavigator;
   final ZegoCallPopUpManager popUpManager;
 
-  final ZegoLiveStreamingAudioEffectConfig effectConfig;
+  final ZegoCallAudioEffectConfig effectConfig;
 
   const ZegoCallSoundEffectButton({
     Key? key,

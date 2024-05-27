@@ -15,60 +15,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart'
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 /// @nodoc
-class ZegoInviterCallingBottomToolBar extends StatelessWidget {
-  final ZegoCallInvitationPageManager pageManager;
-  final ZegoCallButtonUIConfig cancelButtonConfig;
-
-  final List<ZegoUIKitUser> invitees;
-
-  const ZegoInviterCallingBottomToolBar({
-    Key? key,
-    required this.pageManager,
-    required this.cancelButtonConfig,
-    required this.invitees,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120.zH,
-      child: Center(
-        child: (cancelButtonConfig.visible)
-            ? ZegoCancelInvitationButton(
-                invitees: invitees.map((e) => e.id).toList(),
-                data: const JsonEncoder().convert({
-                  CallInvitationProtocolKey.callID: pageManager.currentCallID,
-                  CallInvitationProtocolKey.operationType:
-                      BackgroundMessageType.cancelInvitation.text,
-                }),
-                textStyle: cancelButtonConfig.textStyle,
-                icon: ButtonIcon(
-                  icon: cancelButtonConfig.icon ??
-                      Image(
-                        image: ZegoCallImage.asset(
-                          InvitationStyleIconUrls.toolbarBottomCancel,
-                        ).image,
-                        fit: BoxFit.fill,
-                      ),
-                ),
-                buttonSize: cancelButtonConfig.size ?? Size(120.zR, 120.zR),
-                iconSize: cancelButtonConfig.iconSize ?? Size(120.zR, 120.zR),
-                onPressed:
-                    (String code, String message, List<String> errorInvitees) {
-                  pageManager.onLocalCancelInvitation(
-                    code,
-                    message,
-                    errorInvitees,
-                  );
-                },
-              )
-            : Container(),
-      ),
-    );
-  }
-}
-
-/// @nodoc
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoCallInvitationPageManager pageManager;
   final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
@@ -139,8 +85,8 @@ class ZegoInviteeCallingBottomToolBarState
       inviterID: widget.inviter.id,
       // data customization is not supported
       data: const JsonEncoder().convert({
-        CallInvitationProtocolKey.reason:
-            CallInvitationProtocolKey.refuseByDecline,
+        ZegoCallInvitationProtocolKey.reason:
+            ZegoCallInvitationProtocolKey.refuseByDecline,
       }),
       text: widget.callInvitationData.innerText.incomingCallPageDeclineButton,
       textStyle: widget.declineButtonConfig.textStyle ?? buttonTextStyle,
