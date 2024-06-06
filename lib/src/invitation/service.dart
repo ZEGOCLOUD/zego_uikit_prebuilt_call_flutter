@@ -216,7 +216,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.11.4; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.11.6; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
