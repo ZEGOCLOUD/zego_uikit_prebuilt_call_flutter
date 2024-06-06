@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/common.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/inviter_bottom_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/inviter_top_toolbar.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 /// @nodoc
 class ZegoCallingInviterView extends StatelessWidget {
@@ -110,7 +110,7 @@ class ZegoCallingInviterView extends StatelessWidget {
                 )
               : Container(),
         ),
-        SizedBox(height: 10.zR),
+        SizedBox(height: config.spacingBetweenAvatarAndName ?? 10.zR),
         config.showCentralName
             ? centralName((isVideo
                     ? (invitees.length > 1
@@ -121,7 +121,7 @@ class ZegoCallingInviterView extends StatelessWidget {
                         : innerText.outgoingVoiceCallPageTitle))
                 .replaceFirst(param_1, firstInvitee.name))
             : SizedBox(height: 59.zH),
-        SizedBox(height: 47.zR),
+        SizedBox(height: config.spacingBetweenNameAndCallingText ?? 47.zR),
         config.showCallingText
             ? callingText(isVideo
                 ? (invitees.length > 1

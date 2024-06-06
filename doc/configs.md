@@ -30,6 +30,8 @@
   - bool `showAvatar`: show avatar or not
   - bool `showCentralName`: show central name or not
   - bool `showCallingText`: show calling text or not
+  - double? `spacingBetweenAvatarAndName`: spacing between avatar and name
+  - double? `spacingBetweenNameAndCallingText`: spacing between name and calling text
   - [ZegoCallingForegroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingForegroundBuilder.html)? `foregroundBuilder`: foreground builder
   - [ZegoCallingPageBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingPageBuilder.html)? `pageBuilder`: It will replace the inviter/invitee's call view
   - [ZegoCallingBackgroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingBackgroundBuilder.html)? `backgroundBuilder`: background
@@ -45,6 +47,8 @@
   - bool `showAvatar`: show avatar or not
   - bool `showCentralName`: show central name or not
   - bool `showCallingText`: show calling text or not
+  - double? `spacingBetweenAvatarAndName`: spacing between avatar and name
+  - double? `spacingBetweenNameAndCallingText`: spacing between name and calling text
   - [ZegoCallInvitationNotifyPopUpUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationNotifyPopUpUIConfig-class.html) `popUp`: config of call invitation pop-up dialog
     - EdgeInsetsGeometry? `padding`: popup's padding
     - double? `width`: popup's width

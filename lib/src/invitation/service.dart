@@ -131,21 +131,27 @@ part 'mixins/private/invitation.dart';
 ///   ZegoUIKitPrebuiltCallInvitationService().uninit();
 /// }
 /// ```
-class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
+class ZegoUIKitPrebuiltCallInvitationService
+    with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
   bool get isInit => private._isInit;
 
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
 
-  ZegoCallInvitationInnerText get innerText => private._data?.innerText ?? private._defaultInnerText;
+  ZegoCallInvitationInnerText get innerText =>
+      private._data?.innerText ?? private._defaultInnerText;
 
-  ZegoCallRingtoneConfig get ringtoneConfig => private._data?.ringtoneConfig ?? private._defaultRingtoneConfig;
+  ZegoCallRingtoneConfig get ringtoneConfig =>
+      private._data?.ringtoneConfig ?? private._defaultRingtoneConfig;
 
   /// Invitation-related event notifications and callbacks.
-  ZegoUIKitPrebuiltCallInvitationEvents? get events => private._data?.invitationEvents;
+  ZegoUIKitPrebuiltCallInvitationEvents? get events =>
+      private._data?.invitationEvents;
 
-  ZegoCallAndroidNotificationConfig? get androidNotificationConfig => private._data?.notificationConfig.androidNotificationConfig;
+  ZegoCallAndroidNotificationConfig? get androidNotificationConfig =>
+      private._data?.notificationConfig.androidNotificationConfig;
 
-  ZegoUIKitPrebuiltCallController get controller => ZegoUIKitPrebuiltCallController.instance;
+  ZegoUIKitPrebuiltCallController get controller =>
+      ZegoUIKitPrebuiltCallController.instance;
 
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
@@ -210,7 +216,7 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePriva
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.11.0; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.11.4; $uikitVersion',
         tag: 'call',
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
@@ -246,7 +252,8 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePriva
 
     await private.callkit._initCallKit(
       pageManager: private._pageManager!,
-      androidNotificationConfig: private._data!.notificationConfig.androidNotificationConfig,
+      androidNotificationConfig:
+          private._data!.notificationConfig.androidNotificationConfig,
     );
 
     await private._initPlugins(
@@ -306,7 +313,9 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePriva
         subTag: 'call invitation service(${identityHashCode(this)})',
       );
 
-      ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(onBackgroundMessageReceived);
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .setBackgroundMessageHandler(onBackgroundMessageReceived);
     } else if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',
@@ -316,7 +325,9 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePriva
 
       private._enableIOSVoIP = true;
 
-      ZegoUIKit().getSignalingPlugin().setIncomingPushReceivedHandler(onIncomingPushReceived);
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .setIncomingPushReceivedHandler(onIncomingPushReceived);
 
       private.iOSCallkit._initIOSCallkitService();
     }
@@ -399,5 +410,6 @@ class ZegoUIKitPrebuiltCallInvitationService with ZegoCallInvitationServicePriva
 
   factory ZegoUIKitPrebuiltCallInvitationService() => _instance;
 
-  static final ZegoUIKitPrebuiltCallInvitationService _instance = ZegoUIKitPrebuiltCallInvitationService._internal();
+  static final ZegoUIKitPrebuiltCallInvitationService _instance =
+      ZegoUIKitPrebuiltCallInvitationService._internal();
 }

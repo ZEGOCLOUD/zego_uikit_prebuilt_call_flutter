@@ -79,15 +79,19 @@ class ZegoCallingMachine {
         },
       ); // default state
 
-    stateCallingWithVoice = machine.newState(CallingState.kCallingWithVoice)..onEntry(onCallingEntry);
-    stateCallingWithVideo = machine.newState(CallingState.kCallingWithVideo)..onEntry(onCallingEntry);
-    stateOnlineAudioVideo = machine.newState(CallingState.kOnlineAudioVideo)..onEntry(onCallingEntry);
+    stateCallingWithVoice = machine.newState(CallingState.kCallingWithVoice)
+      ..onEntry(onCallingEntry);
+    stateCallingWithVideo = machine.newState(CallingState.kCallingWithVideo)
+      ..onEntry(onCallingEntry);
+    stateOnlineAudioVideo = machine.newState(CallingState.kOnlineAudioVideo)
+      ..onEntry(onCallingEntry);
 
     machine.current = stateIdle;
   }
 
   void onCallingEntry() {
-    if (ZegoCallMiniOverlayPageState.calling == ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.calling ==
+        ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',
         tag: 'call',

@@ -142,7 +142,8 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.groupVideoCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.groupVideoCall() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: true,
         isVideo: true,
       );
@@ -156,7 +157,8 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.groupVoiceCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.groupVoiceCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.groupVoiceCall() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: true,
         isVideo: false,
       );
@@ -170,7 +172,8 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: false,
         isVideo: true,
       );
@@ -184,7 +187,8 @@ class ZegoUIKitPrebuiltCallConfig {
   /// ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
   /// ..turnOnMicrophoneWhenJoining = false
   /// ```
-  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall() => ZegoUIKitPrebuiltCallConfigExtension.generate(
+  factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall() =>
+      ZegoUIKitPrebuiltCallConfigExtension.generate(
         isGroup: false,
         isVideo: false,
       );
@@ -204,23 +208,31 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
     ZegoCallUserConfig? userConfig,
-    @Deprecated('use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440') ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
+    @Deprecated(
+        'use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440')
+    ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
     ZegoLayout? layout,
     this.foreground,
     this.background,
     this.avatarBuilder,
-    @Deprecated('use audioVideoView.containerBuilder instead$deprecatedTipsV419') ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
+    @Deprecated(
+        'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
+    ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoView = (audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig())..containerBuilder = audioVideoContainerBuilder,
+        audioVideoView = (audioVideoViewConfig ??
+            ZegoCallAudioVideoViewConfig())
+          ..containerBuilder = audioVideoContainerBuilder,
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
         bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
         memberList = memberListConfig ?? ZegoCallMemberListConfig(),
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
         user = userConfig ?? ZegoCallUserConfig(),
-        hangUpConfirmDialog = (hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig())..info = hangUpConfirmDialogInfo,
+        hangUpConfirmDialog = (hangUpConfirmDialog ??
+            ZegoCallHangUpConfirmDialogConfig())
+          ..info = hangUpConfirmDialogInfo,
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,

@@ -11,17 +11,20 @@ class ZegoCallInvitationInternalInstance {
 
   ZegoCallInvitationInternalInstance._internal();
 
-  static final ZegoCallInvitationInternalInstance instance = ZegoCallInvitationInternalInstance._internal();
+  static final ZegoCallInvitationInternalInstance instance =
+      ZegoCallInvitationInternalInstance._internal();
 
   ZegoCallInvitationPageManager? _pageManager;
   ZegoUIKitPrebuiltCallInvitationData? _callInvitationData;
 
   ZegoCallInvitationPageManager? get pageManager {
-    assert(_pageManager != null, 'pageManager is null, plugins call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
+    assert(_pageManager != null,
+        'pageManager is null, plugins call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
     return _pageManager;
   }
 
-  ZegoUIKitPrebuiltCallInvitationData? get callInvitationData => _callInvitationData;
+  ZegoUIKitPrebuiltCallInvitationData? get callInvitationData =>
+      _callInvitationData;
 
   void register({
     required ZegoCallInvitationPageManager pageManager,

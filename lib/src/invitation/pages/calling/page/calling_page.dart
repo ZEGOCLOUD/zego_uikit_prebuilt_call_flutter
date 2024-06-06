@@ -7,12 +7,12 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/invitee_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/inviter_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
 /// @nodoc
 class ZegoCallingPage extends StatefulWidget {

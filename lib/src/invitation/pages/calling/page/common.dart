@@ -15,7 +15,8 @@ Widget backgroundImage() {
     height: double.infinity,
     decoration: BoxDecoration(
       image: DecorationImage(
-        image: ZegoCallImage.asset(InvitationStyleIconUrls.inviteBackground).image,
+        image:
+            ZegoCallImage.asset(InvitationStyleIconUrls.inviteBackground).image,
         fit: BoxFit.fitHeight,
       ),
     ),

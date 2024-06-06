@@ -2,8 +2,6 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
 class ZegoCallInvitationConfig {
@@ -66,6 +64,8 @@ class ZegoCallInvitationInviterUIConfig {
     this.showAvatar = true,
     this.showCentralName = true,
     this.showCallingText = true,
+    this.spacingBetweenAvatarAndName,
+    this.spacingBetweenNameAndCallingText,
     ZegoCallButtonUIConfig? cancelButton,
   }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig();
 
@@ -85,6 +85,12 @@ class ZegoCallInvitationInviterUIConfig {
   bool showCentralName;
   bool showCallingText;
 
+  /// spacing between avatar and name
+  double? spacingBetweenAvatarAndName;
+
+  /// spacing between name and calling text
+  double? spacingBetweenNameAndCallingText;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInviterUIConfig:{'
@@ -95,6 +101,8 @@ class ZegoCallInvitationInviterUIConfig {
         'pageBuilder:$pageBuilder, '
         'backgroundBuilder:$backgroundBuilder, '
         'cancelButton:$cancelButton, '
+        'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
+        'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         '}';
   }
 }
@@ -107,6 +115,8 @@ class ZegoCallInvitationInviteeUIConfig {
     this.showAvatar = true,
     this.showCentralName = true,
     this.showCallingText = true,
+    this.spacingBetweenAvatarAndName,
+    this.spacingBetweenNameAndCallingText,
     ZegoCallButtonUIConfig? declineButton,
     ZegoCallButtonUIConfig? acceptButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
@@ -136,6 +146,12 @@ class ZegoCallInvitationInviteeUIConfig {
   bool showCentralName;
   bool showCallingText;
 
+  /// spacing between avatar and name
+  double? spacingBetweenAvatarAndName;
+
+  /// spacing between name and calling text
+  double? spacingBetweenNameAndCallingText;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInviteeUIConfig:{'
@@ -148,6 +164,8 @@ class ZegoCallInvitationInviteeUIConfig {
         'popUp:$popUp, '
         'acceptButton:$acceptButton, '
         'declineButton:$declineButton, '
+        'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
+        'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         '}';
   }
 }
