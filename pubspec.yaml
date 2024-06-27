@@ -1,6 +1,6 @@
 name: zego_uikit_prebuilt_call
 description: PrebuiltCall is a full-featured call kit that provides a realtime call invitation, voice/video chat, device detection, etc. Add a voice/video call to your app in minutes.
-version: 4.11.6
+version: 4.12.9
 homepage: https://www.zegocloud.com/
 repository: https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter
 screenshots:
@@ -17,25 +17,24 @@ dependencies:
   flutter:
     sdk: flutter
 
-  zego_uikit: ^2.22.8
-  zego_plugin_adapter: ^2.11.8
-  zego_uikit_signaling_plugin: ^2.7.12
+  zego_uikit: ^2.24.2
+  zego_plugin_adapter: ^2.11.9
+  zego_uikit_signaling_plugin: ^2.7.14
 
   zego_zpns: ^2.6.0+3
   zego_callkit: ^1.0.0+4
 
-  flutter_vibrate: ^1.3.0
+  vibration: ^1.9.0
   audioplayers: ^5.2.0
   statemachine: ^3.3.1
   uuid: ^4.1.0
   permission_handler: ^11.0.1
   shared_preferences: ^2.2.2
-  is_lock_screen2: ^2.0.1
   plugin_platform_interface: ^2.1.6
 
   #  1. make kotlin version >= 1.8.0, open the your_project/android/app/build.gradle file, and modify the kotlin_version to 1.8.0.
   #  2. make gradle version >= 7.0, open the your_project/android/gradle/wrapper/gradle-wrapper.properties file, and modify the distributionUrl to https\://services.gradle.org/distributions/gradle-7.0-all.zip.
-  flutter_callkit_incoming_yoer: ^2.0.1+4
+  flutter_callkit_incoming_yoer: ^2.0.1+5
 
 dev_dependencies:
   flutter_test:

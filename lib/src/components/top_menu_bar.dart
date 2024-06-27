@@ -169,7 +169,10 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
     final buttons = [
       ...getDefaultButtons(context),
       ...widget.config.topMenuBar.extendButtons
-          .map((extendButton) => buttonWrapper(child: extendButton))
+          .map((extendButton) => buttonWrapper(
+                child: extendButton,
+                withRoomUpdateNotifier: true,
+              ))
     ];
 
     /// limited item count display on menu bar,
@@ -210,13 +213,28 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
     hideTimerOfMenuBar?.cancel();
   }
 
-  Widget buttonWrapper({required Widget child}) {
-    return Container(
+  Widget buttonWrapper({
+    required Widget child,
+    bool withRoomUpdateNotifier = false,
+  }) {
+    final button = Container(
       padding: EdgeInsets.fromLTRB(0, 0, 10.zR, 0),
       width: buttonDisplaySize.width,
       height: buttonDisplaySize.height,
       child: child,
     );
+
+    return withRoomUpdateNotifier
+        ? ValueListenableBuilder<ZegoUIKitRoomState>(
+            valueListenable: ZegoUIKit().getRoomStateStream(),
+            builder: (context, roomState, _) {
+              if (roomState.reason != ZegoRoomStateChangedReason.Logined) {
+                return const SizedBox();
+              }
+
+              return button;
+            })
+        : button;
   }
 
   List<Widget> getDefaultButtons(BuildContext context) {
@@ -304,7 +322,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             }
             return canHangUp;
           },
-          onPress: () {
+          onPress: () async {
             ZegoLoggerService.logInfo(
               'restore mini state by hang up',
               tag: 'call',
@@ -313,11 +331,9 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             ZegoCallMiniOverlayMachine()
                 .changeState(ZegoCallMiniOverlayPageState.idle);
 
-            /// because group call invitation enter call directly,
-            /// so need cancel if end call
-            ZegoUIKitPrebuiltCallInvitationService()
+            await ZegoUIKitPrebuiltCallInvitationService()
                 .private
-                .cancelGroupCallInvitation();
+                .clearInvitation();
 
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,

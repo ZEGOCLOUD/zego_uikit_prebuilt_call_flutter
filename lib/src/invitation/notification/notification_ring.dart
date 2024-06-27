@@ -3,7 +3,7 @@ import 'dart:async';
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:vibration/vibration.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Flutter imports:
@@ -27,7 +27,7 @@ class ZegoRingtone {
   }) {
     ZegoLoggerService.logInfo(
       'init: prefix:$prefix, source path:$sourcePath',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
@@ -60,7 +60,7 @@ class ZegoRingtone {
     if (isRingTimerRunning) {
       ZegoLoggerService.logInfo(
         'ring is running',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'ringtone',
       );
 
@@ -69,7 +69,7 @@ class ZegoRingtone {
 
     ZegoLoggerService.logInfo(
       'start ring, source path:$sourcePath',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
@@ -83,26 +83,36 @@ class ZegoRingtone {
       await audioPlayer.play(AssetSource(sourcePath)).then((value) {
         ZegoLoggerService.logInfo(
           'audioPlayer play done',
-          tag: 'call',
+          tag: 'call-invitation',
           subTag: 'ringtone',
         );
       });
     } catch (e) {
       ZegoLoggerService.logInfo(
         'audioPlayer play error:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'ringtone',
       );
     }
     if (isVibrate) {
-      Vibrate.vibrate();
+      Vibration.hasVibrator().then((hasVibrator) {
+        if (hasVibrator ?? false) {
+          Vibration.vibrate();
+        } else {
+          ZegoLoggerService.logWarn(
+            'has not vibrate capabilities',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+        }
+      });
     }
 
     Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
       if (!isRingTimerRunning) {
         ZegoLoggerService.logInfo(
           'ring timer ended',
-          tag: 'call',
+          tag: 'call-invitation',
           subTag: 'ringtone',
         );
 
@@ -110,14 +120,14 @@ class ZegoRingtone {
           audioPlayer.stop().then((value) {
             ZegoLoggerService.logInfo(
               'audioPlayer stop done',
-              tag: 'call',
+              tag: 'call-invitation',
               subTag: 'ringtone',
             );
           });
         } catch (e) {
           ZegoLoggerService.logInfo(
             'audioPlayer stop error:$e',
-            tag: 'call',
+            tag: 'call-invitation',
             subTag: 'ringtone',
           );
         }
@@ -125,7 +135,17 @@ class ZegoRingtone {
         timer.cancel();
       } else {
         if (isVibrate) {
-          Vibrate.vibrate();
+          Vibration.hasVibrator().then((hasVibrator) {
+            if (hasVibrator ?? false) {
+              Vibration.vibrate();
+            } else {
+              ZegoLoggerService.logWarn(
+                'has not vibrate capabilities',
+                tag: 'call-invitation',
+                subTag: 'ringtone',
+              );
+            }
+          });
         }
       }
     });
@@ -134,7 +154,7 @@ class ZegoRingtone {
   Future<void> stopRing() async {
     ZegoLoggerService.logInfo(
       'stop ring',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
@@ -148,14 +168,14 @@ class ZegoRingtone {
       await audioPlayer.stop().then((value) {
         ZegoLoggerService.logInfo(
           'audioPlayer stop done',
-          tag: 'call',
+          tag: 'call-invitation',
           subTag: 'ringtone',
         );
       });
     } catch (e) {
       ZegoLoggerService.logInfo(
         'audioPlayer stop error:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'ringtone',
       );
     }

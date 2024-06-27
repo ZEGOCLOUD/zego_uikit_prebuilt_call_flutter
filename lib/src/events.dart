@@ -22,16 +22,17 @@ class ZegoUIKitPrebuiltCallEvents {
   /// end reason is due to being kicked, you can determine who initiated the
   /// kick by using the variable [event.kickerUserID].
   ///
-  /// The default behavior is to return to the previous page like following:
+  /// The default behavior is to return to the previous page or hide the minimize page.
+  /// like following:
   /// ``` dart
   /// onCallEnd: (
   ///     ZegoCallEndEvent event,
-  ///     /// defaultAction to return to the previous page
+  ///     /// defaultAction to return to the previous page or hide the minimize page
   ///     VoidCallback defaultAction,
   /// ) {
   ///   debugPrint('onCallEnd, do whatever you want');
   ///
-  ///   /// you can call this defaultAction to return to the previous page,
+  ///   /// you can call this defaultAction to return to the previous page or hide the minimize page
   ///   defaultAction.call();
   /// }
   /// ```

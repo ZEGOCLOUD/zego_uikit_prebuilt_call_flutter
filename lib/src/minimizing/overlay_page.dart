@@ -572,7 +572,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
         ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoLoggerService.logInfo(
         'onUserLeave, not in minimizing',
-        tag: 'call',
+        tag: 'call-minimize',
         subTag: 'overlay page',
       );
 
@@ -581,7 +581,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
     ZegoLoggerService.logInfo(
       'onUserLeave',
-      tag: 'call',
+      tag: 'call-minimize',
       subTag: 'overlay page',
     );
 

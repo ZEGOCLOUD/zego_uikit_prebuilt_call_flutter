@@ -58,7 +58,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
           ZegoLoggerService.logInfo(
             'onStateChanged, '
             'currentState:$currentState, ',
-            tag: 'call',
+            tag: 'call-invitation',
             subTag: 'calling page',
           );
         });
@@ -162,7 +162,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
       'create prebuilt call page, '
       'is group call:${widget.pageManager.isGroupCall}, '
       'invitationData:${widget.pageManager.invitationData}',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'calling page',
     );
 
@@ -176,7 +176,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
 
     ZegoLoggerService.logInfo(
       'create prebuilt call page',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'calling page',
     );
     if (!widget.pageManager.isGroupCall) {
@@ -191,13 +191,13 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
           ];
           ZegoLoggerService.logInfo(
             'requiredUsers.users set as (${callConfig.user.requiredUsers.users})',
-            tag: 'call',
+            tag: 'call-invitation',
             subTag: 'calling page',
           );
         } else {
           ZegoLoggerService.logInfo(
             'config.user.requiredUsers.users had value(${callConfig.user.requiredUsers.users}) before, would not replace it',
-            tag: 'call',
+            tag: 'call-invitation',
             subTag: 'calling page',
           );
         }

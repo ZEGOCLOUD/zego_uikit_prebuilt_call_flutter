@@ -1,6 +1,5 @@
 
 - [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcallzego_uikit_prebuilt_callzegouikitprebuiltcall-classhtml)
-- [ZegoUIKitPrebuiltCallConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallConfig-class.html)
 - [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservicezego_uikit_prebuilt_callzegouikitprebuiltcallinvitationservice-classhtml)
   - [init](#init)
   - [uninit](#uninit)

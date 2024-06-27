@@ -8,7 +8,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/inner_text.dart';
-import 'deprecated/deprecated.dart';
 
 /// Configuration for initializing the Call
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].
@@ -208,31 +207,22 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
     ZegoCallUserConfig? userConfig,
-    @Deprecated(
-        'use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440')
-    ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
     ZegoLayout? layout,
     this.foreground,
     this.background,
     this.avatarBuilder,
-    @Deprecated(
-        'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
-    ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoView = (audioVideoViewConfig ??
-            ZegoCallAudioVideoViewConfig())
-          ..containerBuilder = audioVideoContainerBuilder,
+        audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
         bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
         memberList = memberListConfig ?? ZegoCallMemberListConfig(),
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
         user = userConfig ?? ZegoCallUserConfig(),
-        hangUpConfirmDialog = (hangUpConfirmDialog ??
-            ZegoCallHangUpConfirmDialogConfig())
-          ..info = hangUpConfirmDialogInfo,
+        hangUpConfirmDialog =
+            hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig(),
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
@@ -292,6 +282,15 @@ class ZegoCallAudioVideoViewConfig {
   /// You can return any widget, and we will place it at the top of the audio/video view.
   ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
 
+  /// When inviting in calling, the invited user window will appear on the
+  /// invitation side, if you want to hide this view, set it to false.
+  /// you can cancel the invitation for this user in this view.
+  bool showWaitingCallAcceptAudioVideoView;
+
+  /// When inviting in calling, the invited user window will appear on the invitation side,
+  /// and you can customize the foreground at this time.
+  ZegoAudioVideoViewForegroundBuilder? waitingCallAcceptForegroundBuilder;
+
   /// Background for the audio/video windows in a call.
   /// You can use any widget as the background for the audio/video windows. This can be a video, a GIF animation, an image, a web page, or any other widget.
   /// If you need to dynamically change the background content, you should implement the logic for dynamic modification within the widget you return.
@@ -327,7 +326,9 @@ class ZegoCallAudioVideoViewConfig {
     this.useVideoViewAspectFill = false,
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
+    this.showWaitingCallAcceptAudioVideoView = true,
     this.foregroundBuilder,
+    this.waitingCallAcceptForegroundBuilder,
     this.backgroundBuilder,
     this.containerBuilder,
     this.containerRect,

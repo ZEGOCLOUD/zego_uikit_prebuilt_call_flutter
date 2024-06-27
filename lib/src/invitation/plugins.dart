@@ -59,7 +59,7 @@ class ZegoCallPrebuiltPlugins {
       ZegoUIKit().getPlugin(pluginType)?.getVersion().then((version) {
         ZegoLoggerService.logInfo(
           'plugin-$pluginType version: $version',
-          tag: 'call',
+          tag: 'call-invitation',
           subTag: 'plugin',
         );
       });
@@ -87,7 +87,7 @@ class ZegoCallPrebuiltPlugins {
   Future<void> init({Future<void> Function()? onPluginInit}) async {
     ZegoLoggerService.logInfo(
       'plugins init',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
     await ZegoUIKit()
@@ -99,13 +99,13 @@ class ZegoCallPrebuiltPlugins {
 
     ZegoLoggerService.logInfo(
       'plugins init done, login...',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
     await ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
     ZegoLoggerService.logInfo(
       'plugins login done',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
     initialized = true;
@@ -114,7 +114,7 @@ class ZegoCallPrebuiltPlugins {
 
     ZegoLoggerService.logInfo(
       'plugins init done',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
   }
@@ -122,7 +122,7 @@ class ZegoCallPrebuiltPlugins {
   Future<void> uninit() async {
     ZegoLoggerService.logInfo(
       'uninit',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
     initialized = false;
@@ -151,14 +151,14 @@ class ZegoCallPrebuiltPlugins {
       'local user:($localUser) '
       'initialized:$initialized, '
       'user state:${pluginUserStateNotifier.value}',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
     if (!initialized) {
       ZegoLoggerService.logInfo(
         'onUserInfoUpdate, plugin is not init',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
       return;
@@ -168,7 +168,7 @@ class ZegoCallPrebuiltPlugins {
         ZegoSignalingPluginConnectionState.connected) {
       ZegoLoggerService.logInfo(
         'onUserInfoUpdate, user state is not connected',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
       return;
@@ -177,7 +177,7 @@ class ZegoCallPrebuiltPlugins {
     if (localUser.id == userID && localUser.name == userName) {
       ZegoLoggerService.logInfo(
         'same user, cancel this re-login',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
       return;
@@ -191,7 +191,7 @@ class ZegoCallPrebuiltPlugins {
       ZegoSignalingPluginConnectionStateChangedEvent event) {
     ZegoLoggerService.logInfo(
       '[call invitation] onInvitationConnectionState, $event',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
@@ -208,7 +208,7 @@ class ZegoCallPrebuiltPlugins {
   void onSignalingError(ZegoSignalingError error) {
     ZegoLoggerService.logError(
       'on signaling error:$error',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
@@ -222,14 +222,14 @@ class ZegoCallPrebuiltPlugins {
   void didChangeAppLifecycleState(bool isAppInBackground) {
     ZegoLoggerService.logInfo(
       'didChangeAppLifecycleState, isAppInBackground:$isAppInBackground',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
     if (!isAppInBackground) {
       ZegoLoggerService.logInfo(
         'app active from background, try re-login',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
 
@@ -241,7 +241,7 @@ class ZegoCallPrebuiltPlugins {
     ZegoLoggerService.logInfo(
       'onNetworkModeChanged $networkMode, previous '
       'network state: $networkState',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
@@ -269,14 +269,14 @@ class ZegoCallPrebuiltPlugins {
     ZegoLoggerService.logInfo(
       'tryReLogin, initialized:$initialized, '
       'state:${pluginUserStateNotifier.value}',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
 
     if (!initialized) {
       ZegoLoggerService.logInfo(
         'tryReLogin, plugin is not init',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
       return;
@@ -286,7 +286,7 @@ class ZegoCallPrebuiltPlugins {
         ZegoSignalingPluginConnectionState.disconnected) {
       ZegoLoggerService.logInfo(
         'tryReLogin, user state is not disconnected',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'plugin',
       );
       return;
@@ -294,7 +294,7 @@ class ZegoCallPrebuiltPlugins {
 
     ZegoLoggerService.logInfo(
       're-login, id:$userID, name:$userName',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'plugin',
     );
     tryReLogging = true;

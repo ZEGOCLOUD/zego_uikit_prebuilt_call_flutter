@@ -41,7 +41,7 @@ class ZegoCallMiniOverlayMachine {
 
     ZegoLoggerService.logInfo(
       'add listener:$listener, size:${_onStateChangedListeners.length}',
-      tag: 'call',
+      tag: 'call-minimize',
       subTag: 'overlay machine',
     );
   }
@@ -52,7 +52,7 @@ class ZegoCallMiniOverlayMachine {
 
     ZegoLoggerService.logInfo(
       'remove listener:$listener, size:${_onStateChangedListeners.length}',
-      tag: 'call',
+      tag: 'call-minimize',
       subTag: 'overlay machine',
     );
   }
@@ -60,14 +60,14 @@ class ZegoCallMiniOverlayMachine {
   void init() {
     ZegoLoggerService.logInfo(
       'init',
-      tag: 'call',
+      tag: 'call-minimize',
       subTag: 'overlay machine',
     );
 
     _machine.onAfterTransition.listen((event) {
       ZegoLoggerService.logInfo(
         'mini overlay, from ${event.source} to ${event.target}',
-        tag: 'call',
+        tag: 'call-minimize',
         subTag: 'overlay machine',
       );
 
@@ -86,7 +86,7 @@ class ZegoCallMiniOverlayMachine {
   void changeState(ZegoCallMiniOverlayPageState state) {
     ZegoLoggerService.logInfo(
       'change state outside to $state',
-      tag: 'call',
+      tag: 'call-minimize',
       subTag: 'overlay machine',
     );
 

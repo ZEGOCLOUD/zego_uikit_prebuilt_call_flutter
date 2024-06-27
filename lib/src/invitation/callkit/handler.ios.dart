@@ -6,7 +6,6 @@ import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 
@@ -17,9 +16,10 @@ UUID? iOSIncomingPushUUID;
 /// [iOS] VoIP event callback
 void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   ZegoLoggerService.logInfo(
-    'on incoming push received: extras:$extras, uuid:$uuid',
-    tag: 'call',
-    subTag: 'background message',
+    'on message received: '
+    'extras:$extras, uuid:$uuid',
+    tag: 'call-invitation',
+    subTag: 'offline',
   );
 
   iOSIncomingPushUUID = uuid;
@@ -33,18 +33,12 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
   await setOfflineCallKitCallID(invitationInternalData.callID).then((value) {
+    // flag[0] = true;
+
     ZegoLoggerService.logInfo(
       'cache ${invitationInternalData.callID}',
-      tag: 'call',
-      subTag: 'background message',
-    );
-  });
-
-  await ZegoCallPluginPlatform.instance.activeAudioByCallKit().then((value) {
-    ZegoLoggerService.logInfo(
-      'activeAudioByCallKit',
-      tag: 'call',
-      subTag: 'background message',
+      tag: 'call-invitation',
+      subTag: 'offline',
     );
   });
 }

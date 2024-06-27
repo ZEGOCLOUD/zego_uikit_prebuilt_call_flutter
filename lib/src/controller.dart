@@ -180,6 +180,8 @@ class ZegoUIKitPrebuiltCallController
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
+    await ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
+
     final endEvent = ZegoCallEndEvent(
       callID: ZegoUIKit().getRoom().id,
       reason: reason,
@@ -197,7 +199,7 @@ class ZegoUIKitPrebuiltCallController
     }
 
     ZegoLoggerService.logInfo(
-      'hang up, finished, test:${private.events}',
+      'hang up, finished',
       tag: 'call',
       subTag: 'controller',
     );
@@ -207,9 +209,9 @@ class ZegoUIKitPrebuiltCallController
 
   ZegoUIKitPrebuiltCallController._internal() {
     ZegoLoggerService.logInfo(
-      'ZegoUIKitPrebuiltCallController create',
+      'create',
       tag: 'call',
-      subTag: 'call controller(${identityHashCode(this)})',
+      subTag: 'controller(${identityHashCode(this)})',
     );
   }
 

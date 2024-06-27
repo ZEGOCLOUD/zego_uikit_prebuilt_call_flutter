@@ -19,7 +19,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoCallInvitationPageManager pageManager;
   final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
 
-  final ZegoCallType invitationType;
+  final ZegoCallInvitationType invitationType;
   final ZegoUIKitUser inviter;
   final ZegoCallButtonUIConfig declineButtonConfig;
   final ZegoCallButtonUIConfig acceptButtonConfig;
@@ -82,7 +82,9 @@ class ZegoInviteeCallingBottomToolBarState
 
   Widget declineButton() {
     return ZegoRefuseInvitationButton(
+      isAdvancedMode: true,
       inviterID: widget.inviter.id,
+      targetInvitationID: widget.pageManager.invitationData.invitationID,
       // data customization is not supported
       data: const JsonEncoder().convert({
         ZegoCallInvitationProtocolKey.reason:
@@ -110,7 +112,10 @@ class ZegoInviteeCallingBottomToolBarState
 
   Widget acceptButton() {
     return ZegoAcceptInvitationButton(
+      isAdvancedMode: true,
       inviterID: widget.inviter.id,
+      targetInvitationID: widget.pageManager.invitationData.invitationID,
+      customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
       icon: ButtonIcon(
         icon: widget.acceptButtonConfig.icon ??
             Image(
@@ -131,11 +136,11 @@ class ZegoInviteeCallingBottomToolBarState
     );
   }
 
-  String imageURLByInvitationType(ZegoCallType invitationType) {
+  String imageURLByInvitationType(ZegoCallInvitationType invitationType) {
     switch (invitationType) {
-      case ZegoCallType.voiceCall:
+      case ZegoCallInvitationType.voiceCall:
         return InvitationStyleIconUrls.toolbarBottomVoice;
-      case ZegoCallType.videoCall:
+      case ZegoCallInvitationType.videoCall:
         return InvitationStyleIconUrls.toolbarBottomVideo;
     }
   }

@@ -31,7 +31,7 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   Function(
     String callID,
     ZegoCallUser caller,
-    ZegoCallType callType,
+    ZegoCallInvitationType callType,
     List<ZegoCallUser> callees,
     String customData,
   )? onIncomingCallReceived;

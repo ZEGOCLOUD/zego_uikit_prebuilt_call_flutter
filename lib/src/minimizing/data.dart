@@ -58,10 +58,11 @@ class ZegoCallMinimizeData {
   final List<IZegoUIKitPlugin>? plugins;
   @override
   String toString() {
-    return 'app id:$appID, app sign:$appSign, call id:$callID, '
+    return 'ZegoCallMinimizeData{'
+        'app id:$appID, app sign:$appSign, call id:$callID, '
         'isPrebuiltFromMinimizing: $isPrebuiltFromMinimizing, '
         'user id:$userID, user name:$userName, '
         'duration start time:$durationStartTime, '
-        'config:$config ';
+        'config:$config}';
   }
 }

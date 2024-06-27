@@ -21,9 +21,21 @@ class ZegoCallInvitationProtocolKey {
   static String reason = 'reason';
   static String refuseByDecline = 'decline';
   static String refuseByBusy = 'busy';
+
+  ///
+  static String version = 'v';
 }
 
-class ZegoCallInvitationSendRequestProtocol {
+mixin ZegoCallInvitationProtocolVersion {
+  String version = 'f1.0';
+
+  void _parseVersionFromMap(Map<String, dynamic> dict) {
+    version = dict[ZegoCallInvitationProtocolKey.version] ?? 'f1.0';
+  }
+}
+
+class ZegoCallInvitationSendRequestProtocol
+    with ZegoCallInvitationProtocolVersion {
   String callID = '';
   List<ZegoUIKitUser> invitees = [];
   String customData = '';
@@ -45,7 +57,7 @@ class ZegoCallInvitationSendRequestProtocol {
     } catch (e) {
       ZegoLoggerService.logError(
         'InvitationSendRequestData, json decode data exception:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'protocols',
       );
     }
@@ -71,6 +83,8 @@ class ZegoCallInvitationSendRequestProtocol {
       );
       invitees.add(user);
     }
+
+    _parseVersionFromMap(dict);
   }
 
   String toJson() {
@@ -84,15 +98,17 @@ class ZegoCallInvitationSendRequestProtocol {
           .toList(),
       ZegoCallInvitationProtocolKey.timeout: timeout,
       ZegoCallInvitationProtocolKey.customData: customData,
+      ZegoCallInvitationProtocolKey.version: version,
     };
     return const JsonEncoder().convert(dict);
   }
 }
 
-class ZegoCallInvitationCancelRequestProtocol {
+class ZegoCallInvitationCancelRequestProtocol
+    with ZegoCallInvitationProtocolVersion {
   ZegoCallInvitationCancelRequestProtocol({
     required this.callID,
-    required this.customData,
+    this.customData = '',
   });
 
   String callID = '';
@@ -105,7 +121,7 @@ class ZegoCallInvitationCancelRequestProtocol {
     } catch (e) {
       ZegoLoggerService.logError(
         'InvitationCancelRequestData, json decode data exception:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'protocols',
       );
     }
@@ -122,6 +138,8 @@ class ZegoCallInvitationCancelRequestProtocol {
     callID = dict[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
     customData =
         dict[ZegoCallInvitationProtocolKey.customData] as String? ?? '';
+
+    _parseVersionFromMap(dict);
   }
 
   String toJson() {
@@ -130,12 +148,14 @@ class ZegoCallInvitationCancelRequestProtocol {
       ZegoCallInvitationProtocolKey.operationType:
           BackgroundMessageType.cancelInvitation.text,
       ZegoCallInvitationProtocolKey.customData: customData,
+      ZegoCallInvitationProtocolKey.version: version,
     };
     return const JsonEncoder().convert(dict);
   }
 }
 
-class ZegoCallInvitationRejectRequestProtocol {
+class ZegoCallInvitationRejectRequestProtocol
+    with ZegoCallInvitationProtocolVersion {
   ZegoCallInvitationRejectRequestProtocol({
     required this.reason,
     this.targetInvitationID = '',
@@ -153,7 +173,7 @@ class ZegoCallInvitationRejectRequestProtocol {
     } catch (e) {
       ZegoLoggerService.logError(
         'InvitationCancelRejectData, json decode data exception:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'protocols',
       );
     }
@@ -163,6 +183,8 @@ class ZegoCallInvitationRejectRequestProtocol {
     reason = dict[ZegoCallInvitationProtocolKey.reason] as String? ?? '';
     customData =
         dict[ZegoCallInvitationProtocolKey.customData] as String? ?? '';
+
+    _parseVersionFromMap(dict);
   }
 
   String toJson() {
@@ -170,12 +192,14 @@ class ZegoCallInvitationRejectRequestProtocol {
       ZegoCallInvitationProtocolKey.invitationID: targetInvitationID,
       ZegoCallInvitationProtocolKey.reason: reason,
       ZegoCallInvitationProtocolKey.customData: customData,
+      ZegoCallInvitationProtocolKey.version: version,
     };
     return const JsonEncoder().convert(dict);
   }
 }
 
-class ZegoCallInvitationAcceptRequestProtocol {
+class ZegoCallInvitationAcceptRequestProtocol
+    with ZegoCallInvitationProtocolVersion {
   ZegoCallInvitationAcceptRequestProtocol({
     this.customData = '',
   });
@@ -189,18 +213,21 @@ class ZegoCallInvitationAcceptRequestProtocol {
     } catch (e) {
       ZegoLoggerService.logError(
         'InvitationCancelRejectData, json decode data exception:$e',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'protocols',
       );
     }
 
     customData =
         dict[ZegoCallInvitationProtocolKey.customData] as String? ?? '';
+
+    _parseVersionFromMap(dict);
   }
 
   String toJson() {
     final dict = {
       ZegoCallInvitationProtocolKey.customData: customData,
+      ZegoCallInvitationProtocolKey.version: version,
     };
     return const JsonEncoder().convert(dict);
   }
@@ -217,20 +244,29 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
 
   String invitationID = '';
   ZegoUIKitUser inviter = ZegoUIKitUser.empty();
-  ZegoCallType callType = ZegoCallType.voiceCall;
+  ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
   String payloadData = '';
   bool accept = false;
+  int datetime = 0;
 
   bool get isEmpty => invitationID.isEmpty || payloadData.isEmpty;
 
   ZegoCallInvitationOfflineCallKitCacheParameterProtocol.fromJson(String json) {
+    ZegoLoggerService.logError(
+      'ZegoCallInvitationOfflineCallKitCacheParameterProtocol, json:$json, ',
+      tag: 'call-invitation',
+      subTag: 'protocols',
+    );
+
     var dict = <String, dynamic>{};
     try {
       dict = jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
       ZegoLoggerService.logError(
-        'ZegoCallInvitationOfflineCallKitParameterProtocol, json decode data exception:$e',
-        tag: 'call',
+        'ZegoCallInvitationOfflineCallKitParameterProtocol, '
+        'json decode data exception:$e, '
+        'data:$json, ',
+        tag: 'call-invitation',
         subTag: 'protocols',
       );
     }
@@ -244,16 +280,23 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   }
 
   void _parseFromMap(Map<String, dynamic> dict) {
+    ZegoLoggerService.logInfo(
+      'ZegoCallInvitationOfflineCallKitParameterProtocol, _parseFromMap:$dict',
+      tag: 'call-invitation',
+      subTag: 'protocols',
+    );
+
     invitationID =
         dict[ZegoCallInvitationProtocolKey.invitationID] as String? ?? '';
     inviter = ZegoUIKitUser.fromJson(
       dict['inviter'] as Map<String, dynamic>? ?? {},
     );
     callType = ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
-        ZegoCallType.voiceCall;
+        ZegoCallInvitationType.voiceCall;
     payloadData = dict['data'] as String? ?? '';
 
     accept = dict['accept'] as bool? ?? false;
+    datetime = dict['datetime'] as int? ?? 0;
   }
 
   String toJson() {
@@ -266,5 +309,6 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
         'type': callType.value,
         'data': payloadData,
         'accept': accept,
+        'datetime': datetime,
       };
 }

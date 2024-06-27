@@ -21,6 +21,8 @@ import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
@@ -36,6 +38,7 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// {@category APIs}
 /// {@category Events}
 /// {@category Configs}
+/// {@category Components}
 /// {@category Migration_v4.x}
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
@@ -93,8 +96,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   var barVisibilityNotifier = ValueNotifier<bool>(true);
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
   var chatViewVisibleNotifier = ValueNotifier<bool>(false);
+  final waitingAcceptUserNotifier = ValueNotifier<List<ZegoUIKitUser>>([]);
 
   List<StreamSubscription<dynamic>?> subscriptions = [];
+  List<StreamSubscription<dynamic>?> userSubscriptions = [];
   ZegoCallEventListener? _eventListener;
 
   late ZegoCallMinimizeData minimizeData;
@@ -128,7 +133,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.11.6; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.12.9; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -153,6 +158,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
 
     correctConfigValue();
+    onInvitingUsersUpdated();
 
     minimizeData = ZegoCallMinimizeData(
       appID: widget.appID,
@@ -174,6 +180,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         tag: 'call',
         subTag: 'prebuilt',
       );
+
+      listenUserEvents();
     } else {
       controller.private.initByPrebuilt(
         prebuiltConfig: widget.config,
@@ -190,16 +198,18 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
 
       /// not wake from mini page
-      initContext();
+      initContext().then((_) {
+        listenUserEvents();
+      });
     }
     ZegoCallMiniOverlayMachine().changeState(ZegoCallMiniOverlayPageState.idle);
 
-    subscriptions
-      ..add(
-        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
-      )
-      ..add(ZegoUIKit().getErrorStream().listen(onUIKitError))
-      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+    subscriptions.add(ZegoUIKit().getErrorStream().listen(onUIKitError));
+
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .invitingUsersNotifier
+        .addListener(onInvitingUsersUpdated);
 
     checkRequiredParticipant();
   }
@@ -213,6 +223,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     for (final subscription in subscriptions) {
       subscription?.cancel();
     }
+    for (final subscription in userSubscriptions) {
+      subscription?.cancel();
+    }
+
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .invitingUsersNotifier
+        .removeListener(onInvitingUsersUpdated);
 
     widget.onDispose?.call();
 
@@ -220,6 +238,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
+      ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
+
       controller.private.uninitByPrebuilt();
       controller.user.private.uninitByPrebuilt();
       controller.audioVideo.private.uninitByPrebuilt();
@@ -242,12 +262,24 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
   }
 
+  void listenUserEvents() {
+    for (final subscription in userSubscriptions) {
+      subscription?.cancel();
+    }
+
+    userSubscriptions
+      ..add(
+        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
+      )
+      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+  }
+
   void checkRequiredParticipant() {
     if (!widget.config.user.requiredUsers.enabled) {
       ZegoLoggerService.logInfo(
         'requiredUsers not enabled',
         tag: 'call',
-        subTag: 'prebuilt',
+        subTag: 'prebuilt, checkRequiredParticipant',
       );
 
       return;
@@ -273,7 +305,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         'kDebugMode:$kDebugMode, '
         'detectInDebugMode:${widget.config.user.requiredUsers.detectInDebugMode}',
         tag: 'call',
-        subTag: 'prebuilt',
+        subTag: 'prebuilt, checkRequiredParticipant',
       );
     }
   }
@@ -365,7 +397,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     await initEffectsPlugins();
 
     final config = widget.config;
-    initPermissions().then((value) async {
+    await initPermissions().then((value) async {
       ZegoUIKit().login(widget.userID, widget.userName);
 
       /// first set before create express
@@ -392,7 +424,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
           ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
-        ZegoUIKit().joinRoom(widget.callID).then((result) async {
+        await ZegoUIKit().joinRoom(widget.callID).then((result) async {
           assert(result.errorCode == 0);
 
           if (result.errorCode != 0) {
@@ -469,6 +501,92 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
   }
 
+  void onInvitingUsersUpdated() {
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) == null) {
+      ZegoLoggerService.logInfo(
+        'onInvitingUsersUpdated, '
+        'signaling plugin is null',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      return;
+    }
+
+    final invitingUsers = ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .invitingUsersNotifier
+        .value;
+
+    ZegoLoggerService.logInfo(
+      'onInvitingUsersUpdated, '
+      'invitingUsers:$invitingUsers',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+    waitingAcceptUserNotifier.value = invitingUsers
+        .map((u) => ZegoUIKitUser(
+              id: u.id,
+              name: u.name,
+            ))
+        .toList();
+    if (waitingAcceptUserNotifier.value.isEmpty) {
+      final currentInvitationID = ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .currentCallInvitationData
+          .invitationID;
+      final remoteUserIsEmpty = ZegoUIKit().getRemoteUsers().isEmpty;
+      final localIsInitiator = ZegoUIKit().getLocalUser().id ==
+          ZegoUIKit()
+              .getSignalingPlugin()
+              .getAdvanceInitiator(currentInvitationID)
+              ?.userID;
+      final hasWaitingInvitee = ZegoUIKit()
+          .getSignalingPlugin()
+          .getAdvanceInvitees(currentInvitationID)
+          .where((e) =>
+              e.state == AdvanceInvitationState.idle ||
+              e.state == AdvanceInvitationState.waiting ||
+              e.state == AdvanceInvitationState.accepted)
+          .toList()
+          .isNotEmpty;
+
+      ZegoLoggerService.logInfo(
+        'no wait inviting users now, '
+        'currentInvitationID:$currentInvitationID, '
+        'remoteUserIsEmpty:$remoteUserIsEmpty, '
+        'localIsInitiator:$localIsInitiator, '
+        'hasWaitingInvitee:$hasWaitingInvitee, ',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+      if (remoteUserIsEmpty && localIsInitiator && !hasWaitingInvitee) {
+        ZegoLoggerService.logInfo(
+          'no wait inviting users now and not remote user exist, auto end',
+          tag: 'call',
+          subTag: 'prebuilt',
+        );
+
+        ///  remote users is empty
+        final callEndEvent = ZegoCallEndEvent(
+          callID: widget.callID,
+          reason: ZegoCallEndReason.abandoned,
+          isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
+              ZegoUIKitPrebuiltCallController().minimize.state,
+        );
+        defaultAction() {
+          defaultEndAction(callEndEvent);
+        }
+
+        if (events.onCallEnd != null) {
+          events.onCallEnd?.call(callEndEvent, defaultAction);
+        } else {
+          defaultAction.call();
+        }
+      }
+    }
+  }
+
   void onUserLeave(List<ZegoUIKitUser> users) {
     if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
       return;
@@ -533,7 +651,24 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         borderRadius: 18.0.zW,
         borderColor: Colors.transparent,
         backgroundBuilder: audioVideoViewBackground,
-        foregroundBuilder: audioVideoViewForeground,
+        foregroundBuilder: (
+          BuildContext context,
+          Size size,
+          ZegoUIKitUser? user,
+          Map<String, dynamic> extraInfo,
+        ) {
+          return ValueListenableBuilder(
+            valueListenable: waitingAcceptUserNotifier,
+            builder: (context, _, __) {
+              return audioVideoViewForeground(
+                context,
+                size,
+                user,
+                extraInfo,
+              );
+            },
+          );
+        },
         avatarConfig: ZegoAvatarConfig(
           showInAudioMode: widget.config.audioVideoView.showAvatarInAudioMode,
           showSoundWavesInAudioMode:
@@ -546,32 +681,32 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return Positioned.fromRect(
       rect: widget.config.audioVideoView.containerRect?.call() ??
           Rect.fromLTWH(0, 0, preferWidth, preferHeight),
-      child: widget.config.audioVideoView.containerBuilder != null
-          ? StreamBuilder<List<ZegoUIKitUser>>(
-              stream: ZegoUIKit().getUserListStream(),
-              builder: (context, snapshot) {
-                final allUsers = ZegoUIKit().getAllUsers();
-                return StreamBuilder<List<ZegoUIKitUser>>(
-                  stream: ZegoUIKit().getAudioVideoListStream(),
-                  builder: (context, snapshot) {
-                    return widget.config.audioVideoView.containerBuilder!.call(
-                          context,
-                          allUsers,
-                          ZegoUIKit().getAudioVideoList(),
-                          audioVideoViewCreator,
-                        ) ??
-                        defaultAudioVideoContainer();
-                  },
-                );
-              },
-            )
-          : defaultAudioVideoContainer(),
+      child: StreamBuilder<List<ZegoUIKitUser>>(
+        stream: ZegoUIKit().getUserListStream(),
+        builder: (context, snapshot) {
+          final allUsers = ZegoUIKit().getAllUsers();
+          return StreamBuilder<List<ZegoUIKitUser>>(
+            stream: ZegoUIKit().getAudioVideoListStream(),
+            builder: (context, snapshot) {
+              return widget.config.audioVideoView.containerBuilder?.call(
+                    context,
+                    allUsers,
+                    ZegoUIKit().getAudioVideoList(),
+                    audioVideoViewCreator,
+                  ) ??
+                  defaultAudioVideoContainer();
+            },
+          );
+        },
+      ),
     );
   }
 
   Widget defaultAudioVideoContainer() {
     /// audio video container
-    if (widget.config.layout is ZegoLayoutPictureInPictureConfig) {
+    final isPIPLayout =
+        widget.config.layout is ZegoLayoutPictureInPictureConfig;
+    if (isPIPLayout) {
       final layout = (widget.config.layout as ZegoLayoutPictureInPictureConfig)
         ..smallViewSize ??= Size(190.0.zW, 338.0.zH)
         ..margin ??= EdgeInsets.only(
@@ -585,10 +720,18 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     return ZegoAudioVideoContainer(
       layout: widget.config.layout,
-      sources: const [
-        ZegoAudioVideoContainerSource.user,
-        ZegoAudioVideoContainerSource.audioVideo,
-        ZegoAudioVideoContainerSource.screenSharing,
+      virtualUsersNotifier: waitingAcceptUserNotifier,
+      sources: [
+        ...[
+          ZegoAudioVideoContainerSource.user,
+          ZegoAudioVideoContainerSource.audioVideo,
+          ZegoAudioVideoContainerSource.screenSharing,
+        ],
+        ...(widget.config.audioVideoView.showWaitingCallAcceptAudioVideoView
+            ? [
+                ZegoAudioVideoContainerSource.virtualUser,
+              ]
+            : [])
       ],
       backgroundBuilder: audioVideoViewBackground,
       foregroundBuilder: audioVideoViewForeground,
@@ -715,6 +858,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return Container();
     }
 
+    final isWaitingCallAccept = -1 !=
+        waitingAcceptUserNotifier.value
+            .indexWhere((virtualUser) => user?.id == virtualUser.id);
+    extraInfo[ZegoViewBuilderMapExtraInfoKey.isVirtualUser.name] =
+        isWaitingCallAccept;
+
     return Stack(
       children: [
         widget.config.audioVideoView.foregroundBuilder
@@ -729,6 +878,25 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               widget.config.audioVideoView.showCameraStateOnView,
           showUserNameOnView: widget.config.audioVideoView.showUserNameOnView,
         ),
+        isWaitingCallAccept
+            ? widget.config.audioVideoView.waitingCallAcceptForegroundBuilder
+                    ?.call(context, size, user, extraInfo) ??
+                ZegoWaitingCallAcceptAudioVideoForeground(
+                  size: size,
+                  user: user,
+                  invitationID: ZegoUIKitPrebuiltCallInvitationService()
+                      .private
+                      .currentCallInvitationData
+                      .invitationID,
+                  cancelData: ZegoCallInvitationCancelRequestProtocol(
+                    callID: ZegoUIKitPrebuiltCallInvitationService()
+                        .private
+                        .currentCallInvitationData
+                        .callID,
+                    customData: '',
+                  ).toJson(),
+                )
+            : Container(color: Colors.transparent),
       ],
     );
   }
@@ -747,6 +915,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     if (widget.config.layout is ZegoLayoutGalleryConfig) {
       backgroundColor = const Color(0xff4A4B4D);
     }
+
+    extraInfo[ZegoViewBuilderMapExtraInfoKey.isVirtualUser.name] = -1 !=
+        waitingAcceptUserNotifier.value
+            .indexWhere((virtualUser) => user?.id == virtualUser.id);
 
     return Stack(
       children: [

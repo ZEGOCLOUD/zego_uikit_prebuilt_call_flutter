@@ -32,7 +32,7 @@ class ZegoCallInvitationInternalInstance {
   }) {
     ZegoLoggerService.logInfo(
       'register, pageManager:$pageManager, callInvitationData:$callInvitationData',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'internal instance',
     );
 
@@ -43,7 +43,7 @@ class ZegoCallInvitationInternalInstance {
   void unregister() {
     ZegoLoggerService.logInfo(
       'unregister',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'internal instance',
     );
 

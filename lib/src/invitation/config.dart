@@ -6,6 +6,9 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
 class ZegoCallInvitationConfig {
   ZegoCallInvitationConfig({
+    this.canInvitingInCalling = false,
+    this.endCallWhenInitiatorLeave = false,
+    this.onlyInitiatorCanInvite = false,
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
@@ -30,6 +33,35 @@ class ZegoCallInvitationConfig {
   /// );
   /// ```
   List<ZegoCallInvitationPermission> permissions;
+
+  /// whether to allow invitations in calling
+  /// Default value is false.
+  /// Please note that if allowed, it will be incompatible with versions before v4.12.0, which means mutual invitations cannot be made.
+  bool canInvitingInCalling;
+
+  /// whether only the call initiator has the permission to invite others to
+  /// join the call.
+  /// Default value is false.
+  ///
+  /// If set to false, all participants in the call can invite others.
+  bool onlyInitiatorCanInvite;
+
+  /// whether the entire call should end when the initiator leaves the call
+  /// (will causing other participants to leave together).
+  /// Default value is false.
+  ///
+  /// If set to false, the call can continue even after the initiator leaves.
+  bool endCallWhenInitiatorLeave;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationConfig:{'
+        'permissions:$permissions, '
+        'canInvitingInCalling:$canInvitingInCalling, '
+        'onlyInitiatorCanInvite:$onlyInitiatorCanInvite, '
+        'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
+        '}';
+  }
 }
 
 class ZegoCallInvitationUIConfig {

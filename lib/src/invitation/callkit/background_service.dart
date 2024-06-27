@@ -30,7 +30,7 @@ class ZegoCallKitBackgroundService {
   }) {
     ZegoLoggerService.logInfo(
       'register, pageManager:$pageManager',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'callkit internal instance',
     );
 
@@ -41,7 +41,7 @@ class ZegoCallKitBackgroundService {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'accept invitation, but has not callkit incoming cause by app in background',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'call invitation service',
       );
 
@@ -52,17 +52,34 @@ class ZegoCallKitBackgroundService {
     }
 
     if (_pageManager?.invitationData.callID.isNotEmpty ?? false) {
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
+      if (_pageManager?.isAdvanceInvitationMode ?? true) {
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .acceptAdvanceInvitation(
               inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-              data: '')
-          .then((result) {
-        _pageManager?.onLocalAcceptInvitation(
-          result.error?.code ?? '',
-          result.error?.message ?? '',
-        );
-      });
+              invitationID: _pageManager?.invitationData.invitationID ?? '',
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+            )
+            .then((result) {
+          _pageManager?.onLocalAcceptInvitation(
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+          );
+        });
+      } else {
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .acceptInvitation(
+              inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+            )
+            .then((result) {
+          _pageManager?.onLocalAcceptInvitation(
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+          );
+        });
+      }
     }
   }
 
@@ -72,7 +89,7 @@ class ZegoCallKitBackgroundService {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'refuse invitation, but has not callkit incoming cause by app in background',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'call invitation service',
       );
 
@@ -86,26 +103,46 @@ class ZegoCallKitBackgroundService {
 
     ZegoLoggerService.logInfo(
       'refuse invitation(${_pageManager?.invitationData}) by callkit',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'call invitation service',
     );
 
-    await ZegoUIKit()
-        .getSignalingPlugin()
-        .refuseInvitation(
-          inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-          data: const JsonEncoder().convert({
-            ZegoCallInvitationProtocolKey.reason:
-                ZegoCallInvitationProtocolKey.refuseByDecline,
-          }),
-        )
-        .then((result) {
-      _pageManager?.onLocalRefuseInvitation(
-        result.error?.code ?? '',
-        result.error?.message ?? '',
-        needClearCallKit: needClearCallKit,
-      );
-    });
+    if (_pageManager?.isAdvanceInvitationMode ?? true) {
+      await ZegoUIKit()
+          .getSignalingPlugin()
+          .refuseAdvanceInvitation(
+            inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+            invitationID: _pageManager?.invitationData.invitationID ?? '',
+            data: const JsonEncoder().convert({
+              ZegoCallInvitationProtocolKey.reason:
+                  ZegoCallInvitationProtocolKey.refuseByDecline,
+            }),
+          )
+          .then((result) {
+        _pageManager?.onLocalRefuseInvitation(
+          result.error?.code ?? '',
+          result.error?.message ?? '',
+          needClearCallKit: needClearCallKit,
+        );
+      });
+    } else {
+      await ZegoUIKit()
+          .getSignalingPlugin()
+          .refuseInvitation(
+            inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+            data: const JsonEncoder().convert({
+              ZegoCallInvitationProtocolKey.reason:
+                  ZegoCallInvitationProtocolKey.refuseByDecline,
+            }),
+          )
+          .then((result) {
+        _pageManager?.onLocalRefuseInvitation(
+          result.error?.code ?? '',
+          result.error?.message ?? '',
+          needClearCallKit: needClearCallKit,
+        );
+      });
+    }
   }
 
   Future<void> acceptCallKitIncomingCauseInBackground(
@@ -114,7 +151,7 @@ class ZegoCallKitBackgroundService {
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'accept invitation, but has not callkit incoming cause by app in background',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'call invitation service',
       );
 
@@ -126,7 +163,7 @@ class ZegoCallKitBackgroundService {
 
     ZegoLoggerService.logInfo(
       'accept invitation, callkit call id: $callKitCallID',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'call invitation service',
     );
 
@@ -134,21 +171,38 @@ class ZegoCallKitBackgroundService {
         callKitCallID == _pageManager?.invitationData.callID) {
       ZegoLoggerService.logInfo(
         'accept invitation, auto agree, cause exist callkit params same as current call',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'call invitation service',
       );
 
-      await ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
+      if (_pageManager?.isAdvanceInvitationMode ?? true) {
+        await ZegoUIKit()
+            .getSignalingPlugin()
+            .acceptAdvanceInvitation(
               inviterID: _pageManager?.invitationData.inviter?.id ?? '',
-              data: '')
-          .then((result) {
-        _pageManager?.onLocalAcceptInvitation(
-          result.error?.code ?? '',
-          result.error?.message ?? '',
-        );
-      });
+              invitationID: _pageManager?.invitationData.invitationID ?? '',
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+            )
+            .then((result) {
+          _pageManager?.onLocalAcceptInvitation(
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+          );
+        });
+      } else {
+        await ZegoUIKit()
+            .getSignalingPlugin()
+            .acceptInvitation(
+              inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+            )
+            .then((result) {
+          _pageManager?.onLocalAcceptInvitation(
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+          );
+        });
+      }
     }
   }
 
@@ -166,7 +220,7 @@ class ZegoCallKitBackgroundService {
   Future<void> handUpCurrentCallByCallKit() async {
     ZegoLoggerService.logInfo(
       'hang up by call kit, iOSBackgroundLockCalling:${_pageManager?.inCallingByIOSBackgroundLock}',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'call invitation service',
     );
 
@@ -184,7 +238,7 @@ class ZegoCallKitBackgroundService {
     await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(
         'leave room result, ${result.errorCode} ${result.extendedData}',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'call invitation service',
       );
     });
@@ -202,7 +256,7 @@ class ZegoCallKitBackgroundService {
         ZegoLoggerService.logError(
           'Navigator pop exception:$e, '
           'contextQuery:${_pageManager?.callInvitationData.contextQuery}',
-          tag: 'call',
+          tag: 'call-invitation',
           subTag: 'call invitation service',
         );
       }
@@ -218,7 +272,7 @@ class ZegoCallKitBackgroundService {
 
     ZegoLoggerService.logInfo(
       'setIOSCallKitCallingState:$isCalling',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'call invitation service',
     );
   }

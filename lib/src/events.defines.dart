@@ -11,7 +11,11 @@ typedef ZegoCallEndCallback = void Function(
 typedef ZegoCallHangUpConfirmationCallback = Future<bool> Function(
   ZegoCallHangUpConfirmationEvent event,
 
-  /// defaultAction to return to the previous page
+  /// defaultAction to **return to the previous page** or **hide the minimize page**
+  ///
+  /// If you do not execute defaultAction and want to control the end time of the call yourself, then:
+  /// when [event.isFromMinimizing] is false, just call **Navigator.pop()** or **ZegoUIKitPrebuiltCallController().hangUp()**to return to the previous page
+  /// when [event.isFromMinimizing] is true, just hide the minimize page by call **ZegoUIKitPrebuiltCallController().minimize.hide()**
   Future<bool> Function() defaultAction,
 );
 
@@ -46,14 +50,17 @@ class ZegoCallEndEvent {
   /// end reason
   ZegoCallEndReason reason;
 
-  /// The [isFromMinimizing] it means that the user left the live streaming
+  /// The [isFromMinimizing] it means that the user left the call
   /// while it was in a minimized state.
   ///
   /// You **can not** return to the previous page while it was **in a minimized state**!!!
-  /// just hide the minimize page by [ZegoUIKitPrebuiltCallController().minimize.hide()]
+  /// If you do not execute defaultAction, just hide the minimize page by
+  /// [ZegoUIKitPrebuiltCallController().minimize.hide()].
   ///
   /// On the other hand, if the value of the parameter is false, it means
-  /// that the user left the live streaming while it was not minimized.
+  /// that the user left the call while it was not minimized.
+  /// If you do not execute defaultAction, you are responsible to return to the previous page.
+  /// call [ZegoUIKitPrebuiltCallController().hangUp()] or Navigator.pop().
   bool isFromMinimizing;
 
   ZegoCallEndEvent({

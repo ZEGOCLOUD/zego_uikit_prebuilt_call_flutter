@@ -22,8 +22,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     if (_callKitServiceInit) {
       ZegoLoggerService.logInfo(
         'callkit service had been init',
-        tag: 'call',
-        subTag: 'callkit service',
+        tag: 'call-invitation',
+        subTag: 'callkit',
       );
 
       return;
@@ -31,8 +31,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     ZegoLoggerService.logInfo(
       'callkit service init',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
 
     _callKitServiceInit = true;
@@ -44,8 +44,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     final callKitCallID = await getOfflineCallKitCallID();
     ZegoLoggerService.logInfo(
       'offline callkit call id: $callKitCallID',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
 
     /// In iOS, it is not necessary to explicitly clear the call as it may result in automatically disconnecting the offline call.
@@ -67,8 +67,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     ZegoLoggerService.logInfo(
       'register callkit incoming event listener',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
     FlutterCallkitIncoming.onEvent.listen(_onOnlineCallKitIncomingEvent);
   }
@@ -77,8 +77,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     if (!_callKitServiceInit) {
       ZegoLoggerService.logInfo(
         'callkit service had not been init',
-        tag: 'call',
-        subTag: 'callkit service',
+        tag: 'call-invitation',
+        subTag: 'callkit',
       );
 
       return;
@@ -86,8 +86,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     ZegoLoggerService.logInfo(
       'callkit service uninit',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
 
     _callKitServiceInit = false;
@@ -101,8 +101,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
   void _setCallKitVariables(Map<CallKitInnerVariable, dynamic> variables) {
     ZegoLoggerService.logInfo(
       'set callkit variables:$variables',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
 
     SharedPreferences.getInstance().then((prefs) {
@@ -132,8 +132,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
   Future<void> _onOnlineCallKitIncomingEvent(CallEvent? event) async {
     ZegoLoggerService.logInfo(
       'online callkit incoming event, event:${event?.event}, body:${event?.body}',
-      tag: 'call',
-      subTag: 'callkit service',
+      tag: 'call-invitation',
+      subTag: 'callkit',
     );
 
     switch (event!.event) {

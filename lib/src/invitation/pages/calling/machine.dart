@@ -12,8 +12,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
-// Project imports:
-
 /// @nodoc
 enum CallingState {
   kIdle,
@@ -52,14 +50,14 @@ class ZegoCallingMachine {
   void init() {
     ZegoLoggerService.logInfo(
       'init',
-      tag: 'call',
+      tag: 'call-invitation',
       subTag: 'machine',
     );
 
     machine.onAfterTransition.listen((event) {
       ZegoLoggerService.logInfo(
         'calling, from ${event.source} to ${event.target}',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'machine',
       );
 
@@ -73,7 +71,7 @@ class ZegoCallingMachine {
         () {
           ZegoLoggerService.logInfo(
             'calling machine to be idle',
-            tag: 'call',
+            tag: 'call-invitation',
             subTag: 'machine',
           );
         },
@@ -94,7 +92,7 @@ class ZegoCallingMachine {
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'machine',
       );
 
@@ -104,7 +102,7 @@ class ZegoCallingMachine {
     if (isPagePushed) {
       ZegoLoggerService.logInfo(
         'page had pushed',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'machine',
       );
       return;
@@ -132,7 +130,7 @@ class ZegoCallingMachine {
       ZegoLoggerService.logError(
         'Navigator push exception:$e, '
         'contextQuery:${callInvitationData.contextQuery}, ',
-        tag: 'call',
+        tag: 'call-invitation',
         subTag: 'machine',
       );
     }

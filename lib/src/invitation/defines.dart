@@ -10,48 +10,56 @@ typedef ZegoCallPrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
 );
 
 /// Call Type
-enum ZegoCallType {
+enum ZegoCallInvitationType {
   voiceCall,
   videoCall,
 }
+// ZegoLiveStreamingInvitationType.requestCoHost: 2,
+// ZegoLiveStreamingInvitationType.inviteToJoinCoHost: 3,
+// ZegoLiveStreamingInvitationType.removeFromCoHost: 4,
+// // ZegoLiveStreamingInvitationType.crossRoomPKBattleRequest: 5,
+// ZegoLiveStreamingInvitationType.crossRoomPKBattleRequestV2: 6,
 
-extension ZegoCallTypeExtension on ZegoCallType {
+extension ZegoCallTypeExtension on ZegoCallInvitationType {
   static bool isCallType(int type) {
-    return type == ZegoCallType.voiceCall.value ||
-        type == ZegoCallType.videoCall.value;
+    return type == ZegoCallInvitationType.voiceCall.value ||
+        type == ZegoCallInvitationType.videoCall.value;
   }
 
   static const valueMap = {
-    ZegoCallType.voiceCall: 0,
-    ZegoCallType.videoCall: 1,
+    ZegoCallInvitationType.voiceCall: 0,
+    ZegoCallInvitationType.videoCall: 1,
   };
 
   int get value => valueMap[this] ?? -1;
 
-  static const Map<int, ZegoCallType> mapValue = {
-    0: ZegoCallType.voiceCall,
-    1: ZegoCallType.videoCall,
+  static const Map<int, ZegoCallInvitationType> mapValue = {
+    0: ZegoCallInvitationType.voiceCall,
+    1: ZegoCallInvitationType.videoCall,
   };
 }
 
 class ZegoCallInvitationData {
   String callID = '';
   String invitationID = ''; //zim call id
-  ZegoCallType type = ZegoCallType.voiceCall;
+  ZegoCallInvitationType type = ZegoCallInvitationType.voiceCall;
   List<ZegoUIKitUser> invitees = [];
   ZegoUIKitUser? inviter;
   String customData = '';
 
   ZegoCallInvitationData.empty();
+  bool get isEmpty => callID.isEmpty || invitationID.isEmpty;
 
   @override
   String toString() {
-    return 'callID: $callID, '
+    return 'ZegoCallInvitationData:{'
+        'callID: $callID, '
         'invitationID: $invitationID, '
         'type: $type, '
         'invitees: ${invitees.map((invitee) => invitee.toString())}, '
         'inviter: $inviter, '
-        'customData: $customData.';
+        'customData: $customData.'
+        '}';
   }
 }
 

@@ -322,7 +322,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
             }
             return canHangUp;
           },
-          onPress: () {
+          onPress: () async {
             ZegoLoggerService.logInfo(
               'restore mini state by hang up',
               tag: 'call',
@@ -332,11 +332,9 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
               ZegoCallMiniOverlayPageState.idle,
             );
 
-            /// because group call invitation enter call directly,
-            /// so need cancel if end call
-            ZegoUIKitPrebuiltCallInvitationService()
+            await ZegoUIKitPrebuiltCallInvitationService()
                 .private
-                .cancelGroupCallInvitation();
+                .clearInvitation();
 
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,

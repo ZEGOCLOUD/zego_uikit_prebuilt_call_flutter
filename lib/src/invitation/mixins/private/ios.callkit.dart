@@ -22,14 +22,15 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     if (_iOSCallKitServiceInit) {
       ZegoLoggerService.logInfo(
         'callkit service had been init',
-        tag: 'call',
-        subTag: 'iOS callkit service',
+        tag: 'call-invitation',
+        subTag: 'ios callkit',
       );
 
       return;
     }
 
     _iOSCallKitServiceInit = true;
+
     _callkitServiceSubscriptions
       ..add(ZegoUIKit()
           .getSignalingPlugin()
@@ -82,8 +83,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     ZegoLoggerService.logInfo(
       'service has been inited',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
   }
 
@@ -92,8 +93,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     if (!_iOSCallKitServiceInit) {
       ZegoLoggerService.logInfo(
         'callkit service had not been init',
-        tag: 'call',
-        subTag: 'iOS callkit service',
+        tag: 'call-invitation',
+        subTag: 'ios callkit',
       );
 
       return;
@@ -105,9 +106,9 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     }
 
     ZegoLoggerService.logInfo(
-      'service has been uninited',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      'service has been uninit',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
   }
 
@@ -116,8 +117,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit provider did reset',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
   }
 
@@ -126,8 +127,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit provider did begin',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     ZegoCallPluginPlatform.instance.activeAudioByCallKit();
@@ -138,8 +139,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit activate audio',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
   }
 
@@ -148,8 +149,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit deactivate audio',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
   }
 
@@ -158,8 +159,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit timeout performing action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
@@ -172,8 +173,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform start call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     ZegoCallPluginPlatform.instance.activeAudioByCallKit();
@@ -188,21 +189,62 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform answer call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
-
-    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
 
     event.action.fulfill();
 
-    ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
+    onAnswerCallPerform() {
+      ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
-    getOfflineCallKitCallID().then((callKitCallID) {
-      ZegoCallKitBackgroundService()
-          .acceptCallKitIncomingCauseInBackground(callKitCallID);
-      clearOfflineCallKitCallID();
-    });
+      getOfflineCallKitCallID().then((callKitCallID) {
+        ZegoCallKitBackgroundService()
+            .acceptCallKitIncomingCauseInBackground(callKitCallID);
+        clearOfflineCallKitCallID();
+      });
+
+      ZegoCallPluginPlatform.instance.activeAudioByCallKit();
+    }
+
+    final currentCallInvitationData = ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .currentCallInvitationData;
+    ZegoLoggerService.logInfo(
+      'currentCallInvitationData:$currentCallInvitationData',
+      tag: 'call-invitation',
+      subTag: 'ios callkit, on callkit perform answer call action',
+    );
+    if (currentCallInvitationData.isEmpty) {
+      /// At this point, iOS should have received an online notification
+      /// Otherwise, wait
+      _waitUntil(() {
+        final currentCallInvitationData =
+            ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .currentCallInvitationData;
+        final needWait = currentCallInvitationData.isEmpty;
+        if (needWait) {
+          ZegoLoggerService.logInfo(
+            'currentCallInvitationData:$currentCallInvitationData, is empty, waiting...',
+            tag: 'call-invitation',
+            subTag: 'ios callkit, on callkit perform answer call action',
+          );
+        }
+        return !needWait;
+      }).then((count) {
+        ZegoLoggerService.logInfo(
+          'currentCallInvitationData:$currentCallInvitationData, now is fine, '
+          'count:$count.',
+          tag: 'call-invitation',
+          subTag: 'ios callkit, on callkit perform answer call action',
+        );
+
+        onAnswerCallPerform.call();
+      });
+    } else {
+      onAnswerCallPerform.call();
+    }
   }
 
   void _onCallkitPerformEndCallActionEvent(
@@ -210,8 +252,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform end call call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
@@ -242,8 +284,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform set held call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
@@ -254,8 +296,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform set muted call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
@@ -268,8 +310,8 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform set group call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
@@ -280,10 +322,29 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform play DTMF call action',
-      tag: 'call',
-      subTag: 'iOS callkit service',
+      tag: 'call-invitation',
+      subTag: 'ios callkit',
     );
 
     event.action.fulfill();
+  }
+
+  /// Waits until the specified condition is met.
+  Future<int> _waitUntil(
+    bool Function() test, {
+    final int maxIterations = 100,
+    final Duration step = const Duration(milliseconds: 10),
+  }) async {
+    var iterations = 0;
+    for (; iterations < maxIterations; iterations++) {
+      await Future.delayed(step);
+      if (test()) {
+        break;
+      }
+    }
+    if (iterations >= maxIterations) {
+      return iterations;
+    }
+    return iterations;
   }
 }

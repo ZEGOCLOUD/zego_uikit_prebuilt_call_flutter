@@ -34,7 +34,7 @@ class ZegoCallingInviterView extends StatelessWidget {
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallType invitationType;
+  final ZegoCallInvitationType invitationType;
   final ZegoAvatarBuilder? avatarBuilder;
   final ZegoCallingForegroundBuilder? foregroundBuilder;
   final ZegoCallingBackgroundBuilder? backgroundBuilder;
@@ -62,7 +62,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget backgroundView(BuildContext context) {
-    if (ZegoCallType.videoCall == invitationType) {
+    if (ZegoCallInvitationType.videoCall == invitationType) {
       return ZegoAudioVideoView(user: inviter);
     }
 
@@ -81,7 +81,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    final isVideo = ZegoCallType.videoCall == invitationType;
+    final isVideo = ZegoCallInvitationType.videoCall == invitationType;
 
     final firstInvitee =
         invitees.isNotEmpty ? invitees.first : ZegoUIKitUser.empty();

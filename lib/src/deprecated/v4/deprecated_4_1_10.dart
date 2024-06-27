@@ -47,8 +47,8 @@ typedef ZegoRingtoneConfig = ZegoCallRingtoneConfig;
 @Deprecated('use ZegoCallPrebuiltConfigQuery instead$deprecatedTipsV4_1_10')
 typedef PrebuiltConfigQuery = ZegoCallPrebuiltConfigQuery;
 
-@Deprecated('use ZegoCallType instead$deprecatedTipsV4_1_10')
-typedef ZegoInvitationType = ZegoCallType;
+@Deprecated('use ZegoCallInvitationType instead$deprecatedTipsV4_1_10')
+typedef ZegoInvitationType = ZegoCallInvitationType;
 
 @Deprecated(
     'use ZegoUIKitPrebuiltCallMiniOverlayPage instead$deprecatedTipsV4_1_10')

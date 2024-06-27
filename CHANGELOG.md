@@ -1,15 +1,48 @@
+## 4.12.9
 
+- Bugs
+  - Fix the issue of invitee name loss in invitation-related callbacks
 
-## 4.11.6
+## 4.12.6-4.12.8
+
+- Update documents.
+  
+## 4.12.5
+
+- Bugs
+  - Fix the issue of not entering a call due to offline call timing in IOS
+  
+## 4.12.4
+
+- Bugs
+  - Fix the issue of not entering a call directly when accept the offline call in Android
+
+## 4.12.3
+
+- Bugs
+  - try fix the issue of not entering a call due to offline call timing in IOS
+
+## 4.12.2
+
+- Bugs
+  - Fix crash on normal call
+
+## 4.12.1
+
+- Bugs
+  - Fixing the issue of failed invitations in certain scenarios.
+
+## 4.12.0
+
+- Features
+  - Support inviting users in calling by setting **canInvitingInCalling** to true when `ZegoUIKitPrebuiltCallInvitationService.init`, see [Doc](https://www.zegocloud.
+    com/docs/uikit/callkit-flutter/invitation-config/invitation-in-calling) for effects and steps. ⚠️⚠️⚠️  **If you use this feature, the invitation feature will no longer be compatible with 
+    version before v4.12.0, that is mean, invitations will not be received between each other**.  
+
+  
+## 4.11.4-4.11.8
 
 - Update dependency.
-
-## 4.11.5
-
-- Update dependency.
-
-## 4.11.4
-
 - Bugs
   - Fix namespace error after grade v8.0
   

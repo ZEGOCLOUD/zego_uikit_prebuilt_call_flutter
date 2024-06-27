@@ -16,7 +16,7 @@ class ZegoCallingBuilderInfo {
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallType callType;
+  final ZegoCallInvitationType callType;
 }
 
 typedef ZegoCallingBackgroundBuilder = Widget? Function(
@@ -84,7 +84,7 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
   ///   onIncomingCallReceived: (
   ///     String callID,
   ///     ZegoCallUser caller,
-  ///     ZegoCallType callType,
+  ///     ZegoCallInvitationType callType,
   ///     List<ZegoCallUser> callees,
   ///     String customData,
   ///   ) {

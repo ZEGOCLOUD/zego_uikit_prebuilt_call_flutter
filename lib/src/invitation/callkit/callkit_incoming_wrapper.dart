@@ -42,7 +42,7 @@ const String callkitParamsCacheKey = 'callkit_params';
 /// }
 Future<CallKitParams> _makeCallKitParam({
   required ZegoUIKitUser? caller,
-  required ZegoCallType callType,
+  required ZegoCallInvitationType callType,
   required ZegoCallInvitationSendRequestProtocol sendRequestProtocol,
   String? title,
   String? body,
@@ -117,7 +117,7 @@ Future<CallKitParams> _makeCallKitParam({
     ios: IOSParams(
       iconName: iOSIconName,
       handleType: '',
-      supportsVideo: ZegoCallType.videoCall == callType,
+      supportsVideo: ZegoCallInvitationType.videoCall == callType,
       ringtonePath: tempRingtonePath,
       maximumCallGroups: 1,
       maximumCallsPerCallGroup: 1,
@@ -142,7 +142,7 @@ Future<CallKitParams> _makeCallKitParam({
 /// - ringtonePath
 Future<void> showCallkitIncoming({
   required ZegoUIKitUser? caller,
-  required ZegoCallType callType,
+  required ZegoCallInvitationType callType,
   required ZegoCallInvitationSendRequestProtocol sendRequestProtocol,
   String? ringtonePath,
   String? title,
@@ -163,7 +163,7 @@ Future<void> showCallkitIncoming({
     'show callkit incoming, inviter name:${caller?.name}, call type:$callType, '
     'request protocol:${sendRequestProtocol.toJson()}, '
     'callKitParam:${callKitParam.toJson()}',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
@@ -176,7 +176,7 @@ Future<void> showCallkitIncoming({
 Future<void> clearAllCallKitCalls() async {
   ZegoLoggerService.logInfo(
     'clear all callKit calls',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
@@ -187,7 +187,7 @@ Future<void> clearAllCallKitCalls() async {
 Future<void> setOfflineCallKitCallID(String callID) async {
   ZegoLoggerService.logInfo(
     'set offline callkit id:$callID',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
@@ -207,7 +207,7 @@ Future<String?> getOfflineCallKitCallID() async {
 Future<void> clearOfflineCallKitCallID() async {
   ZegoLoggerService.logInfo(
     'clear offline callkit id',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
@@ -220,21 +220,22 @@ Future<void> setOfflineCallKitCacheParams(
   ZegoCallInvitationOfflineCallKitCacheParameterProtocol
       callKitParameterProtocol,
 ) async {
+  callKitParameterProtocol.datetime = DateTime.now().millisecondsSinceEpoch;
   final jsonString = callKitParameterProtocol.toJson();
   ZegoLoggerService.logInfo(
     'set offline callkit params:$jsonString',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
   final prefs = await SharedPreferences.getInstance();
-  prefs.setString(callkitParamsCacheKey, jsonString);
-
-  ZegoLoggerService.logInfo(
-    'set offline callkit params done',
-    tag: 'call',
-    subTag: 'callkit',
-  );
+  await prefs.setString(callkitParamsCacheKey, jsonString).then((result) {
+    ZegoLoggerService.logInfo(
+      'set offline callkit params done, result:$result',
+      tag: 'call-invitation',
+      subTag: 'callkit',
+    );
+  });
 }
 
 Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol>
@@ -250,7 +251,7 @@ Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol>
 Future<void> clearOfflineCallKitCacheParams() async {
   ZegoLoggerService.logInfo(
     'clear offline callkit params',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 
@@ -259,7 +260,7 @@ Future<void> clearOfflineCallKitCacheParams() async {
 
   ZegoLoggerService.logInfo(
     'clear offline callkit params done',
-    tag: 'call',
+    tag: 'call-invitation',
     subTag: 'callkit',
   );
 }

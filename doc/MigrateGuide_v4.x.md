@@ -20,6 +20,7 @@
 
 # Versions
 
+- [4.12.0](#4120)
 - [4.11.0](#4110)  **(💥 breaking changes)**
 - [4.8.0](#480)  **(💥 breaking changes)**
 - [4.4.0](#440)
@@ -31,6 +32,17 @@
 
 <br />
 <br />
+
+# 4.12.0
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.11.+ to the latest 4.12.0 version.
+
+# Major Interface Changes
+    - rename **ZegoCallType** to `ZegoCallInvitationType`
 
 
 # 4.11.0

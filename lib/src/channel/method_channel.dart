@@ -25,17 +25,17 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   Future<void> activeAudioByCallKit() async {
     if (Platform.isAndroid) {
       ZegoLoggerService.logInfo(
-        'activeAudioByCallKit, not support in Android',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in Android',
+        tag: 'call-channel',
+        subTag: 'activeAudioByCallKit',
       );
       return;
     }
 
     ZegoLoggerService.logInfo(
       'activeAudioByCallKit',
-      tag: 'signaling',
-      subTag: 'channel',
+      tag: 'call-channel',
+      subTag: 'activeAudioByCallKit',
     );
 
     try {
@@ -43,8 +43,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to active audio by callkit: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'activeAudioByCallKit',
       );
     }
   }
@@ -55,8 +55,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   Future<bool> checkAppRunning() async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'checkAppRunning, not support in iOS',
-        tag: 'signaling',
+        'not support in iOS',
+        tag: 'call-channel',
         subTag: 'channel',
       );
 
@@ -65,8 +65,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
 
     ZegoLoggerService.logInfo(
       'checkAppRunning',
-      tag: 'signaling',
-      subTag: 'channel',
+      tag: 'call-channel',
+      subTag: 'checkAppRunning',
     );
 
     var isAppRunning = false;
@@ -76,8 +76,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to check app running: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'checkAppRunning',
       );
     }
 
@@ -92,18 +92,18 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   ) async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'addLocalCallNotification, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'addLocalCallNotification',
       );
 
       return;
     }
 
     ZegoLoggerService.logInfo(
-      'addLocalCallNotification:$config',
-      tag: 'signaling',
-      subTag: 'channel',
+      'config:$config',
+      tag: 'call-channel',
+      subTag: 'addLocalCallNotification',
     );
 
     try {
@@ -123,8 +123,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
       methodChannel.setMethodCallHandler((call) async {
         ZegoLoggerService.logInfo(
           'MethodCallHandler, method:${call.method}, arguments:${call.arguments}.',
-          tag: 'signaling',
-          subTag: 'channel',
+          tag: 'call-channel',
+          subTag: 'addLocalCallNotification',
         );
 
         switch (call.method) {
@@ -144,8 +144,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to add local notification: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'addLocalCallNotification',
       );
     }
   }
@@ -158,18 +158,18 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   ) async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'addLocalIMNotification, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'addLocalIMNotification',
       );
 
       return;
     }
 
     ZegoLoggerService.logInfo(
-      'addLocalIMNotification:$config',
-      tag: 'signaling',
-      subTag: 'channel',
+      'config:$config',
+      tag: 'call-channel',
+      subTag: 'addLocalIMNotification',
     );
 
     try {
@@ -187,8 +187,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
       methodChannel.setMethodCallHandler((call) async {
         ZegoLoggerService.logInfo(
           'MethodCallHandler, method:${call.method}, arguments:${call.arguments}.',
-          tag: 'signaling',
-          subTag: 'channel',
+          tag: 'call-channel',
+          subTag: 'addLocalIMNotification',
         );
 
         switch (call.method) {
@@ -199,8 +199,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to add local IM notification: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'addLocalIMNotification',
       );
     }
   }
@@ -213,18 +213,18 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   ) async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'createNotificationChannel, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'createNotificationChannel',
       );
 
       return;
     }
 
     ZegoLoggerService.logInfo(
-      'createNotificationChannel:$config',
-      tag: 'signaling',
-      subTag: 'channel',
+      'config:$config',
+      tag: 'call-channel',
+      subTag: 'createNotificationChannel',
     );
 
     try {
@@ -237,8 +237,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to create notification channel: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'createNotificationChannel',
       );
     }
   }
@@ -249,9 +249,9 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   Future<void> dismissAllNotifications() async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'dismissAllNotifications, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'dismissAllNotifications',
       );
 
       return;
@@ -259,8 +259,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
 
     ZegoLoggerService.logInfo(
       'dismissAllNotifications',
-      tag: 'signaling',
-      subTag: 'channel',
+      tag: 'call-channel',
+      subTag: 'dismissAllNotifications',
     );
 
     try {
@@ -268,8 +268,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to dismiss all notifications: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'dismissAllNotifications',
       );
     }
   }
@@ -280,9 +280,9 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   Future<void> activeAppToForeground() async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'activeAppToForeground, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'activeAppToForeground',
       );
 
       return;
@@ -290,8 +290,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
 
     ZegoLoggerService.logInfo(
       'activeAppToForeground',
-      tag: 'signaling',
-      subTag: 'channel',
+      tag: 'call-channel',
+      subTag: 'activeAppToForeground',
     );
 
     try {
@@ -299,8 +299,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to active app to foreground: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'activeAppToForeground',
       );
     }
   }
@@ -311,9 +311,9 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   Future<void> requestDismissKeyguard() async {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
-        'requestDismissKeyguard, not support in iOS',
-        tag: 'signaling',
-        subTag: 'channel',
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'requestDismissKeyguard',
       );
 
       return;
@@ -321,8 +321,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
 
     ZegoLoggerService.logInfo(
       'requestDismissKeyguard',
-      tag: 'signaling',
-      subTag: 'channel',
+      tag: 'call-channel',
+      subTag: 'requestDismissKeyguard',
     );
 
     try {
@@ -330,8 +330,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to request dismiss keyguard: $e.',
-        tag: 'signaling',
-        subTag: 'channel',
+        tag: 'call-channel',
+        subTag: 'requestDismissKeyguard',
       );
     }
   }

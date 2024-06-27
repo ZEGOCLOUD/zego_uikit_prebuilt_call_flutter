@@ -106,11 +106,23 @@ class ZegoCallControllerAudioVideoCameraImpl
 
   /// local use front facing camera or back
   void switchFrontFacing(bool isFrontFacing) {
+    ZegoLoggerService.logInfo(
+      'switchFrontFacing, isFrontFacing:$isFrontFacing, ',
+      tag: 'call',
+      subTag: 'controller.audioVideo',
+    );
+
     ZegoUIKit().useFrontFacingCamera(isFrontFacing);
   }
 
   /// switch video mirror mode
   void switchVideoMirroring(bool isVideoMirror) {
+    ZegoLoggerService.logInfo(
+      'switchVideoMirroring, isVideoMirror:$isVideoMirror, ',
+      tag: 'call',
+      subTag: 'controller.audioVideo',
+    );
+
     ZegoUIKit().enableVideoMirroring(isVideoMirror);
   }
 }
@@ -130,6 +142,12 @@ class ZegoCallControllerAudioVideoAudioOutputImpl
 
   /// set audio output to speaker or earpiece(telephone receiver)
   void switchToSpeaker(bool isSpeaker) {
+    ZegoLoggerService.logInfo(
+      'switchToSpeaker, isSpeaker:$isSpeaker, ',
+      tag: 'call',
+      subTag: 'controller.audioVideo',
+    );
+
     ZegoUIKit().setAudioOutputToSpeaker(isSpeaker);
   }
 }

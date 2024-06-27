@@ -9,6 +9,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 // Project imports:
@@ -130,7 +131,7 @@ class _ZegoCallInvitationNotifyDialogState
     return SizedBox(
       width: 350.zW,
       child: Text(
-        (ZegoCallType.videoCall == widget.invitationData.type
+        (ZegoCallInvitationType.videoCall == widget.invitationData.type
                 ? (widget.invitationData.invitees.length > 1
                     ? widget.callInvitationConfig.innerText
                         .incomingGroupVideoCallDialogTitle
@@ -181,7 +182,9 @@ class _ZegoCallInvitationNotifyDialogState
         inviterID: widget.invitationData.inviter?.id ?? '',
         targetInvitationID: widget.invitationData.invitationID,
         // customization is not supported
-        data: '{"reason":"decline"}',
+        data: ZegoCallInvitationRejectRequestProtocol(
+          reason: ZegoCallInvitationProtocolKey.refuseByDecline,
+        ).toJson(),
         textStyle: widget.declineButtonConfig.textStyle,
         icon: ButtonIcon(
           icon: widget.declineButtonConfig.icon ??
@@ -207,6 +210,7 @@ class _ZegoCallInvitationNotifyDialogState
       child: ZegoAcceptInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
         targetInvitationID: widget.invitationData.invitationID,
+        customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
         textStyle: widget.acceptButtonConfig.textStyle,
         icon: ButtonIcon(
           icon: widget.acceptButtonConfig.icon ??
@@ -227,25 +231,25 @@ class _ZegoCallInvitationNotifyDialogState
     );
   }
 
-  String imageURLByInvitationType(ZegoCallType invitationType) {
+  String imageURLByInvitationType(ZegoCallInvitationType invitationType) {
     switch (invitationType) {
-      case ZegoCallType.voiceCall:
+      case ZegoCallInvitationType.voiceCall:
         return InvitationStyleIconUrls.inviteVoice;
-      case ZegoCallType.videoCall:
+      case ZegoCallInvitationType.videoCall:
         return InvitationStyleIconUrls.inviteVideo;
     }
   }
 
   String invitationTypeString(
-      ZegoCallType invitationType, List<ZegoUIKitUser> invitees) {
+      ZegoCallInvitationType invitationType, List<ZegoUIKitUser> invitees) {
     switch (invitationType) {
-      case ZegoCallType.voiceCall:
+      case ZegoCallInvitationType.voiceCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
                 .incomingGroupVoiceCallDialogMessage)
             : (widget
                 .callInvitationConfig.innerText.incomingVoiceCallDialogMessage);
-      case ZegoCallType.videoCall:
+      case ZegoCallInvitationType.videoCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
                 .incomingGroupVideoCallDialogMessage)

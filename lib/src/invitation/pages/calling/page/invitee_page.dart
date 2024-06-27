@@ -34,7 +34,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallType invitationType;
+  final ZegoCallInvitationType invitationType;
   final ZegoAvatarBuilder? avatarBuilder;
 
   final ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -76,7 +76,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    final isVideo = ZegoCallType.videoCall == invitationType;
+    final isVideo = ZegoCallInvitationType.videoCall == invitationType;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
