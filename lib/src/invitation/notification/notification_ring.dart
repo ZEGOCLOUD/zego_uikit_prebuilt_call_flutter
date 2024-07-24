@@ -35,17 +35,17 @@ class ZegoRingtone {
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 
-    const audioContext = AudioContext(
+    final audioContext = AudioContext(
       iOS: AudioContextIOS(
         category: AVAudioSessionCategory.playAndRecord,
-        options: [
+        options: const {
           AVAudioSessionOptions.defaultToSpeaker,
           AVAudioSessionOptions.allowBluetooth,
           AVAudioSessionOptions.allowBluetoothA2DP,
           AVAudioSessionOptions.mixWithOthers,
-        ],
+        },
       ),
-      android: AudioContextAndroid(
+      android: const AudioContextAndroid(
         isSpeakerphoneOn: true,
         stayAwake: true,
         contentType: AndroidContentType.music,

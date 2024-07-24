@@ -1,3 +1,10 @@
+
+- [ZegoSendCallInvitationButton](#zegosendcallinvitationbutton)
+- [ZegoSendCallingInvitationButton](#zegosendcallinginvitationbutton)
+- [ZegoUIKitPrebuiltCallMiniOverlayPage && ZegoUIKitPrebuiltCallMiniPopScope](#zegouikitprebuiltcallminioverlaypage--zegouikitprebuiltcallminipopscope)
+
+---
+
 ## ZegoSendCallInvitationButton
 
 > This button is used to send a call invitation to one or more specified users.
@@ -54,3 +61,73 @@
 - List`<ZegoCallUser>` `selectedUsers`: selected users (cannot be unselected again), that is, users who are already in the call
 - List`<ZegoCallUser>` Function(List`<ZegoCallUser>`)? `userSort`: The sorting method of the user list, the default is to sort by user id
 - bool `defaultChecked`: Whether **waitingSelectUsers** is selected by default
+
+## ZegoUIKitPrebuiltCallMiniOverlayPage && ZegoUIKitPrebuiltCallMiniPopScope
+
+> The page can be minimized within the app
+> 
+> To support the minimize functionality in the app:
+> 
+> 1. Add a minimize button.
+> ```dart
+> ZegoUIKitPrebuiltCallConfig.topMenuBar.buttons.add(ZegoCallMenuBarButtonName.minimizingButton)
+> ```
+> Alternatively, if you have defined your own button, you can call:
+> ```dart
+> ZegoUIKitPrebuiltCallController().minimize.minimize()
+> ```
+> 
+> 2. Nest the `ZegoUIKitPrebuiltCallMiniOverlayPage` within your MaterialApp widget. Make sure to return the correct context in the `contextQuery` parameter.
+> 
+> How to add in MaterialApp, example:
+> ```dart
+> 
+> void main() {
+>   WidgetsFlutterBinding.ensureInitialized();
+> 
+>   final navigatorKey = GlobalKey<NavigatorState>();
+>   runApp(MyApp(
+>     navigatorKey: navigatorKey,
+>   ));
+> }
+> 
+> class MyApp extends StatefulWidget {
+>   final GlobalKey<NavigatorState> navigatorKey;
+> 
+>   const MyApp({
+>     required this.navigatorKey,
+>     Key? key,
+>   }) : super(key: key);
+> 
+>   @override
+>   State<StatefulWidget> createState() => MyAppState();
+> }
+> 
+> class MyAppState extends State<MyApp> {
+>   @override
+>   Widget build(BuildContext context) {
+>     return MaterialApp(
+>       title: 'Flutter Demo',
+>       home: const ZegoUIKitPrebuiltCallMiniPopScope(
+>         child: HomePage(),
+>       ),
+>       navigatorKey: widget.navigatorKey,
+>       builder: (BuildContext context, Widget? child) {
+>         return Stack(
+>           children: [
+>             child!,
+> 
+>             /// support minimizing
+>             ZegoUIKitPrebuiltCallMiniOverlayPage(
+>               contextQuery: () {
+>                 return widget.navigatorKey.currentState!.context;
+>               },
+>             ),
+>           ],
+>         );
+>       },
+>     );
+>   }
+> }
+> ```
+> 

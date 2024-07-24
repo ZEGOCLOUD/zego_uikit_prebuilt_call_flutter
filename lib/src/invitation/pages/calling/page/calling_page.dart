@@ -149,9 +149,12 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         break;
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
       },
       child: view,
     );
@@ -207,6 +210,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     final prebuiltCall = ZegoUIKitPrebuiltCall(
       appID: widget.callInvitationData.appID,
       appSign: widget.callInvitationData.appSign,
+      token: widget.callInvitationData.token,
       callID: widget.pageManager.invitationData.callID,
       userID: widget.callInvitationData.userID,
       userName: widget.callInvitationData.userName,

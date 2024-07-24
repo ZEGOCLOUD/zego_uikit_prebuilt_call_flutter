@@ -184,8 +184,7 @@ class _ZegoSendCallInvitationButtonState
   }
 
   void updateCallID() {
-    callIDNotifier.value = widget.callID
-            ?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '') ??
+    callIDNotifier.value = widget.callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
     // ZegoLoggerService.logInfo(
     //   'update call id, ${callIDNotifier.value}',

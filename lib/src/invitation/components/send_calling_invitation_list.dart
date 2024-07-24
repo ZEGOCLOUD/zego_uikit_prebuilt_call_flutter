@@ -165,13 +165,13 @@ class _ZegoSendCallingInvitationListState
         .map((e) => e.id)
         .toList();
     List<ZegoCallUser> invitingWaitingSelectUsers = [];
-    widget.waitingSelectUsers.forEach((user) {
+    for (var user in widget.waitingSelectUsers) {
       if (invitingUserIDs.contains(user.id)) {
         invitingWaitingSelectUsers.add(user);
       } else {
         waitingSelectUsers.add(user);
       }
-    });
+    }
     selectedUsers = [
       ...invitingWaitingSelectUsers,
       ...widget.selectedUsers,
@@ -386,9 +386,10 @@ class _ZegoSendCallingInvitationListState
               /// disable
               : null,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0.zR), // 设置圆角
+            borderRadius: BorderRadius.circular(8.0.zR),
           ),
-          fillColor: MaterialStateProperty.all(
+          //MaterialStateProperty
+          fillColor: WidgetStateProperty.all(
             (selectedStatus[user.id] ?? false)
                 ? Colors.grey
                 : Colors.transparent,

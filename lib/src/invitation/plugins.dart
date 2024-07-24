@@ -22,6 +22,7 @@ class ZegoCallPrebuiltPlugins {
   ZegoCallPrebuiltPlugins({
     required this.appID,
     required this.appSign,
+    required this.token,
     required this.userID,
     required this.userName,
     required this.plugins,
@@ -33,6 +34,7 @@ class ZegoCallPrebuiltPlugins {
 
   final int appID;
   final String appSign;
+  final String token;
 
   final String userID;
   final String userName;
@@ -102,7 +104,11 @@ class ZegoCallPrebuiltPlugins {
       tag: 'call-invitation',
       subTag: 'plugin',
     );
-    await ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
+    await ZegoUIKit().getSignalingPlugin().login(
+          id: userID,
+          name: userName,
+          token: token,
+        );
     ZegoLoggerService.logInfo(
       'plugins login done',
       tag: 'call-invitation',
@@ -184,7 +190,11 @@ class ZegoCallPrebuiltPlugins {
     }
 
     await ZegoUIKit().getSignalingPlugin().logout();
-    await ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
+    await ZegoUIKit().getSignalingPlugin().login(
+          id: userID,
+          name: userName,
+          token: token,
+        );
   }
 
   void onInvitationConnectionState(
@@ -299,7 +309,11 @@ class ZegoCallPrebuiltPlugins {
     );
     tryReLogging = true;
     await ZegoUIKit().getSignalingPlugin().logout().then((value) async {
-      await ZegoUIKit().getSignalingPlugin().login(id: userID, name: userName);
+      await ZegoUIKit().getSignalingPlugin().login(
+            id: userID,
+            name: userName,
+            token: token,
+          );
     });
   }
 }

@@ -33,6 +33,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal_instance.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/isolate_name_server_guard.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/notification.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
@@ -173,10 +174,11 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// If you want to listen for events and perform custom logics, you can use [invitationEvents] to obtain related invitation events, and for call-related events, you need to use [events].
   Future<void> init({
     required int appID,
-    required String appSign,
     required String userID,
     required String userName,
     required List<IZegoUIKitPlugin> plugins,
+    String appSign = '',
+    String token = '',
 
     /// call abouts.
     ZegoCallPrebuiltConfigQuery? requireConfig,
@@ -202,7 +204,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.12.9; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.14.3; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
@@ -227,6 +229,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     await private._initPrivate(
       appID: appID,
       appSign: appSign,
+      token: token,
       userID: userID,
       userName: userName,
       plugins: plugins,
@@ -253,6 +256,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     await private._initPlugins(
       appID: appID,
       appSign: appSign,
+      token: token,
       userID: userID,
       userName: userName,
     );

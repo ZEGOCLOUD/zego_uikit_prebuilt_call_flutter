@@ -1,3 +1,42 @@
+## 4.14.3
+
+- Update dependency
+
+## 4.14.2
+
+- Bugs
+  - Fix the issue of offline receive failure caused by android/iOS certificate indexing error
+
+## 4.14.1
+
+- Update dependency
+
+
+## 4.14.0
+
+- Features
+  - Added `ZegoUIKitPrebuiltCallMiniPopScope` to protect the interface from being destroyed when minimized
+  - Added `license` in `ZegoBeautyPluginConfig` to setting license to beauty
+
+## 4.13.1
+
+- Update dependency
+
+## 4.13.0
+
+- Features
+  - Support login by token
+
+## 4.12.11
+
+- Bugs
+  - Fix the issue that there is no pop-up box for offline calls after enabling the foreground service in Android.
+
+## 4.12.10
+
+- Bugs
+  - Fix call-id being modified midway
+
 ## 4.12.9
 
 - Bugs
@@ -35,8 +74,7 @@
 ## 4.12.0
 
 - Features
-  - Support inviting users in calling by setting **canInvitingInCalling** to true when `ZegoUIKitPrebuiltCallInvitationService.init`, see [Doc](https://www.zegocloud.
-    com/docs/uikit/callkit-flutter/invitation-config/invitation-in-calling) for effects and steps. ⚠️⚠️⚠️  **If you use this feature, the invitation feature will no longer be compatible with 
+  - Support inviting users in calling by setting **canInvitingInCalling** to true when `ZegoUIKitPrebuiltCallInvitationService.init`, see [Doc](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/invitation-in-calling) for effects and steps. ⚠️⚠️⚠️  **If you use this feature, the invitation feature will no longer be compatible with 
     version before v4.12.0, that is mean, invitations will not be received between each other**.  
 
   

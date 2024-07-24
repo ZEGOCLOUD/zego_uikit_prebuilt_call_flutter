@@ -72,7 +72,7 @@ class ZegoCallInvitationServiceAPIImpl
             );
     }
 
-    final currentCallID = callID?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '') ??
+    final currentCallID = callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
     if ((callID?.isNotEmpty ?? false) && currentCallID != callID) {
       ZegoLoggerService.logWarn(

@@ -525,7 +525,7 @@ class ZegoCallInvitationPageManager {
             ..setAudioOutputToSpeaker(true);
 
           await ZegoUIKit()
-              .joinRoom(invitationData.callID)
+              .joinRoom(invitationData.callID, token: callInvitationData.token)
               .then((result) async {
             userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
             userListStreamSubscriptionInCallingByIOSBackgroundLock = ZegoUIKit()

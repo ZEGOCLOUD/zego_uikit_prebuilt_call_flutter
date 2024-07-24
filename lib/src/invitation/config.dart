@@ -379,6 +379,7 @@ class ZegoCallAndroidNotificationConfig {
         'messageIcon:$messageIcon, '
         'messageSound:$messageSound, '
         'certificateIndex:$certificateIndex, '
+        'showFullScreen:$showFullScreen, '
         '}';
   }
 }

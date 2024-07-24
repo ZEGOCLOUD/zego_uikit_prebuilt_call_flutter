@@ -33,6 +33,8 @@ part 'controller/permission.dart';
 
 part 'controller/user.dart';
 
+part 'controller/room.dart';
+
 part 'controller/private/audio_video.dart';
 
 part 'controller/private/minimize.dart';
@@ -61,6 +63,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerAudioVideo,
         ZegoCallControllerUser,
         ZegoCallControllerPermission,
+        ZegoCallControllerRoom,
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 

@@ -13,7 +13,8 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ZegoCallMiniOverlayMachine().state();
 
   /// Is it currently in the minimized state or not
-  bool get isMinimizing => ZegoCallMiniOverlayMachine().isMinimizing;
+  bool get isMinimizing => isMinimizingNotifier.value;
+  ValueNotifier<bool> get isMinimizingNotifier => _private.isMinimizingNotifier;
 
   /// restore the ZegoUIKitPrebuiltCall from minimize
   bool restore(
@@ -53,6 +54,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
           final prebuiltCall = ZegoUIKitPrebuiltCall(
             appID: minimizeData.appID,
             appSign: minimizeData.appSign,
+            token: minimizeData.token,
             userID: minimizeData.userID,
             userName: minimizeData.userName,
             callID: minimizeData.callID,

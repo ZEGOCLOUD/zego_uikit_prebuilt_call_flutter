@@ -1,6 +1,6 @@
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/deprecated_4_11_0.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 
 const deprecatedTipsV420 = ', '
     'deprecated since 4.2.0, '

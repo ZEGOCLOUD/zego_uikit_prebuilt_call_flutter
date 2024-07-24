@@ -20,12 +20,14 @@ import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/isolate_name_server_guard.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
 
 const backgroundMessageIsolatePortName = 'bg_msg_isolate_port';
+const backgroundMessageIsolateCloseCommand = 'close';
 StreamSubscription<CallEvent?>? flutterCallkitIncomingStreamSubscription;
 
 /// @nodoc
@@ -60,9 +62,11 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
   ZegoLoggerService.logInfo(
     'isolate: ${registeredIsolatePort?.hashCode}, isAppRunning:$isAppRunning',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, isolate',
   );
   if (isAppRunning) {
+    // await ZegoCallPluginPlatform.instance.activeAppToForeground();
+
     /// after app being screen-locked for more than 10 minutes, the app was not
     /// killed(suspended) but the zpns login timed out, so that's why receive
     /// offline call when app was alive.
@@ -75,7 +79,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
       'isolate: app has another isolate(${registeredIsolatePort.hashCode}), '
       'send command to deal with this background message',
       tag: 'call-invitation',
-      subTag: 'offline',
+      subTag: 'offline, isolate',
     );
     registeredIsolatePort.send(jsonEncode({
       'title': message.title,
@@ -89,11 +93,18 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     backgroundPort.sendPort,
     backgroundMessageIsolatePortName,
   );
+
+  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addObserver(ZegoCallIsolateNameServerGuard(
+    backgroundPort: backgroundPort,
+    portName: backgroundMessageIsolatePortName,
+  ));
+
   ZegoLoggerService.logInfo(
-    'isolate: backgroundPort(${backgroundPort.hashCode}), registerPortWithName backgroundPort.sendPort(${backgroundPort.sendPort.hashCode})'
+    'isolate: backgroundPort(${backgroundPort.hashCode}),registerPortWithName backgroundPort.sendPort(${backgroundPort.sendPort.hashCode})'
     'message:$message',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, isolate',
   );
 
   backgroundPort.listen((dynamic message) async {
@@ -101,15 +112,15 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
       'isolate: current port(${backgroundPort.hashCode}) receive, backgroundPort.sendPort(${backgroundPort.sendPort.hashCode})'
       'message:$message',
       tag: 'call-invitation',
-      subTag: 'offline',
+      subTag: 'offline, isolate',
     );
 
-    /// this will fix the issue that when offline call dialog popup, user click appicon to open app,
-    if (message is String && message == 'close') {
+    /// this will fix the issue that when offline call dialog popup, user click app icon to open app,
+    if (message is String && message == backgroundMessageIsolateCloseCommand) {
       ZegoLoggerService.logInfo(
         'isolate: close port command received, also cancel the flutterCallkitIncomingStreamSubscription(${flutterCallkitIncomingStreamSubscription?.hashCode})',
         tag: 'call-invitation',
-        subTag: 'offline',
+        subTag: 'offline, isolate',
       );
       flutterCallkitIncomingStreamSubscription?.cancel();
       flutterCallkitIncomingStreamSubscription = null;
@@ -133,7 +144,7 @@ Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
     'isolate: register and listen port(${backgroundPort.hashCode}), '
     'send command to deal with this background message',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, isolate',
   );
 
   _onBackgroundMessageReceived(
@@ -741,6 +752,7 @@ Future<void> _installSignalingPlugin({
   await ZegoUIKit().getSignalingPlugin().login(
         id: handlerInfo.userID,
         name: handlerInfo.userName,
+        token: handlerInfo.token,
       );
 
   ZegoLoggerService.logInfo(
@@ -810,6 +822,7 @@ void _onThroughMessage(
 
 class HandlerPrivateInfo {
   String appID;
+  String token;
   String userID;
   String userName;
   bool? isIOSSandboxEnvironment;
@@ -834,6 +847,7 @@ class HandlerPrivateInfo {
 
   HandlerPrivateInfo({
     required this.appID,
+    required this.token,
     required this.userID,
     required this.userName,
     required this.canInvitingInCalling,
@@ -856,6 +870,7 @@ class HandlerPrivateInfo {
   factory HandlerPrivateInfo.fromJson(Map<String, dynamic> json) {
     return HandlerPrivateInfo(
       appID: json['aid'],
+      token: json['tkn'],
       userID: json['uid'],
       userName: json['un'],
       isIOSSandboxEnvironment: json['isse'],
@@ -879,6 +894,7 @@ class HandlerPrivateInfo {
   Map<String, dynamic> toJson() {
     return {
       'aid': appID,
+      'tkn': token,
       'uid': userID,
       'un': userName,
       'isse': isIOSSandboxEnvironment,
@@ -901,7 +917,27 @@ class HandlerPrivateInfo {
 
   @override
   String toString() {
-    return jsonEncode(toJson());
+    return 'HandlerPrivateInfo{'
+        'appID:$appID,'
+        'has token:${token.isNotEmpty},'
+        'userID:$userID,'
+        'userName:$userName,'
+        'isIOSSandboxEnvironment:$isIOSSandboxEnvironment,'
+        'enableIOSVoIP:$enableIOSVoIP,'
+        'certificateIndex:$certificateIndex,'
+        'appName:$appName,'
+        'canInvitingInCalling:$canInvitingInCalling,'
+        'androidCallChannelID:$androidCallChannelID,'
+        'androidCallChannelName:$androidCallChannelName,'
+        'androidCallIcon:$androidCallIcon,'
+        'androidCallSound:$androidCallSound,'
+        'androidCallVibrate:$androidCallVibrate,'
+        'androidMessageChannelID:$androidMessageChannelID,'
+        'androidMessageChannelName:$androidMessageChannelName,'
+        'androidMessageSound:$androidMessageSound,'
+        'androidMessageIcon:$androidMessageIcon,'
+        'androidMessageVibrate:$androidMessageVibrate,'
+        '}';
   }
 
   String toJsonString() {

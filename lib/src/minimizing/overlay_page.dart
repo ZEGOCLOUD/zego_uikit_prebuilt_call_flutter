@@ -61,7 +61,9 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 ///   Widget build(BuildContext context) {
 ///     return MaterialApp(
 ///       title: 'Flutter Demo',
-///       home: HomePage(),
+///       home: const ZegoUIKitPrebuiltCallMiniPopScope(
+///         child: HomePage(),
+///       ),
 ///       navigatorKey: widget.navigatorKey,
 ///       builder: (BuildContext context, Widget? child) {
 ///         return Stack(
@@ -195,9 +197,12 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Widget build(BuildContext context) {
     itemSize = calculateItemSize();
 
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
       },
       child: Visibility(
         visible: visibility,

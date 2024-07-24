@@ -252,11 +252,15 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   bool get isEmpty => invitationID.isEmpty || payloadData.isEmpty;
 
   ZegoCallInvitationOfflineCallKitCacheParameterProtocol.fromJson(String json) {
-    ZegoLoggerService.logError(
+    ZegoLoggerService.logInfo(
       'ZegoCallInvitationOfflineCallKitCacheParameterProtocol, json:$json, ',
       tag: 'call-invitation',
       subTag: 'protocols',
     );
+
+    if (json.isEmpty) {
+      return;
+    }
 
     var dict = <String, dynamic>{};
     try {

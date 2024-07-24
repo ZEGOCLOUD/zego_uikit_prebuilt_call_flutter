@@ -102,7 +102,7 @@ Future<CallKitParams> _makeCallKitParam({
     ),
     android: AndroidParams(
       isCustomNotification: true,
-      isShowFullScreen: isShowFullScreen,
+      isShowFullLockedScreen: isShowFullScreen,
       isShowLogo: false,
       ringtonePath: tempRingtonePath,
       backgroundColor:
