@@ -15,7 +15,7 @@
 ## 4.14.0
 
 - Features
-  - Added `ZegoUIKitPrebuiltCallMiniPopScope` to protect the interface from being destroyed when minimized
+  - Added `ZegoUIKitPrebuiltCallMiniPopScope` to protect the interface from being destroyed when minimized. [Document](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/minimize-call-window)
   - Added `license` in `ZegoBeautyPluginConfig` to setting license to beauty
 
 ## 4.13.1

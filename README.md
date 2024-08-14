@@ -1,3 +1,11 @@
+*If you find this package helpful, please help by giving it a 👍 on pub.dev! ↗️*
+
+*Your support and encouragement motivate us to continue improving and maintaining this package.*
+
+*Thank you for recognizing our work! 👏👏*
+
+----------------------------------------
+
 # Call Kit
 
 **Call Kit** is a prebuilt feature-rich call component, which enables you to build **one-on-one and group voice/video calls** into your app with only a few lines of code.
@@ -6,17 +14,7 @@ We also support online invitation and offline invitation.
 
 And it includes the business logic with the UI, you can add or remove features accordingly by customizing UI components.
 
->
->
->If you find this package helpful, please help by giving it a 👍 on pub.dev! ↗️
->
->Your support and encouragement motivate us to continue improving and maintaining this package.
->
->Thank you for recognizing our work! 👏👏
----
-
 [![ZEGOCLOUD Video Call Feature Intro](https://res.cloudinary.com/marcomontalbano/image/upload/v1682407474/video_to_markdown/images/youtube--mEg32GyIqgI-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/embed/mEg32GyIqgI "ZEGOCLOUD Video Call Feature Intro")
-
 
 ## When do you need the Call Kit
 
@@ -49,13 +47,10 @@ And it includes the business logic with the UI, you can add or remove features a
 - [Configs](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Configs-topic.html)
 - [Components](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Components-topic.html)
 
-> 
-> 
-
 - [Quick start](https://www.zegocloud.com/docs/uikit/callkit-flutter/quick-start)
 - [Quick start with call invitation](https://www.zegocloud.com/docs/uikit/callkit-flutter/quick-start-(with-call-invitation))
 - Calling Configs
-  - [Overview](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/overview) 
+  - [Overview](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/overview)
   - [Set avatar for users](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/set-avatar-for-users)
   - [Add custom components](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/add-custom-components)
   - [Configure layouts](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/configure-layouts)
@@ -67,12 +62,12 @@ And it includes the business logic with the UI, you can add or remove features a
   - [Minimize call window](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/minimize-call-window)
   - [Set video config](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/set-video-config)
 - Invitation Configs
-  - [Customize UI](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html) 
+  - [Customize UI](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
   - [Enable fullscreen incoming call](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/enable-fullscreen-incoming-call)
   - [Customize the ringtone](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/customize-the-ringtone)
   - [Hide the decline/cancel button](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/hide-the-decline-or-cancel-button)
   - [Customizing Calling Background](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/customizing-calling-background)
-    https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/auto-re-send-call-invitation-after-call-timeout)
+  - [Auto re-send call invitation after call timeout](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/auto-re-send-call-invitation-after-call-timeout)
   - [Modify User Interface text](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/modify-user-interface-text)
   - [Customizing the icon for the iOS CallKit UI](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/customizing-the-icon-for-the-ios-callkit-ui)
   - [API for call invitation](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/api-for-call-invitation)
@@ -84,7 +79,6 @@ And it includes the business logic with the UI, you can add or remove features a
   - [Beauty effects](https://www.zegocloud.com/docs/uikit/callkit-flutter/advanced-features/beauty-effects)
 - [Troubleshooting call invitations](https://www.zegocloud.com/docs/uikit/callkit-flutter/troubleshooting-call-invitations)
 
-
 ## Migration Guides
 
 - [Migrating from 4.11.+ to 4.12.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4120)
@@ -95,16 +89,15 @@ And it includes the business logic with the UI, you can add or remove features a
 - [Migrating from 4.1.9 to 4.1.10](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110-2)
 - [Migrating from 4.1.8 to 4.1.9](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#419)
 - [Migrating from 4.1.3 to 4.1.4](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#414).  **(💥 breaking changes)**
-
 - [Migrating from 3.x to 4.0.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400).  **(💥 breaking changes)**
-  
+
 ## More
+
 [Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
 
 <br />
 
 [Please visit our official website for more details.](https://docs.zegocloud.com/article/14746)
-
 
 ## Previews
 
@@ -113,25 +106,25 @@ And it includes the business logic with the UI, you can add or remove features a
 <img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/blob/master/images/_all_close.gif?raw=true" alt="1v1_call" width="300" height="651">
 
 - group call
-  
+
 <img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/raw/master/images/8C_little.jpeg" alt="group_call" width="300" height="544">
 
 - actived online invitation
-  
+
 <img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/1online.gif" alt="actived_online_invitation" width="300" height="623">
 
 - background online invitation
-  
+
 <img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/2background.gif" alt="background_online_invitation" width="300" height="623">
 
 - invitation in calling
-  
+
 <img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/group_chat_call_example.gif" alt="calling_invitation" width="900" height="651">
 
 - android offline invitation
-  
+
 <img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/3offline.gif" alt="android_offline_invitation" width="300" height="623">
 
 - iOS offline invitation
-  
+
 <img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/iOScallkit.gif" alt="ios_offline_invitation" width="300" height="648">
