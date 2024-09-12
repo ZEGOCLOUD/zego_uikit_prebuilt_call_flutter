@@ -13,6 +13,7 @@ class ZegoCallInvitationProtocolKey {
   static String timeout = 'timeout';
   static String customData = 'custom_data';
   static String invitees = 'invitees';
+  static String inviterName = 'inviter_name';
   static String userID = 'user_id';
   static String userName = 'user_name';
   static String operationType = 'operation_type';
@@ -37,6 +38,7 @@ mixin ZegoCallInvitationProtocolVersion {
 class ZegoCallInvitationSendRequestProtocol
     with ZegoCallInvitationProtocolVersion {
   String callID = '';
+  String inviterName = '';
   List<ZegoUIKitUser> invitees = [];
   String customData = '';
   int timeout = 60;
@@ -46,6 +48,7 @@ class ZegoCallInvitationSendRequestProtocol
   ZegoCallInvitationSendRequestProtocol({
     required this.callID,
     required this.invitees,
+    required this.inviterName,
     required this.timeout,
     required this.customData,
   });
@@ -56,7 +59,9 @@ class ZegoCallInvitationSendRequestProtocol
       dict = jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
       ZegoLoggerService.logError(
-        'InvitationSendRequestData, json decode data exception:$e',
+        'InvitationSendRequestData, '
+        'json decode data exception:$e, '
+        'json:$json',
         tag: 'call-invitation',
         subTag: 'protocols',
       );
@@ -74,6 +79,8 @@ class ZegoCallInvitationSendRequestProtocol
     customData =
         dict[ZegoCallInvitationProtocolKey.customData] as String? ?? '';
 
+    inviterName =
+        dict[ZegoCallInvitationProtocolKey.inviterName] as String? ?? '';
     for (final invitee
         in dict[ZegoCallInvitationProtocolKey.invitees] as List) {
       final inviteeDict = invitee as Map<String, dynamic>;
@@ -90,6 +97,7 @@ class ZegoCallInvitationSendRequestProtocol
   String toJson() {
     final dict = {
       ZegoCallInvitationProtocolKey.callID: callID,
+      ZegoCallInvitationProtocolKey.inviterName: inviterName,
       ZegoCallInvitationProtocolKey.invitees: invitees
           .map((user) => {
                 ZegoCallInvitationProtocolKey.userID: user.id,
@@ -120,7 +128,9 @@ class ZegoCallInvitationCancelRequestProtocol
       dict = jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
       ZegoLoggerService.logError(
-        'InvitationCancelRequestData, json decode data exception:$e',
+        'InvitationCancelRequestData, '
+        'json decode data exception:$e, '
+        'json:$json',
         tag: 'call-invitation',
         subTag: 'protocols',
       );
@@ -172,7 +182,9 @@ class ZegoCallInvitationRejectRequestProtocol
       dict = jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
       ZegoLoggerService.logError(
-        'InvitationCancelRejectData, json decode data exception:$e',
+        'InvitationCancelRejectData, '
+        'json decode data exception:$e, '
+        'json:$json',
         tag: 'call-invitation',
         subTag: 'protocols',
       );
@@ -212,7 +224,46 @@ class ZegoCallInvitationAcceptRequestProtocol
       dict = jsonDecode(json) as Map<String, dynamic>;
     } catch (e) {
       ZegoLoggerService.logError(
-        'InvitationCancelRejectData, json decode data exception:$e',
+        'InvitationCancelRejectData, '
+        'json decode data exception:$e, '
+        'json:$json, ',
+        tag: 'call-invitation',
+        subTag: 'protocols',
+      );
+    }
+
+    customData =
+        dict[ZegoCallInvitationProtocolKey.customData] as String? ?? '';
+
+    _parseVersionFromMap(dict);
+  }
+
+  String toJson() {
+    final dict = {
+      ZegoCallInvitationProtocolKey.customData: customData,
+      ZegoCallInvitationProtocolKey.version: version,
+    };
+    return const JsonEncoder().convert(dict);
+  }
+}
+
+class ZegoCallInvitationJoinRequestProtocol
+    with ZegoCallInvitationProtocolVersion {
+  ZegoCallInvitationJoinRequestProtocol({
+    this.customData = '',
+  });
+
+  String customData = '';
+
+  ZegoCallInvitationJoinRequestProtocol.fromJson(String json) {
+    var dict = <String, dynamic>{};
+    try {
+      dict = jsonDecode(json) as Map<String, dynamic>;
+    } catch (e) {
+      ZegoLoggerService.logError(
+        'InvitationJoinData, '
+        'json decode data exception:$e, '
+        'json:$json, ',
         tag: 'call-invitation',
         subTag: 'protocols',
       );
@@ -269,7 +320,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
       ZegoLoggerService.logError(
         'ZegoCallInvitationOfflineCallKitParameterProtocol, '
         'json decode data exception:$e, '
-        'data:$json, ',
+        'json:$json, ',
         tag: 'call-invitation',
         subTag: 'protocols',
       );

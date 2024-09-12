@@ -1,35 +1,33 @@
 - [Invitation](#invitation)
-  ----------
-  - [config](#zegocallinvitationconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallinvitationconfig-classhtml)
-  - [ringtone](#zegocallringtoneconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallringtoneconfig-classhtml)
-  - [UI](#zegocallinvitationuiconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallinvitationuiconfig-classhtml)
-    - `inviter`
-    - `invitee`
-      - `popUp`
-  - [notification](#zegocallinvitationnotificationconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallinvitationnotificationconfig-classhtml)
-    - `iOSNotificationConfig`
-    - `androidNotificationConfig`
-    
-- [Call](#zegouikitprebuiltcallconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegouikitprebuiltcallconfig-classhtml)
-  - [video](#zegouikitvideoconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegouikitvideoconfig-classhtml-video)
-  - [audioVideoView](#zegocallaudiovideoviewconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallaudiovideoviewconfig-classhtml-audiovideoview)
-  - [topMenuBar](#zegocalltopmenubarconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocalltopmenubarconfig-classhtml-topmenubar)
-  - [bottomMenuBar](#zegocallbottommenubarconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallbottommenubarconfig-classhtml-bottommenubar)
-  - [memberList](#zegocallmemberlistconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallmemberlistconfig-classhtml-memberlist)
-  - [beauty](#zegobeautypluginconfighttpspubdevdocumentationzego_plugin_adapterlatestzego_plugin_adapterzegobeautypluginconfig-classhtml-beauty)
-  - [duration](#zegocalldurationconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocalldurationconfig-classhtml-duration)
-  - [chatView](#zegocallinroomchatviewconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallinroomchatviewconfig-classhtml-chatview)
-  - [user](#zegocalluserconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocalluserconfig-classhtml-user)
-  - [hangUpConfirmDialog](#zegocallhangupconfirmdialogconfighttpspubdevdocumentationzego_uikit_prebuilt_calllatestzego_uikit_prebuilt_callzegocallhangupconfirmdialogconfig-classhtml-hangupconfirmdialog)
-  - [advanceConfigs](#mapstring-string-advanceconfigs)
-  - [turnOnCameraWhenJoining](#bool-turnoncamerawhenjoining)
-  - [turnOnMicrophoneWhenJoining](#bool-turnonmicrophonewhenjoining)
-  - [useSpeakerWhenJoining](#bool-usespeakerwhenjoining)
-  - [layout](#zegolayouthttpspubdevdocumentationzego_uikitlatestzego_uikitzegolayouthtml-layout)
-  - [foreground](#widget-foreground)
-  - [background](#widget-background)
-  - [avatarBuilder](#zegoavatarbuilderhttpspubdevdocumentationzego_uikitlatestzego_uikitzegoavatarbuilderhtml-avatarbuilder)
-  - [rootNavigator](#bool-rootnavigator)
+  - [ZegoCallInvitationConfig](#zegocallinvitationconfig)
+    - [ZegoCallInvitationInCallingConfig `inCalling`](#zegocallinvitationincallingconfig-incalling)
+    - [ZegoCallPermissionConfirmDialogConfig `systemAlertWindowConfirmDialog`:](#zegocallpermissionconfirmdialogconfig-systemalertwindowconfirmdialog)
+    - [ZegoCallInvitationMissedCallConfig `missedCall`:](#zegocallinvitationmissedcallconfig-missedcall)
+  - [ZegoCallRingtoneConfig](#zegocallringtoneconfig)
+  - [ZegoCallInvitationUIConfig](#zegocallinvitationuiconfig)
+  - [ZegoCallInvitationNotificationConfig](#zegocallinvitationnotificationconfig)
+- [ZegoUIKitPrebuiltCallConfig](#zegouikitprebuiltcallconfig)
+  - [construtors](#construtors)
+  - [parameters](#parameters)
+    - [ZegoUIKitVideoConfig `video`](#zegouikitvideoconfig-video)
+    - [ZegoCallAudioVideoViewConfig `audioVideoView`](#zegocallaudiovideoviewconfig-audiovideoview)
+    - [ZegoCallTopMenuBarConfig `topMenuBar`](#zegocalltopmenubarconfig-topmenubar)
+    - [ZegoCallBottomMenuBarConfig `bottomMenuBar`](#zegocallbottommenubarconfig-bottommenubar)
+    - [ZegoCallMemberListConfig `memberList`](#zegocallmemberlistconfig-memberlist)
+    - [ZegoBeautyPluginConfig? `beauty`](#zegobeautypluginconfig-beauty)
+    - [ZegoCallDurationConfig `duration`](#zegocalldurationconfig-duration)
+    - [ZegoCallInRoomChatViewConfig `chatView`](#zegocallinroomchatviewconfig-chatview)
+    - [ZegoCallUserConfig `user`](#zegocalluserconfig-user)
+    - [ZegoCallHangUpConfirmDialogConfig? `hangUpConfirmDialog`](#zegocallhangupconfirmdialogconfig-hangupconfirmdialog)
+    - [Map\<String, String\> `advanceConfigs`](#mapstring-string-advanceconfigs)
+    - [bool `turnOnCameraWhenJoining`](#bool-turnoncamerawhenjoining)
+    - [bool `turnOnMicrophoneWhenJoining`](#bool-turnonmicrophonewhenjoining)
+    - [bool `useSpeakerWhenJoining`](#bool-usespeakerwhenjoining)
+    - [ZegoLayout `layout`](#zegolayout-layout)
+    - [Widget? `foreground`](#widget-foreground)
+    - [Widget? `background`](#widget-background)
+    - [ZegoAvatarBuilder? `avatarBuilder`](#zegoavatarbuilder-avatarbuilder)
+    - [bool `rootNavigator`](#bool-rootnavigator)
 
 ---
 
@@ -55,7 +53,19 @@
   >   },
   > );
   > ```
+  
+  - bool `endCallWhenInitiatorLeave`:
+  > whether the entire call should end when the initiator leaves the call
+  > 1. will causing other participants to leave together.
+  > 2. other participants can't enter the call anymore
+  >
+  > Default value is false.
+  >
+  > If set to false
+  > 1. the call can continue even after the initiator leaves.
+  > 2. other participants can enter the call after the initiator leaves.
 
+### [ZegoCallInvitationInCallingConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInCallingConfig-class.html) `inCalling`
   - bool `onlyInitiatorCanInvite`:
   > whether only the call initiator has the permission to invite others to
   > join the call.
@@ -69,6 +79,38 @@
   > Default value is false.
   >
   > If set to false, the call can continue even after the initiator leaves.
+
+### [ZegoCallPermissionConfirmDialogConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPermissionConfirmDialogConfig-class.html) `systemAlertWindowConfirmDialog`:
+  - String? `title`
+  - TextStyle? `titleStyle`
+  - TextStyle? `contentStyle`
+  - TextStyle? `actionTextStyle`
+  - Brightness? `backgroundBrightness`
+
+### [ZegoCallInvitationMissedCallConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationMissedCallConfig-class.html) `missedCall`:
+
+  - bool `enabled`:
+  > whether to allow popup the missed notification
+  > Default value is true.
+  
+  - bool `enableDialBack`;
+  > whether to allow dial back the missed when click notification
+  > Default value is false.
+  > Please note that if allowed, it will be incompatible with versions before v4.12.0,
+  > which means mutual invitations cannot be made between the old and new versions of zego_uikit_prebuilt_call.
+
+  - String? `resourceID`;
+  > The [resource id] for notification which same as [Zego Console](https://console.zegocloud.com/)
+
+  - String? Function()? `notificationTitle`;
+  > The title for the notification.
+  
+  - String? Function()? `notificationMessage`;
+  > The message for the notification.
+  
+  - int `timeoutSeconds`;
+  > The timeout duration in seconds for the dial back invitation.
+
 
 ## [ZegoCallRingtoneConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallRingtoneConfig-class.html)
 

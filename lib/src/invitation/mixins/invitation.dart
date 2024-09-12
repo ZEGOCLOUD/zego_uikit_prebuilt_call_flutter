@@ -220,4 +220,40 @@ class ZegoCallInvitationServiceAPIImpl
       customData: customData,
     );
   }
+
+  Future<bool> join({
+    required String invitationID,
+    String? customData = '',
+  }) async {
+    ZegoLoggerService.logInfo(
+      'send call invitation',
+      tag: 'call-invitation',
+      subTag: 'service, join',
+    );
+
+    if (!private._checkParamValid()) {
+      ZegoLoggerService.logInfo(
+        'parameter is not valid',
+        tag: 'call-invitation',
+        subTag: 'service, join',
+      );
+
+      return false;
+    }
+
+    if (!private._checkSignalingPlugin()) {
+      ZegoLoggerService.logInfo(
+        'signaling plugin is null',
+        tag: 'call-invitation',
+        subTag: 'service, join',
+      );
+
+      return false;
+    }
+
+    return private._joinInvitation(
+      invitationID: invitationID,
+      customData: customData,
+    );
+  }
 }

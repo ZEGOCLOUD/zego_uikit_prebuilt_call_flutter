@@ -150,7 +150,8 @@
 > ```dart
 > Future<void> init({
 >    required int appID,
->    required String appSign,
+>    String appSign = '',
+>    String token = '',
 >    required String userID,
 >    required String userName,
 >    required List<IZegoUIKitPlugin> plugins,

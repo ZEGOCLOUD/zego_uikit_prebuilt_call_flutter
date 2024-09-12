@@ -124,7 +124,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
   /// if call ended in minimizing state, not need to navigate, just hide the minimize widget.
   void hide() {
-    ZegoLoggerService.logError(
+    ZegoLoggerService.logInfo(
       'hide',
       tag: 'call',
       subTag: 'controller.minimize',

@@ -30,6 +30,104 @@ const backgroundMessageIsolatePortName = 'bg_msg_isolate_port';
 const backgroundMessageIsolateCloseCommand = 'close';
 StreamSubscription<CallEvent?>? flutterCallkitIncomingStreamSubscription;
 
+/// =====================
+/// web
+/// title:Call invitation,
+/// content:,
+/// extras:{
+///   zego: {
+///     "call_id":"172604065779740667",
+///     "version":1,
+///     "zpns_request_id":"2819825754101714171"
+///   },
+///   body: Please join your call with our care personnel,
+///   title: Call invitation,
+///   payload: {
+///     "call_id":"call_248232fd96ba4f8e9d938cc2b9e7cdb7_1726040657797",
+///     "invitees":[
+///       {"user_id":"3ae894260de84e389900e42b3bd987ab","user_name":"April Ninth"}
+///     ],
+///     "inviter":{"id":"248232fd96ba4f8e9d938cc2b9e7cdb7","name":"William Alias"},
+///     "type":1,
+///     "custom_data":"",
+///     "inviter_name":"William Alias",
+///     "data":"{
+///       "call_id":"call_248232fd96ba4f8e9d938cc2b9e7cdb7_1726040657797",
+///       "invitees":[
+///         {"user_id":"3ae894260de84e389900e42b3bd987ab","user_name":"April Ninth"}
+///       ],
+///       "inviter":{"id":"248232fd96ba4f8e9d938cc2b9e7cdb7","name":"William Alias"},
+///       "type":1,
+///       "custom_data":""
+///     }"
+///   },
+///   call_id: 172604065779740667
+/// }
+///
+/// =====================
+/// flutter:
+///
+/// - normal
+/// title:user_542,
+/// content:,
+/// extras:{
+///   zego: {
+///     "call_id":"14292543900357708322",
+///     "version":1,
+///     "zpns_request_id":"702041001865190434"
+///   },
+///   body: Incoming video call...,
+///   title: user_542,
+///   payload: {
+///     "inviter_id":"542",
+///     "inviter_name":"user_542",
+///     "type":1,
+///     "data":"{
+///       "call_id":"call_542_1726039827282",
+///       "inviter_name":"user_542",
+///       "invitees":[
+///         {"user_id":"946042","user_name":"user_946042"}
+///       ],
+///       "timeout":60,
+///       "custom_data":"",
+///       "v":"f1.0"
+///     }"
+///   },
+///   call_id: 14292543900357708322
+/// },
+///
+/// -advance
+/// title:user_542,
+/// content:,
+/// extras:{
+///   zego: {
+///     "call_id":"1204724609078844523",
+///     "version":1,
+///     "zpns_request_id":"6983256569312803082"
+///   },
+///   body: Incoming video call...,
+///   title: user_542,
+///   payload: {
+///     "inviter":{"id":"542","name":"user_542"},
+///     "invitees":[
+///       "946042"
+///     ],
+///     "type":1,
+///     "custom_data":"{
+///       "call_id":"call_542_1726040168792",
+///       "inviter_name":"user_542",
+///       "invitees":[
+///         {"user_id":"946042","user_name":"user_946042"}
+///       ],
+///       "timeout":60,
+///       "custom_data":"",
+///       "v":"f1.0"
+///     }
+///   },
+///   call_id: 1204724609078844523
+/// }
+///
+
 /// @nodoc
 ///
 /// [Android] Silent Notification event notify
@@ -172,6 +270,13 @@ Future<void> _onBackgroundMessageReceived({
       subTag: 'offline',
     );
   }
+  final isAdvanceMode =
+      ZegoUIKitAdvanceInvitationSendProtocol.typeOf(payloadMap);
+  ZegoLoggerService.logInfo(
+    'isAdvanceMode:$isAdvanceMode',
+    tag: 'call-invitation',
+    subTag: 'offline',
+  );
 
   final operationType = BackgroundMessageTypeExtension.fromText(
       payloadMap[ZegoCallInvitationProtocolKey.operationType] as String? ?? '');
@@ -206,6 +311,7 @@ Future<void> _onBackgroundMessageReceived({
 
   /// operation type is empty, is send/cancel request
   _onBackgroundCallMessageReceived(
+    isAdvanceMode: isAdvanceMode,
     messageTitle: messageTitle,
     messageExtras: messageExtras,
     fromOtherIsolate: fromOtherIsolate,
@@ -263,7 +369,7 @@ Future<void> _onBackgroundIMMessageReceived({
       soundSource: ZegoCallInvitationNotificationManager.getSoundSource(
         handlerInfo?.androidMessageSound ?? '',
       ),
-      clickCallback: () async {
+      clickCallback: (int notificationID) async {
         await ZegoCallPluginPlatform.instance.activeAppToForeground();
         await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
       },
@@ -282,6 +388,7 @@ Future<void> _onBackgroundIMMessageReceived({
 }
 
 Future<void> _onBackgroundCallMessageReceived({
+  required bool isAdvanceMode,
   required String messageTitle,
   required Map<String, Object?> messageExtras,
   required bool fromOtherIsolate,
@@ -354,6 +461,7 @@ Future<void> _onBackgroundCallMessageReceived({
     }
 
     await _onBackgroundOfflineCall(
+      isAdvanceMode: isAdvanceMode,
       messageExtras: messageExtras,
       payloadMap: payloadMap,
       signalingPluginInstalled: signalingPluginNeedInstalled,
@@ -391,6 +499,7 @@ Future<void> _onBackgroundInvitationCanceled(String callID) async {
 }
 
 Future<void> _onBackgroundOfflineCall({
+  required bool isAdvanceMode,
   required Map<String, Object?> messageExtras,
   required Map<String, dynamic> payloadMap,
   required ValueNotifier<bool> signalingPluginInstalled,
@@ -454,14 +563,28 @@ Future<void> _onBackgroundOfflineCall({
   var inviter = ZegoUIKitUser.empty();
   String payloadCustomData = '';
   int invitationType = -1;
-  if (handlerInfo?.canInvitingInCalling ?? true) {
+  if (isAdvanceMode) {
     final sendProtocol =
         ZegoUIKitAdvanceInvitationSendProtocol.fromJson(payloadMap);
+
+    ZegoLoggerService.logInfo(
+      'advance sendProtocol:$sendProtocol',
+      tag: 'call-invitation',
+      subTag: 'offline',
+    );
+
     inviter = sendProtocol.inviter;
     payloadCustomData = sendProtocol.customData;
     invitationType = sendProtocol.type;
   } else {
     final sendProtocol = ZegoUIKitInvitationSendProtocol.fromJson(payloadMap);
+
+    ZegoLoggerService.logInfo(
+      'sendProtocol:$sendProtocol',
+      tag: 'call-invitation',
+      subTag: 'offline',
+    );
+
     inviter = sendProtocol.inviter;
     payloadCustomData = sendProtocol.customData;
     invitationType = sendProtocol.type;
@@ -475,6 +598,7 @@ Future<void> _onBackgroundOfflineCall({
 
   final signalingSubscriptions = <StreamSubscription<dynamic>>[];
   _listenFlutterCallkitIncomingEvent(
+    isAdvanceMode: isAdvanceMode,
     invitationID: invitationID,
     inviter: inviter,
     callType: callType,
@@ -487,6 +611,7 @@ Future<void> _onBackgroundOfflineCall({
   _listenSignalingEvents(
     signalingSubscriptions,
     handlerInfo: handlerInfo,
+    isAdvanceMode: isAdvanceMode,
   );
 
   /// cache and do when app run
@@ -517,6 +642,7 @@ Future<void> _onBackgroundOfflineCall({
 }
 
 void _listenFlutterCallkitIncomingEvent({
+  required bool isAdvanceMode,
   required String invitationID,
   required ZegoUIKitUser inviter,
   required ZegoCallInvitationType callType,
@@ -582,7 +708,7 @@ void _listenFlutterCallkitIncomingEvent({
         await clearOfflineCallKitCacheParams();
         await clearOfflineCallKitCallID();
 
-        if (handlerInfo?.canInvitingInCalling ?? true) {
+        if (isAdvanceMode) {
           await ZegoUIKit()
               .getSignalingPlugin()
               .refuseAdvanceInvitationByInvitationID(
@@ -647,6 +773,7 @@ void _listenFlutterCallkitIncomingEvent({
 void _listenSignalingEvents(
   List<StreamSubscription<dynamic>> signalingSubscriptions, {
   required HandlerPrivateInfo? handlerInfo,
+  required bool isAdvanceMode,
 }) {
   if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) == null) {
     ZegoLoggerService.logInfo(
@@ -660,7 +787,7 @@ void _listenSignalingEvents(
 
   ZegoUIKit().getSignalingPlugin().setThroughMessageHandler(_onThroughMessage);
 
-  if (handlerInfo?.canInvitingInCalling ?? true) {
+  if (isAdvanceMode) {
     signalingSubscriptions
       ..add(ZegoUIKit()
           .getSignalingPlugin()
@@ -683,19 +810,124 @@ void _listenSignalingEvents(
   }
 }
 
-void _onInvitationTimeout(Map<String, dynamic> params) {
-  final ZegoUIKitUser inviter = params['inviter']!;
-  final String data = params['data']!; // extended field
-
+void _onInvitationTimeout(Map<String, dynamic> params) async {
   ZegoLoggerService.logInfo(
-    'on invitation timeout, inviter:$inviter, data:$data',
+    'params:$params, ',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, on invitation timeout',
+  );
+
+  clearAllCallKitCalls();
+
+  await _addMissedCallNotification(params);
+}
+
+Future<void> _addMissedCallNotification(Map<String, dynamic> params) async {
+  final handlerInfoJson =
+      await getPreferenceString(serializationKeyHandlerInfo);
+  ZegoLoggerService.logInfo(
+    'parsing handler info:$handlerInfoJson',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+  final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
+  ZegoLoggerService.logInfo(
+    'parsing handler object:$handlerInfo',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+
+  if (!(handlerInfo?.androidMissedCallEnabled ?? true)) {
+    ZegoLoggerService.logInfo(
+      'not enabled',
+      tag: 'call-invitation',
+      subTag: 'offline, missed call',
+    );
+
+    return;
+  }
+
+  final String data = params['data']!; // extended field
+  final callType =
+      ZegoCallTypeExtension.mapValue[params['type'] as int? ?? 0] ??
+          ZegoCallInvitationType.voiceCall;
+  final invitationID = params['invitation_id'] as String? ?? '';
+
+  final sendRequestProtocol =
+      ZegoCallInvitationSendRequestProtocol.fromJson(data);
+
+  var inviter = ZegoUIKitUser.empty();
+  if (params['inviter'] is ZegoUIKitUser) {
+    inviter = params['inviter']!;
+  } else if (params['inviter'] is Map<String, dynamic>) {
+    inviter = ZegoUIKitUser.fromJson(params['inviter'] as Map<String, dynamic>);
+  }
+  inviter.name = sendRequestProtocol.inviterName;
+
+  var channelID =
+      handlerInfo?.androidMissedCallChannelID ?? defaultMissedCallChannelKey;
+  if (channelID.isEmpty) {
+    channelID = defaultMissedCallChannelKey;
+  }
+
+  final groupMissedCallContent = ZegoCallInvitationType.videoCall == callType
+      ? handlerInfo?.missedGroupVideoCallNotificationContent ??
+          'Group Video Call'
+      : handlerInfo?.missedGroupAudioCallNotificationContent ??
+          'Group Audio Call';
+  final oneOnOneMissedCallContent = ZegoCallInvitationType.videoCall == callType
+      ? handlerInfo?.missedVideoCallNotificationContent ?? 'Video Call'
+      : handlerInfo?.missedAudioCallNotificationContent ?? 'Audio Call';
+
+  final notificationID = Random().nextInt(2147483647);
+  ZegoCallInvitationData callInvitationData = ZegoCallInvitationData(
+    callID: sendRequestProtocol.callID,
+    invitationID: invitationID,
+    type: callType,
+    invitees: sendRequestProtocol.invitees,
+    inviter: inviter,
+    customData: sendRequestProtocol.customData,
+  );
+  await addOfflineMissedCallNotification(notificationID, callInvitationData);
+
+  await ZegoCallPluginPlatform.instance.addLocalIMNotification(
+    ZegoSignalingPluginLocalIMNotificationConfig(
+      id: notificationID,
+      channelID: channelID,
+      title: handlerInfo?.missedCallNotificationTitle ?? 'Missed Call',
+      content:
+          '${sendRequestProtocol.inviterName} ${sendRequestProtocol.invitees.length > 1 ? groupMissedCallContent : oneOnOneMissedCallContent}',
+      vibrate: handlerInfo?.androidMissedCallVibrate ?? false,
+      iconSource: ZegoCallInvitationNotificationManager.getIconSource(
+        handlerInfo?.androidMissedCallIcon ?? '',
+      ),
+      soundSource: ZegoCallInvitationNotificationManager.getSoundSource(
+        handlerInfo?.androidMissedCallSound ?? '',
+      ),
+      clickCallback: (int notificationID) async {
+        ZegoLoggerService.logInfo(
+          'notification clicked, notificationID:$notificationID',
+          tag: 'call-invitation',
+          subTag: 'offline, missed call',
+        );
+
+        await setOfflineMissedCallNotificationID(notificationID)
+            .then((_) async {
+          await ZegoCallPluginPlatform.instance.activeAppToForeground();
+          await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+        });
+      },
+    ),
   );
 }
 
 Future<void> _onInvitationCanceled(Map<String, dynamic> params) async {
-  final ZegoUIKitUser inviter = params['inviter']!;
+  var inviter = ZegoUIKitUser.empty();
+  if (params['inviter'] is ZegoUIKitUser) {
+    inviter = params['inviter']!;
+  } else if (params['inviter'] is Map<String, dynamic>) {
+    inviter = ZegoUIKitUser.fromJson(params['inviter'] as Map<String, dynamic>);
+  }
   final String data = params['data']!; // extended field
 
   ZegoLoggerService.logInfo(
@@ -720,24 +952,24 @@ Future<void> _installSignalingPlugin({
     removePreferenceValue(serializationKeyHandlerInfo);
 
     ZegoLoggerService.logInfo(
-      'install signaling plugin, but handler info parse failed',
+      'but handler info parse failed',
       tag: 'call-invitation',
-      subTag: 'offline',
+      subTag: 'offline, install signaling plugin',
     );
     return;
   }
 
   ZegoLoggerService.logInfo(
-    'install signaling plugin, handler info:$handlerInfo',
+    'handler info:$handlerInfo',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, install signaling plugin',
   );
   ZegoUIKit().installPlugins([ZegoUIKitSignalingPlugin()]);
 
   ZegoLoggerService.logInfo(
-    'init signaling plugin',
+    'try init',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, install signaling plugin',
   );
   await ZegoUIKit().getSignalingPlugin().init(
         int.tryParse(handlerInfo.appID) ?? 0,
@@ -747,7 +979,7 @@ Future<void> _installSignalingPlugin({
   ZegoLoggerService.logInfo(
     'login signaling plugin',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, install signaling plugin',
   );
   await ZegoUIKit().getSignalingPlugin().login(
         id: handlerInfo.userID,
@@ -758,7 +990,7 @@ Future<void> _installSignalingPlugin({
   ZegoLoggerService.logInfo(
     'enable notify',
     tag: 'call-invitation',
-    subTag: 'offline',
+    subTag: 'offline, install signaling plugin',
   );
   await ZegoUIKit()
       .getSignalingPlugin()
@@ -845,6 +1077,19 @@ class HandlerPrivateInfo {
   String androidMessageSound;
   bool androidMessageVibrate;
 
+  /// missed call
+  bool androidMissedCallEnabled;
+  String androidMissedCallChannelID;
+  String androidMissedCallChannelName;
+  String androidMissedCallIcon;
+  String androidMissedCallSound;
+  bool androidMissedCallVibrate;
+  String missedCallNotificationTitle;
+  String missedGroupVideoCallNotificationContent;
+  String missedGroupAudioCallNotificationContent;
+  String missedVideoCallNotificationContent;
+  String missedAudioCallNotificationContent;
+
   HandlerPrivateInfo({
     required this.appID,
     required this.token,
@@ -865,6 +1110,17 @@ class HandlerPrivateInfo {
     this.androidMessageIcon = '',
     this.androidMessageSound = '',
     this.androidMessageVibrate = false,
+    this.androidMissedCallEnabled = true,
+    this.androidMissedCallChannelID = '',
+    this.androidMissedCallChannelName = '',
+    this.androidMissedCallIcon = '',
+    this.androidMissedCallSound = '',
+    this.androidMissedCallVibrate = false,
+    this.missedCallNotificationTitle = '',
+    this.missedGroupVideoCallNotificationContent = '',
+    this.missedGroupAudioCallNotificationContent = '',
+    this.missedVideoCallNotificationContent = '',
+    this.missedAudioCallNotificationContent = '',
   });
 
   factory HandlerPrivateInfo.fromJson(Map<String, dynamic> json) {
@@ -888,6 +1144,17 @@ class HandlerPrivateInfo {
       androidMessageIcon: json['ami'] ?? '',
       androidMessageSound: json['ams'] ?? '',
       androidMessageVibrate: json['amv'] ?? '',
+      androidMissedCallEnabled: json['amdce'] ?? '',
+      androidMissedCallChannelID: json['amdcci'] ?? '',
+      androidMissedCallChannelName: json['amdccn'] ?? '',
+      androidMissedCallIcon: json['amdci'] ?? '',
+      androidMissedCallSound: json['amdcs'] ?? '',
+      androidMissedCallVibrate: json['amdcv'] ?? '',
+      missedCallNotificationTitle: json['amdnt'] ?? '',
+      missedGroupVideoCallNotificationContent: json['amdncgv'] ?? '',
+      missedGroupAudioCallNotificationContent: json['amdncga'] ?? '',
+      missedVideoCallNotificationContent: json['amdncv'] ?? '',
+      missedAudioCallNotificationContent: json['amdnca'] ?? '',
     );
   }
 
@@ -912,6 +1179,17 @@ class HandlerPrivateInfo {
       'ams': androidMessageSound,
       'ami': androidMessageIcon,
       'amv': androidMessageVibrate,
+      'amdce': androidMissedCallEnabled,
+      'amdcci': androidMissedCallChannelID,
+      'amdccn': androidMissedCallChannelName,
+      'amdcs': androidMissedCallSound,
+      'amdci': androidMissedCallIcon,
+      'amdcv': androidMissedCallVibrate,
+      'amdnt': missedCallNotificationTitle,
+      'amdncgv': missedGroupVideoCallNotificationContent,
+      'amdncga': missedGroupAudioCallNotificationContent,
+      'amdncv': missedVideoCallNotificationContent,
+      'amdnca': missedAudioCallNotificationContent,
     };
   }
 
@@ -937,6 +1215,17 @@ class HandlerPrivateInfo {
         'androidMessageSound:$androidMessageSound,'
         'androidMessageIcon:$androidMessageIcon,'
         'androidMessageVibrate:$androidMessageVibrate,'
+        'androidMissedCallEnabled:$androidMissedCallEnabled,'
+        'androidMissedCallChannelID:$androidMissedCallChannelID,'
+        'androidMissedCallChannelName:$androidMissedCallChannelName,'
+        'androidMissedCallSound:$androidMissedCallSound,'
+        'androidMissedCallIcon:$androidMissedCallIcon,'
+        'androidMissedCallVibrate:$androidMissedCallVibrate,'
+        'missedCallNotificationTitle:$missedCallNotificationTitle,'
+        'missedGroupVideoCallNotificationContent:$missedGroupVideoCallNotificationContent,'
+        'missedGroupAudioCallNotificationContent:$missedGroupAudioCallNotificationContent,'
+        'missedVideoCallNotificationContent:$missedVideoCallNotificationContent,'
+        'missedAudioCallNotificationContent:$missedAudioCallNotificationContent,'
         '}';
   }
 

@@ -111,6 +111,46 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is *"Accept"*.
   String incomingCallPageAcceptButton;
 
+  /// The button on the call bottom bar to cancel current outgoing call.
+  /// The **default value** is *"Cancel"*.
+  String outgoingCallPageACancelButton;
+
+  /// The title of the missed call notification,
+  /// The **default value** is **Missed Call**.
+  String missedCallNotificationTitle;
+
+  /// The content of the group video missed call notification,
+  /// The **default value** is **Group Video Call**.
+  String missedGroupVideoCallNotificationContent;
+
+  /// The content of the group audio missed call notification,
+  /// The **default value** is **Group Audio Call**.
+  String missedGroupAudioCallNotificationContent;
+
+  /// The content of the video missed call notification,
+  /// The **default value** is **Video Call**.
+  String missedVideoCallNotificationContent;
+
+  /// The content of the audio missed call notification,
+  /// The **default value** is **Audio Call**.
+  String missedAudioCallNotificationContent;
+
+  /// The title of the systemAlertWindow permission request confirmation dialog,
+  /// The **default value** is **Display over other apps**.
+  String systemAlertWindowConfirmDialogSubTitle;
+
+  /// The allow button text of the permission request,
+  /// The **default value** is *"Allow $appName to $subTitle"*.
+  String permissionConfirmDialogTitle;
+
+  /// The allow button text of the permission request,
+  /// The **default value** is *"Allow"*.
+  String permissionConfirmDialogAllowButton;
+
+  /// The deny button text of the permission request,
+  /// The **default value** is *"Deny"*.
+  String permissionConfirmDialogDenyButton;
+
   ZegoCallInvitationInnerText({
     String? incomingVideoCallDialogTitle,
     String? incomingVideoCallDialogMessage,
@@ -122,6 +162,7 @@ class ZegoCallInvitationInnerText {
     String? incomingVoiceCallPageMessage,
     String? incomingCallPageDeclineButton,
     String? incomingCallPageAcceptButton,
+    String? outgoingCallPageACancelButton,
     String? outgoingVideoCallPageTitle,
     String? outgoingVideoCallPageMessage,
     String? outgoingVoiceCallPageTitle,
@@ -138,6 +179,15 @@ class ZegoCallInvitationInnerText {
     String? outgoingGroupVideoCallPageMessage,
     String? outgoingGroupVoiceCallPageTitle,
     String? outgoingGroupVoiceCallPageMessage,
+    String? missedCallNotificationTitle,
+    String? missedGroupVideoCallNotificationContent,
+    String? missedGroupAudioCallNotificationContent,
+    String? missedVideoCallNotificationContent,
+    String? missedAudioCallNotificationContent,
+    String? systemAlertWindowConfirmDialogSubTitle,
+    String? permissionConfirmDialogTitle,
+    String? permissionConfirmDialogAllowButton,
+    String? permissionConfirmDialogDenyButton,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
@@ -153,6 +203,8 @@ class ZegoCallInvitationInnerText {
         incomingCallPageDeclineButton =
             incomingCallPageDeclineButton ?? 'Decline',
         incomingCallPageAcceptButton = incomingCallPageAcceptButton ?? 'Accept',
+        outgoingCallPageACancelButton =
+            outgoingCallPageACancelButton ?? 'Cancel',
         outgoingVideoCallPageTitle = outgoingVideoCallPageTitle ?? param_1,
         outgoingVideoCallPageMessage =
             outgoingVideoCallPageMessage ?? 'Calling...',
@@ -184,7 +236,25 @@ class ZegoCallInvitationInnerText {
         outgoingGroupVoiceCallPageTitle =
             outgoingGroupVoiceCallPageTitle ?? param_1,
         outgoingGroupVoiceCallPageMessage =
-            outgoingGroupVoiceCallPageMessage ?? 'Calling...';
+            outgoingGroupVoiceCallPageMessage ?? 'Calling...',
+        missedCallNotificationTitle =
+            missedCallNotificationTitle ?? 'Missed Call',
+        missedGroupVideoCallNotificationContent =
+            missedGroupVideoCallNotificationContent ?? 'Group Video Call',
+        missedGroupAudioCallNotificationContent =
+            missedGroupAudioCallNotificationContent ?? 'Group Audio Call',
+        missedVideoCallNotificationContent =
+            missedVideoCallNotificationContent ?? 'Video Call',
+        missedAudioCallNotificationContent =
+            missedAudioCallNotificationContent ?? 'Audio Call',
+        systemAlertWindowConfirmDialogSubTitle =
+            systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
+        permissionConfirmDialogTitle =
+            permissionConfirmDialogTitle ?? 'Allow $param_1 to',
+        permissionConfirmDialogAllowButton =
+            permissionConfirmDialogAllowButton ?? 'Allow',
+        permissionConfirmDialogDenyButton =
+            permissionConfirmDialogDenyButton ?? 'Deny';
 
   /// if add a new text, need check [ZegoCallInvitationInnerTextForCallInvitationServicePrivate]
 }

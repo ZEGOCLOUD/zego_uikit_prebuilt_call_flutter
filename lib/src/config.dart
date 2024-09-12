@@ -278,9 +278,16 @@ class ZegoCallAudioVideoViewConfig {
   /// Set it to false if you don't want to show the username on the audio/video view.
   bool showUserNameOnView;
 
-  /// You can customize the foreground of the audio/video view, which refers to the widget positioned on top of the view.
-  /// You can return any widget, and we will place it at the top of the audio/video view.
-  ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
+  /// Is it only displayed audio video view when the camera or microphone is turned on?
+  ///
+  /// true, it will only display if the camera or microphone is turned on
+  /// false, displays regardless of whether it is turned on or off
+  bool showOnlyCameraMicrophoneOpened;
+
+  /// Is it display local user audio video view
+  ///
+  /// set false if you want to hide it
+  bool showLocalUser;
 
   /// When inviting in calling, the invited user window will appear on the
   /// invitation side, if you want to hide this view, set it to false.
@@ -290,6 +297,10 @@ class ZegoCallAudioVideoViewConfig {
   /// When inviting in calling, the invited user window will appear on the invitation side,
   /// and you can customize the foreground at this time.
   ZegoAudioVideoViewForegroundBuilder? waitingCallAcceptForegroundBuilder;
+
+  /// You can customize the foreground of the audio/video view, which refers to the widget positioned on top of the view.
+  /// You can return any widget, and we will place it at the top of the audio/video view.
+  ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
 
   /// Background for the audio/video windows in a call.
   /// You can use any widget as the background for the audio/video windows. This can be a video, a GIF animation, an image, a web page, or any other widget.
@@ -327,6 +338,8 @@ class ZegoCallAudioVideoViewConfig {
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
     this.showWaitingCallAcceptAudioVideoView = true,
+    this.showLocalUser = true,
+    this.showOnlyCameraMicrophoneOpened = false,
     this.foregroundBuilder,
     this.waitingCallAcceptForegroundBuilder,
     this.backgroundBuilder,

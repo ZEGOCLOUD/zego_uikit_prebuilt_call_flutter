@@ -158,18 +158,18 @@ class _ZegoSendCallingInvitationListState
   void initState() {
     super.initState();
 
-    final invitingUserIDs = ZegoUIKitPrebuiltCallInvitationService()
+    final localInvitingUserIDs = ZegoUIKitPrebuiltCallInvitationService()
         .private
-        .invitingUsersNotifier
+        .localInvitingUsersNotifier
         .value
         .map((e) => e.id)
         .toList();
     List<ZegoCallUser> invitingWaitingSelectUsers = [];
-    for (var user in widget.waitingSelectUsers) {
-      if (invitingUserIDs.contains(user.id)) {
-        invitingWaitingSelectUsers.add(user);
+    for (var waitingSelectUser in widget.waitingSelectUsers) {
+      if (localInvitingUserIDs.contains(waitingSelectUser.id)) {
+        invitingWaitingSelectUsers.add(waitingSelectUser);
       } else {
-        waitingSelectUsers.add(user);
+        waitingSelectUsers.add(waitingSelectUser);
       }
     }
     selectedUsers = [

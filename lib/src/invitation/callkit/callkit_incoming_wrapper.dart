@@ -18,6 +18,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart'
 /// @nodoc
 const String callkitCalIDCacheKey = 'callkit_call_id';
 const String callkitParamsCacheKey = 'callkit_params';
+const String callkitMissedCalIDCacheKey = 'callkit_missed_call_id';
 
 /// @nodoc
 ///
@@ -215,6 +216,77 @@ Future<void> clearOfflineCallKitCallID() async {
   prefs.remove(callkitCalIDCacheKey);
 }
 
+/// cached ID of the current cal
+Future<void> setOfflineMissedCallNotificationID(int notificationID) async {
+  ZegoLoggerService.logInfo(
+    'set offline missed call id:$notificationID',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setInt(callkitMissedCalIDCacheKey, notificationID);
+}
+
+/// @nodoc
+///
+/// Retrieve the cached ID of the current call, which is stored in the handler received from ZPNS.
+Future<int?> getOfflineMissedCallNotificationID() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getInt(callkitMissedCalIDCacheKey);
+}
+
+/// cached ID of the current cal
+Future<void> clearOfflineMissedCallNotificationID() async {
+  ZegoLoggerService.logInfo(
+    'clear offline missed call id',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove(callkitMissedCalIDCacheKey);
+}
+
+/// cached ID of the missed cal
+Future<void> addOfflineMissedCallNotification(
+  int notificationID,
+  ZegoCallInvitationData invitationData,
+) async {
+  ZegoLoggerService.logInfo(
+    'add offline missed call notification, '
+    'notification id:$notificationID, '
+    'data:$invitationData',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(notificationID.toString(), invitationData.toJson());
+}
+
+/// Retrieve the cached ID of the missed call
+Future<ZegoCallInvitationData> getOfflineMissedCallNotification(
+  int notificationID,
+) async {
+  final prefs = await SharedPreferences.getInstance();
+  final dataJson = prefs.getString(notificationID.toString());
+
+  return ZegoCallInvitationData.fromJson(dataJson ?? '');
+}
+
+/// cached ID of the current cal
+Future<void> clearOfflineMissedCallNotification(int notificationID) async {
+  ZegoLoggerService.logInfo(
+    'clear offline missed call, notification id:$notificationID',
+    tag: 'call-invitation',
+    subTag: 'offline, missed call',
+  );
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove(notificationID.toString());
+}
+
 /// cached ID of the current params
 Future<void> setOfflineCallKitCacheParams(
   ZegoCallInvitationOfflineCallKitCacheParameterProtocol
@@ -225,7 +297,7 @@ Future<void> setOfflineCallKitCacheParams(
   ZegoLoggerService.logInfo(
     'set offline callkit params:$jsonString',
     tag: 'call-invitation',
-    subTag: 'callkit',
+    subTag: 'offline, missed call',
   );
 
   final prefs = await SharedPreferences.getInstance();
@@ -233,7 +305,7 @@ Future<void> setOfflineCallKitCacheParams(
     ZegoLoggerService.logInfo(
       'set offline callkit params done, result:$result',
       tag: 'call-invitation',
-      subTag: 'callkit',
+      subTag: 'offline, missed call',
     );
   });
 }

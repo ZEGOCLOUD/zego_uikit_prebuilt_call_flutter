@@ -18,11 +18,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoCallInvitationInternalInstance.instance.callInvitationData;
 
   bool get _isAdvanceInvitationMode =>
-      ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .callInvitationConfig
-          ?.canInvitingInCalling ??
-      true;
+      ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode;
 
   ZegoCallInvitationInnerText? _innerText;
 
@@ -81,16 +77,27 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       subTag: 'service.p, add call invitation',
     );
 
-    final invitingInviteeIDs = ZegoUIKitPrebuiltCallInvitationService()
+    if (!_isAdvanceInvitationMode) {
+      ZegoLoggerService.logError(
+        'please set {ZegoCallInvitationConfig.inCalling.canInvitingInCalling} or {ZegoCallInvitationConfig.missedCall.enableDialBack} to be true',
+        tag: 'call-invitation',
+        subTag: 'service.p, add call invitation',
+      );
+
+      // return false;
+    }
+
+    final localInvitingInviteeIDs = ZegoUIKitPrebuiltCallInvitationService()
         .private
-        .invitingUsersNotifier
+        .localInvitingUsersNotifier
         .value
         .map((e) => e.id)
         .toList();
-    callees.removeWhere((callee) => invitingInviteeIDs.contains(callee.id));
+    callees
+        .removeWhere((callee) => localInvitingInviteeIDs.contains(callee.id));
     ZegoLoggerService.logInfo(
       'clear inviting invitee id, '
-      'invitingInviteeIDs:$invitingInviteeIDs, '
+      'localInvitingInviteeIDs:$localInvitingInviteeIDs, '
       'now callee is:$callees, ',
       tag: 'call-invitation',
       subTag: 'service.p, add call invitation',
@@ -108,11 +115,11 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
 
     ZegoUIKitPrebuiltCallInvitationService()
         .private
-        .invitingUsersNotifier
+        .localInvitingUsersNotifier
         .value = [
       ...ZegoUIKitPrebuiltCallInvitationService()
           .private
-          .invitingUsersNotifier
+          .localInvitingUsersNotifier
           .value,
       ...callees,
     ];
@@ -133,6 +140,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
           ).value,
           data: ZegoCallInvitationSendRequestProtocol(
             callID: callID,
+            inviterName: ZegoUIKit().getLocalUser().name,
             invitees: callees
                 .map((invitee) => ZegoUIKitUser(
                       id: invitee.id,
@@ -178,7 +186,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         errorInvitees: result.errorInvitees.keys.toList(),
       );
 
-      return result.error?.code.isNotEmpty ?? true;
+      return result.error?.code.isEmpty ?? true;
     });
   }
 
@@ -207,11 +215,12 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
 
     ZegoUIKitPrebuiltCallInvitationService()
         .private
-        .invitingUsersNotifier
+        .localInvitingUsersNotifier
         .value = List.from(callees);
 
     final sendProtocol = ZegoCallInvitationSendRequestProtocol(
       callID: callID,
+      inviterName: ZegoUIKit().getLocalUser().name,
       invitees: callees
           .map((invitee) => ZegoUIKitUser(
                 id: invitee.id,
@@ -269,7 +278,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         ),
       );
 
-      return result.error?.code.isNotEmpty ?? true;
+      return result.error?.code.isEmpty ?? true;
     }
 
     if (_isAdvanceInvitationMode) {
@@ -324,7 +333,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         result.errorInvitees,
       );
 
-      return result.error?.code.isNotEmpty ?? true;
+      return result.error?.code.isEmpty ?? true;
     }
 
     if (_isAdvanceInvitationMode) {
@@ -373,7 +382,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         result.error?.message ?? '',
       );
 
-      return result.error?.code.isNotEmpty ?? true;
+      return result.error?.code.isEmpty ?? true;
     }
 
     if (_isAdvanceInvitationMode) {
@@ -422,7 +431,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         result.error?.message ?? '',
       );
 
-      return result.error?.code.isNotEmpty ?? true;
+      return result.error?.code.isEmpty ?? true;
     }
 
     if (_isAdvanceInvitationMode) {
@@ -447,6 +456,23 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
           )
           .then(callback);
     }
+  }
+
+  Future<bool> _joinInvitation({
+    required String invitationID,
+    String? customData = '',
+  }) {
+    return ZegoUIKit()
+        .getSignalingPlugin()
+        .joinAdvanceInvitation(
+          invitationID: invitationID,
+          data: ZegoCallInvitationAcceptRequestProtocol(
+            customData: customData ?? '',
+          ).toJson(),
+        )
+        .then((result) {
+      return result.error?.code.isEmpty ?? true;
+    });
   }
 
   /// Waits until the specified condition is met.

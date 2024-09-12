@@ -1,10 +1,11 @@
-// Dart imports:
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+
+// Project imports:
+import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 
 /// @nodoc
 class ZegoCallAudioVideoForeground extends StatelessWidget {
@@ -105,6 +106,7 @@ class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
   final ZegoUIKitUser? user;
   final String invitationID;
   final String? cancelData;
+  final ZegoCallInvitationInnerText invitationInnerText;
 
   const ZegoWaitingCallAcceptAudioVideoForeground({
     Key? key,
@@ -112,6 +114,7 @@ class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
     this.user,
     required this.invitationID,
     required this.size,
+    required this.invitationInnerText,
   }) : super(key: key);
 
   @override
@@ -134,7 +137,7 @@ class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
               right: 0,
               child: Center(
                 child: ZegoTextIconButton(
-                  text: 'Cancel',
+                  text: invitationInnerText.outgoingCallPageACancelButton,
                   textStyle: TextStyle(
                     color: Colors.white,
                     fontSize: 15.zR,

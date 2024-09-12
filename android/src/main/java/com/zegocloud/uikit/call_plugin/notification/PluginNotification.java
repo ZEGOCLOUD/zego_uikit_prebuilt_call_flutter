@@ -39,6 +39,15 @@ public class PluginNotification {
                 ",soundSource:" + soundSource + ",iconSource:" + iconSource + "," +
                 "notificationId:" + notificationIdString + ", isVibrate:" + isVibrate);
 
+        int notificationId = 1;
+        try {
+            notificationId = Integer.parseInt(notificationIdString);
+        } catch (NumberFormatException e) {
+            Log.d("call plugin", "convert notification id exception, " + String.format("%s", e.getMessage()));
+
+            notificationId = 1;
+        }
+
         createNotificationChannel(context, channelID, channelID, soundSource, isVibrate);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -47,12 +56,15 @@ public class PluginNotification {
 
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            flags = PendingIntent.FLAG_IMMUTABLE;
+            flags = PendingIntent.FLAG_IMMUTABLE ;
         }
+        /// update extra value
+        flags |= PendingIntent.FLAG_ONE_SHOT;
 
         ClickReceiver clickReceiver = new ClickReceiver();
         Intent clickIntent = new Intent(context, clickReceiver.getClass());
         clickIntent.setAction(Defines.ACTION_CLICK_IM);
+        clickIntent.putExtra(Defines.FLUTTER_PARAM_NOTIFICATION_ID, notificationId);
         PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context, 0, clickIntent, flags);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)
@@ -64,13 +76,13 @@ public class PluginNotification {
                 .setSound(retrieveSoundResourceUri(context, soundSource))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
-                .setOngoing(true)
+                .setOngoing(false)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle());
 
         if (isVibrate) {
-            builder.setVibrate(new long[]{0});
-        } else {
             builder.setVibrate(new long[]{0, 1000, 500, 1000});
+        } else {
+            builder.setVibrate(new long[]{0});
         }
 
         int iconResourceId = BitmapUtils.getDrawableResourceId(context, iconSource);
@@ -83,18 +95,8 @@ public class PluginNotification {
 
         android.app.Notification notification = builder.build();
         /// if android version < 4.1
-        notification.flags |= notification.FLAG_NO_CLEAR;
+//        notification.flags |= notification.FLAG_NO_CLEAR;
 
-        int notificationId = 1;
-        try {
-            notificationId = Integer.parseInt(notificationIdString);
-        } catch (NumberFormatException e) {
-            Log.d("call plugin", "convert notification id exception, " + String.format("%s", e.getMessage()));
-
-            notificationId = 1;
-        }
-
-        int finalNotificationId = notificationId;
         String notificationTag = String.valueOf(notificationId);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationManager notificationManager = getNotificationManager(context);
@@ -167,9 +169,9 @@ public class PluginNotification {
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle());
 
         if (isVibrate) {
-            builder.setVibrate(new long[]{0});
-        } else {
             builder.setVibrate(new long[]{0, 1000, 500, 1000});
+        } else {
+            builder.setVibrate(new long[]{0});
         }
 
         int iconResourceId = BitmapUtils.getDrawableResourceId(context, iconSource);
@@ -241,6 +243,18 @@ public class PluginNotification {
             }
         } else {
             Log.i("call plugin", "version too low, not need create channel");
+        }
+    }
+
+    public void dismissNotification(Context context, int notificationID) {
+        Log.i("call plugin", String.format("dismissNotification, id: %d", notificationID));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O /*Android 8*/) {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(notificationID);
+        } else {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(notificationID);
         }
     }
 

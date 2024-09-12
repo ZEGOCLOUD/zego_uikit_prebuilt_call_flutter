@@ -1,5 +1,8 @@
 package com.zegocloud.uikit.call_plugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -101,11 +104,19 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             notification.createNotificationChannel(context, channelID, channelName, soundSource, isVibrate);
 
             result.success(null);
+        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_DISMISS_NOTIFICATION)) {
+            String notificationIdString = call.argument(Defines.FLUTTER_PARAM_NOTIFICATION_ID);
+            Log.d("dismiss notification", notificationIdString);
+            int notificationID = Integer.parseInt(notificationIdString);
+
+            notification.dismissNotification(context, notificationID);
+
+            result.success(null);
         } else if (call.method.equals(Defines.FLUTTER_API_FUNC_DISMISS_ALL_NOTIFICATIONS)) {
             notification.dismissAllNotifications(context);
 
             result.success(null);
-        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_ACTIVE_APP_TO_FOREGROUND)) {
+        }  else if (call.method.equals(Defines.FLUTTER_API_FUNC_ACTIVE_APP_TO_FOREGROUND)) {
             notification.activeAppToForeground(context);
 
             result.success(null);
@@ -222,7 +233,13 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
     }
 
     private void onBroadcastNotificationIMClicked(Intent intent) {
-        Log.d("call plugin", "onBroadcastNotificationIMClicked");
-        methodChannel.invokeMethod(Defines.ACTION_CLICK_IM_CB_FUNC, null);
+        int notificationID = intent.getIntExtra(Defines.FLUTTER_PARAM_NOTIFICATION_ID, -1);
+
+        Log.d("call plugin", String.format("onBroadcastNotificationIMClicked, notification id: %d", notificationID));
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put(Defines.FLUTTER_PARAM_NOTIFICATION_ID, notificationID);
+
+        methodChannel.invokeMethod(Defines.ACTION_CLICK_IM_CB_FUNC, arguments);
     }
 }

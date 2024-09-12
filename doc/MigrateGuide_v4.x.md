@@ -20,6 +20,8 @@
 
 # Versions
 
+- [4.15.2](#4152)
+- [4.15.0](#4150)
 - [4.12.0](#4120)
 - [4.11.0](#4110)  **(💥 breaking changes)**
 - [4.8.0](#480)  **(💥 breaking changes)**
@@ -33,6 +35,169 @@
 <br />
 <br />
 
+# 4.15.2
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.15.0 to the latest 4.15.2 version.
+
+# Major Interface Changes
+
+- ZegoCallInvitationMissedCallConfig
+    - rename **enableReCall** to `enableDialBack`
+- ZegoUIKitPrebuiltCallInvitationEvents
+    - rename **onIncomingMissedCallReCallFailed** to `onIncomingMissedCallDialBackFailed`
+
+
+  <details>
+    <summary>Migrate Guide</summary>
+
+    > Modify your code based on the following guidelines to make it compatible with version 4.15.2:
+    >
+    > 4.15.0 Version Code:
+    >
+    > ```dart
+    >  ZegoUIKitPrebuiltCallInvitationService().init(
+    >    ...
+    >    config: ZegoCallInvitationConfig(
+    >        missedCall: ZegoCallInvitationMissedCallConfig(
+    >      enableReCall: true,
+    >    )),
+    >    invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+    >      onIncomingMissedCallReCallFailed: () {},
+    >    ),
+    >    ...
+    >  );
+    > ```
+    >
+    >4.15.2 Version Code:
+    >
+    > ```dart
+    >  ZegoUIKitPrebuiltCallInvitationService().init(
+    >    ...
+    >    config: ZegoCallInvitationConfig(
+    >        missedCall: ZegoCallInvitationMissedCallConfig(
+    >      enableDialBack: true,
+    >    )),
+    >    invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+    >      onIncomingMissedCallDialBackFailed: () {},
+    >    ),
+    >    ...
+    >  );
+    > ```
+
+  </details>
+
+
+
+<br />
+<br />
+
+# 4.15.0
+---
+
+# Introduction
+
+>
+> In this migration guide, we will explain how to upgrade from version 4.14.+ to the latest 4.15.0 version.
+
+# Major Interface Changes
+
+- ZegoCallInvitationConfig
+    - in calling
+        - move **canInvitingInCalling** to `inCalling.canInvitingInCalling`
+        - move **onlyInitiatorCanInvite** to `inCalling.onlyInitiatorCanInvite`
+- ZegoCallAndroidNotificationConfig
+    - rename **fullScreenBackground** to `fullScreenBackgroundAssetURL`
+    - call channel
+        - move **channelID** to `callChannel.channelID`
+        - move **channelName** to `callChannel.channelName`
+        - move **sound** to `callChannel.sound`
+        - move **icon** to `callChannel.icon`
+        - move **vibrate** to `callChannel.vibrate`
+    - message channel
+        - move **messageChannelID** to `messageChannel.channelID`
+        - move **messageChannelName** to `messageChannel.channelName`
+        - move **messageSound** to `messageChannel.sound`
+        - move **messageIcon** to `messageChannel.icon`
+        - move **messageVibrate** to `messageChannel.vibrate`
+
+
+
+  <details>
+    <summary>Migrate Guide</summary>
+
+    > Modify your code based on the following guidelines to make it compatible with version 4.15.0:
+    >
+    > 4.14.+ Version Code:
+    >
+    >```dart
+    >  ZegoUIKitPrebuiltCallInvitationService().init(
+    >    config: ZegoCallInvitationConfig(
+    >      canInvitingInCalling: true,
+    >      onlyInitiatorCanInvite: false,
+    >    ),
+    >
+    >    notificationConfig: ZegoCallInvitationNotificationConfig(
+    >      androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+    >        fullScreenBackground: '',
+    >
+    >        channelID: "Call",
+    >        channelName: "Call",
+    >        sound: "call",
+    >        icon: "call",
+    >        vibrate: true,
+    >
+    >        messageChannelID: "Message",
+    >        messageChannelName: "Message",
+    >        messageSound: "message",
+    >        messageIcon: "message",
+    >        messageVibrate: true,
+    >      ),
+    >    ),
+    >  );
+    >```
+    >
+    >4.15.0 Version Code:
+    >
+    >```dart
+    >   ZegoUIKitPrebuiltCallInvitationService().init(
+    >     config: ZegoCallInvitationConfig(
+    >       inCalling: ZegoCallInvitationInCallingConfig(
+    >         canInvitingInCalling: true,
+    >         onlyInitiatorCanInvite: false,
+    >       ),
+    >     ),
+    >     notificationConfig: ZegoCallInvitationNotificationConfig(
+    >       androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+    >         fullScreenBackgroundAssetURL: '',
+    >         callChannel: ZegoCallAndroidNotificationChannelConfig(
+    >           channelID: "Call",
+    >           channelName: "Call",
+    >           sound: "call",
+    >           icon: "call",
+    >         ),
+    >         messageChannel: ZegoCallAndroidNotificationChannelConfig(
+    >           channelID: "Message",
+    >           channelName: "Message",
+    >           sound: "message",
+    >           icon: "message",
+    >           vibrate: false,
+    >         ),
+    >       ),
+    >     ),
+    >   );
+    >```
+
+  </details>
+
+
+
+<br />
+<br />
+
 # 4.12.0
 ---
 
@@ -42,8 +207,14 @@
 > In this migration guide, we will explain how to upgrade from version 4.11.+ to the latest 4.12.0 version.
 
 # Major Interface Changes
-    - rename **ZegoCallType** to `ZegoCallInvitationType`
 
+- rename **ZegoCallType** to `ZegoCallInvitationType`
+
+
+
+
+<br />
+<br />
 
 # 4.11.0
 ---
@@ -68,7 +239,8 @@
     - rename **callingForegroundBuilder** to `ZegoCallInvitationUIConfig.invitee.foregroundBuilder`
     - rename **callingPageBuilder** to `ZegoCallInvitationUIConfig.invitee.pageBuilder`
     - rename **callingBackgroundBuilder** to `ZegoCallInvitationUIConfig.invitee.backgroundBuilder`
-    <details>
+  
+  <details>
     <summary>Migrate Guide</summary>
 
   > Modify your code based on the following guidelines to make it compatible with version 4.11.0:
@@ -415,24 +587,61 @@
 
 ---
 
-* [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
-    * [init](#init--breaking-changes)
-* [ZegoUIKitPrebuiltCallMiniOverlayMachine(ZegoMiniOverlayMachine)](#zegouikitprebuiltcallminioverlaymachinezegominioverlaymachine)
-* [Controller](#controller)
-    * [screenSharingViewController](#screensharingviewcontroller)
-    * [showScreenSharingViewInFullscreenMode](#showscreensharingviewinfullscreenmode)
-    * [sendCallInvitation](#sendcallinvitation)
-    * [cancelCallInvitation](#cancelcallinvitation)
-    * [rejectCallInvitation](#rejectcallinvitation)
-    * [acceptCallInvitation](#acceptcallinvitation)
-    * [isMinimizing => minimize.isMinimizing](#isminimizing--minimizeisminimizing)
-* Events
-    * [ZegoUIKitPrebuiltCallConfig](#zegouikitprebuiltcallconfig)
-        * [onError](#onerror--breaking-changes)
-        * [onHangUpConfirmation](#onhangupconfirmation--breaking-changes)
-        * [onHangUp/onOnlySelfInRoom/onMeRemovedFromRoom](#onhangupononlyselfinroomonmeremovedfromroom--breaking-changes)
-    * [ZegoUIKitPrebuiltCallInvitationEvents](#zegouikitprebuiltcallinvitationevents)
-        * [onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined](#onoutgoingcallrejectedcausebusyonoutgoingcalldeclined--breaking-changes)
+- [Versions](#versions)
+- [4.15.2](#4152)
+- [Introduction](#introduction)
+- [Major Interface Changes](#major-interface-changes)
+- [4.15.0](#4150)
+- [Introduction](#introduction-1)
+- [Major Interface Changes](#major-interface-changes-1)
+- [4.12.0](#4120)
+- [Introduction](#introduction-2)
+- [Major Interface Changes](#major-interface-changes-2)
+- [4.11.0](#4110)
+- [Introduction](#introduction-3)
+- [Major Interface Changes](#major-interface-changes-3)
+- [4.8.0](#480)
+- [Introduction](#introduction-4)
+- [Major Interface Changes](#major-interface-changes-4)
+- [4.4.0](#440)
+- [Introduction](#introduction-5)
+- [Major Interface Changes](#major-interface-changes-5)
+- [4.2.0](#420)
+- [Introduction](#introduction-6)
+- [Major Interface Changes](#major-interface-changes-6)
+- [4.1.10](#4110-1)
+- [Introduction](#introduction-7)
+- [Major Interface Changes](#major-interface-changes-7)
+- [4.1.9](#419)
+- [Introduction](#introduction-8)
+- [Major Interface Changes](#major-interface-changes-8)
+- [4.1.4](#414)
+- [Introduction](#introduction-9)
+- [Major Interface Changes](#major-interface-changes-9)
+  - [onHangUpConfirmation](#onhangupconfirmation)
+- [4.0.0](#400)
+- [Introduction](#introduction-10)
+- [Major Interface Changes](#major-interface-changes-10)
+  - [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcall)
+  - [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
+    - [init  **(💥 breaking changes)**](#init---breaking-changes)
+  - [ZegoUIKitPrebuiltCallMiniOverlayMachine(ZegoMiniOverlayMachine)  **(💥 breaking changes)**](#zegouikitprebuiltcallminioverlaymachinezegominioverlaymachine---breaking-changes)
+  - [Controller](#controller)
+    - [screenSharingViewController](#screensharingviewcontroller)
+    - [showScreenSharingViewInFullscreenMode](#showscreensharingviewinfullscreenmode)
+    - [sendCallInvitation](#sendcallinvitation)
+    - [cancelCallInvitation](#cancelcallinvitation)
+    - [rejectCallInvitation](#rejectcallinvitation)
+    - [acceptCallInvitation](#acceptcallinvitation)
+    - [isMinimizing =\> minimize.isMinimizing](#isminimizing--minimizeisminimizing)
+  - [Events](#events)
+    - [ZegoUIKitPrebuiltCallConfig](#zegouikitprebuiltcallconfig)
+      - [onError **(💥 breaking changes)**](#onerror--breaking-changes)
+      - [onHangUpConfirmation **(💥 breaking changes)**](#onhangupconfirmation--breaking-changes)
+      - [onHangUp/onOnlySelfInRoom/onMeRemovedFromRoom **(💥 breaking changes)**](#onhangupononlyselfinroomonmeremovedfromroom--breaking-changes)
+    - [ZegoUIKitPrebuiltCallInvitationEvents](#zegouikitprebuiltcallinvitationevents)
+      - [onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined **(💥 breaking changes)**](#onoutgoingcallrejectedcausebusyonoutgoingcalldeclined--breaking-changes)
+  - [Feedback Channels](#feedback-channels)
           
 ---
 

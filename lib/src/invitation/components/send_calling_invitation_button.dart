@@ -133,7 +133,8 @@ class _ZegoSendCallingInvitationButtonState
     final canInvitingInCalling = ZegoUIKitPrebuiltCallInvitationService()
             .private
             .callInvitationConfig
-            ?.canInvitingInCalling ??
+            ?.inCalling
+            .canInvitingInCalling ??
         true;
     if (!canInvitingInCalling) {
       ZegoLoggerService.logWarn(
@@ -161,7 +162,8 @@ class _ZegoSendCallingInvitationButtonState
     if (ZegoUIKitPrebuiltCallInvitationService()
             .private
             .callInvitationConfig
-            ?.onlyInitiatorCanInvite ??
+            ?.inCalling
+            .onlyInitiatorCanInvite ??
         true) {
       final callInitiatorUserID = ZegoUIKit()
           .getSignalingPlugin()

@@ -193,7 +193,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
 
         switch (call.method) {
           case 'onIMNotificationClicked':
-            config.clickCallback?.call();
+            final notificationID = call.arguments['notification_id'] ?? -1;
+            config.clickCallback?.call(notificationID);
         }
       });
     } on PlatformException catch (e) {
@@ -239,6 +240,38 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
         'Failed to create notification channel: $e.',
         tag: 'call-channel',
         subTag: 'createNotificationChannel',
+      );
+    }
+  }
+
+  /// only support android
+  @override
+  Future<void> dismissNotification(int notificationID) async {
+    if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'dismissNotification',
+      );
+
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'id:$notificationID',
+      tag: 'call-channel',
+      subTag: 'dismissNotification',
+    );
+
+    try {
+      await methodChannel.invokeMethod('dismissNotification', {
+        'notification_id': notificationID.toString(),
+      });
+    } on PlatformException catch (e) {
+      ZegoLoggerService.logError(
+        'Failed to dismiss notification, id:$notificationID, exception:$e.',
+        tag: 'call-channel',
+        subTag: 'dismissNotification',
       );
     }
   }

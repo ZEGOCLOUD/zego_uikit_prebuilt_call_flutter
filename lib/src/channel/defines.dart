@@ -61,7 +61,7 @@ class ZegoSignalingPluginLocalIMNotificationConfig {
   final bool vibrate;
   final String title;
   final String content;
-  final VoidCallback? clickCallback;
+  final void Function(int notificationID)? clickCallback;
 
   @override
   String toString() {

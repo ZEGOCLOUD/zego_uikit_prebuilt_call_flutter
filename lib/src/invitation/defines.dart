@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:convert';
+
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
@@ -47,8 +50,74 @@ class ZegoCallInvitationData {
   ZegoUIKitUser? inviter;
   String customData = '';
 
+  ZegoCallInvitationData({
+    required this.callID,
+    required this.invitationID,
+    required this.type,
+    required this.inviter,
+    required this.invitees,
+    required this.customData,
+  });
+
   ZegoCallInvitationData.empty();
   bool get isEmpty => callID.isEmpty || invitationID.isEmpty;
+
+  ZegoCallInvitationData.fromJson(String json) {
+    var dict = <String, dynamic>{};
+    try {
+      dict = jsonDecode(json) as Map<String, dynamic>;
+    } catch (e) {
+      ZegoLoggerService.logError(
+        'json decode data exception:$e, '
+        'json:$json',
+        tag: 'call-invitation',
+        subTag: 'ZegoCallInvitationData',
+      );
+    }
+
+    _parseFromMap(dict);
+  }
+
+  ZegoCallInvitationData.fromJsonMap(Map<String, dynamic> dict) {
+    _parseFromMap(dict);
+  }
+
+  void _parseFromMap(Map<String, dynamic> dict) {
+    callID = dict['call_id'] as String? ?? '';
+    invitationID = dict['invitation_id'] as String? ?? '';
+    type = ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
+        ZegoCallInvitationType.voiceCall;
+    customData = dict['data'] as String? ?? '';
+
+    for (final invitee in dict['invitees'] as List) {
+      final inviteeDict = invitee as Map<String, dynamic>;
+      final user = ZegoUIKitUser(
+        id: inviteeDict['id'] as String,
+        name: inviteeDict['name'] as String,
+      );
+      invitees.add(user);
+    }
+
+    inviter = ZegoUIKitUser(
+      id: dict['inviter_id'] as String? ?? '',
+      name: dict['inviter_name'] as String? ?? '',
+    );
+  }
+
+  String toJson() {
+    final dict = {
+      'call_id': callID,
+      'invitation_id': invitationID,
+      'type': type.index,
+      'data': customData,
+      'inviter_id': inviter?.id ?? '',
+      'inviter_name': inviter?.name ?? '',
+      'invitees':
+          invitees.map((user) => {'id': user.id, 'name': user.name}).toList(),
+    };
+
+    return const JsonEncoder().convert(dict);
+  }
 
   @override
   String toString() {

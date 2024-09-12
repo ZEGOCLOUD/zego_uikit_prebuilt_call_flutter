@@ -1,19 +1,37 @@
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
 class ZegoCallInvitationConfig {
   ZegoCallInvitationConfig({
-    this.canInvitingInCalling = false,
     this.endCallWhenInitiatorLeave = false,
-    this.onlyInitiatorCanInvite = false,
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
     ],
-  });
+    ZegoCallInvitationInCallingConfig? inCalling,
+    ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
+    ZegoCallInvitationMissedCallConfig? missedCall,
+    @Deprecated(
+        'use inCalling.canInvitingInCalling instead$deprecatedTipsV4150')
+    bool canInvitingInCalling = false,
+    @Deprecated(
+        'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
+    bool onlyInitiatorCanInvite = false,
+  })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
+            ZegoCallPermissionConfirmDialogConfig(),
+        inCalling = inCalling ??
+            ZegoCallInvitationInCallingConfig(
+              canInvitingInCalling: canInvitingInCalling,
+              onlyInitiatorCanInvite: onlyInitiatorCanInvite,
+            ),
+        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig();
 
   /// If you want to a pure audio call with invitation without popping up
   /// camera permission requests, you can remove the camera in [permissions]
@@ -34,9 +52,48 @@ class ZegoCallInvitationConfig {
   /// ```
   List<ZegoCallInvitationPermission> permissions;
 
+  ///  calling config
+  ZegoCallInvitationInCallingConfig inCalling;
+
+  ///  missed call config
+  ZegoCallInvitationMissedCallConfig missedCall;
+
+  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
+  /// Default will pop-up a confirmation box. If not, please set it to null.
+  ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
+
+  /// whether the entire call should end when the initiator leaves the call
+  /// 1. will causing other participants to leave together.
+  /// 2. other participants can't enter the call anymore
+  ///
+  /// Default value is false.
+  ///
+  /// If set to false
+  /// 1. the call can continue even after the initiator leaves.
+  /// 2. other participants can enter the call after the initiator leaves.
+  bool endCallWhenInitiatorLeave;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationConfig:{'
+        'permissions:$permissions, '
+        'calling:$inCalling, '
+        'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
+        'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationInCallingConfig {
+  ZegoCallInvitationInCallingConfig({
+    this.canInvitingInCalling = false,
+    this.onlyInitiatorCanInvite = false,
+  });
+
   /// whether to allow invitations in calling
   /// Default value is false.
-  /// Please note that if allowed, it will be incompatible with versions before v4.12.0, which means mutual invitations cannot be made.
+  /// Please note that if allowed, it will be incompatible with versions before v4.12.0,
+  /// which means mutual invitations cannot be made between the old and new versions of zego_uikit_prebuilt_call.
   bool canInvitingInCalling;
 
   /// whether only the call initiator has the permission to invite others to
@@ -45,21 +102,55 @@ class ZegoCallInvitationConfig {
   ///
   /// If set to false, all participants in the call can invite others.
   bool onlyInitiatorCanInvite;
+  @override
+  String toString() {
+    return 'ZegoCallInvitationInCallingConfig:{'
+        'canInvitingInCalling:$canInvitingInCalling, '
+        'onlyInitiatorCanInvite:$onlyInitiatorCanInvite, '
+        '}';
+  }
+}
 
-  /// whether the entire call should end when the initiator leaves the call
-  /// (will causing other participants to leave together).
+class ZegoCallInvitationMissedCallConfig {
+  ZegoCallInvitationMissedCallConfig({
+    this.enabled = true,
+    @Deprecated('use enableDialBack instead$deprecatedTipsV4152')
+    bool? enableReCall,
+    bool? enableDialBack,
+    this.resourceID,
+    this.notificationTitle,
+    this.notificationMessage,
+    this.timeoutSeconds = 30,
+  }) : enableDialBack = enableDialBack ?? (enableReCall ?? false);
+
+  /// whether to allow popup the missed notification
+  /// Default value is true.
+  bool enabled;
+
+  /// whether to allow redial the missed when click notification
   /// Default value is false.
-  ///
-  /// If set to false, the call can continue even after the initiator leaves.
-  bool endCallWhenInitiatorLeave;
+  /// Please note that if allowed, it will be incompatible with versions before v4.12.0,
+  /// which means mutual invitations cannot be made between the old and new versions of zego_uikit_prebuilt_call.
+  bool enableDialBack;
+
+  /// The [resource id] for notification which same as [Zego Console](https://console.zegocloud.com/)
+  String? resourceID;
+
+  /// The title for the notification.
+  String? Function()? notificationTitle;
+
+  /// The message for the notification.
+  String? Function()? notificationMessage;
+
+  /// The timeout duration in seconds for the redial invitation.
+  int timeoutSeconds;
 
   @override
   String toString() {
-    return 'ZegoCallInvitationConfig:{'
-        'permissions:$permissions, '
-        'canInvitingInCalling:$canInvitingInCalling, '
-        'onlyInitiatorCanInvite:$onlyInitiatorCanInvite, '
-        'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
+    return 'ZegoCallInvitationMissedCallConfig:{'
+        'enableDialBack:$enableDialBack, '
+        'timeoutSeconds:$timeoutSeconds, '
+        'resourceID:$resourceID, '
         '}';
   }
 }
@@ -291,24 +382,6 @@ class ZegoCallIOSNotificationConfig {
 
 /// android notification config
 class ZegoCallAndroidNotificationConfig {
-  /// specify the channel id of notification, which is same in 'Zego Console'
-  String channelID;
-
-  /// specify the channel name of notification, which is same in 'Zego Console'
-  String channelName;
-
-  /// specify the icon file name id of notification,
-  /// Additionally, you must place your icon file in the following path:
-  /// ${project_root}/android/app/src/main/res/drawable/${icon}.png
-  String? icon;
-
-  /// specify the sound file name id of notification, which is same in 'Zego Console'.
-  /// Additionally, you must place your audio file in the following path:
-  /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
-  String? sound;
-
-  bool vibrate;
-
   /// specify the call id show or hide,
   bool callIDVisibility;
 
@@ -326,60 +399,158 @@ class ZegoCallAndroidNotificationConfig {
   /// If fullScreen is enabled, you can use this parameter to configure the
   /// background image
   /// such as fullScreenBackground: 'assets/image/call.png'
-  String? fullScreenBackground;
+  String? fullScreenBackgroundAssetURL;
 
-  /// specify the channel id of message notification, which is same in 'Zego Console'
-  String messageChannelID;
+  /// specify the channel config of call notification
+  /// channelID, channelName and sound need be same in 'Zego Console'
+  ZegoCallAndroidNotificationChannelConfig callChannel;
 
-  /// specify the channel name of message notification, which is same in 'Zego Console'
-  String messageChannelName;
+  /// specify the channel config of message notification
+  /// channelID, channelName and sound need be same in 'Zego Console'
+  ZegoCallAndroidNotificationChannelConfig messageChannel;
 
-  /// specify the icon file name id of message notification,
-  /// Additionally, you must place your icon file in the following path:
-  /// ${project_root}/android/app/src/main/res/drawable/${icon}.png
-  String? messageIcon;
-
-  /// specify the sound file name id of message notification, which is same in 'Zego Console'.
-  /// Additionally, you must place your audio file in the following path:
-  /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
-  String? messageSound;
-
-  bool messageVibrate;
+  /// specify the channel config of missed call notification
+  ZegoCallAndroidNotificationChannelConfig missedCallChannel;
 
   ZegoCallAndroidNotificationConfig({
+    this.callIDVisibility = true,
+    this.showFullScreen = false,
+    this.certificateIndex =
+        ZegoSignalingPluginMultiCertificate.firstCertificate,
+    ZegoCallAndroidNotificationChannelConfig? missedCallChannel,
+
+    /// Deprecated
+    @Deprecated('use fullScreenBackgroundAssetURL instead$deprecatedTipsV4150')
+    String? fullScreenBackground,
+    String? fullScreenBackgroundAssetURL,
+
+    /// Deprecated call channel config, please use callChannel
+    @Deprecated('use callChannel.channelID instead$deprecatedTipsV4150')
+    String channelID = 'CallInvitation',
+    @Deprecated('use callChannel.channelName instead$deprecatedTipsV4150')
+    String channelName = 'Call Invitation',
+    @Deprecated('use callChannel.icon instead$deprecatedTipsV4150')
+    String? icon = '',
+    @Deprecated('use callChannel.sound instead$deprecatedTipsV4150')
+    String? sound = '',
+    @Deprecated('use callChannel.vibrate instead$deprecatedTipsV4150')
+    bool vibrate = true,
+    ZegoCallAndroidNotificationChannelConfig? callChannel,
+
+    /// Deprecated message channel config, please use messageChannel
+    @Deprecated('use messageChannel.channelID instead$deprecatedTipsV4150')
+    String messageChannelID = 'Message',
+    @Deprecated('use messageChannel.channelName instead$deprecatedTipsV4150')
+    String messageChannelName = 'Message',
+    @Deprecated('use messageChannel.icon instead$deprecatedTipsV4150')
+    String? messageIcon = '',
+    @Deprecated('use messageChannel.sound instead$deprecatedTipsV4150')
+    String? messageSound = '',
+    @Deprecated('use messageChannel.vibrate instead$deprecatedTipsV4150')
+    bool messageVibrate = false,
+    ZegoCallAndroidNotificationChannelConfig? messageChannel,
+  })  : fullScreenBackgroundAssetURL =
+            fullScreenBackgroundAssetURL ?? fullScreenBackground ?? '',
+        callChannel = callChannel ??
+            ZegoCallAndroidNotificationChannelConfig(
+              channelID: channelID,
+              channelName: channelName,
+              icon: icon,
+              sound: sound,
+              vibrate: vibrate,
+            ),
+        missedCallChannel = missedCallChannel ??
+            ZegoCallAndroidNotificationChannelConfig(
+              channelID: 'Missed Call',
+              channelName: 'Missed Call',
+              icon: '',
+              sound: '',
+              vibrate: false,
+            ),
+        messageChannel = messageChannel ??
+            ZegoCallAndroidNotificationChannelConfig(
+              channelID: messageChannelID,
+              channelName: messageChannelName,
+              icon: messageIcon,
+              sound: messageSound,
+              vibrate: messageVibrate,
+            );
+
+  @override
+  toString() {
+    return 'ZegoCallAndroidNotificationConfig:{'
+        'callIDVisibility:$callIDVisibility, '
+        'certificateIndex:$certificateIndex, '
+        'showFullScreen:$showFullScreen, '
+        'call channel config:$callChannel, '
+        'missed call channel config:$missedCallChannel, '
+        'message channel config:$messageChannel, '
+        '}';
+  }
+}
+
+class ZegoCallAndroidNotificationChannelConfig {
+  /// specify the channel id of notification
+  String channelID;
+
+  /// specify the channel name of notification
+  String channelName;
+
+  /// specify the icon file name id of notification,
+  /// Additionally, you must place your icon file in the following path:
+  /// ${project_root}/android/app/src/main/res/drawable/${icon}.png
+  String? icon;
+
+  /// specify the sound file name id of notification, which is same in 'Zego Console'.
+  /// Additionally, you must place your audio file in the following path:
+  /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
+  String? sound;
+
+  bool vibrate;
+
+  ZegoCallAndroidNotificationChannelConfig({
     this.channelID = 'CallInvitation',
     this.channelName = 'Call Invitation',
     this.icon = '',
     this.sound = '',
     this.vibrate = true,
-    this.messageVibrate = false,
-    this.callIDVisibility = true,
-    this.showFullScreen = false,
-    this.messageChannelID = 'Message',
-    this.messageChannelName = 'Message',
-    this.messageIcon = '',
-    this.messageSound = '',
-    this.fullScreenBackground = '',
-    this.certificateIndex =
-        ZegoSignalingPluginMultiCertificate.firstCertificate,
   });
-
   @override
   toString() {
-    return 'ZegoCallAndroidNotificationConfig:{'
+    return 'ZegoCallAndroidNotificationChannelConfig:{'
         'channelID:$channelID, '
         'channelName:$channelName, '
         'icon:$icon, '
         'sound:$sound, '
         'vibrate:$vibrate, '
-        'messageVibrate:$messageVibrate, '
-        'callIDVisibility:$callIDVisibility, '
-        'messageChannelID:$messageChannelID, '
-        'messageChannelName:$messageChannelName, '
-        'messageIcon:$messageIcon, '
-        'messageSound:$messageSound, '
-        'certificateIndex:$certificateIndex, '
-        'showFullScreen:$showFullScreen, '
+        '}';
+  }
+}
+
+/// Confirmation dialog when requestPermission.
+class ZegoCallPermissionConfirmDialogConfig {
+  String? title;
+  TextStyle? titleStyle;
+  TextStyle? contentStyle;
+  TextStyle? actionTextStyle;
+  Brightness? backgroundBrightness;
+
+  ZegoCallPermissionConfirmDialogConfig({
+    this.title,
+    this.titleStyle,
+    this.contentStyle,
+    this.actionTextStyle,
+    this.backgroundBrightness,
+  });
+
+  @override
+  String toString() {
+    return 'ZegoCallPermissionConfirmDialogConfig:{'
+        'title:$title, '
+        'titleStyle:$titleStyle, '
+        'contentStyle:$contentStyle, '
+        'actionTextStyle:$actionTextStyle, '
+        'backgroundBrightness:$backgroundBrightness, '
         '}';
   }
 }

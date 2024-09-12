@@ -62,6 +62,12 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
   }
 
   /// dismissAllNotifications
+  Future<void> dismissNotification(int notificationID) {
+    throw UnimplementedError(
+        'dismissAllNotifications has not been implemented.');
+  }
+
+  /// dismissAllNotifications
   Future<void> dismissAllNotifications() {
     throw UnimplementedError(
         'dismissAllNotifications has not been implemented.');

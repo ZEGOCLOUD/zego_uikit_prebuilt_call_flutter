@@ -3,6 +3,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
 
 /// Invitation-related event notifications and callbacks.
 /// You can listen to events that you are interested in here.
@@ -44,7 +45,41 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   )? onIncomingCallCanceled;
 
   /// The **callee** will receive a notification through this callback when the callee doesn't respond to the call invitation after a timeout duration.
+  /// missed call callback
   Function(String callID, ZegoCallUser caller)? onIncomingCallTimeout;
+
+  /// This callback will be triggered to **callee** when callee click the
+  /// missed call notification
+  ///
+  /// ```dart
+  ///  onIncomingMissedCallClicked: (
+  ///    String callID,
+  ///    ZegoCallUser caller,
+  ///    ZegoCallInvitationType callType,
+  ///    List<ZegoCallUser> callees,
+  ///    String customData,
+  ///
+  ///    /// defaultAction is redial the missed call
+  ///    Future<void> Function() defaultAction,
+  ///  ) async {
+  ///    /// do some other logic
+  ///
+  ///    await defaultAction.call();
+  ///  },
+  /// ```
+  Future<void> Function(
+    String callID,
+    ZegoCallUser caller,
+    ZegoCallInvitationType callType,
+    List<ZegoCallUser> callees,
+    String customData,
+
+    /// defaultAction is redial the missed call
+    Future<void> Function() defaultAction,
+  )? onIncomingMissedCallClicked;
+
+  /// missed call dial back failed
+  Function()? onIncomingMissedCallDialBackFailed;
 
   /// This callback will be triggered to **caller** when caller cancels the call invitation by click the cancel button
   Function()? onOutgoingCallCancelButtonPressed;
@@ -81,10 +116,20 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
     this.onIncomingCallReceived,
     this.onIncomingCallCanceled,
     this.onIncomingCallTimeout,
+    this.onIncomingMissedCallClicked,
+    @Deprecated(
+        'use onIncomingMissedCallDialBackFailed instead$deprecatedTipsV4152')
+    Function()? onIncomingMissedCallReCallFailed,
+    this.onIncomingMissedCallDialBackFailed,
     this.onOutgoingCallCancelButtonPressed,
     this.onOutgoingCallAccepted,
     this.onOutgoingCallRejectedCauseBusy,
     this.onOutgoingCallDeclined,
     this.onOutgoingCallTimeout,
-  });
+  }) {
+    if (null != onIncomingMissedCallReCallFailed &&
+        null == onIncomingMissedCallDialBackFailed) {
+      onIncomingMissedCallDialBackFailed = onIncomingMissedCallReCallFailed;
+    }
+  }
 }

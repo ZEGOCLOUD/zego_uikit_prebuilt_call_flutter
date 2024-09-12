@@ -78,7 +78,8 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.cancelButtonName,
-            style: TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
+            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
+                TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
           ),
           onPressed: () {
             //  pop this dialog
@@ -101,7 +102,8 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.confirmButtonName,
-            style: TextStyle(fontSize: 26.zR, color: Colors.white),
+            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
+                TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
             //  pop this dialog

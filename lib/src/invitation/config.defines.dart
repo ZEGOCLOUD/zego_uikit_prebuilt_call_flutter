@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 class ZegoCallingBuilderInfo {
@@ -138,4 +139,17 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
+}
+
+class ZegoCallPermissionConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
+  ZegoCallPermissionConfirmDialogInfo({
+    required String title,
+    String cancelButtonName = 'Deny',
+    String confirmButtonName = 'Allow',
+  }) : super(
+          title: title,
+          message: '',
+          cancelButtonName: cancelButtonName,
+          confirmButtonName: confirmButtonName,
+        );
 }
