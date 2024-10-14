@@ -153,11 +153,31 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     if (private._isInit) {
       private._data?.contextQuery = () {
-        return navigatorKey.currentState!.context;
+        late BuildContext context;
+        try {
+          context = navigatorKey.currentState!.context;
+        } catch (e) {
+          ZegoLoggerService.logError(
+            'navigatorKey is not valid, please check',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), setNavigatorKey 1',
+          );
+        }
+        return context;
       };
     } else {
       private._contextQuery = () {
-        return navigatorKey.currentState!.context;
+        late BuildContext context;
+        try {
+          context = navigatorKey.currentState!.context;
+        } catch (e) {
+          ZegoLoggerService.logError(
+            'navigatorKey is not valid, please check',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), setNavigatorKey 2',
+          );
+        }
+        return context;
       };
     }
   }
@@ -204,7 +224,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.15.8; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.16.5; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );

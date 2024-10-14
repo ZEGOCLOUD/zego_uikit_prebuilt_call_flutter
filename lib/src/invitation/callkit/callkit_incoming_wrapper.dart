@@ -297,7 +297,7 @@ Future<void> setOfflineCallKitCacheParams(
   ZegoLoggerService.logInfo(
     'set offline callkit params:$jsonString',
     tag: 'call-invitation',
-    subTag: 'offline, missed call',
+    subTag: 'callkit',
   );
 
   final prefs = await SharedPreferences.getInstance();
@@ -305,7 +305,7 @@ Future<void> setOfflineCallKitCacheParams(
     ZegoLoggerService.logInfo(
       'set offline callkit params done, result:$result',
       tag: 'call-invitation',
-      subTag: 'offline, missed call',
+      subTag: 'callkit',
     );
   });
 }

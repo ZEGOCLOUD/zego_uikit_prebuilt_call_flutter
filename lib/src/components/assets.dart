@@ -3,8 +3,17 @@ import 'package:flutter/material.dart';
 
 /// @nodoc
 class ZegoCallImage {
-  static Image asset(String name) {
-    return Image.asset(name, package: 'zego_uikit_prebuilt_call');
+  static Image asset(
+    String name, {
+    double? width,
+    double? height,
+  }) {
+    return Image.asset(
+      name,
+      package: 'zego_uikit_prebuilt_call',
+      width: width,
+      height: height,
+    );
   }
 }
 
@@ -12,6 +21,7 @@ class ZegoCallImage {
 class ZegoCallIconUrls {
   static const String back = 'assets/icons/back.png';
   static const String minimizing = 'assets/icons/minimizing.png';
+  static const String pip = 'assets/icons/pip.png';
   static const String im = 'assets/icons/im.png';
 
   static const String topMemberNormal = 'assets/icons/top_member_normal.png';

@@ -49,41 +49,6 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     }
   }
 
-  /// check app running
-  /// only support android
-  @override
-  Future<bool> checkAppRunning() async {
-    if (Platform.isIOS) {
-      ZegoLoggerService.logInfo(
-        'not support in iOS',
-        tag: 'call-channel',
-        subTag: 'channel',
-      );
-
-      return false;
-    }
-
-    ZegoLoggerService.logInfo(
-      'checkAppRunning',
-      tag: 'call-channel',
-      subTag: 'checkAppRunning',
-    );
-
-    var isAppRunning = false;
-    try {
-      isAppRunning =
-          await methodChannel.invokeMethod<bool?>('checkAppRunning') ?? false;
-    } on PlatformException catch (e) {
-      ZegoLoggerService.logError(
-        'Failed to check app running: $e.',
-        tag: 'call-channel',
-        subTag: 'checkAppRunning',
-      );
-    }
-
-    return isAppRunning;
-  }
-
   /// add local call notification
   /// only support android
   @override
@@ -303,68 +268,6 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
         'Failed to dismiss all notifications: $e.',
         tag: 'call-channel',
         subTag: 'dismissAllNotifications',
-      );
-    }
-  }
-
-  /// active app to foreground
-  /// only support android
-  @override
-  Future<void> activeAppToForeground() async {
-    if (Platform.isIOS) {
-      ZegoLoggerService.logInfo(
-        'not support in iOS',
-        tag: 'call-channel',
-        subTag: 'activeAppToForeground',
-      );
-
-      return;
-    }
-
-    ZegoLoggerService.logInfo(
-      'activeAppToForeground',
-      tag: 'call-channel',
-      subTag: 'activeAppToForeground',
-    );
-
-    try {
-      await methodChannel.invokeMethod('activeAppToForeground', {});
-    } on PlatformException catch (e) {
-      ZegoLoggerService.logError(
-        'Failed to active app to foreground: $e.',
-        tag: 'call-channel',
-        subTag: 'activeAppToForeground',
-      );
-    }
-  }
-
-  /// request dismiss keyguard
-  /// only support android
-  @override
-  Future<void> requestDismissKeyguard() async {
-    if (Platform.isIOS) {
-      ZegoLoggerService.logInfo(
-        'not support in iOS',
-        tag: 'call-channel',
-        subTag: 'requestDismissKeyguard',
-      );
-
-      return;
-    }
-
-    ZegoLoggerService.logInfo(
-      'requestDismissKeyguard',
-      tag: 'call-channel',
-      subTag: 'requestDismissKeyguard',
-    );
-
-    try {
-      await methodChannel.invokeMethod('requestDismissKeyguard', {});
-    } on PlatformException catch (e) {
-      ZegoLoggerService.logError(
-        'Failed to request dismiss keyguard: $e.',
-        tag: 'call-channel',
-        subTag: 'requestDismissKeyguard',
       );
     }
   }

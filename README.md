@@ -60,7 +60,7 @@ And it includes the business logic with the UI, you can add or remove features a
   - [Customize the menu bar](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/customize-the-menu-bar)
   - [Set a hangup confirmation dialog](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/set-a-hangup-confirmation-dialog)
   - [Calculate call duration](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/calculate-call-duration)
-  - [Minimize call window](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/minimize-call-window)
+  - [Overlay(Minimize)/PIP](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/minimize-call-window)
   - [Set video config](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/set-video-config)
 - Invitation Configs
   - [Customize UI](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
@@ -108,37 +108,46 @@ And it includes the business logic with the UI, you can add or remove features a
 
 - 1v1 call
 
-<img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/blob/master/images/_all_close.gif?raw=true" alt="1v1_call" width="300" height="651">
+<img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/blob/master/images/_all_close.gif?raw=true" alt="1v1_call" height="480">
 
 - group call
 
-<img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/raw/master/images/8C_little.jpeg" alt="group_call" width="300" height="544">
+<img src="https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter/raw/master/images/8C_little.jpeg" alt="group_call" height="480">
 
 - actived online invitation
 
-<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/1online.gif" alt="actived_online_invitation" width="300" height="623">
+<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/1online.gif" alt="actived_online_invitation" height="480">
 
 - background online invitation
 
-<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/2background.gif" alt="background_online_invitation" width="300" height="623">
+<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/2background.gif" alt="background_online_invitation" height="480">
 
 - invitation in calling
 
-<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/group_chat_call_example.gif" alt="calling_invitation" width="900" height="651">
+<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/group_chat_call_example.gif" alt="calling_invitation" height="480">
 
 - android offline invitation
 
-<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/3offline.gif" alt="android_offline_invitation" width="300" height="623">
+<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/3offline.gif" alt="android_offline_invitation" height="480">
 
 - iOS offline invitation
 
-<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/iOScallkit.gif" alt="ios_offline_invitation" width="300" height="648">
+<img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/iOScallkit.gif" alt="ios_offline_invitation" height="480">
 
 - android missed-call
   - group call
   
-  <img src="https://media-resource.spreading.io/docuo/workspace564/27e54a759d23575969552654cb45bf89/05259eb350.gif" alt="group_missed_call.gif" width="900" height="648"/>
+  <img src="https://media-resource.spreading.io/docuo/workspace564/27e54a759d23575969552654cb45bf89/05259eb350.gif" alt="group_missed_call" height="480">
   
   - 1v1 
   
-  <img src="https://media-resource.spreading.io/docuo/workspace564/27e54a759d23575969552654cb45bf89/d23501e916.gif" alt="oneonone_missed_call.gif" width="600" height="648"/>
+  <img src="https://media-resource.spreading.io/docuo/workspace564/27e54a759d23575969552654cb45bf89/d23501e916.gif" alt="oneonone_missed_call" height="480">
+
+- overlay(minimized)
+  
+  <img src="https://media-resource.spreading.io/5fa3f99cda659c8c9f2907cbb0242e6c/workspace86/call_mini.gif" alt="overlay" height="480">
+
+- PIP
+  
+  <img src="https://media-resource.spreading.io/docuo/workspace564/27e54a759d23575969552654cb45bf89/430cfc06a4.gif" alt="pip" height="480">
+

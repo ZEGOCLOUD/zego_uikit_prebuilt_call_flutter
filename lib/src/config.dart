@@ -44,6 +44,8 @@ class ZegoUIKitPrebuiltCallConfig {
   /// Configuration options for voice changer and reverberation effects.
   ZegoCallAudioEffectConfig audioEffect;
 
+  ZegoCallPIPConfig pip;
+
   /// Set advanced engine configuration, Used to enable advanced functions.
   /// For details, please consult ZEGO technical support.
   Map<String, String> advanceConfigs;
@@ -203,6 +205,7 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallTopMenuBarConfig? topMenuBarConfig,
     ZegoCallBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoCallMemberListConfig? memberListConfig,
+    ZegoCallPIPConfig? pipConfig,
     ZegoCallDurationConfig? durationConfig,
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
@@ -228,7 +231,8 @@ class ZegoUIKitPrebuiltCallConfig {
               smallViewPosition: ZegoViewPosition.topRight,
             ),
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
-        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig();
+        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
+        pip = pipConfig ?? ZegoCallPIPConfig();
 
   @override
   String toString() {
@@ -242,6 +246,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'chatView:$chatView, '
         'user:$user, '
         'layout:$layout, '
+        'pip:$pip, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
         'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
@@ -912,6 +917,57 @@ class ZegoCallRequiredUserConfig {
         'users:$users, '
         'detectSeconds:$detectSeconds, '
         'detectInDebugMode:$detectInDebugMode, '
+        '}';
+  }
+}
+
+/// pip config
+class ZegoCallPIPConfig {
+  ZegoCallPIPConfig({
+    this.aspectWidth = 9,
+    this.aspectHeight = 16,
+    this.enableWhenBackground = true,
+    ZegoCallPIPAndroidConfig? android,
+  }) : android = android ?? ZegoCallPIPAndroidConfig();
+
+  /// android config
+  ZegoCallPIPAndroidConfig android;
+
+  /// aspect width
+  int aspectWidth;
+
+  /// aspect height
+  int aspectHeight;
+
+  /// android: only available on SDK higher than 31(>=31)
+  /// iOS: not limit
+  bool enableWhenBackground;
+
+  @override
+  String toString() {
+    return 'ZegoCallPIPConfig:{'
+        'android:$android, '
+        'aspectWidth:$aspectWidth, '
+        'aspectHeight:$aspectHeight, '
+        'enableWhenAppBackToDesktop:$enableWhenBackground, '
+        '}';
+  }
+}
+
+/// android pip
+/// only available on SDK higher than 26(>=26)
+class ZegoCallPIPAndroidConfig {
+  ZegoCallPIPAndroidConfig({
+    this.background,
+  });
+
+  /// default is black
+  Widget? background;
+
+  @override
+  String toString() {
+    return 'ZegoCallPIPAndroidConfig:{'
+        'background:$background, '
         '}';
   }
 }

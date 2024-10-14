@@ -116,16 +116,6 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             notification.dismissAllNotifications(context);
 
             result.success(null);
-        }  else if (call.method.equals(Defines.FLUTTER_API_FUNC_ACTIVE_APP_TO_FOREGROUND)) {
-            notification.activeAppToForeground(context);
-
-            result.success(null);
-        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_REQUEST_DISMISS_KEYGUARD)) {
-            notification.requestDismissKeyguard(context, activityBinding.getActivity());
-
-            result.success(null);
-        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_CHECK_APP_RUNNING)) {
-            result.success(isAppRunning());
         } else {
             result.notImplemented();
         }
@@ -160,24 +150,6 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
     public void onDetachedFromActivity() {
         Log.d("call plugin", "onDetachedFromActivity");
         activityBinding = null;
-    }
-
-    private boolean isAppRunning() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
-            if (runningAppProcesses != null) {
-                for (ActivityManager.RunningAppProcessInfo processInfo : runningAppProcesses) {
-                    Log.d("call plugin", "running app: " + processInfo.processName);
-
-                    if (processInfo.processName.equals(context.getPackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     // BroadcastReceiver by other classes.

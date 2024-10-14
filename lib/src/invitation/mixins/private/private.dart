@@ -12,6 +12,8 @@ class ZegoCallInvitationServicePrivateImpl
     with
         ZegoCallInvitationServiceCallKitPrivate,
         ZegoCallInvitationServiceIOSCallKitPrivatePrivate {
+  set inCallPage(bool value) => _pageManager?.inCallPage = value;
+
   bool _isInit = false;
 
   ZegoCallInvitationServiceAPIImpl? invitationImpl;
@@ -34,8 +36,11 @@ class ZegoCallInvitationServicePrivateImpl
 
   final localInvitingUsersNotifier = ValueNotifier<List<ZegoCallUser>>([]);
 
-  ZegoCallInvitationData get currentCallInvitationData =>
+  ZegoCallInvitationData get currentCallInvitationDataSafe =>
       _pageManager?.invitationData ?? ZegoCallInvitationData.empty();
+
+  ZegoCallInvitationData? get currentCallInvitationData =>
+      _pageManager?.invitationData;
 
   ZegoCallInvitationLocalParameter get localInvitationParameter =>
       _pageManager?.localInvitationParameter ??
@@ -81,6 +86,8 @@ class ZegoCallInvitationServicePrivateImpl
       tag: 'call-invitation',
       subTag: 'service private(${identityHashCode(this)})',
     );
+
+    localInvitingUsersNotifier.addListener(onLocalInvitingUsersUpdated);
 
     _registerOfflineCallIsolateNameServer();
 
@@ -147,6 +154,7 @@ class ZegoCallInvitationServicePrivateImpl
       subTag: 'service private(${identityHashCode(this)})',
     );
 
+    localInvitingUsersNotifier.removeListener(onLocalInvitingUsersUpdated);
     _unregisterOfflineCallIsolateNameServer();
 
     ZegoUIKit()
@@ -499,8 +507,8 @@ class ZegoCallInvitationServicePrivateImpl
       var isKitProtocol = messageExtras.containsKey('zego');
       if (isKitProtocol) {
         /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
-        await ZegoCallPluginPlatform.instance.activeAppToForeground();
-        await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+        await ZegoUIKit().activeAppToForeground();
+        await ZegoUIKit().requestDismissKeyguard();
       }
 
       /// There is no need for additional processing.
@@ -530,6 +538,14 @@ class ZegoCallInvitationServicePrivateImpl
 
     _backgroundPort?.close();
     IsolateNameServer.removePortNameMapping(backgroundMessageIsolatePortName);
+  }
+
+  void onLocalInvitingUsersUpdated() {
+    ZegoLoggerService.logInfo(
+      'onLocalInvitingUsersUpdated, state:${localInvitingUsersNotifier.value}, ',
+      tag: 'call-invitation',
+      subTag: 'service private(${identityHashCode(this)})',
+    );
   }
 
   /// sync app background state

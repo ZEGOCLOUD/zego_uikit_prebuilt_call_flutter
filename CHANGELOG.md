@@ -1,3 +1,73 @@
+## 4.16.8
+
+- Bugs
+  - Fix incompatibility with the web of invitations on calling
+  - Fix the issue where the invitation ringtone does not follow the silent mode under iOS
+
+## 4.16.7
+
+- Features
+  - add ZegoCallInvitationPermission.systemAlertWindow option in ZegoCallInvitationConfig.permissions array. If this permission is not specified, the ZegoUIKitPrebuiltCallInvitationService().init() method will not automatically apply for this permission.
+  
+- Bugs
+  - Fix occasional cancel button issue
+
+## 4.16.6
+
+- Bugs
+  - Update the processing of receiving ended call invitations in unstable network environment
+
+## 4.16.4
+## 4.16.5
+
+- Bugs
+  - Fix the occasional crash of pip on some android machines
+  - Fix screen-sharing crash issue on android 14
+
+## 4.16.3
+
+- Features
+  - Add a new parameter **invitationData** to the `event` parameter of `onCallEnd`. If the currently ended call was entered through an invitation, the invitation data will be returned at the same time.
+
+## 4.16.2
+
+- Update dependency
+
+## 4.16.1
+
+- Bugs
+  - hide pip logic in iOS, or an exception will occur
+  - Fix exit the application when you receive an online invitation, and the next offline calls will be automatically canceled in iOS
+
+## 4.16.0
+
+- Features
+  - Support PIP(android only)
+  
+## 4.15.13
+
+- Features
+  - add **customData** in `foregroundBuilder`,`pageBuilder` and `backgroundBuilder` of `ZegoCallInvitationInviterUIConfig的foregroundBuilder`
+
+## 4.15.12
+
+- Update dependency
+
+## 4.15.11
+
+- Bugs
+  - Fix the issue that failed call of **ZegoUIKitPrebuiltCallInvitationService.accept/reject** 
+
+## 4.15.10
+
+- Bugs
+  - Fix the issue of the cancel button appearing after entering a call in normal call scenarios
+
+## 4.15.9
+
+- Bugs
+  -  Fix the issue of black screen when ending the call in some scenarios
+
 
 ## 4.15.8
 

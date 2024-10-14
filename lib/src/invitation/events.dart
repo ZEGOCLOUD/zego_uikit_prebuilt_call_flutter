@@ -2,8 +2,8 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 /// Invitation-related event notifications and callbacks.
 /// You can listen to events that you are interested in here.

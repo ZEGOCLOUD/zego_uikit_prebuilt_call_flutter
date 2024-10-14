@@ -1,6 +1,8 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:core';
+import 'dart:ui';
+import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
@@ -8,12 +10,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:floating/floating.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
@@ -152,7 +156,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.15.8; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.16.5; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -216,6 +220,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.minimize.private.initByPrebuilt(
         minimizeData: minimizeData,
       );
+      controller.permission.private.initByPrebuilt(
+        config: widget.config,
+      );
+      controller.pip.private.initByPrebuilt(
+        config: widget.config,
+      );
 
       /// not wake from mini page
       initContext().then((_) {
@@ -256,6 +266,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     durationTimer?.cancel();
 
+    controller.pip.cancelBackground();
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
       ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
@@ -264,6 +275,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.user.private.uninitByPrebuilt();
       controller.audioVideo.private.uninitByPrebuilt();
       controller.minimize.private.uninitByPrebuilt();
+      controller.permission.private.uninitByPrebuilt();
+      controller.pip.private.uninitByPrebuilt();
 
       ZegoUIKit().leaveRoom();
       // await ZegoUIKit().uninit();
@@ -334,23 +347,45 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: PopScope(
-        canPop: false,
-        onPopInvoked: (bool didPop) async {
-          if (didPop) {
-            return;
-          }
+    if (Platform.isAndroid) {
+      return PiPSwitcher(
+        floating: ZegoUIKitPrebuiltCallController().pip.private.floating,
+        childWhenDisabled: normalPage(),
+        childWhenEnabled: screenUtil(
+          childWidget: pipPage(),
+        ),
+      );
+    }
 
-          /// not support end by return button
-        },
-        child: ZegoScreenUtilInit(
-          designSize: const Size(750, 1334),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return ZegoInputBoardWrapper(
+    return normalPage();
+  }
+
+  Widget screenUtil({required Widget childWidget}) {
+    return ZegoScreenUtilInit(
+      designSize: const Size(750, 1334),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return childWidget;
+      },
+    );
+  }
+
+  Widget normalPage() {
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) async {
+            if (didPop) {
+              return;
+            }
+
+            /// not support end by return button
+          },
+          child: screenUtil(
+            childWidget: ZegoInputBoardWrapper(
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return clickListener(
@@ -377,10 +412,34 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                   );
                 },
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget pipPage() {
+    final screenSize = MediaQuery.of(context).size;
+    final height = screenSize.height / 3.0;
+    final width = 16 / 9 * height;
+    return ZegoMinimizingCallPage(
+      size: Size(width, height),
+      background: widget.config.pip.android.background ??
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 5.0),
+            child: Container(
+              color: Colors.black.withOpacity(0.8),
+            ),
+          ),
+      durationNotifier: durationNotifier,
+      withCircleBorder: false,
+      backgroundBuilder: widget.config.audioVideoView.backgroundBuilder,
+      foregroundBuilder: widget.config.audioVideoView.foregroundBuilder,
+      avatarBuilder: widget.config.avatarBuilder,
+      showCameraButton: false,
+      showMicrophoneButton: false,
+      showLeaveButton: false,
     );
   }
 
@@ -568,7 +627,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// check if need end call now
       final currentInvitationID = ZegoUIKitPrebuiltCallInvitationService()
           .private
-          .currentCallInvitationData
+          .currentCallInvitationDataSafe
           .invitationID;
       final remoteUserIsEmpty = ZegoUIKit().getRemoteUsers().isEmpty;
       final localIsInitiator = ZegoUIKit().getLocalUser().id ==
@@ -602,12 +661,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           subTag: 'prebuilt, onLocalInvitingUsersUpdated',
         );
 
+        controller.pip.cancelBackground();
+
         ///  remote users is empty
         final callEndEvent = ZegoCallEndEvent(
           callID: widget.callID,
           reason: ZegoCallEndReason.abandoned,
           isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
               ZegoUIKitPrebuiltCallController().minimize.state,
+          invitationData: ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .currentCallInvitationData,
         );
         defaultAction() {
           defaultEndAction(callEndEvent);
@@ -639,11 +703,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       reason: ZegoCallEndReason.remoteHangUp,
       isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
           ZegoUIKitPrebuiltCallController().minimize.state,
+      invitationData: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .currentCallInvitationData,
     );
     defaultAction() {
       defaultEndAction(callEndEvent);
     }
 
+    controller.pip.cancelBackground();
     if (events.onCallEnd != null) {
       events.onCallEnd?.call(callEndEvent, defaultAction);
     } else {
@@ -917,12 +985,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                   user: user,
                   invitationID: ZegoUIKitPrebuiltCallInvitationService()
                       .private
-                      .currentCallInvitationData
+                      .currentCallInvitationDataSafe
                       .invitationID,
                   cancelData: ZegoCallInvitationCancelRequestProtocol(
                     callID: ZegoUIKitPrebuiltCallInvitationService()
                         .private
-                        .currentCallInvitationData
+                        .currentCallInvitationDataSafe
                         .callID,
                     customData: '',
                   ).toJson(),
@@ -1026,11 +1094,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       reason: ZegoCallEndReason.kickOut,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.minimizing == controller.minimize.state,
+      invitationData: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .currentCallInvitationData,
     );
     defaultAction() {
       defaultEndAction(callEndEvent);
     }
 
+    controller.pip.cancelBackground();
     if (null != events.onCallEnd) {
       events.onCallEnd!.call(callEndEvent, defaultAction);
     } else {
@@ -1077,7 +1149,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                 ),
           ),
           onPressed: () {
-            //  pop this dialog
+            //  pop this confirm dialog
             try {
               Navigator.of(
                 context,
@@ -1100,7 +1172,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             style: TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
-            //  pop this dialog
+            //  pop this confirm dialog
             try {
               Navigator.of(
                 context,
@@ -1137,6 +1209,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       tag: 'call',
       subTag: 'prebuilt',
     );
+
+    /// stop page manager restore to idle when received invitation end event
+    ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
 
     if (ZegoCallMiniOverlayPageState.idle != controller.minimize.state) {
       /// now is minimizing state, not need to navigate, just switch to idle

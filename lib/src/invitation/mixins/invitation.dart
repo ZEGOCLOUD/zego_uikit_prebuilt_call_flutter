@@ -45,14 +45,14 @@ class ZegoCallInvitationServiceAPIImpl
     }
 
     sendInvitationFunc(callID) {
-      return private._checkInCalling()
+      return private._checkInCall()
           ? private._addInvitation(
               callees: invitees,
               isVideoCall: isVideoCall,
               callID: callID,
               invitationID: ZegoUIKitPrebuiltCallInvitationService()
                   .private
-                  .currentCallInvitationData
+                  .currentCallInvitationDataSafe
                   .invitationID,
               customData: customData,
               resourceID: resourceID,
@@ -164,7 +164,7 @@ class ZegoCallInvitationServiceAPIImpl
       return false;
     }
 
-    if (private._checkInCalling()) {
+    if (private._checkInCall()) {
       return false;
     }
 
@@ -184,7 +184,7 @@ class ZegoCallInvitationServiceAPIImpl
     ZegoLoggerService.logInfo(
       'accept call invitation',
       tag: 'call-invitation',
-      subTag: 'service, invitation',
+      subTag: 'service, accept',
     );
 
     if (!private._checkParamValid()) {
@@ -207,7 +207,7 @@ class ZegoCallInvitationServiceAPIImpl
       return false;
     }
 
-    if (private._checkInCalling()) {
+    if (private._checkInCall()) {
       return false;
     }
 

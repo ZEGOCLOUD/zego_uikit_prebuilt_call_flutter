@@ -1,6 +1,8 @@
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
+
 typedef ZegoCallEndCallback = void Function(
   ZegoCallEndEvent event,
 
@@ -63,11 +65,15 @@ class ZegoCallEndEvent {
   /// call [ZegoUIKitPrebuiltCallController().hangUp()] or Navigator.pop().
   bool isFromMinimizing;
 
+  /// invitation data if current call is from invitation
+  ZegoCallInvitationData? invitationData;
+
   ZegoCallEndEvent({
     required this.callID,
     required this.reason,
     required this.isFromMinimizing,
     this.kickerUserID,
+    this.invitationData,
   });
 
   @override
@@ -76,6 +82,7 @@ class ZegoCallEndEvent {
         'callID:$callID, '
         'kickerUserID:$kickerUserID,'
         ' reason:$reason, '
+        'invitationData: $invitationData, '
         '}';
   }
 }

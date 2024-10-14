@@ -98,6 +98,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                     inviter: widget.inviter,
                     invitees: widget.invitees,
                     callType: widget.pageManager.invitationData.type,
+                    customData: widget.pageManager.invitationData.customData,
                   ),
                 ) ??
                 ZegoCallingInviterView(
@@ -106,6 +107,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   inviter: widget.inviter,
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
+                  customData: widget.pageManager.invitationData.customData,
                   avatarBuilder: widget.callInvitationData
                       .requireConfig(widget.pageManager.invitationData)
                       .avatarBuilder,
@@ -120,6 +122,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                     inviter: widget.inviter,
                     invitees: widget.invitees,
                     callType: widget.pageManager.invitationData.type,
+                    customData: widget.pageManager.invitationData.customData,
                   ),
                 ) ??
                 ZegoCallingInviteeView(
@@ -128,6 +131,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   inviter: widget.inviter,
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
+                  customData: widget.pageManager.invitationData.customData,
                   avatarBuilder: widget.callInvitationData
                       .requireConfig(widget.pageManager.invitationData)
                       .avatarBuilder,

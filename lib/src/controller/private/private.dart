@@ -82,7 +82,7 @@ class ZegoCallControllerPrivateImpl {
                 TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
           ),
           onPressed: () {
-            //  pop this dialog
+            //  pop this confirm dialog
             try {
               Navigator.of(
                 context,
@@ -106,7 +106,7 @@ class ZegoCallControllerPrivateImpl {
                 TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
-            //  pop this dialog
+            //  pop this confirm dialog
             try {
               Navigator.of(
                 context,
@@ -144,6 +144,8 @@ class ZegoCallControllerPrivateImpl {
       tag: 'call',
       subTag: 'controller.p',
     );
+
+    ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
 
     if (ZegoCallMiniOverlayPageState.idle !=
         ZegoCallMiniOverlayMachine().state()) {

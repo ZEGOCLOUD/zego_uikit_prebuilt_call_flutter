@@ -370,8 +370,8 @@ Future<void> _onBackgroundIMMessageReceived({
         handlerInfo?.androidMessageSound ?? '',
       ),
       clickCallback: (int notificationID) async {
-        await ZegoCallPluginPlatform.instance.activeAppToForeground();
-        await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+        await ZegoUIKit().activeAppToForeground();
+        await ZegoUIKit().requestDismissKeyguard();
       },
     ),
   );
@@ -628,8 +628,8 @@ Future<void> _onBackgroundOfflineCall({
 
   if (fromOtherIsolate) {
     /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
-    await ZegoCallPluginPlatform.instance.activeAppToForeground();
-    await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+    await ZegoUIKit().activeAppToForeground();
+    await ZegoUIKit().requestDismissKeyguard();
   } else {
     await showCallkitIncoming(
       caller: inviter,
@@ -913,8 +913,8 @@ Future<void> _addMissedCallNotification(Map<String, dynamic> params) async {
 
         await setOfflineMissedCallNotificationID(notificationID)
             .then((_) async {
-          await ZegoCallPluginPlatform.instance.activeAppToForeground();
-          await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+          await ZegoUIKit().activeAppToForeground();
+          await ZegoUIKit().requestDismissKeyguard();
         });
       },
     ),

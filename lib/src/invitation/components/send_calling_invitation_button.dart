@@ -35,6 +35,7 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
     this.buttonIconSize,
     this.buttonSize,
     this.avatarBuilder,
+    this.sheetBuilder,
     this.userNameColor,
     this.popUpBackIcon,
     this.inviteButtonIcon,
@@ -52,6 +53,18 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
 
   /// avatar builder
   final ZegoAvatarBuilder? avatarBuilder;
+
+  /// custom your invitation list sheet widget
+  final Widget Function(
+    /// from [selectedUsers]
+    List<ZegoCallUser> selectedUsers,
+
+    /// from [waitingSelectUsers]
+    List<ZegoCallUser> waitingSelectUsers,
+
+    /// action to send invitation to selected users of this sheet
+    void Function(List<ZegoCallUser> selectedUsers) defaultInviteAction,
+  )? sheetBuilder;
 
   /// color of user name
   final Color? userNameColor;
@@ -169,7 +182,7 @@ class _ZegoSendCallingInvitationButtonState
           .getSignalingPlugin()
           .getAdvanceInitiator(ZegoUIKitPrebuiltCallInvitationService()
               .private
-              .currentCallInvitationData
+              .currentCallInvitationDataSafe
               .invitationID)
           ?.userID;
       ZegoLoggerService.logInfo(
@@ -191,48 +204,56 @@ class _ZegoSendCallingInvitationButtonState
       }
     }
 
-    showCallingInvitationListSheet(
-      context,
-      selectedUsers: widget.selectedUsers,
-      waitingSelectUsers: widget.waitingSelectUsers,
-      userSort: widget.userSort,
-      onPressed: (List<ZegoCallUser> selectedUsers) {
-        if (selectedUsers.isEmpty) {
-          return;
-        }
+    if (widget.sheetBuilder != null) {
+      widget.sheetBuilder?.call(
+        widget.selectedUsers,
+        widget.waitingSelectUsers,
+        sendInvitation,
+      );
+    } else {
+      showCallingInvitationListSheet(
+        context,
+        selectedUsers: widget.selectedUsers,
+        waitingSelectUsers: widget.waitingSelectUsers,
+        userSort: widget.userSort,
+        onPressed: sendInvitation,
+        backgroundColor:
+            ZegoUIKitDefaultTheme.viewBackgroundColor.withOpacity(0.6),
+        defaultChecked: widget.defaultChecked,
+        buttonIcon: widget.buttonIcon,
+        buttonIconSize: widget.buttonIconSize,
+        buttonSize: widget.buttonSize,
+        avatarBuilder: widget.avatarBuilder,
+        userNameColor: widget.userNameColor,
+        popUpTitle: widget.popUpTitle,
+        popUpTitleStyle: widget.popUpTitleStyle,
+        popUpBackIcon: widget.popUpBackIcon,
+        inviteButtonIcon: widget.inviteButtonIcon,
+      );
+    }
+  }
 
-        final currentCallInvitationData =
-            ZegoUIKitPrebuiltCallInvitationService()
-                .private
-                .currentCallInvitationData;
-        final localInvitationParameter =
-            ZegoUIKitPrebuiltCallInvitationService()
-                .private
-                .localInvitationParameter;
-        ZegoUIKitPrebuiltCallInvitationService().send(
-          invitees: selectedUsers,
-          isVideoCall: ZegoCallInvitationType.videoCall ==
-              currentCallInvitationData.type,
-          customData: currentCallInvitationData.customData,
-          callID: currentCallInvitationData.callID,
-          resourceID: localInvitationParameter.resourceID,
-          notificationTitle: localInvitationParameter.notificationTitle,
-          notificationMessage: localInvitationParameter.notificationMessage,
-          timeoutSeconds: localInvitationParameter.timeoutSeconds,
-        );
-      },
-      backgroundColor:
-          ZegoUIKitDefaultTheme.viewBackgroundColor.withOpacity(0.6),
-      defaultChecked: widget.defaultChecked,
-      buttonIcon: widget.buttonIcon,
-      buttonIconSize: widget.buttonIconSize,
-      buttonSize: widget.buttonSize,
-      avatarBuilder: widget.avatarBuilder,
-      userNameColor: widget.userNameColor,
-      popUpTitle: widget.popUpTitle,
-      popUpTitleStyle: widget.popUpTitleStyle,
-      popUpBackIcon: widget.popUpBackIcon,
-      inviteButtonIcon: widget.inviteButtonIcon,
+  void sendInvitation(List<ZegoCallUser> selectedUsers) {
+    if (selectedUsers.isEmpty) {
+      return;
+    }
+
+    final currentCallInvitationData = ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .currentCallInvitationDataSafe;
+    final localInvitationParameter = ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .localInvitationParameter;
+    ZegoUIKitPrebuiltCallInvitationService().send(
+      invitees: selectedUsers,
+      isVideoCall:
+          ZegoCallInvitationType.videoCall == currentCallInvitationData.type,
+      customData: currentCallInvitationData.customData,
+      callID: currentCallInvitationData.callID,
+      resourceID: localInvitationParameter.resourceID,
+      notificationTitle: localInvitationParameter.notificationTitle,
+      notificationMessage: localInvitationParameter.notificationMessage,
+      timeoutSeconds: localInvitationParameter.timeoutSeconds,
     );
   }
 }

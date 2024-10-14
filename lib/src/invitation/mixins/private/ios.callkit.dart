@@ -209,38 +209,56 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     final currentCallInvitationData = ZegoUIKitPrebuiltCallInvitationService()
         .private
-        .currentCallInvitationData;
+        .currentCallInvitationDataSafe;
     ZegoLoggerService.logInfo(
       'currentCallInvitationData:$currentCallInvitationData',
       tag: 'call-invitation',
       subTag: 'ios callkit, on callkit perform answer call action',
     );
     if (currentCallInvitationData.isEmpty) {
+      const checkMaxIterations = 10;
+
       /// At this point, iOS should have received an online notification
       /// Otherwise, wait
-      _waitUntil(() {
-        final currentCallInvitationData =
-            ZegoUIKitPrebuiltCallInvitationService()
-                .private
-                .currentCallInvitationData;
-        final needWait = currentCallInvitationData.isEmpty;
-        if (needWait) {
+      _waitUntil(
+        () {
+          final currentCallInvitationData =
+              ZegoUIKitPrebuiltCallInvitationService()
+                  .private
+                  .currentCallInvitationDataSafe;
+          final needWait = currentCallInvitationData.isEmpty;
+          if (needWait) {
+            ZegoLoggerService.logInfo(
+              'currentCallInvitationData:$currentCallInvitationData, is empty, waiting...',
+              tag: 'call-invitation',
+              subTag: 'ios callkit, on callkit perform answer call action',
+            );
+          }
+          return !needWait;
+        },
+        maxIterations: checkMaxIterations,
+        step: const Duration(milliseconds: 200),
+      ).then((count) {
+        if (count >= checkMaxIterations) {
           ZegoLoggerService.logInfo(
-            'currentCallInvitationData:$currentCallInvitationData, is empty, waiting...',
+            'currentCallInvitationData:$currentCallInvitationData, now is failed, ',
             tag: 'call-invitation',
             subTag: 'ios callkit, on callkit perform answer call action',
           );
-        }
-        return !needWait;
-      }).then((count) {
-        ZegoLoggerService.logInfo(
-          'currentCallInvitationData:$currentCallInvitationData, now is fine, '
-          'count:$count.',
-          tag: 'call-invitation',
-          subTag: 'ios callkit, on callkit perform answer call action',
-        );
 
-        onAnswerCallPerform.call();
+          ZegoCallKitBackgroundService()
+              .setIOSCallKitCallingDisplayState(false);
+          clearAllCallKitCalls();
+        } else {
+          ZegoLoggerService.logInfo(
+            'currentCallInvitationData:$currentCallInvitationData, now is fine, '
+            'count:$count.',
+            tag: 'call-invitation',
+            subTag: 'ios callkit, on callkit perform answer call action',
+          );
+
+          onAnswerCallPerform.call();
+        }
       });
     } else {
       onAnswerCallPerform.call();

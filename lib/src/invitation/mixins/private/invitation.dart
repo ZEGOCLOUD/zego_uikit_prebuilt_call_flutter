@@ -496,7 +496,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
 
   bool _checkParamValid() {
     if (null == _pageManager || null == _callInvitationConfig) {
-      ZegoLoggerService.logInfo(
+      ZegoLoggerService.logWarn(
         'param is invalid, page manager:$_pageManager, invitation config:$_callInvitationConfig',
         tag: 'call-invitation',
         subTag: 'service.p',
@@ -527,7 +527,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         _pageManager?.invitationData.callID.isNotEmpty ?? false;
 
     if (!isInInvitation) {
-      ZegoLoggerService.logInfo(
+      ZegoLoggerService.logWarn(
         'not in invitation, '
         'invitationData:${_pageManager?.invitationData}',
         tag: 'call-invitation',
@@ -538,13 +538,13 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     return isInInvitation;
   }
 
-  bool _checkInCalling() {
+  bool _checkInCall() {
     final currentState =
         _pageManager?.callingMachine?.machine.current?.identifier ??
             CallingState.kIdle;
-    if (CallingState.kIdle != currentState) {
-      ZegoLoggerService.logInfo(
-        'in calling now, $currentState',
+    if (CallingState.kOnlineAudioVideo == currentState) {
+      ZegoLoggerService.logWarn(
+        'in call now, $currentState',
         tag: 'call-invitation',
         subTag: 'service.p',
       );
@@ -561,7 +561,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     if (CallingState.kCallingWithVoice != currentState &&
         CallingState.kCallingWithVideo != currentState &&
         CallingState.kOnlineAudioVideo != currentState) {
-      ZegoLoggerService.logInfo(
+      ZegoLoggerService.logWarn(
         'not in calling now, $currentState',
         tag: 'call-invitation',
         subTag: 'service.p',

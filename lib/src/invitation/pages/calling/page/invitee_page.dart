@@ -21,6 +21,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
     required this.inviter,
     required this.invitees,
     required this.invitationType,
+    required this.customData,
     required this.declineButtonConfig,
     required this.acceptButtonConfig,
     this.foregroundBuilder,
@@ -35,6 +36,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
   final ZegoCallInvitationType invitationType;
+  final String customData;
   final ZegoAvatarBuilder? avatarBuilder;
 
   final ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -63,6 +65,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
                       inviter: inviter,
                       invitees: invitees,
                       callType: invitationType,
+                      customData: customData,
                     ),
                   ) ??
                   backgroundImage();
@@ -149,6 +152,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
               inviter: inviter,
               invitees: invitees,
               callType: invitationType,
+              customData: customData,
             ),
           ) ??
           Container();

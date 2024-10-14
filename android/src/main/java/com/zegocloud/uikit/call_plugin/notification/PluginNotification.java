@@ -312,83 +312,9 @@ public class PluginNotification {
         }
     }
 
-    public void requestDismissKeyguard(Context context, Activity activity) {
-        Log.d("call plugin", "request dismiss keyguard");
-
-        if (null == activity) {
-            Log.d("call plugin", "request dismiss keyguard, activity is null");
-            return;
-        }
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
-            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-            if (keyguardManager.isKeyguardLocked()) {
-                keyguardManager.requestDismissKeyguard(activity, null);
-            }
-        } else {
-            WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-            params.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
-            params.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
-            activity.getWindow().setAttributes(params);
-        }
-    }
-
     public String getAppName(Context context) {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
         return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
-    }
-
-    public void activeAppToForeground(Context context) {
-        Log.d("call plugin", "active app to foreground");
-
-        String packageName = context.getPackageName();
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        if (intent != null) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            context.getApplicationContext().startActivity(intent);
-        }
-
-//        // 获取ActivityManager
-//        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//
-//        // 获取任务列表
-//        List<ActivityManager.AppTask> appTasks = null;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//            appTasks = am.getAppTasks();
-//        }
-//        if (appTasks == null || appTasks.isEmpty()) {
-//            Log.d("call plugin", "app task null");
-//            return;
-//        }
-//
-//        if (Build.VERSION.SDK_INT < 29) {
-//            // Android 10以下版本，可以直接调用moveTaskToFront将任务带到前台
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                for (ActivityManager.AppTask appTask : appTasks) {
-//                    if (appTask.getTaskInfo().baseActivity.getPackageName().equals(packageName)) {
-//                        appTask.moveToFront();
-//                        return;
-//                    }
-//                }
-//            } else {
-//                // 对于 API 23以下的版本，启动一个新的Activity来将应用带到前台
-//                Intent intent = null;
-//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.CUPCAKE) {
-//                    intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-//                }
-//                if (intent != null) {
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                    context.startActivity(intent);
-//                }
-//            }
-//        } else {
-//            // Android 10以上版本，需要通过启动intent来将应用带到前台
-//            Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-//            if (intent != null) {
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                context.getApplicationContext().startActivity(intent);
-//            }
-//        }
     }
 }

@@ -320,8 +320,8 @@ class ZegoCallInvitationNotificationManager {
           await ZegoCallPluginPlatform.instance
               .dismissNotification(notificationID);
 
-          await ZegoCallPluginPlatform.instance.activeAppToForeground();
-          await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+          await ZegoUIKit().activeAppToForeground();
+          await ZegoUIKit().requestDismissKeyguard();
 
           if (missedCallInvitationData.isEmpty) {
             ZegoLoggerService.logError(
@@ -415,8 +415,8 @@ class ZegoCallInvitationNotificationManager {
             ZegoCallInvitationNotificationManager.hasInvitation = false;
 
             await cancelInvitationNotification();
-            await ZegoCallPluginPlatform.instance.activeAppToForeground();
-            await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+            await ZegoUIKit().activeAppToForeground();
+            await ZegoUIKit().requestDismissKeyguard();
 
             ZegoCallKitBackgroundService().acceptInvitationInBackground();
           },
@@ -452,8 +452,8 @@ class ZegoCallInvitationNotificationManager {
             );
 
             await cancelInvitationNotification();
-            await ZegoCallPluginPlatform.instance.activeAppToForeground();
-            await ZegoCallPluginPlatform.instance.requestDismissKeyguard();
+            await ZegoUIKit().activeAppToForeground();
+            await ZegoUIKit().requestDismissKeyguard();
           }),
     );
   }

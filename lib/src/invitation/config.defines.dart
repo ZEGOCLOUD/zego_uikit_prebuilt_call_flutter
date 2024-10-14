@@ -13,11 +13,13 @@ class ZegoCallingBuilderInfo {
     required this.inviter,
     required this.invitees,
     required this.callType,
+    required this.customData,
   });
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
   final ZegoCallInvitationType callType;
+  final String customData;
 }
 
 typedef ZegoCallingBackgroundBuilder = Widget? Function(

@@ -103,6 +103,8 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ZegoCallMiniOverlayPageState.minimizing,
     );
 
+    ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
+
     try {
       /// pop call page
       Navigator.of(

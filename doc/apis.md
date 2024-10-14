@@ -1,26 +1,31 @@
 
-- [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcallzego_uikit_prebuilt_callzegouikitprebuiltcall-classhtml)
-- [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservicezego_uikit_prebuilt_callzegouikitprebuiltcallinvitationservice-classhtml)
+- [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcall)
+- [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
+  - [setNavigatorKey](#setnavigatorkey)
+  - [isInCalling](#isincalling)
   - [init](#init)
   - [uninit](#uninit)
-  - [setNavigatorKey](#setnavigatorkey)
   - [useSystemCallingUI](#usesystemcallingui)
-  - [send](#send)
-  - [cancel](#cancel)
-  - [reject](#reject)
-  - [accept](#accept)
-- [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontrollerzego_uikit_prebuilt_callzegouikitprebuiltcallcontroller-classhtml)
+    - [send](#send)
+    - [cancel](#cancel)
+    - [reject](#reject)
+    - [accept](#accept)
+- [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontroller)
   - [hangUp](#hangup)
-  - [minimize](#minimize)
-    - [isMinimizing](#isminimizingnotifiervaluenotifierbool)
-    - [isMinimizing](#isminimizing)
-    - [state](#state)
-    - [restore](#restore)
-    - [minimize](#minimize-2)
-    - [hide](#hide)
   - [screenSharing](#screensharing)
     - [viewController](#viewcontroller)
     - [showViewInFullscreenMode](#showviewinfullscreenmode)
+  - [minimize](#minimize)
+    - [isMinimizingNotifier(ValueNotifier)](#isminimizingnotifiervaluenotifier)
+    - [isMinimizing(bool)](#isminimizingbool)
+    - [state(ZegoCallMiniOverlayPageState)](#statezegocallminioverlaypagestate)
+    - [restore](#restore)
+    - [minimize](#minimize-1)
+    - [hide](#hide)
+  - [pip](#pip)
+    - [enable](#enable)
+    - [enableWhenBackground](#enablewhenbackground)
+    - [cancelBackground](#cancelbackground)
   - [audioVideo](#audiovideo)
     - [camera](#camera)
       - [localState](#localstate)
@@ -42,7 +47,7 @@
       - [localNotifier](#localnotifier)
       - [notifier](#notifier)
       - [switchToSpeaker](#switchtospeaker)
-  - [user]
+  - [user](#user)
     - [stream](#stream)
     - [remove](#remove)
   
@@ -438,6 +443,42 @@
 > ```dart
 > ZegoUIKitPrebuiltCallController().minimize.hide();
 > ```
+
+## pip
+
+### enable
+
+>
+> - function prototype:
+>
+> ```dart
+> Future<PiPStatus> enable({
+>   int aspectWidth = 9,
+>   int aspectHeight = 16,
+> }) async
+> ```
+
+### enableWhenBackground
+
+>
+> - function prototype:
+>
+> ```dart
+> Future<PiPStatus> enableWhenBackground({
+>   int aspectWidth = 9,
+>   int aspectHeight = 16,
+> }) async
+> ```
+
+### cancelBackground
+
+>
+> - function prototype:
+>
+> ```dart
+> Future<PiPStatus> cancelBackground() async
+> ```
+
 
 ## audioVideo
 

@@ -43,24 +43,9 @@ class ZegoCallInvitationConfig {
   ///   config: ZegoCallInvitationConfig(permissions: [
   ///     ZegoCallInvitationPermission.microphone,
   ///   ]),
-  ///   requireConfig: (ZegoCallInvitationData data) {
-  ///     ...
-  ///     config.turnOnCameraWhenJoining = false;
-  ///     ...
-  ///   },
   /// );
   /// ```
   List<ZegoCallInvitationPermission> permissions;
-
-  ///  calling config
-  ZegoCallInvitationInCallingConfig inCalling;
-
-  ///  missed call config
-  ZegoCallInvitationMissedCallConfig missedCall;
-
-  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
-  /// Default will pop-up a confirmation box. If not, please set it to null.
-  ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
 
   /// whether the entire call should end when the initiator leaves the call
   /// 1. will causing other participants to leave together.
@@ -72,6 +57,16 @@ class ZegoCallInvitationConfig {
   /// 1. the call can continue even after the initiator leaves.
   /// 2. other participants can enter the call after the initiator leaves.
   bool endCallWhenInitiatorLeave;
+
+  ///  calling config
+  ZegoCallInvitationInCallingConfig inCalling;
+
+  ///  missed call config
+  ZegoCallInvitationMissedCallConfig missedCall;
+
+  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
+  /// Default will pop-up a confirmation box. If not, please set it to null.
+  ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
 
   @override
   String toString() {
