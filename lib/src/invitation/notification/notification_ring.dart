@@ -37,19 +37,13 @@ class ZegoRingtone {
 
     final audioContext = AudioContext(
       iOS: AudioContextIOS(
-        category: AVAudioSessionCategory.playAndRecord,
-        options: const {
-          AVAudioSessionOptions.defaultToSpeaker,
-          AVAudioSessionOptions.allowBluetooth,
-          AVAudioSessionOptions.allowBluetoothA2DP,
-          AVAudioSessionOptions.mixWithOthers,
-        },
+        category: AVAudioSessionCategory.soloAmbient,
       ),
       android: const AudioContextAndroid(
         isSpeakerphoneOn: true,
         stayAwake: true,
-        contentType: AndroidContentType.music,
-        usageType: AndroidUsageType.media,
+        contentType: AndroidContentType.unknown,
+        usageType: AndroidUsageType.notificationRingtone,
         audioFocus: AndroidAudioFocus.gain,
       ),
     );

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
@@ -42,6 +43,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notificatio
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
+import 'internal/permission.dart';
 
 part 'mixins/private/callkit.dart';
 
@@ -212,6 +214,28 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoCallInvitationInnerText? innerText,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
   }) async {
+    userID = userID.trim();
+
+    if (userID.isEmpty || userName.isEmpty) {
+      ZegoLoggerService.logError(
+        'user parameters is not valid, '
+        'user id:$userID, user name:$userName',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), init',
+      );
+
+      return;
+    }
+    if (appSign.isEmpty && token.isEmpty) {
+      ZegoLoggerService.logError(
+        'app parameters is not valid, ',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), init',
+      );
+
+      return;
+    }
+
     if (private._isInit) {
       ZegoLoggerService.logWarn(
         'service had init before',
@@ -224,7 +248,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.16.5; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:4.17.0; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
@@ -306,16 +330,28 @@ class ZegoUIKitPrebuiltCallInvitationService
       );
     });
 
-    await private
-        ._initPermissions()
-        .then((value) => private._initContext())
-        .then((_) {
+    try {
+      await private
+          ._initPermissions()
+          .then(
+            (value) => private._initContext(
+              config: config,
+            ),
+          )
+          .then((_) {
+        ZegoLoggerService.logInfo(
+          'initPermissions done',
+          tag: 'call-invitation',
+          subTag: 'service(${identityHashCode(this)}), init',
+        );
+      });
+    } catch (e) {
       ZegoLoggerService.logInfo(
-        'initPermissions done',
+        'initPermissions exception:$e',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
-    });
+    }
 
     await getOfflineMissedCallNotificationID().then((notificationID) async {
       if (null == notificationID) {

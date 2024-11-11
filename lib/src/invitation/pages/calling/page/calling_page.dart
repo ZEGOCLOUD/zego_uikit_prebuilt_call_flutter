@@ -1,6 +1,7 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'dart:io' show Platform;
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
@@ -90,6 +91,9 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         break;
       case CallingState.kCallingWithVoice:
       case CallingState.kCallingWithVideo:
+        final prebuiltCallConfig = widget.callInvitationData.requireConfig(
+          widget.pageManager.invitationData,
+        );
         final localUserIsInviter = localUserInfo.id == widget.inviter.id;
         final invitationView = localUserIsInviter
             ? (widget.callInvitationData.uiConfig.inviter.pageBuilder?.call(
@@ -108,9 +112,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
                   customData: widget.pageManager.invitationData.customData,
-                  avatarBuilder: widget.callInvitationData
-                      .requireConfig(widget.pageManager.invitationData)
-                      .avatarBuilder,
+                  avatarBuilder: prebuiltCallConfig.avatarBuilder,
                   foregroundBuilder: widget
                       .callInvitationData.uiConfig.inviter.foregroundBuilder,
                   backgroundBuilder: widget
@@ -132,9 +134,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
                   customData: widget.pageManager.invitationData.customData,
-                  avatarBuilder: widget.callInvitationData
-                      .requireConfig(widget.pageManager.invitationData)
-                      .avatarBuilder,
+                  avatarBuilder: prebuiltCallConfig.avatarBuilder,
                   foregroundBuilder: widget
                       .callInvitationData.uiConfig.invitee.foregroundBuilder,
                   backgroundBuilder: widget
@@ -180,6 +180,33 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     var callConfig = widget.callInvitationData.requireConfig(
       widget.pageManager.invitationData,
     );
+
+    if (Platform.isIOS) {
+      if (callConfig.pip.iOS.support !=
+          widget.callInvitationData.config.pip.iOS.support) {
+        ZegoLoggerService.logError(
+          'ios pip support value is different!!!! '
+          'the video frame will not be rendered!!!, '
+          'please modify [ZegoCallInvitationPIPConfig.pip.iOS.support] and '
+          '[ZegoUIKitPrebuiltCallConfig.pip.iOS.support]'
+          ' to be consistent in [ZegoUIKitPrebuiltCallInvitationService().init], '
+          'invitation config:${widget.callInvitationData.config.pip.iOS.support}, '
+          'prebuilt call config:${callConfig.pip.iOS.support} ',
+          tag: 'call-invitation',
+          subTag: 'calling page',
+        );
+        ZegoLoggerService.logError(
+          'In order to correct the issue of video rendering, the PIP is reset to '
+          '${widget.callInvitationData.config.pip.iOS.support ? 'enable' : 'disable'} '
+          'this time',
+          tag: 'call-invitation',
+          subTag: 'calling page',
+        );
+
+        callConfig.pip.iOS.support =
+            widget.callInvitationData.config.pip.iOS.support;
+      }
+    }
 
     ZegoLoggerService.logInfo(
       'create prebuilt call page',

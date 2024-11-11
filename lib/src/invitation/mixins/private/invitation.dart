@@ -512,10 +512,13 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
       ZegoLoggerService.logError(
-        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}',
+        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
+        'ZegoUIKitPrebuiltCallInvitationService is init: ${ZegoUIKitPrebuiltCallInvitationService().isInit}'
+        'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin first',
         tag: 'call-invitation',
         subTag: 'service.p',
       );
+
       return false;
     }
 

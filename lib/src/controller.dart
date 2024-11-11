@@ -23,6 +23,10 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
+import 'controller/private/pip/pip_android.dart';
+import 'controller/private/pip/pip_interface.dart';
+import 'controller/private/pip/pip_ios.dart';
+
 part 'controller/audio_video.dart';
 
 part 'controller/invitation.dart';

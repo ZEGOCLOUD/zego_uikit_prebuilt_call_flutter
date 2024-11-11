@@ -57,7 +57,7 @@ class _ZegoCallPIPButtonState extends State<ZegoCallPIPButton> {
               aspectWidth: widget.aspectWidth,
               aspectHeight: widget.aspectHeight,
             );
-        if (PiPStatus.enabled != pipStatus) {
+        if (ZegoPiPStatus.enabled != pipStatus) {
           return;
         }
 

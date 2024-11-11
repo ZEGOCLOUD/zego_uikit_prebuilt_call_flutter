@@ -141,6 +141,19 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
+  systemAlertWindow,
+}
+
+class ZegoCallInvitationPermissions {
+  static List<ZegoCallInvitationPermission> get withoutSystemAlertWindow => [
+        ZegoCallInvitationPermission.camera,
+        ZegoCallInvitationPermission.microphone,
+      ];
+  static List<ZegoCallInvitationPermission> get audio => [
+        ZegoCallInvitationPermission.camera,
+        ZegoCallInvitationPermission.microphone,
+        ZegoCallInvitationPermission.systemAlertWindow,
+      ];
 }
 
 class ZegoCallPermissionConfirmDialogInfo extends ZegoCallConfirmDialogInfo {

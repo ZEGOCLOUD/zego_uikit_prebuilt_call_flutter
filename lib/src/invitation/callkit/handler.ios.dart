@@ -24,11 +24,47 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
 
   iOSIncomingPushUUID = uuid;
 
-  // final invitationID = extras['call_id'] as String? ?? '';
   final payload = extras['payload'] as String? ?? '';
-  final extendedMap = jsonDecode(payload) as Map<String, dynamic>;
-  final invitationInternalData = ZegoCallInvitationSendRequestProtocol.fromJson(
-      extendedMap['data'] as String);
+  final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
+
+  final isAdvanceMode =
+      ZegoUIKitAdvanceInvitationSendProtocol.typeOf(payloadMap);
+  ZegoLoggerService.logInfo(
+    'isAdvanceMode:$isAdvanceMode',
+    tag: 'call-invitation',
+    subTag: 'offline',
+  );
+  String payloadCustomData = '';
+  if (isAdvanceMode) {
+    final sendProtocol =
+        ZegoUIKitAdvanceInvitationSendProtocol.fromJson(payloadMap);
+
+    ZegoLoggerService.logInfo(
+      'advance sendProtocol:$sendProtocol',
+      tag: 'call-invitation',
+      subTag: 'offline',
+    );
+
+    payloadCustomData = sendProtocol.customData;
+  } else {
+    final sendProtocol = ZegoUIKitInvitationSendProtocol.fromJson(payloadMap);
+
+    ZegoLoggerService.logInfo(
+      'sendProtocol:$sendProtocol',
+      tag: 'call-invitation',
+      subTag: 'offline',
+    );
+
+    payloadCustomData = sendProtocol.customData;
+  }
+  ZegoLoggerService.logInfo(
+    'payload custom data:$payloadCustomData',
+    tag: 'call-invitation',
+    subTag: 'offline',
+  );
+
+  final invitationInternalData =
+      ZegoCallInvitationSendRequestProtocol.fromJson(payloadCustomData);
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
@@ -36,7 +72,7 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
     // flag[0] = true;
 
     ZegoLoggerService.logInfo(
-      'cache ${invitationInternalData.callID}',
+      'cache ${invitationInternalData.callID} done',
       tag: 'call-invitation',
       subTag: 'offline',
     );

@@ -20,11 +20,11 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/mini_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 /// @nodoc
 class ZegoCallTopMenuBar extends StatefulWidget {
@@ -169,7 +169,11 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   List<Widget> getDisplayButtons(BuildContext context) {
     final needRestoreDeviceState =
         widget.minimizeData.isPrebuiltFromMinimizing ||
-            ZegoUIKitPrebuiltCallController().pip.private.isRestoreFromPIP;
+            ZegoUIKitPrebuiltCallController()
+                .pip
+                .private
+                .pipImpl()
+                .isRestoredFromPIP;
 
     final buttons = [
       ...getDefaultButtons(

@@ -12,10 +12,10 @@ import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 /// The page can be minimized within the app
 ///
@@ -98,6 +98,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
+    this.showLocalUserView = false,
     this.leaveButtonIcon,
     this.foreground,
     this.builder,
@@ -116,6 +117,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final bool showUserName;
 
   final bool showLeaveButton;
+  final bool showLocalUserView;
   final Widget? leaveButtonIcon;
 
   final Widget? foreground;
@@ -259,6 +261,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             showDevices: widget.showDevices,
             showUserName: widget.showUserName,
             showLeaveButton: widget.showLeaveButton,
+            showLocalUserView: widget.showLocalUserView,
             leaveButtonIcon: widget.leaveButtonIcon,
             foreground: widget.foreground,
             builder: widget.builder,

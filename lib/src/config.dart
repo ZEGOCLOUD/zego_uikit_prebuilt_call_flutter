@@ -928,10 +928,15 @@ class ZegoCallPIPConfig {
     this.aspectHeight = 16,
     this.enableWhenBackground = true,
     ZegoCallPIPAndroidConfig? android,
-  }) : android = android ?? ZegoCallPIPAndroidConfig();
+    ZegoCallPIPIOSConfig? iOS,
+  })  : android = android ?? ZegoCallPIPAndroidConfig(),
+        iOS = iOS ?? ZegoCallPIPIOSConfig();
 
   /// android config
   ZegoCallPIPAndroidConfig android;
+
+  /// ios config
+  ZegoCallPIPIOSConfig iOS;
 
   /// aspect width
   int aspectWidth;
@@ -939,14 +944,15 @@ class ZegoCallPIPConfig {
   /// aspect height
   int aspectHeight;
 
-  /// android: only available on SDK higher than 31(>=31)
-  /// iOS: not limit
+  /// android: SDK higher than 31(>=31)
+  /// iOS: SDK higher than 15(>=15)
   bool enableWhenBackground;
 
   @override
   String toString() {
     return 'ZegoCallPIPConfig:{'
         'android:$android, '
+        'iOS:$iOS, '
         'aspectWidth:$aspectWidth, '
         'aspectHeight:$aspectHeight, '
         'enableWhenAppBackToDesktop:$enableWhenBackground, '
@@ -968,6 +974,42 @@ class ZegoCallPIPAndroidConfig {
   String toString() {
     return 'ZegoCallPIPAndroidConfig:{'
         'background:$background, '
+        '}';
+  }
+}
+
+/// iOS pip
+/// only available on 15.0
+class ZegoCallPIPIOSConfig {
+  ZegoCallPIPIOSConfig({
+    this.support = true,
+  });
+
+  /// Whether to enable PIP under iOS
+  /// After setting, it cannot be modified again within one lifetime of prebuilt
+  ///
+  /// If you use [ZegoUIKitPrebuiltCallInvitationService], then the value of
+  /// [support] and [ZegoCallInvitationPIPConfig.pip.iOS.support] must be
+  /// consistent, otherwise, the video frame will not be rendered.
+  /// ```dart
+  /// ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
+  ///
+  /// ZegoUIKitPrebuiltCallInvitationService().init(
+  ///    config: ZegoCallInvitationConfig(
+  ///      pip: ZegoCallInvitationPIPConfig(
+  ///        iOS: ZegoCallInvitationPIPIOSConfig(
+  ///          support: true,
+  ///        ),
+  ///      ),
+  ///    ),
+  ///  );
+  /// ```
+  bool support;
+
+  @override
+  String toString() {
+    return 'ZegoCallPIPIOSConfig:{'
+        'support:$support, '
         '}';
   }
 }

@@ -1,3 +1,32 @@
+## 4.17.0
+
+- Features
+  - Support PIP in iOS, default is open, you can set **ZegoCallInvitationConfig.pip.iOS.support** to false to turn off
+- Bugs
+  - Fix the issue where Android PIP fails after minimizing within the app
+
+## 4.16.12
+ 
+- Bugs
+  - Fix iOS offline call enter failure issue after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
+
+
+## 4.16.11
+
+- Add some logs
+
+## 4.16.10
+
+- Bugs
+  - Catch and log crashes in certain scenes
+  
+## 4.16.9
+
+- Bugs
+  - Prevent crashes caused by some permissions not being granted
+  - Fix the issue where the invitation ringtone does not follow the silent mode under Android
+- Update dependency
+
 ## 4.16.8
 
 - Bugs
@@ -17,8 +46,8 @@
 - Bugs
   - Update the processing of receiving ended call invitations in unstable network environment
 
-## 4.16.4
 ## 4.16.5
+## 4.16.4
 
 - Bugs
   - Fix the occasional crash of pip on some android machines

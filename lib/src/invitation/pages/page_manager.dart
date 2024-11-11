@@ -464,6 +464,16 @@ class ZegoCallInvitationPageManager {
     ///  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
+    if (code.isNotEmpty) {
+      ZegoLoggerService.logInfo(
+        'local accept invitation is failed, ignore',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+
+      return;
+    }
+
     if (Platform.isIOS && _appInBackground) {
       ZegoLoggerService.logInfo(
         'accept call by callkit in background-locked, manually enter room',
@@ -657,6 +667,10 @@ class ZegoCallInvitationPageManager {
     callInvitationData.invitationEvents?.onOutgoingCallCancelButtonPressed
         ?.call();
 
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .localInvitingUsersNotifier
+        .value = [];
     _invitingInvitees.clear();
 
     restoreToIdle();

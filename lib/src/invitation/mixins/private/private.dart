@@ -131,7 +131,15 @@ class ZegoCallInvitationServicePrivateImpl
     _notificationManager = ZegoCallInvitationNotificationManager(
       callInvitationData: _data!,
     );
-    await _notificationManager!.init(_data?.contextQuery?.call());
+    try {
+      await _notificationManager!.init(_data?.contextQuery?.call());
+    } catch (e) {
+      ZegoLoggerService.logInfo(
+        'notificationManager init exception:$e',
+        tag: 'call-invitation',
+        subTag: 'service private(${identityHashCode(this)})',
+      );
+    }
 
     _pageManager = ZegoCallInvitationPageManager(
       callInvitationData: _data!,
@@ -366,6 +374,25 @@ class ZegoCallInvitationServicePrivateImpl
             tag: 'call-invitation',
             subTag: 'service private(${identityHashCode(this)}), init plugins',
           );
+          if (offlineCallKitCacheParameter.accept) {
+            /// After setting, in the scenario of network disconnection,
+            /// for calls that have been canceled/ended,
+            /// zim says it will return the cancel/end event
+            ZegoUIKit()
+                .getSignalingPlugin()
+                .setAdvancedConfig(
+                  'zim_voip_call_id',
+                  offlineCallKitCacheParameter.invitationID,
+                )
+                .then((_) {
+              ZegoLoggerService.logInfo(
+                'set advanced config done',
+                tag: 'call-invitation',
+                subTag:
+                    'service private(${identityHashCode(this)}), init plugins',
+              );
+            });
+          }
 
           /// exist offline call, wait auto enter room, or popup incoming call dialog
           _pageManager
@@ -409,7 +436,9 @@ class ZegoCallInvitationServicePrivateImpl
     }
   }
 
-  Future<void> _initContext() async {
+  Future<void> _initContext({
+    ZegoCallInvitationConfig? config,
+  }) async {
     ZegoLoggerService.logInfo(
       'init context',
       tag: 'call-invitation',
@@ -417,9 +446,29 @@ class ZegoCallInvitationServicePrivateImpl
     );
 
     ZegoUIKit().login(_data?.userID ?? '', _data?.userName ?? '');
+
+    bool playingStreamInPIPUnderIOS = false;
+    if (Platform.isIOS) {
+      playingStreamInPIPUnderIOS = config?.pip.iOS.support ?? true;
+
+      if (playingStreamInPIPUnderIOS) {
+        final systemVersion = ZegoUIKit().getMobileSystemVersion();
+        if (systemVersion.major < 15) {
+          ZegoLoggerService.logInfo(
+            'not support pip smaller than 15',
+            tag: 'call-invitation',
+            subTag: 'service private(${identityHashCode(this)})',
+          );
+
+          playingStreamInPIPUnderIOS = false;
+        }
+      }
+    }
     await ZegoUIKit().init(
       appID: _data?.appID ?? 0,
       appSign: _data?.appSign ?? '',
+      enablePlatformView: playingStreamInPIPUnderIOS,
+      playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
     );
 
     // enableCustomVideoProcessing
@@ -787,6 +836,72 @@ class ZegoCallInvitationServicePrivateImpl
             );
       }
     }
+  }
+
+  Future<void> requestSystemAlertWindowPermission() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    if (!_isInit) {
+      ZegoLoggerService.logInfo(
+        'service not init',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
+      );
+
+      return;
+    }
+
+    if (null == _data?.config.systemAlertWindowConfirmDialog) {
+      await requestSystemAlertWindowPermissionImpl();
+    } else {
+      PermissionStatus status = await Permission.systemAlertWindow.status;
+      if (status != PermissionStatus.granted) {
+        await PackageInfo.fromPlatform().then((info) async {
+          await permissionConfirmationDialog(
+            _data?.contextQuery?.call(),
+            dialogConfig: _data!.config.systemAlertWindowConfirmDialog!,
+            dialogInfo: ZegoCallPermissionConfirmDialogInfo(
+              title:
+                  '${_data!.innerText.permissionConfirmDialogTitle.replaceFirst(param_1, info.packageName.isEmpty ? 'App' : info.appName)} ${_data!.innerText.systemAlertWindowConfirmDialogSubTitle}',
+              cancelButtonName:
+                  _data!.innerText.permissionConfirmDialogDenyButton,
+              confirmButtonName:
+                  _data!.innerText.permissionConfirmDialogAllowButton,
+            ),
+          ).then((isAllow) async {
+            if (!isAllow) {
+              ZegoLoggerService.logInfo(
+                'requestPermission of systemAlertWindow, not allow',
+                tag: 'call-invitation',
+                subTag: 'notification manager',
+              );
+
+              return;
+            }
+            await requestSystemAlertWindowPermissionImpl();
+          });
+        });
+      }
+    }
+  }
+
+  Future<void> requestSystemAlertWindowPermissionImpl() async {
+    /// for bring app to foreground from background in Android 10
+    await requestPermission(Permission.systemAlertWindow).then((value) {
+      ZegoLoggerService.logInfo(
+        'request system alert window permission result:$value',
+        tag: 'call-invitation',
+        subTag: 'notification manager',
+      );
+    }).then((_) {
+      ZegoLoggerService.logInfo(
+        'requestPermission of systemAlertWindow done',
+        tag: 'call-invitation',
+        subTag: 'notification manager',
+      );
+    });
   }
 }
 
