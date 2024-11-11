@@ -69,7 +69,6 @@ class ZegoCallControllerMinimizePrivateActiveUser {
   bool showLocalUserView = false;
 
   final activeUserIDNotifier = ValueNotifier<String?>(null);
-
   StreamSubscription<dynamic>? audioVideoListSubscription;
   List<StreamSubscription<dynamic>?> soundLevelSubscriptions = [];
   Timer? activeUserTimer;
@@ -154,6 +153,7 @@ class ZegoCallControllerMinimizePrivateActiveUser {
           .removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
     }
     onAudioVideoListUpdated(audioVideoList);
+
     if (audioVideoList.isEmpty) {
       if (!ignoreLocalUser) {
         activeUserIDNotifier.value = ZegoUIKit().getLocalUser().id;

@@ -161,7 +161,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         break;
       case Event.actionCallEnded:
         _myPageManager?.hasCallkitIncomingCauseAppInBackground = false;
-        if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
+        if (!ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
           await ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
         }
 

@@ -1,7 +1,9 @@
+// Dart imports:
+import 'dart:io' show Platform;
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'dart:io' show Platform;
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';

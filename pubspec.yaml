@@ -36,7 +36,7 @@ dependencies:
   #  1. make kotlin version >= 1.8.0, open the your_project/android/app/build.gradle file, and modify the kotlin_version to 1.8.0.
   #  2. make gradle version >= 7.0, open the your_project/android/gradle/wrapper/gradle-wrapper.properties file, and modify the distributionUrl to https\://services.gradle.org/distributions/gradle-7.0-all.zip.
   flutter_callkit_incoming_yoer: ^2.0.4+1
-  floating: ^4.0.1
+  floating: ^5.0.1
 
 dev_dependencies:
   flutter_test:

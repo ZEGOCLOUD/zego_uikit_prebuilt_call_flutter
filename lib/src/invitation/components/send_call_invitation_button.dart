@@ -202,28 +202,17 @@ class _ZegoSendCallInvitationButtonState
   }
 
   Widget button() {
-    final canInvitingInCalling = ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .callInvitationConfig
-            ?.inCalling
-            .canInvitingInCalling ??
-        true;
-    final supportMissedCall = ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .callInvitationConfig
-            ?.missedCall
-            .enableDialBack ??
-        true;
     ZegoLoggerService.logInfo(
       'button, '
-      'canInvitingInCalling:$canInvitingInCalling, '
-      'supportMissedCall:$supportMissedCall, ',
+      'isAdvanceInvitationMode:${ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode}, ',
       tag: 'call-invitation',
       subTag: 'components, send call button',
     );
 
     return ZegoStartInvitationButton(
-      isAdvancedMode: canInvitingInCalling || supportMissedCall,
+      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .isAdvanceInvitationMode,
       invitationType: ZegoCallTypeExtension(
         widget.isVideoCall
             ? ZegoCallInvitationType.videoCall

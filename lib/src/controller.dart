@@ -15,6 +15,9 @@ import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_interface.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
@@ -22,10 +25,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-
-import 'controller/private/pip/pip_android.dart';
-import 'controller/private/pip/pip_interface.dart';
-import 'controller/private/pip/pip_ios.dart';
 
 part 'controller/audio_video.dart';
 

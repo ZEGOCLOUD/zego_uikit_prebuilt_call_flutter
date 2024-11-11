@@ -10,9 +10,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
-
-import '../controller/private/pip/pip_ios.dart';
 
 /// @nodoc
 class ZegoMinimizingCallPage extends StatefulWidget {
@@ -184,14 +183,13 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
                     return Container();
                   }
 
-                  return activeUserID == user?.id
-                      ? Stack(
-                          children: [
-                            devices(user),
-                            userName(user),
-                          ],
-                        )
-                      : Container();
+                  final isActiveUser = activeUserID == user?.id;
+                  return Stack(
+                    children: [
+                      if (isActiveUser) devices(user),
+                      userName(user, alignCenter: !isActiveUser),
+                    ],
+                  );
                 },
                 backgroundBuilder: widget.backgroundBuilder,
                 onUserListUpdated: (List<ZegoUIKitUser> userList) {
@@ -212,15 +210,6 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         );
       },
     );
-  }
-
-  Widget activeUserWidget(String? activeUserID) {
-    final activeUser = ZegoUIKit().getUser(activeUserID ?? '');
-    return widget.withCircleBorder
-        ? circleBorder(
-            child: minimizingUserWidget(activeUser),
-          )
-        : minimizingUserWidget(activeUser);
   }
 
   Widget circleBorder({required Widget child}) {
@@ -292,11 +281,14 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     );
   }
 
-  Widget userName(ZegoUIKitUser? activeUser) {
+  Widget userName(
+    ZegoUIKitUser? activeUser, {
+    bool alignCenter = false,
+  }) {
     return widget.showUserName
         ? Positioned(
-            right: 2.zW,
-            bottom: 2.zH,
+            left: alignCenter ? 0 : null,
+            right: alignCenter ? 0 : 2.zW,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(

@@ -30,7 +30,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-
 import 'controller/private/pip/pip_android.dart';
 import 'controller/private/pip/pip_ios.dart';
 
@@ -822,7 +821,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
     }
 
-    final _defaultAudioVideoContainer = defaultAudioVideoContainer();
+    final defaultAudioVideoContainerWidget = defaultAudioVideoContainer();
 
     return Positioned.fromRect(
       rect: widget.config.audioVideoView.containerRect?.call() ??
@@ -840,7 +839,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                     ZegoUIKit().getAudioVideoList(),
                     audioVideoViewCreator,
                   ) ??
-                  _defaultAudioVideoContainer;
+                  defaultAudioVideoContainerWidget;
             },
           );
         },
@@ -1016,10 +1015,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return Container();
     }
 
-    final isWaitingCallAccept = -1 !=
-        waitingAcceptUserNotifier.value.indexWhere(
-          (waitingAcceptUser) => user?.id == waitingAcceptUser.id,
-        );
+    var isWaitingCallAccept = false;
+    if (ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .isAdvanceInvitationMode) {
+      /// only support in advance invite
+      isWaitingCallAccept = -1 !=
+          waitingAcceptUserNotifier.value.indexWhere(
+            (waitingAcceptUser) => user?.id == waitingAcceptUser.id,
+          );
+    }
     extraInfo[ZegoViewBuilderMapExtraInfoKey.isVirtualUser.name] =
         isWaitingCallAccept;
 

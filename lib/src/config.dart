@@ -261,10 +261,16 @@ class ZegoUIKitPrebuiltCallConfig {
 }
 
 /// Configuration options for audio/video views.
-/// You can use the [ZegoUIKitPrebuiltCallConfig.audioVideoView] property to set the properties inside this class.
-/// These options allow you to customize the display effects of the audio/video views, such as showing microphone status and usernames.
-/// If you need to customize the foreground or background of the audio/video view, you can use foregroundBuilder and backgroundBuilder.
-/// If you want to hide user avatars or sound waveforms in audio mode, you can set showAvatarInAudioMode and showSoundWavesInAudioMode to false.
+///
+/// You can use the [ZegoUIKitPrebuiltCallConfig.audioVideoView] property to
+/// set the properties inside this class.
+/// These options allow you to customize the display effects of the
+/// audio/video views, such as showing microphone status and usernames.
+///
+/// If you need to customize the foreground or background of the audio/video
+/// view, you can use [foregroundBuilder] and [backgroundBuilder].
+/// If you want to hide user avatars or sound waveforms in audio mode, you
+/// can set [showAvatarInAudioMode] and  [showSoundWavesInAudioMode] to false.
 class ZegoCallAudioVideoViewConfig {
   /// Whether to mirror the displayed video captured by the camera.
   /// This mirroring effect only applies to the front-facing camera.

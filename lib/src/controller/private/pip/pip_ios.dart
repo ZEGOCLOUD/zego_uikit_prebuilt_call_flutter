@@ -1,12 +1,17 @@
+// Dart imports:
 import 'dart:async';
 import 'dart:io' show Platform;
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+
+// Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_interface.dart';
 
 class ZegoCallControllerIOSPIP extends ZegoCallControllerPIPInterface {
   final _private = ZegoCallControllerPIPImplPrivateIOS();
@@ -17,8 +22,9 @@ class ZegoCallControllerIOSPIP extends ZegoCallControllerPIPInterface {
   bool get isRestoredFromPIP => false;
 
   @override
-  // TODO: implement available
-  Future<bool> get available => throw UnimplementedError();
+  Future<bool> get available async {
+    return _private.available;
+  }
 
   @override
   Future<void> cancelBackground() async {}
@@ -96,6 +102,17 @@ class ZegoCallControllerPIPImplPrivateIOS {
   ZegoUIKitPrebuiltCallConfig? config;
   StreamSubscription<dynamic>? subscription;
   bool? _isSupportInConfig;
+  bool? _isAvailable;
+
+  bool get available {
+    if (null != _isAvailable) {
+      return _isAvailable!;
+    }
+
+    final systemVersion = ZegoUIKit().getMobileSystemVersion();
+    _isAvailable == systemVersion.major >= 15;
+    return _isAvailable!;
+  }
 
   bool get isSupportInConfig {
     if (null == _isSupportInConfig) {

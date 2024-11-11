@@ -1,10 +1,14 @@
+// Dart imports:
 import 'dart:async';
-import 'dart:io' show Platform;
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
 import 'package:floating/floating.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+
+// Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_interface.dart';

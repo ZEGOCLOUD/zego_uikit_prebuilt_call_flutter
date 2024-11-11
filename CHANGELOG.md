@@ -1,7 +1,7 @@
 ## 4.17.0
 
 - Features
-  - Support PIP in iOS, default is open, you can set **ZegoCallInvitationConfig.pip.iOS.support** to false to turn off
+  - Support PIP in iOS, default is open, you can set **ZegoCallInvitationConfig.pip.iOS.support** or **ZegoUIKitPrebuiltCallConfig.pip.iOS.support** to false to turn off
 - Bugs
   - Fix the issue where Android PIP fails after minimizing within the app
 

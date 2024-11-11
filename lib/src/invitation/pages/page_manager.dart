@@ -106,10 +106,12 @@ class ZegoCallInvitationPageManager {
   set waitingCallInvitationReceivedAfterCallKitIncomingRejected(value) =>
       _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
 
-  bool get isInCalling =>
-      CallingState.kOnlineAudioVideo ==
-          (callingMachine?.getPageState() ?? CallingState.kIdle) ||
-      inCallingByIOSBackgroundLock;
+  bool get isInCalling {
+    final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
+    return (CallingState.kCallingWithVoice == pageState ||
+            CallingState.kCallingWithVideo == pageState) ||
+        inCallingByIOSBackgroundLock;
+  }
 
   Future<void> init({
     required ZegoCallRingtoneConfig ringtoneConfig,
@@ -509,12 +511,37 @@ class ZegoCallInvitationPageManager {
           callInvitationData.userName,
         );
 
+        bool playingStreamInPIPUnderIOS = false;
+        if (Platform.isIOS) {
+          playingStreamInPIPUnderIOS =
+              callInvitationData.config.pip.iOS.support;
+
+          if (playingStreamInPIPUnderIOS) {
+            final systemVersion = ZegoUIKit().getMobileSystemVersion();
+            if (systemVersion.major < 15) {
+              ZegoLoggerService.logInfo(
+                'not support pip smaller than 15',
+                tag: 'call-invitation',
+                subTag: 'page manager',
+              );
+
+              playingStreamInPIPUnderIOS = false;
+            }
+          }
+        }
         ZegoUIKit()
             .init(
           appID: callInvitationData.appID,
           appSign: callInvitationData.appSign,
+          enablePlatformView: playingStreamInPIPUnderIOS,
+          playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
         )
             .then((value) async {
+          if (playingStreamInPIPUnderIOS) {
+            await ZegoUIKit().enableHardwareDecoder(true);
+            await ZegoUIKit().enableCustomVideoRender(true);
+          }
+
           ZegoUIKit()
             ..turnMicrophoneOn(true)
             ..setAudioOutputToSpeaker(true);
@@ -1142,7 +1169,7 @@ class ZegoCallInvitationPageManager {
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
-    if (!isInCalling) {
+    if (isInCalling) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
   }
@@ -1378,6 +1405,7 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager, on invitation refused',
     );
 
+    var restoreCauseByRefused = false;
     if (isGroupCall) {
       if (_invitingInvitees.isEmpty && isNobodyAccepted) {
         ZegoLoggerService.logInfo(
@@ -1386,10 +1414,22 @@ class ZegoCallInvitationPageManager {
           subTag: 'page manager, on invitation refused',
         );
 
-        restoreToIdle();
+        restoreCauseByRefused = true;
       }
     } else {
+      restoreCauseByRefused = true;
+    }
+
+    if (restoreCauseByRefused) {
       restoreToIdle();
+
+      if (ZegoCallMiniOverlayPageState.minimizing ==
+          ZegoCallMiniOverlayMachine().state()) {
+        _callerRingtone.stopRing();
+        _calleeRingtone.stopRing();
+
+        ZegoUIKitPrebuiltCallController().minimize.hide();
+      }
     }
   }
 
@@ -1454,7 +1494,10 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
-    _invitingInvitees.clear();
+    if (ZegoCallMiniOverlayPageState.minimizing !=
+        ZegoCallMiniOverlayMachine().state()) {
+      _invitingInvitees.clear();
+    }
 
     restoreToIdle(needPop: false);
   }
@@ -1470,11 +1513,11 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager, restore to idle',
     );
 
-    _callerRingtone.stopRing();
-    _calleeRingtone.stopRing();
-
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
+      _callerRingtone.stopRing();
+      _calleeRingtone.stopRing();
+
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
@@ -1525,7 +1568,10 @@ class ZegoCallInvitationPageManager {
       clearAllCallKitCalls();
     }
 
-    _invitationData = ZegoCallInvitationData.empty();
+    if (ZegoCallMiniOverlayPageState.minimizing !=
+        ZegoCallMiniOverlayMachine().state()) {
+      _invitationData = ZegoCallInvitationData.empty();
+    }
   }
 
   void onInvitationTopSheetEmptyClicked() {
