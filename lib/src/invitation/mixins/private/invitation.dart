@@ -254,7 +254,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     Future<bool> sendInvitationCallback(
       ZegoSignalingPluginSendInvitationResult result,
     ) async {
-      _pageManager?.onLocalSendInvitation(
+      await _pageManager?.onLocalSendInvitation(
         callID: callID,
         invitees: callees
             .map((invitee) => ZegoUIKitUser(

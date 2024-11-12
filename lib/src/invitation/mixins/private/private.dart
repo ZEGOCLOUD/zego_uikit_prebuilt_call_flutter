@@ -471,6 +471,8 @@ class ZegoCallInvitationServicePrivateImpl
       playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
     );
 
+    await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);
+
     // enableCustomVideoProcessing
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
       ZegoUIKit().enableCustomVideoProcessing(true);

@@ -331,14 +331,11 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     try {
-      await private
-          ._initPermissions()
-          .then(
-            (value) => private._initContext(
-              config: config,
-            ),
-          )
-          .then((_) {
+      await private._initPermissions().then(
+        (value) async {
+          await private._initContext(config: config);
+        },
+      ).then((_) {
         ZegoLoggerService.logInfo(
           'initPermissions done',
           tag: 'call-invitation',

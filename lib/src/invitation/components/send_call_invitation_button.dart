@@ -344,12 +344,12 @@ class _ZegoSendCallInvitationButtonState
     return true;
   }
 
-  void onPressed(
+  Future<void> onPressed(
     String code,
     String message,
     String invitationID,
     List<String> errorInvitees,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'pressed, code:$code, message:$message, '
       'invitation id:$invitationID, error invitees:$errorInvitees',
@@ -357,7 +357,7 @@ class _ZegoSendCallInvitationButtonState
       subTag: 'components, send call button',
     );
 
-    pageManager?.onLocalSendInvitation(
+    await pageManager?.onLocalSendInvitation(
       callID: callIDNotifier.value,
       invitees: List.from(widget.invitees),
       invitationType: widget.isVideoCall

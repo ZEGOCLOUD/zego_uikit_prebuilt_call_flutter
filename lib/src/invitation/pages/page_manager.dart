@@ -22,6 +22,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/invitation_notify.
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
+import '../../controller/private/pip/pip_ios.dart';
+
 /// @nodoc
 class ZegoCallInvitationPageManager {
   ZegoUIKitPrebuiltCallInvitationData callInvitationData;
@@ -371,7 +373,7 @@ class ZegoCallInvitationPageManager {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void onLocalSendInvitation({
+  Future<void> onLocalSendInvitation({
     required String callID,
     required List<ZegoUIKitUser> invitees,
     required ZegoCallInvitationType invitationType,
@@ -381,7 +383,7 @@ class ZegoCallInvitationPageManager {
     required String invitationID,
     required List<String> errorInvitees,
     required ZegoCallInvitationLocalParameter localConfig,
-  }) {
+  }) async {
     ZegoLoggerService.logInfo(
       'local send invitation, '
       'call id:$callID, '
@@ -537,11 +539,6 @@ class ZegoCallInvitationPageManager {
           playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
         )
             .then((value) async {
-          if (playingStreamInPIPUnderIOS) {
-            await ZegoUIKit().enableHardwareDecoder(true);
-            await ZegoUIKit().enableCustomVideoRender(true);
-          }
-
           ZegoUIKit()
             ..turnMicrophoneOn(true)
             ..setAudioOutputToSpeaker(true);

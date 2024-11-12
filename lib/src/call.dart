@@ -309,12 +309,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.permission.private.uninitByPrebuilt();
       controller.pip.private.uninitByPrebuilt();
 
-      ZegoUIKit().leaveRoom().then((_) {
-        if (playingStreamInPIPUnderIOS) {
-          ZegoUIKit().enableHardwareDecoder(false);
-          ZegoUIKit().enableCustomVideoRender(false);
-        }
-      });
+      ZegoUIKit().leaveRoom();
       // await ZegoUIKit().uninit();
     } else {
       ZegoLoggerService.logInfo(
@@ -546,10 +541,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
-        if (playingStreamInPIPUnderIOS) {
-          await ZegoUIKit().enableHardwareDecoder(true);
-          await ZegoUIKit().enableCustomVideoRender(true);
-        }
+        await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);
 
         _setVideoConfig();
         _setBeautyConfig();
