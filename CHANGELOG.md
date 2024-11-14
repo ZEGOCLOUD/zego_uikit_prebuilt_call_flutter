@@ -1,9 +1,12 @@
-## 4.17.0
+## 4.17.0-beta.1
 
 - Features
   - Support PIP in iOS, default is open, you can set **ZegoCallInvitationConfig.pip.iOS.support** or **ZegoUIKitPrebuiltCallConfig.pip.iOS.support** to false to turn off
+  - Modify the in-app minimization interface
 - Bugs
   - Fix the issue where Android PIP fails after minimizing within the app
+  - Fixed the issue of invitation cancel button appearing in group call
+  - Fix the auto cancel issue when the callee is in the in-app minimization state in group call
 
 ## 4.16.12
  
