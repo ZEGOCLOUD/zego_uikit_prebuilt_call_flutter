@@ -1,3 +1,10 @@
+
+
+## 4.16.13
+
+- Bugs
+  - Fix test zim types crash on debug mode
+
 ## 4.16.12
  
 - Bugs
