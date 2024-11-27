@@ -1,3 +1,4 @@
+
 ## 4.17.0-beta.1
 
 - Features
@@ -7,6 +8,12 @@
   - Fix the issue where Android PIP fails after minimizing within the app
   - Fixed the issue of invitation cancel button appearing in group call
   - Fix the auto cancel issue when the callee is in the in-app minimization state in group call
+
+
+## 4.16.13
+
+- Bugs
+  - Fix test zim types crash on debug mode
 
 ## 4.16.12
  
