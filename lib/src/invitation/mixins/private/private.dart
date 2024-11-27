@@ -436,9 +436,7 @@ class ZegoCallInvitationServicePrivateImpl
     }
   }
 
-  Future<void> _initContext({
-    ZegoCallInvitationConfig? config,
-  }) async {
+  Future<void> _initContext() async {
     ZegoLoggerService.logInfo(
       'init context',
       tag: 'call-invitation',
@@ -446,29 +444,9 @@ class ZegoCallInvitationServicePrivateImpl
     );
 
     ZegoUIKit().login(_data?.userID ?? '', _data?.userName ?? '');
-
-    bool playingStreamInPIPUnderIOS = false;
-    if (Platform.isIOS) {
-      playingStreamInPIPUnderIOS = config?.pip.iOS.support ?? true;
-
-      if (playingStreamInPIPUnderIOS) {
-        final systemVersion = ZegoUIKit().getMobileSystemVersion();
-        if (systemVersion.major < 15) {
-          ZegoLoggerService.logInfo(
-            'not support pip smaller than 15',
-            tag: 'call-invitation',
-            subTag: 'service private(${identityHashCode(this)})',
-          );
-
-          playingStreamInPIPUnderIOS = false;
-        }
-      }
-    }
     await ZegoUIKit().init(
       appID: _data?.appID ?? 0,
       appSign: _data?.appSign ?? '',
-      enablePlatformView: playingStreamInPIPUnderIOS,
-      playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
     );
 
     // enableCustomVideoProcessing

@@ -19,7 +19,6 @@ class ZegoCallInvitationConfig {
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
-    ZegoCallInvitationPIPConfig? pip,
     @Deprecated(
         'use inCalling.canInvitingInCalling instead$deprecatedTipsV4150')
     bool canInvitingInCalling = false,
@@ -33,8 +32,7 @@ class ZegoCallInvitationConfig {
               canInvitingInCalling: canInvitingInCalling,
               onlyInitiatorCanInvite: onlyInitiatorCanInvite,
             ),
-        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig(),
-        pip = pip ?? ZegoCallInvitationPIPConfig();
+        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig();
 
   /// If you want to a pure audio call with invitation without popping up
   /// camera permission requests, you can remove the camera in [permissions]
@@ -74,9 +72,6 @@ class ZegoCallInvitationConfig {
 
   ///  missed call config
   ZegoCallInvitationMissedCallConfig missedCall;
-
-  /// pip
-  ZegoCallInvitationPIPConfig pip;
 
   /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
   /// Default will pop-up a confirmation box. If not, please set it to null.
@@ -160,51 +155,6 @@ class ZegoCallInvitationMissedCallConfig {
         'enableDialBack:$enableDialBack, '
         'timeoutSeconds:$timeoutSeconds, '
         'resourceID:$resourceID, '
-        '}';
-  }
-}
-
-/// pip config
-class ZegoCallInvitationPIPConfig {
-  /// ios config
-  ZegoCallInvitationPIPIOSConfig iOS;
-
-  ZegoCallInvitationPIPConfig({
-    ZegoCallInvitationPIPIOSConfig? iOS,
-  }) : iOS = iOS ?? ZegoCallInvitationPIPIOSConfig();
-}
-
-/// iOS pip
-/// only available on 15.0
-class ZegoCallInvitationPIPIOSConfig {
-  ZegoCallInvitationPIPIOSConfig({
-    this.support = true,
-  });
-
-  /// Whether to enable PIP under iOS
-  /// After setting, it cannot be modified again within one lifetime of prebuilt
-  ///
-  /// the value of [support] and [ZegoUIKitPrebuiltCallConfig.pip.iOS.support] must be consistent,
-  /// otherwise, the video frame will not be rendered.
-  /// ```dart
-  /// ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
-  ///
-  /// ZegoUIKitPrebuiltCallInvitationService().init(
-  ///    config: ZegoCallInvitationConfig(
-  ///      pip: ZegoCallInvitationPIPConfig(
-  ///        iOS: ZegoCallInvitationPIPIOSConfig(
-  ///          support: true,
-  ///        ),
-  ///      ),
-  ///    ),
-  ///  );
-  /// ```
-  bool support;
-
-  @override
-  String toString() {
-    return 'ZegoCallInvitationPIPIOSConfig:{'
-        'support:$support, '
         '}';
   }
 }

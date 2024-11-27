@@ -98,7 +98,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
-    this.showLocalUserView = false,
     this.leaveButtonIcon,
     this.foreground,
     this.builder,
@@ -117,7 +116,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final bool showUserName;
 
   final bool showLeaveButton;
-  final bool showLocalUserView;
   final Widget? leaveButtonIcon;
 
   final Widget? foreground;
@@ -261,7 +259,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             showDevices: widget.showDevices,
             showUserName: widget.showUserName,
             showLeaveButton: widget.showLeaveButton,
-            showLocalUserView: widget.showLocalUserView,
             leaveButtonIcon: widget.leaveButtonIcon,
             foreground: widget.foreground,
             builder: widget.builder,

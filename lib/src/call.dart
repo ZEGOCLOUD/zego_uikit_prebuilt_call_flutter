@@ -31,9 +31,6 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
-import 'controller/private/pip/pip_android.dart';
-import 'controller/private/pip/pip_ios.dart';
-
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
 /// You can refer to our [documentation](https://docs.zegocloud.com/article/14826),
@@ -115,8 +112,6 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
 class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     with SingleTickerProviderStateMixin {
-  var contextInitNotifier = ValueNotifier<bool>(false);
-
   var barVisibilityNotifier = ValueNotifier<bool>(true);
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
   var chatViewVisibleNotifier = ValueNotifier<bool>(false);
@@ -155,24 +150,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isAllEntered;
   }
 
-  bool get playingStreamInPIPUnderIOS {
-    bool isPlaying = false;
-    if (Platform.isIOS) {
-      isPlaying = (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
-              as ZegoCallControllerIOSPIP)
-          .isSupportInConfig;
-    }
-
-    return isPlaying;
-  }
-
   @override
   void initState() {
     super.initState();
 
     ZegoUIKit().getZegoUIKitVersion().then((version) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.17.0; $version, \n'
+        'version: zego_uikit_prebuilt_call:4.16.12; $version, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -221,7 +205,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
 
-      contextInitNotifier.value = true;
       listenUserEvents();
     } else {
       controller.private.initByPrebuilt(
@@ -236,7 +219,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
       controller.minimize.private.initByPrebuilt(
         minimizeData: minimizeData,
-        config: widget.config,
       );
       controller.permission.private.initByPrebuilt(
         config: widget.config,
@@ -247,14 +229,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
       /// not wake from mini page
       initContext().then((_) {
-        ZegoLoggerService.logInfo(
-          'initContext done',
-          tag: 'call',
-          subTag: 'prebuilt',
-        );
-
-        contextInitNotifier.value = true;
-
         listenUserEvents();
       }).catchError((e) {
         ZegoLoggerService.logError(
@@ -310,12 +284,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.permission.private.uninitByPrebuilt();
       controller.pip.private.uninitByPrebuilt();
 
-      ZegoUIKit().leaveRoom().then((_) {
-        if (playingStreamInPIPUnderIOS) {
-          ZegoUIKit().enableHardwareDecoder(false);
-          ZegoUIKit().enableCustomVideoRender(false);
-        }
-      });
+      ZegoUIKit().leaveRoom();
       // await ZegoUIKit().uninit();
     } else {
       ZegoLoggerService.logInfo(
@@ -384,28 +353,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: contextInitNotifier,
-      builder: (context, isDone, _) {
-        if (isDone) {
-          if (Platform.isAndroid) {
-            return PiPSwitcher(
-              floating: (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
-                      as ZegoCallControllerPIPAndroid)
-                  .floating,
-              childWhenDisabled: normalPage(),
-              childWhenEnabled: screenUtil(
-                childWidget: pipPage(),
-              ),
-            );
-          }
+    if (Platform.isAndroid) {
+      return PiPSwitcher(
+        floating: ZegoUIKitPrebuiltCallController().pip.private.floating,
+        childWhenDisabled: normalPage(),
+        childWhenEnabled: screenUtil(
+          childWidget: pipPage(),
+        ),
+      );
+    }
 
-          return normalPage();
-        }
-
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+    return normalPage();
   }
 
   Widget screenUtil({required Widget childWidget}) {
@@ -537,20 +495,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
       ZegoUIKit()
-          .init(
-        appID: widget.appID,
-        appSign: widget.appSign,
-        enablePlatformView: playingStreamInPIPUnderIOS,
-        playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
-      )
+          .init(appID: widget.appID, appSign: widget.appSign)
           .then((value) async {
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
-
-        if (playingStreamInPIPUnderIOS) {
-          await ZegoUIKit().enableHardwareDecoder(true);
-          await ZegoUIKit().enableCustomVideoRender(true);
-        }
 
         _setVideoConfig();
         _setBeautyConfig();
@@ -822,8 +770,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
     }
 
-    final _defaultAudioVideoContainer = defaultAudioVideoContainer();
-
     return Positioned.fromRect(
       rect: widget.config.audioVideoView.containerRect?.call() ??
           Rect.fromLTWH(0, 0, preferWidth, preferHeight),
@@ -840,7 +786,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                     ZegoUIKit().getAudioVideoList(),
                     audioVideoViewCreator,
                   ) ??
-                  _defaultAudioVideoContainer;
+                  defaultAudioVideoContainer();
             },
           );
         },

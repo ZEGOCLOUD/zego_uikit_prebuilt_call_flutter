@@ -1,5 +1,5 @@
 // Dart imports:
-import 'dart:io' show Platform;
+import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
@@ -11,8 +11,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
-
-import '../controller/private/pip/pip_ios.dart';
 
 /// @nodoc
 class ZegoMinimizingCallPage extends StatefulWidget {
@@ -28,7 +26,6 @@ class ZegoMinimizingCallPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
-    this.showLocalUserView = false,
     this.showCameraButton = true,
     this.showMicrophoneButton = true,
     this.soundWaveColor = const Color(0xff2254f6),
@@ -50,7 +47,6 @@ class ZegoMinimizingCallPage extends StatefulWidget {
   final bool showDevices;
   final bool showUserName;
   final bool showLeaveButton;
-  final bool showLocalUserView;
   final bool showCameraButton;
   final bool showMicrophoneButton;
   final Widget? leaveButtonIcon;
@@ -72,155 +68,50 @@ class ZegoMinimizingCallPage extends StatefulWidget {
 
 /// @nodoc
 class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
+  final activeUserIDNotifier = ValueNotifier<String?>(null);
+
+  StreamSubscription<dynamic>? audioVideoListSubscription;
+  List<StreamSubscription<dynamic>?> soundLevelSubscriptions = [];
+  Timer? activeUserTimer;
+  final Map<String, List<double>> rangeSoundLevels = {};
   bool infoDelayRendered = false;
 
-  final pipLayoutUserListNotifier = ValueNotifier<List<ZegoUIKitUser>>([]);
+  Size get buttonArea => Size(widget.size.width * 0.3, widget.size.width * 0.3);
 
-  Size get buttonArea => Size(widget.size.width * 0.2, widget.size.width * 0.2);
-
-  Size get buttonSize => Size(widget.size.width * 0.1, widget.size.width * 0.1);
-
-  bool get playingStreamInPIPUnderIOS {
-    bool isPlaying = false;
-    if (Platform.isIOS) {
-      isPlaying = (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
-              as ZegoCallControllerIOSPIP)
-          .isSupportInConfig;
-    }
-
-    return isPlaying;
-  }
+  Size get buttonSize => Size(widget.size.width * 0.2, widget.size.width * 0.2);
 
   @override
   void initState() {
     super.initState();
 
-    ZegoUIKitPrebuiltCallController().minimize.private.activeUser.start(
-          showLocalUserView: widget.showLocalUserView,
-        );
+    listenAudioVideoList();
+    activeUserTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      updateActiveUserByTimer();
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    ZegoUIKitPrebuiltCallController().minimize.private.activeUser.stop();
+    audioVideoListSubscription?.cancel();
+    activeUserTimer?.cancel();
+    activeUserTimer = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final view = ValueListenableBuilder<String?>(
-      valueListenable: ZegoUIKitPrebuiltCallController()
-          .minimize
-          .private
-          .activeUser
-          .activeUserIDNotifier,
+    return ValueListenableBuilder<String?>(
+      valueListenable: activeUserIDNotifier,
       builder: (context, activeUserID, _) {
-        return audioVideoContainer(
-          activeUserID ?? ZegoUIKit().getLocalUser().id,
-        );
+        final activeUser = ZegoUIKit().getUser(activeUserID ?? '');
+        return widget.withCircleBorder
+            ? circleBorder(
+                child: minimizingUserWidget(activeUser),
+              )
+            : minimizingUserWidget(activeUser);
       },
     );
-
-    return widget.withCircleBorder ? circleBorder(child: view) : view;
-  }
-
-  Widget audioVideoContainer(String activeUserID) {
-    final avList = ZegoUIKit().getAudioVideoList();
-    avList.removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
-    var displayWidthFactor = avList.length.toDouble();
-    if (avList.length >= 3) {
-      displayWidthFactor = 4.0;
-    }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final smallViewWidth = constraints.maxWidth / displayWidthFactor;
-        final smallViewHeight = 16.0 / 9.0 * smallViewWidth;
-
-        return Stack(
-          children: [
-            widget.background ?? Container(),
-            IgnorePointer(
-              ignoring: true,
-              child: ZegoAudioVideoContainer(
-                layout: ZegoLayout.pictureInPicture(
-                  smallViewPosition: ZegoViewPosition.bottomLeft,
-                  smallViewMargin: EdgeInsets.only(
-                    left: 10.zR,
-                    top: 10.zR,
-                    right: 10.zR,
-                    bottom: 15.zR,
-                  ),
-                  smallViewSize: Size(smallViewWidth, smallViewHeight),
-                  isSmallViewDraggable: false,
-                  switchLargeOrSmallViewByClick: true,
-                  isSmallViewsScrollable: false,
-                  bigViewUserID: activeUserID,
-                ),
-                filterAudioVideo: (List<ZegoUIKitUser> users) {
-                  if (!widget.showLocalUserView) {
-                    users.removeWhere(
-                        (user) => user.id == ZegoUIKit().getLocalUser().id);
-                  }
-
-                  return users;
-                },
-                avatarConfig: ZegoAvatarConfig(
-                  builder: widget.avatarBuilder,
-                  soundWaveColor: widget.soundWaveColor,
-                ),
-                foregroundBuilder: (
-                  BuildContext context,
-                  Size size,
-                  ZegoUIKitUser? user,
-
-                  /// {ZegoViewBuilderMapExtraInfoKey:value}
-                  /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
-                  Map<String, dynamic> extraInfo,
-                ) {
-                  if (playingStreamInPIPUnderIOS) {
-                    /// not support if ios pip, platform view will be render wrong user
-                    /// after changed
-                    return Container();
-                  }
-
-                  return activeUserID == user?.id
-                      ? Stack(
-                          children: [
-                            devices(user),
-                            userName(user),
-                          ],
-                        )
-                      : Container();
-                },
-                backgroundBuilder: widget.backgroundBuilder,
-                onUserListUpdated: (List<ZegoUIKitUser> userList) {
-                  pipLayoutUserListNotifier.value = userList;
-                },
-              ),
-            ),
-            durationTimeBoard(),
-            widget.foreground ?? Container(),
-            widget.showLeaveButton
-                ? Positioned(
-                    top: 10.zR,
-                    right: 10.zR,
-                    child: leaveButton(),
-                  )
-                : Container(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget activeUserWidget(String? activeUserID) {
-    final activeUser = ZegoUIKit().getUser(activeUserID ?? '');
-    return widget.withCircleBorder
-        ? circleBorder(
-            child: minimizingUserWidget(activeUser),
-          )
-        : minimizingUserWidget(activeUser);
   }
 
   Widget circleBorder({required Widget child}) {
@@ -240,39 +131,70 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     );
   }
 
-  Widget minimizingUserWidget(ZegoUIKitUser? targetUser) {
-    return widget.builder?.call(targetUser) ??
-        Stack(
-          children: [
-            widget.background ?? Container(),
-            ZegoAudioVideoView(
-              user: targetUser,
-              foregroundBuilder: widget.foregroundBuilder,
-              backgroundBuilder: widget.backgroundBuilder,
-              avatarConfig: ZegoAvatarConfig(
-                builder: widget.avatarBuilder,
-                soundWaveColor: widget.soundWaveColor,
-              ),
-            ),
-            devices(targetUser),
-            userName(targetUser),
-            durationTimeBoard(),
-            widget.foreground ?? Container(),
-            widget.showLeaveButton
-                ? Positioned(
-                    top: 10.zR,
-                    right: 10.zR,
-                    child: leaveButton(),
-                  )
-                : Container(),
-          ],
-        );
+  Widget pureAudioVideoWidget(ZegoUIKitUser? activeUser) {
+    return ZegoAudioVideoView(
+      user: activeUser,
+      foregroundBuilder: widget.foregroundBuilder,
+      backgroundBuilder: widget.backgroundBuilder,
+      avatarConfig: ZegoAvatarConfig(
+        builder: widget.avatarBuilder,
+        soundWaveColor: widget.soundWaveColor,
+      ),
+    );
+  }
+
+  Widget userInfoAudioVideoWidget(ZegoUIKitUser? activeUser) {
+    return Stack(
+      children: [
+        widget.background ?? Container(),
+        ZegoAudioVideoView(
+          user: activeUser,
+          foregroundBuilder: widget.foregroundBuilder,
+          backgroundBuilder: widget.backgroundBuilder,
+          avatarConfig: ZegoAvatarConfig(
+            builder: widget.avatarBuilder,
+            soundWaveColor: widget.soundWaveColor,
+          ),
+        ),
+        devices(activeUser),
+        userName(activeUser),
+        durationTimeBoard(),
+        widget.foreground ?? Container(),
+        widget.showLeaveButton
+            ? Positioned(
+                top: 10.zR,
+                right: 10.zR,
+                child: leaveButton(),
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  Widget minimizingUserWidget(ZegoUIKitUser? activeUser) {
+    return widget.builder?.call(activeUser) ??
+        (!infoDelayRendered
+            ? FutureBuilder<bool>(
+                future: Future.delayed(
+                  const Duration(milliseconds: 1000),
+                  () => true,
+                ),
+                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return pureAudioVideoWidget(activeUser);
+                  }
+
+                  infoDelayRendered = true;
+                  return userInfoAudioVideoWidget(activeUser);
+                },
+              )
+            : userInfoAudioVideoWidget(activeUser));
   }
 
   Widget leaveButton() {
     return ZegoTextIconButton(
-      buttonSize: Size(widget.size.width * 0.4, widget.size.width * 0.4),
-      iconSize: Size(widget.size.width * 0.2, widget.size.width * 0.2),
+      buttonSize: buttonArea,
+      iconSize: buttonSize,
       icon: ButtonIcon(
         icon: widget.leaveButtonIcon ??
             Image(
@@ -295,8 +217,8 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
   Widget userName(ZegoUIKitUser? activeUser) {
     return widget.showUserName
         ? Positioned(
-            right: 2.zW,
-            bottom: 2.zH,
+            left: 2,
+            top: 10.zH + widget.size.width * 0.07,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -348,14 +270,11 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     return Positioned(
       left: 0,
       right: 0,
-      bottom: buttonArea.height,
+      bottom: 5,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          if (widget.showCameraButton) ...[
-            cameraControl(activeUser),
-            SizedBox(width: 10.zR),
-          ],
+          if (widget.showCameraButton) cameraControl(activeUser),
           if (widget.showMicrophoneButton) microphoneControl(activeUser),
         ],
       ),
@@ -438,6 +357,53 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         );
       },
     );
+  }
+
+  void listenAudioVideoList() {
+    audioVideoListSubscription =
+        ZegoUIKit().getAudioVideoListStream().listen(onAudioVideoListUpdated);
+
+    onAudioVideoListUpdated(ZegoUIKit().getAudioVideoList());
+    activeUserIDNotifier.value = ZegoUIKit().getAudioVideoList().isEmpty
+        ? ZegoUIKit().getLocalUser().id
+        : ZegoUIKit().getAudioVideoList().first.id;
+  }
+
+  void onAudioVideoListUpdated(List<ZegoUIKitUser> users) {
+    for (final subscription in soundLevelSubscriptions) {
+      subscription?.cancel();
+    }
+    rangeSoundLevels.clear();
+
+    for (final user in users) {
+      soundLevelSubscriptions.add(user.soundLevel.listen((soundLevel) {
+        if (rangeSoundLevels.containsKey(user.id)) {
+          rangeSoundLevels[user.id]!.add(soundLevel);
+        } else {
+          rangeSoundLevels[user.id] = [soundLevel];
+        }
+      }));
+    }
+  }
+
+  void updateActiveUserByTimer() {
+    var maxAverageSoundLevel = 0.0;
+    var activeUserID = '';
+    rangeSoundLevels.forEach((userID, soundLevels) {
+      final averageSoundLevel =
+          soundLevels.reduce((a, b) => a + b) / soundLevels.length;
+
+      if (averageSoundLevel > maxAverageSoundLevel) {
+        activeUserID = userID;
+        maxAverageSoundLevel = averageSoundLevel;
+      }
+    });
+    activeUserIDNotifier.value = activeUserID;
+    if (activeUserIDNotifier.value?.isEmpty ?? true) {
+      activeUserIDNotifier.value = ZegoUIKit().getLocalUser().id;
+    }
+
+    rangeSoundLevels.clear();
   }
 
   Image uikitImage(String name) {

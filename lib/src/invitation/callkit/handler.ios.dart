@@ -72,7 +72,7 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
     // flag[0] = true;
 
     ZegoLoggerService.logInfo(
-      'cache ${invitationInternalData.callID} done',
+      'cache ${invitationInternalData.callID}',
       tag: 'call-invitation',
       subTag: 'offline',
     );
