@@ -698,10 +698,6 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
-    final callInitiatorUserID = ZegoUIKit()
-        .getSignalingPlugin()
-        .getAdvanceInitiator(event.invitationID)
-        ?.userID;
     for (var userInfo in event.callUserList) {
       switch (userInfo.state) {
         case ZegoSignalingPluginInvitationUserState.accepted:

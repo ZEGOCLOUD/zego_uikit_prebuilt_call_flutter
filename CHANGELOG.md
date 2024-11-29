@@ -1,4 +1,7 @@
+## 4.16.14
 
+- Bugs
+  - Fix the issue of `onOutgoingCallTimeout` event not callback in advanced mode
 
 ## 4.16.13
 
@@ -8,7 +11,7 @@
 ## 4.16.12
  
 - Bugs
-- Fix iOS offline call enter failure issuce after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
+- Fix iOS offline call enter failure issue after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
 
 
 ## 4.16.11
