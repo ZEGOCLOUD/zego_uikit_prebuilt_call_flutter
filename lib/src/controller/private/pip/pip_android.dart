@@ -135,9 +135,6 @@ class ZegoCallControllerPIPImplPrivateAndroid {
 
     this.config = config;
 
-    ZegoUIKit()
-        .adapterService()
-        .registerMessageHandler(_onAppLifecycleStateChanged);
     ZegoUIKitPrebuiltCallController()
         .minimize
         .private
@@ -164,10 +161,6 @@ class ZegoCallControllerPIPImplPrivateAndroid {
     config = null;
 
     subscription?.cancel();
-
-    ZegoUIKit()
-        .adapterService()
-        .unregisterMessageHandler(_onAppLifecycleStateChanged);
   }
 
   Future<ZegoPiPStatus> enableWhenBackground({
@@ -203,15 +196,6 @@ class ZegoCallControllerPIPImplPrivateAndroid {
 
       return ZegoPiPStatus.disabled;
     }
-  }
-
-  /// sync app background state
-  void _onAppLifecycleStateChanged(AppLifecycleState appLifecycleState) async {
-    ZegoLoggerService.logInfo(
-      '_onAppLifecycleStateChanged, $appLifecycleState',
-      tag: 'call',
-      subTag: 'controller.pip.p android',
-    );
   }
 
   void onMinimizeStateChanged() async {
