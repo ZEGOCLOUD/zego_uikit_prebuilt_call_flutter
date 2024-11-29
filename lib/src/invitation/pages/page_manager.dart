@@ -698,6 +698,10 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
+    final callInitiatorUserID = ZegoUIKit()
+        .getSignalingPlugin()
+        .getAdvanceInitiator(event.invitationID)
+        ?.userID;
     for (var userInfo in event.callUserList) {
       switch (userInfo.state) {
         case ZegoSignalingPluginInvitationUserState.accepted:
@@ -717,34 +721,15 @@ class ZegoCallInvitationPageManager {
           }
           break;
         case ZegoSignalingPluginInvitationUserState.timeout:
-          if (userInfo.userID == ZegoUIKit().getLocalUser().id) {
-            /// local timeout
+          final index = _invitingInvitees
+              .indexWhere((invitee) => invitee.id == userInfo.userID);
+          if (-1 != index) {
             onInvitationResponseTimeout({
               'invitees': [
                 ZegoUIKitUser(id: userInfo.userID, name: ''),
               ],
               'data': userInfo.extendedData,
             });
-          } else {
-            final callInitiatorUserID = ZegoUIKit()
-                .getSignalingPlugin()
-                .getAdvanceInitiator(event.invitationID)
-                ?.userID;
-            final callInvitees = ZegoUIKit()
-                .getSignalingPlugin()
-                .getAdvanceInvitees(event.invitationID);
-            if (callInitiatorUserID == ZegoUIKit().getLocalUser().id) {
-              var allCallUserTimeout = true;
-              for (var invitee in callInvitees) {
-                allCallUserTimeout = allCallUserTimeout &&
-                    (AdvanceInvitationState.waiting != invitee.state &&
-                        AdvanceInvitationState.accepted != invitee.state);
-              }
-              if (allCallUserTimeout) {
-                _invitingInvitees.clear();
-                restoreToIdle();
-              }
-            }
           }
           break;
         case ZegoSignalingPluginInvitationUserState.inviting:
@@ -1277,14 +1262,12 @@ class ZegoCallInvitationPageManager {
       }
     }
 
-    final String data = params['data']!; // extended field
-
     for (final timeoutInvitee in invitees) {
       _invitingInvitees
           .removeWhere((invitee) => timeoutInvitee.id == invitee.id);
     }
     ZegoLoggerService.logInfo(
-      'data: $data, '
+      'data: ${params['data']}, '
       'invitees:${invitees.map((e) => e.toString())}, '
       'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}',
       tag: 'call-invitation',
