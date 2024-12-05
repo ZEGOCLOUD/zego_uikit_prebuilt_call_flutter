@@ -19,6 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.da
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// This button is used to send a call invitation to one or more specified users.
 ///
@@ -366,6 +367,15 @@ class _ZegoSendCallInvitationButtonState
       'invitation id:$invitationID, error invitees:$errorInvitees',
       tag: 'call-invitation',
       subTag: 'components, send call button',
+    );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventSendInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourceButton,
+      },
     );
 
     pageManager?.onLocalSendInvitation(

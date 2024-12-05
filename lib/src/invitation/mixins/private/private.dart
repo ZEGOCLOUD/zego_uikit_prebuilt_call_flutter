@@ -447,6 +447,7 @@ class ZegoCallInvitationServicePrivateImpl
     await ZegoUIKit().init(
       appID: _data?.appID ?? 0,
       appSign: _data?.appSign ?? '',
+      token: _data?.token ?? '',
     );
 
     // enableCustomVideoProcessing

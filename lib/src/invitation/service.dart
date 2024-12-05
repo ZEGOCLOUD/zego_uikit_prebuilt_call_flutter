@@ -42,8 +42,9 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dar
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/permission.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
-import 'internal/permission.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 part 'mixins/private/callkit.dart';
 
@@ -214,7 +215,23 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoCallInvitationInnerText? innerText,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
   }) async {
+    const callKitVersion = '4.16.14';
+
     userID = userID.trim();
+
+    await ZegoUIKit().reporter().create(
+      appID: appID,
+      signOrToken: appSign.isNotEmpty ? appSign : token,
+      commonParam: ZegoUIKitReporterCommonParam(
+        kitVersion: callKitVersion,
+        kitName: ZegoUIKitReporterCommonParam.callKitName,
+      ),
+      params: {
+        ZegoUIKitReporter.eventKeyUserID: userID,
+      },
+    );
+
+    final reporterInitBeginTime = DateTime.now().millisecondsSinceEpoch;
 
     if (userID.isEmpty || userName.isEmpty) {
       ZegoLoggerService.logError(
@@ -224,13 +241,33 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
 
+      ZegoUIKit().reporter().report(
+        event: ZegoCallReporter.eventInit,
+        params: {
+          ZegoUIKitReporter.eventKeyErrorCode: -1,
+          ZegoUIKitReporter.eventKeyErrorMsg:
+              'user parameters is not valid, user id:$userID, user name:$userName',
+          ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+        },
+      );
+
       return;
     }
+
     if (appSign.isEmpty && token.isEmpty) {
       ZegoLoggerService.logError(
         'app parameters is not valid, ',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
+      );
+
+      ZegoUIKit().reporter().report(
+        event: ZegoCallReporter.eventInit,
+        params: {
+          ZegoUIKitReporter.eventKeyErrorCode: -1,
+          ZegoUIKitReporter.eventKeyErrorMsg: 'app parameters is not valid',
+          ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+        },
       );
 
       return;
@@ -248,7 +285,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:4.16.14; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:$callKitVersion; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
@@ -342,7 +379,7 @@ class ZegoUIKitPrebuiltCallInvitationService
         );
       });
     } catch (e) {
-      ZegoLoggerService.logInfo(
+      ZegoLoggerService.logError(
         'initPermissions exception:$e',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
@@ -403,6 +440,14 @@ class ZegoUIKitPrebuiltCallInvitationService
         await defaultAction.call();
       }
     });
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventInit,
+      params: {
+        ZegoUIKitReporter.eventKeyErrorCode: 0,
+        ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+      },
+    );
   }
 
   ///   you must call this method as soon as the user logout from your app
@@ -435,6 +480,10 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
 
     await private._uninitPlugins();
+
+    await ZegoUIKit().reporter().report(
+          event: ZegoCallReporter.eventUninit,
+        );
   }
 
   void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {

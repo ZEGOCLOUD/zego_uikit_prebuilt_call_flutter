@@ -198,7 +198,11 @@ class _ZegoCallInvitationNotifyDialogState
         buttonSize: widget.declineButtonConfig.size ?? Size(74.zR, 74.zR),
         onPressed: (String code, String message) {
           widget.pageManager.hideInvitationTopSheet();
-          widget.pageManager.onLocalRefuseInvitation(code, message);
+          widget.pageManager.onLocalRefuseInvitation(
+            widget.invitationData.invitationID,
+            code,
+            message,
+          );
         },
       ),
     );
@@ -225,7 +229,11 @@ class _ZegoCallInvitationNotifyDialogState
         buttonSize: widget.acceptButtonConfig.size ?? Size(74.zR, 74.zR),
         onPressed: (String code, String message) {
           widget.pageManager.hideInvitationTopSheet();
-          widget.pageManager.onLocalAcceptInvitation(code, message);
+          widget.pageManager.onLocalAcceptInvitation(
+            widget.invitationData.invitationID,
+            code,
+            message,
+          );
         },
       ),
     );

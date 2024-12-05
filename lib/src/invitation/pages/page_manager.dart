@@ -21,6 +21,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.da
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/invitation_notify.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// @nodoc
 class ZegoCallInvitationPageManager {
@@ -448,12 +449,25 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onLocalAcceptInvitation(String code, String message) {
+  void onLocalAcceptInvitation(
+    String invitationID,
+    String code,
+    String message,
+  ) {
     ZegoLoggerService.logInfo(
       'local accept invitation, code:$code, message:$message, '
       'app in background:$_appInBackground',
       tag: 'call-invitation',
       subTag: 'page manager',
+    );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventRespondInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionAccept,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+      },
     );
 
     callInvitationData.invitationEvents?.onIncomingCallAcceptButtonPressed
@@ -638,6 +652,7 @@ class ZegoCallInvitationPageManager {
   }
 
   void onLocalRefuseInvitation(
+    String invitationID,
     String code,
     String message, {
     bool needClearCallKit = true,
@@ -646,6 +661,15 @@ class ZegoCallInvitationPageManager {
       'local refuse invitation, code:$code, message:$message, lifecycleState:${WidgetsBinding.instance.lifecycleState}',
       tag: 'call-invitation',
       subTag: 'page manager',
+    );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventRespondInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionRefuse,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+      },
     );
 
     callInvitationData.invitationEvents?.onIncomingCallDeclineButtonPressed
@@ -657,11 +681,24 @@ class ZegoCallInvitationPageManager {
   }
 
   void onLocalCancelInvitation(
-      String code, String message, List<String> errorInvitees) {
+    String invitationID,
+    String code,
+    String message,
+    List<String> errorInvitees,
+  ) {
     ZegoLoggerService.logInfo(
       'local cancel invitation, code:$code, message:$message, error invitees, $errorInvitees',
       tag: 'call-invitation',
       subTag: 'page manager',
+    );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventRespondInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionCancel,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+      },
     );
 
     callInvitationData.invitationEvents?.onOutgoingCallCancelButtonPressed
@@ -811,6 +848,16 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventReceivedInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyInviter: inviter.id,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoCallReporter.eventKeyExtendedData: data,
+      },
+    );
+
     /// call protocol
     final sendRequestProtocol =
         ZegoCallInvitationSendRequestProtocol.fromJson(data);
@@ -880,6 +927,7 @@ class ZegoCallInvitationPageManager {
               )
               .then((result) {
             onLocalAcceptInvitation(
+              result.invitationID,
               result.error?.code ?? '',
               result.error?.message ?? '',
             );
@@ -894,6 +942,7 @@ class ZegoCallInvitationPageManager {
               )
               .then((result) {
             onLocalAcceptInvitation(
+              result.invitationID,
               result.error?.code ?? '',
               result.error?.message ?? '',
             );
@@ -941,7 +990,10 @@ class ZegoCallInvitationPageManager {
                 )
                 .then((result) {
               onLocalRefuseInvitation(
-                  result.error?.code ?? '', result.error?.message ?? '');
+                invitationData.inviter?.id ?? '',
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
             });
           } else {
             ZegoUIKit()
@@ -954,7 +1006,10 @@ class ZegoCallInvitationPageManager {
                 )
                 .then((result) {
               onLocalRefuseInvitation(
-                  result.error?.code ?? '', result.error?.message ?? '');
+                result.invitationID,
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
             });
           }
         } else {
@@ -1275,6 +1330,15 @@ class ZegoCallInvitationPageManager {
     final currentInvitees =
         invitees.map((user) => ZegoCallUser(user.id, user.name)).toList();
 
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventRespondInvitation,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: _invitationData.invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionTimeout,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+      },
+    );
+
     if (isGroupCall) {
       if (_invitingInvitees.isEmpty && isNobodyAccepted) {
         ZegoLoggerService.logInfo(
@@ -1332,6 +1396,16 @@ class ZegoCallInvitationPageManager {
 
     if (ZegoCallInvitationProtocolKey.refuseByBusy ==
         rejectRequestData.reason) {
+      ZegoUIKit().reporter().report(
+        event: ZegoCallReporter.eventRespondInvitation,
+        params: {
+          ZegoCallReporter.eventKeyInvitationID:
+              rejectRequestData.targetInvitationID,
+          ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionBusy,
+          ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        },
+      );
+
       callInvitationData.invitationEvents?.onOutgoingCallRejectedCauseBusy
           ?.call(
         _invitationData.callID,
@@ -1537,6 +1611,14 @@ class ZegoCallInvitationPageManager {
     if (_invitationTopSheetVisibility) {
       return;
     }
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventDisplayInvitationNotification,
+      params: {
+        ZegoCallReporter.eventKeyInvitationID: _invitationData.invitationID,
+        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+      },
+    );
 
     _invitationTopSheetVisibility = true;
 

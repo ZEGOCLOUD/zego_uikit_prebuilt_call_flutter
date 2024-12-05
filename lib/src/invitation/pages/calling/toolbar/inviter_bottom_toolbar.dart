@@ -52,6 +52,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
                 onPressed:
                     (String code, String message, List<String> errorInvitees) {
                   pageManager.onLocalCancelInvitation(
+                    pageManager.invitationData.invitationID,
                     code,
                     message,
                     errorInvitees,
