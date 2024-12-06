@@ -257,7 +257,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoUIKit().reporter().report(
         event: ZegoCallReporter.eventSendInvitation,
         params: {
-          ZegoCallReporter.eventKeyInvitationID: result.invitationID,
+          ZegoUIKitSignalingReporter.eventKeyInvitationID: result.invitationID,
           ZegoCallReporter.eventKeyInvitationSource:
               ZegoCallReporter.eventKeyInvitationSourceAPI,
         },

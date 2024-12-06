@@ -464,9 +464,9 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventRespondInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionAccept,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
       },
     );
 
@@ -666,9 +666,9 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventRespondInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionRefuse,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
       },
     );
 
@@ -695,9 +695,9 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventRespondInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionCancel,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
       },
     );
 
@@ -851,9 +851,9 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventReceivedInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: invitationID,
-        ZegoCallReporter.eventKeyInviter: inviter.id,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInviter: inviter.id,
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
         ZegoCallReporter.eventKeyExtendedData: data,
       },
     );
@@ -1333,9 +1333,10 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventRespondInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: _invitationData.invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInvitationID:
+            _invitationData.invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionTimeout,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
       },
     );
 
@@ -1399,10 +1400,11 @@ class ZegoCallInvitationPageManager {
       ZegoUIKit().reporter().report(
         event: ZegoCallReporter.eventRespondInvitation,
         params: {
-          ZegoCallReporter.eventKeyInvitationID:
+          ZegoUIKitSignalingReporter.eventKeyInvitationID:
               rejectRequestData.targetInvitationID,
           ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionBusy,
-          ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+          ZegoUIKitReporter.eventKeyAppState:
+              ZegoUIKitReporter.currentAppState(),
         },
       );
 
@@ -1615,8 +1617,9 @@ class ZegoCallInvitationPageManager {
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventDisplayInvitationNotification,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: _invitationData.invitationID,
-        ZegoCallReporter.eventKeyAppState: ZegoCallReporter.currentAppState(),
+        ZegoUIKitSignalingReporter.eventKeyInvitationID:
+            _invitationData.invitationID,
+        ZegoUIKitReporter.eventKeyAppState: ZegoUIKitReporter.currentAppState(),
       },
     );
 

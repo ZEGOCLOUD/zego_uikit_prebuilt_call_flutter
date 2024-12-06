@@ -372,7 +372,7 @@ class _ZegoSendCallInvitationButtonState
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventSendInvitation,
       params: {
-        ZegoCallReporter.eventKeyInvitationID: invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyInvitationSource:
             ZegoCallReporter.eventKeyInvitationSourceButton,
       },
