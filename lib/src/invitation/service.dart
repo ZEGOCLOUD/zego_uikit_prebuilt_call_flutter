@@ -222,10 +222,6 @@ class ZegoUIKitPrebuiltCallInvitationService
     await ZegoUIKit().reporter().create(
       appID: appID,
       signOrToken: appSign.isNotEmpty ? appSign : token,
-      commonParam: ZegoUIKitReporterCommonParam(
-        kitVersion: callKitVersion,
-        kitName: ZegoUIKitReporterCommonParam.callKitName,
-      ),
       params: {
         ZegoUIKitReporter.eventKeyUserID: userID,
       },
@@ -244,6 +240,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       ZegoUIKit().reporter().report(
         event: ZegoCallReporter.eventInit,
         params: {
+          ZegoUIKitReporter.eventKeyKitName: callKitVersion,
           ZegoUIKitReporter.eventKeyErrorCode: -1,
           ZegoUIKitReporter.eventKeyErrorMsg:
               'user parameters is not valid, user id:$userID, user name:$userName',
@@ -264,6 +261,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       ZegoUIKit().reporter().report(
         event: ZegoCallReporter.eventInit,
         params: {
+          ZegoUIKitReporter.eventKeyKitName: callKitVersion,
           ZegoUIKitReporter.eventKeyErrorCode: -1,
           ZegoUIKitReporter.eventKeyErrorMsg: 'app parameters is not valid',
           ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
@@ -444,6 +442,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventInit,
       params: {
+        ZegoUIKitReporter.eventKeyKitName: callKitVersion,
         ZegoUIKitReporter.eventKeyErrorCode: 0,
         ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
       },
