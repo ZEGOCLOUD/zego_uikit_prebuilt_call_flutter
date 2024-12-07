@@ -1,3 +1,6 @@
+import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
+
 class ZegoCallReporter {
   static String eventInit = "call/init";
   static String eventUninit = "call/unInit";
@@ -18,4 +21,26 @@ class ZegoCallReporter {
   static String eventKeyActionBusy = "busy";
   static String eventKeyActionCancel = "inviterCancel";
   static String eventKeyActionTimeout = "timeout";
+
+  Future<void> report({
+    required String event,
+    Map<String, Object> params = const {},
+  }) async {
+    version ??= ZegoUIKitPrebuiltCallInvitationService().version;
+
+    params.addAll({
+      ZegoUIKitReporter.eventKeyKitVersion: version!,
+    });
+
+    ZegoUIKit().reporter().report(event: event, params: params);
+  }
+
+  factory ZegoCallReporter() {
+    return instance;
+  }
+
+  ZegoCallReporter._internal();
+
+  String? version;
+  static final ZegoCallReporter instance = ZegoCallReporter._internal();
 }

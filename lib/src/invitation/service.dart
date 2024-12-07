@@ -137,6 +137,8 @@ part 'mixins/private/invitation.dart';
 /// ```
 class ZegoUIKitPrebuiltCallInvitationService
     with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
+  String get version => '4.16.14';
+
   bool get isInit => private._isInit;
 
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
@@ -215,8 +217,6 @@ class ZegoUIKitPrebuiltCallInvitationService
     ZegoCallInvitationInnerText? innerText,
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
   }) async {
-    const callKitVersion = '4.16.14';
-
     userID = userID.trim();
 
     await ZegoUIKit().reporter().create(
@@ -237,10 +237,9 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
 
-      ZegoUIKit().reporter().report(
+      ZegoCallReporter().report(
         event: ZegoCallReporter.eventInit,
         params: {
-          ZegoUIKitReporter.eventKeyKitName: callKitVersion,
           ZegoUIKitReporter.eventKeyErrorCode: -1,
           ZegoUIKitReporter.eventKeyErrorMsg:
               'user parameters is not valid, user id:$userID, user name:$userName',
@@ -258,10 +257,9 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
 
-      ZegoUIKit().reporter().report(
+      ZegoCallReporter().report(
         event: ZegoCallReporter.eventInit,
         params: {
-          ZegoUIKitReporter.eventKeyKitName: callKitVersion,
           ZegoUIKitReporter.eventKeyErrorCode: -1,
           ZegoUIKitReporter.eventKeyErrorMsg: 'app parameters is not valid',
           ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
@@ -283,7 +281,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:$callKitVersion; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:$version; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
@@ -439,10 +437,9 @@ class ZegoUIKitPrebuiltCallInvitationService
       }
     });
 
-    ZegoUIKit().reporter().report(
+    ZegoCallReporter().report(
       event: ZegoCallReporter.eventInit,
       params: {
-        ZegoUIKitReporter.eventKeyKitName: callKitVersion,
         ZegoUIKitReporter.eventKeyErrorCode: 0,
         ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
       },
@@ -480,9 +477,9 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await private._uninitPlugins();
 
-    await ZegoUIKit().reporter().report(
-          event: ZegoCallReporter.eventUninit,
-        );
+    await ZegoCallReporter().report(
+      event: ZegoCallReporter.eventUninit,
+    );
   }
 
   void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
