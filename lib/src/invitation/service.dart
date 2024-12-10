@@ -223,6 +223,8 @@ class ZegoUIKitPrebuiltCallInvitationService
       appID: appID,
       signOrToken: appSign.isNotEmpty ? appSign : token,
       params: {
+        ZegoCallReporter.eventKeyKitVersion:
+            ZegoUIKitPrebuiltCallInvitationService().version,
         ZegoUIKitReporter.eventKeyUserID: userID,
       },
     );

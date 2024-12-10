@@ -22,16 +22,13 @@ class ZegoCallReporter {
   static String eventKeyActionCancel = "inviterCancel";
   static String eventKeyActionTimeout = "timeout";
 
+  /// Version number of each kit, usually in three segments
+  static String eventKeyKitVersion = "call_version";
+
   Future<void> report({
     required String event,
     Map<String, Object> params = const {},
   }) async {
-    version ??= ZegoUIKitPrebuiltCallInvitationService().version;
-
-    params.addAll({
-      ZegoUIKitReporter.eventKeyKitVersion: version!,
-    });
-
     ZegoUIKit().reporter().report(event: event, params: params);
   }
 
@@ -41,6 +38,5 @@ class ZegoCallReporter {
 
   ZegoCallReporter._internal();
 
-  String? version;
   static final ZegoCallReporter instance = ZegoCallReporter._internal();
 }
