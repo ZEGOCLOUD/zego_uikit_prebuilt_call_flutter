@@ -15,6 +15,8 @@ class ZegoCallReporter {
   static String eventKeyInvitationSource = "source";
   static String eventKeyInvitationSourceAPI = "api";
   static String eventKeyInvitationSourceButton = "button";
+  static String eventKeyInvitationSourceService = "service";
+  static String eventKeyInvitationSourcePage = "page";
 
   static String eventKeyExtendedData = "extended_data";
 

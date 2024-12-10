@@ -246,6 +246,8 @@ class ZegoUIKitPrebuiltCallInvitationService
           ZegoUIKitReporter.eventKeyErrorMsg:
               'user parameters is not valid, user id:$userID, user name:$userName',
           ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+          ZegoCallReporter.eventKeyInvitationSource:
+              ZegoCallReporter.eventKeyInvitationSourceService,
         },
       );
 
@@ -265,6 +267,8 @@ class ZegoUIKitPrebuiltCallInvitationService
           ZegoUIKitReporter.eventKeyErrorCode: -1,
           ZegoUIKitReporter.eventKeyErrorMsg: 'app parameters is not valid',
           ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+          ZegoCallReporter.eventKeyInvitationSource:
+              ZegoCallReporter.eventKeyInvitationSourceService,
         },
       );
 
@@ -444,6 +448,8 @@ class ZegoUIKitPrebuiltCallInvitationService
       params: {
         ZegoUIKitReporter.eventKeyErrorCode: 0,
         ZegoUIKitReporter.eventKeyStartTime: reporterInitBeginTime,
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourceService,
       },
     );
   }
@@ -481,6 +487,10 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await ZegoCallReporter().report(
       event: ZegoCallReporter.eventUninit,
+      params: {
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourceService,
+      },
     );
   }
 

@@ -30,7 +30,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'internal/reporter.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -168,6 +168,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ZegoCallReporter().report(
         event: ZegoCallReporter.eventInit,
         params: {
+          ZegoCallReporter.eventKeyInvitationSource:
+              ZegoCallReporter.eventKeyInvitationSourcePage,
           ZegoUIKitReporter.eventKeyErrorCode: 0,
           ZegoUIKitReporter.eventKeyStartTime:
               DateTime.now().millisecondsSinceEpoch,
@@ -323,7 +325,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     widget.onDispose?.call();
 
-    ZegoUIKit().reporter().report(event: ZegoCallReporter.eventUninit);
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventUninit,
+      params: {
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourcePage,
+      },
+    );
   }
 
   void listenUserEvents() {
