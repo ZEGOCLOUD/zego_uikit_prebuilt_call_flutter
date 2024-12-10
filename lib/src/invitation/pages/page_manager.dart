@@ -1530,6 +1530,7 @@ class ZegoCallInvitationPageManager {
 
   void onInvitationCanceled(Map<String, dynamic> params) {
     final ZegoUIKitUser inviter = params['inviter']!;
+    final String eventInvitationID = params['invitation_id'] ?? '';
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
@@ -1554,11 +1555,18 @@ class ZegoCallInvitationPageManager {
     var cancelRequestData =
         ZegoCallInvitationCancelRequestProtocol.fromJson(data);
 
-    if (cancelRequestData.callID != _invitationData.callID) {
+    if (cancelRequestData.callID != _invitationData.callID &&
+
+        /// Kill the app of inviter that in calling, and then open it again.
+        /// ZIM will automatically send the cancel event.
+        /// At this time, the data is empty and needs to be judged based on the invitation id
+        eventInvitationID != _invitationData.invitationID) {
       ZegoLoggerService.logInfo(
         'is not current call, '
         'data call id:${cancelRequestData.callID}, '
-        'current call id:${_invitationData.callID}',
+        'event invitation id:$eventInvitationID, '
+        'current call id:${_invitationData.callID}, '
+        'current invitation id:${_invitationData.invitationID}',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation canceled',
       );
