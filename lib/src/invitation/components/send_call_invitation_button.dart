@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
@@ -379,6 +380,15 @@ class _ZegoSendCallInvitationButtonState
       'invitation id:$invitationID, error invitees:$errorInvitees',
       tag: 'call-invitation',
       subTag: 'components, send call button',
+    );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventSendInvitation,
+      params: {
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourceButton,
+      },
     );
 
     pageManager?.onLocalSendInvitation(

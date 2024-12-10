@@ -62,6 +62,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
           );
@@ -75,6 +76,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
           );
@@ -120,6 +122,7 @@ class ZegoCallKitBackgroundService {
           )
           .then((result) {
         _pageManager?.onLocalRefuseInvitation(
+          result.invitationID,
           result.error?.code ?? '',
           result.error?.message ?? '',
           needClearCallKit: needClearCallKit,
@@ -137,6 +140,7 @@ class ZegoCallKitBackgroundService {
           )
           .then((result) {
         _pageManager?.onLocalRefuseInvitation(
+          result.invitationID,
           result.error?.code ?? '',
           result.error?.message ?? '',
           needClearCallKit: needClearCallKit,
@@ -185,6 +189,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
           );
@@ -198,6 +203,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
           );
