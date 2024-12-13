@@ -2,6 +2,7 @@ package com.zegocloud.uikit.call_plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -23,8 +24,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import com.zegocloud.uikit.call_plugin.notification.PluginNotification;
+import com.zegocloud.uikit.call_plugin.Defines;
 
-import java.util.List;
 
 /**
  * ZegoUIKitCallPlugin
@@ -91,8 +92,9 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             String soundSource = call.argument(Defines.FLUTTER_PARAM_SOUND_SOURCE);
             String notificationId = call.argument(Defines.FLUTTER_PARAM_ID);
             Boolean isVibrate = call.argument(Defines.FLUTTER_PARAM_VIBRATE);
+            Boolean isVideo = call.argument(Defines.FLUTTER_PARAM_IS_VIDEO);
 
-            notification.addLocalCallNotification(context, title, content, acceptButtonText, rejectButtonText, channelID, soundSource, iconSource, notificationId, isVibrate);
+            notification.addLocalCallNotification(context, title, content, acceptButtonText, rejectButtonText, channelID, soundSource, iconSource, notificationId, isVibrate, isVideo);
 
             result.success(null);
         } else if (call.method.equals(Defines.FLUTTER_API_FUNC_CREATE_NOTIFICATION_CHANNEL)) {

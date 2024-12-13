@@ -6,6 +6,7 @@ class ZegoSignalingPluginLocalCallNotificationConfig {
   const ZegoSignalingPluginLocalCallNotificationConfig({
     this.id,
     this.vibrate = true,
+    required this.isVideo,
     this.iconSource,
     this.soundSource,
     this.acceptButtonText = 'Accept',
@@ -21,6 +22,7 @@ class ZegoSignalingPluginLocalCallNotificationConfig {
 
   final int? id;
   final bool vibrate;
+  final bool isVideo;
   final String? iconSource;
   final String? soundSource;
   final String channelID;
