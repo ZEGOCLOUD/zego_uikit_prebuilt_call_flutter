@@ -570,7 +570,7 @@ class ZegoCallInvitationServicePrivateImpl
 
   void onLocalInvitingUsersUpdated() {
     ZegoLoggerService.logInfo(
-      'onLocalInvitingUsersUpdated, state:${localInvitingUsersNotifier.value}, ',
+      'onLocalInvitingUsersUpdated, users:${localInvitingUsersNotifier.value}, ',
       tag: 'call-invitation',
       subTag: 'service private(${identityHashCode(this)})',
     );

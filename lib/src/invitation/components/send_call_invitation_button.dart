@@ -294,18 +294,18 @@ class _ZegoSendCallInvitationButtonState
           'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
           'ZegoUIKitPrebuiltCallInvitationService is init: '
           '${ZegoUIKitPrebuiltCallInvitationService().isInit}, ';
-      if(! ZegoUIKitPrebuiltCallInvitationService().isInit) {
-        errorTips = 'please call ZegoUIKitPrebuiltCallInvitationService.init '
-            'with ZegoUIKitSignalingPlugin, ' + errorTips;
+      if (!ZegoUIKitPrebuiltCallInvitationService().isInit) {
+        errorTips =
+            'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin, ' +
+                errorTips;
       }
 
-      if(ZegoUIKitNetworkState.online != ZegoUIKit().getNetworkState() ) {
+      if (ZegoUIKitNetworkState.online != ZegoUIKit().getNetworkState()) {
         errorTips = 'please check device network state, ' + errorTips;
       }
 
       ZegoLoggerService.logError(
-        errorTips
-            ,
+        errorTips,
         tag: 'call-invitation',
         subTag: 'components, send call button',
       );
