@@ -993,10 +993,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return Container();
     }
 
-    final isWaitingCallAccept = -1 !=
-        waitingAcceptUserNotifier.value.indexWhere(
-          (waitingAcceptUser) => user?.id == waitingAcceptUser.id,
-        );
+    var isWaitingCallAccept = false;
+    if (ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .isAdvanceInvitationMode) {
+      /// only support in advance invite
+      isWaitingCallAccept = -1 !=
+          waitingAcceptUserNotifier.value.indexWhere(
+            (waitingAcceptUser) => user?.id == waitingAcceptUser.id,
+          );
+    }
+
     extraInfo[ZegoViewBuilderMapExtraInfoKey.isVirtualUser.name] =
         isWaitingCallAccept;
 
