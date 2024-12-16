@@ -254,6 +254,15 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     Future<bool> sendInvitationCallback(
       ZegoSignalingPluginSendInvitationResult result,
     ) async {
+      ZegoUIKit().reporter().report(
+        event: ZegoCallReporter.eventSendInvitation,
+        params: {
+          ZegoUIKitSignalingReporter.eventKeyInvitationID: result.invitationID,
+          ZegoCallReporter.eventKeyInvitationSource:
+              ZegoCallReporter.eventKeyInvitationSourceAPI,
+        },
+      );
+
       await _pageManager?.onLocalSendInvitation(
         callID: callID,
         invitees: callees
@@ -328,6 +337,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoSignalingPluginCancelInvitationResult result,
     ) async {
       _pageManager?.onLocalCancelInvitation(
+        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
         result.errorInvitees,
@@ -378,6 +388,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoSignalingPluginResponseInvitationResult result,
     ) async {
       _pageManager?.onLocalRefuseInvitation(
+        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
       );
@@ -427,6 +438,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoSignalingPluginResponseInvitationResult result,
     ) async {
       _pageManager?.onLocalAcceptInvitation(
+        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
       );

@@ -1,4 +1,5 @@
 
+
 ## 4.17.0-beta.1
 
 - Features
@@ -9,6 +10,18 @@
   - Fixed the issue of invitation cancel button appearing in group call
   - Fix the auto cancel issue when the callee is in the in-app minimization state in group call
 
+## 4.16.16
+
+- Update dependency
+
+## 4.16.15
+
+- Update dependency
+
+## 4.16.14
+
+- Bugs
+  - Fix the issue of `onOutgoingCallTimeout` event not callback in advanced mode
 
 ## 4.16.13
 

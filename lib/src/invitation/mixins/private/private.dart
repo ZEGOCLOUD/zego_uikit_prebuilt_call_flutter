@@ -469,6 +469,7 @@ class ZegoCallInvitationServicePrivateImpl
       appSign: _data?.appSign ?? '',
       enablePlatformView: playingStreamInPIPUnderIOS,
       playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
+      token: _data?.token ?? '',
     );
 
     await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);

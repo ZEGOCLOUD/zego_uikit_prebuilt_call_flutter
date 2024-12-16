@@ -11,13 +11,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 
 /// @nodoc
-enum ZegoCallPluginNetworkState {
-  unknown,
-  offline,
-  online,
-}
-
-/// @nodoc
 class ZegoCallPrebuiltPlugins {
   ZegoCallPrebuiltPlugins({
     required this.appID,
@@ -45,7 +38,6 @@ class ZegoCallPrebuiltPlugins {
 
   Function(ZegoUIKitError)? onError;
 
-  ZegoCallPluginNetworkState networkState = ZegoCallPluginNetworkState.unknown;
   List<StreamSubscription<dynamic>?> subscriptions = [];
   ValueNotifier<ZegoSignalingPluginConnectionState> pluginUserStateNotifier =
       ValueNotifier<ZegoSignalingPluginConnectionState>(
@@ -78,12 +70,10 @@ class ZegoCallPrebuiltPlugins {
     pluginUserStateNotifier.value =
         ZegoUIKit().getSignalingPlugin().getConnectionState();
 
-    subscriptions
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getConnectionStateStream()
-          .listen(onInvitationConnectionState))
-      ..add(ZegoUIKit().getNetworkModeStream().listen(onNetworkModeChanged));
+    subscriptions.add(ZegoUIKit()
+        .getSignalingPlugin()
+        .getConnectionStateStream()
+        .listen(onInvitationConnectionState));
   }
 
   Future<void> init({Future<void> Function()? onPluginInit}) async {
@@ -244,34 +234,6 @@ class ZegoCallPrebuiltPlugins {
       );
 
       tryReLogin();
-    }
-  }
-
-  void onNetworkModeChanged(ZegoNetworkMode networkMode) {
-    ZegoLoggerService.logInfo(
-      'onNetworkModeChanged $networkMode, previous '
-      'network state: $networkState',
-      tag: 'call-invitation',
-      subTag: 'plugin',
-    );
-
-    switch (networkMode) {
-      case ZegoNetworkMode.Offline:
-      case ZegoNetworkMode.Unknown:
-        networkState = ZegoCallPluginNetworkState.offline;
-        break;
-      case ZegoNetworkMode.Ethernet:
-      case ZegoNetworkMode.WiFi:
-      case ZegoNetworkMode.Mode2G:
-      case ZegoNetworkMode.Mode3G:
-      case ZegoNetworkMode.Mode4G:
-      case ZegoNetworkMode.Mode5G:
-        if (ZegoCallPluginNetworkState.offline == networkState) {
-          tryReLogin();
-        }
-
-        networkState = ZegoCallPluginNetworkState.online;
-        break;
     }
   }
 

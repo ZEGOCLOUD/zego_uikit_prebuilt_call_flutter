@@ -30,8 +30,9 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'controller/private/pip/pip_android.dart';
-import 'controller/private/pip/pip_ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -164,14 +165,36 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     return isPlaying;
   }
+  
+  String get version => "4.17.0-beta.1";
 
   @override
   void initState() {
     super.initState();
 
-    ZegoUIKit().getZegoUIKitVersion().then((version) {
+    ZegoUIKit().reporter().create(
+      appID: widget.appID,
+      signOrToken: widget.appSign.isNotEmpty ? widget.appSign : widget.token,
+      params: {
+        ZegoCallReporter.eventKeyKitVersion: version,
+        ZegoUIKitReporter.eventKeyUserID: widget.userID,
+      },
+    ).then((_) {
+      ZegoCallReporter().report(
+        event: ZegoCallReporter.eventInit,
+        params: {
+          ZegoCallReporter.eventKeyInvitationSource:
+              ZegoCallReporter.eventKeyInvitationSourcePage,
+          ZegoUIKitReporter.eventKeyErrorCode: 0,
+          ZegoUIKitReporter.eventKeyStartTime:
+              DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+    });
+
+    ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:4.17.0-beta.1; $version, \n'
+        'version: zego_uikit_prebuilt_call:$version; $uikitVersion, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -326,6 +349,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
     widget.onDispose?.call();
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventUninit,
+      params: {
+        ZegoCallReporter.eventKeyInvitationSource:
+            ZegoCallReporter.eventKeyInvitationSourcePage,
+      },
+    );
   }
 
   void listenUserEvents() {
