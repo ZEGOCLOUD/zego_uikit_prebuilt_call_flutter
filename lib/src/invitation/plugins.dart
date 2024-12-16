@@ -70,10 +70,12 @@ class ZegoCallPrebuiltPlugins {
     pluginUserStateNotifier.value =
         ZegoUIKit().getSignalingPlugin().getConnectionState();
 
-    subscriptions.add(ZegoUIKit()
-        .getSignalingPlugin()
-        .getConnectionStateStream()
-        .listen(onInvitationConnectionState));
+    subscriptions.add(
+      ZegoUIKit()
+          .getSignalingPlugin()
+          .getConnectionStateStream()
+          .listen(onInvitationConnectionState),
+    );
   }
 
   Future<void> init({Future<void> Function()? onPluginInit}) async {

@@ -24,6 +24,7 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
@@ -933,6 +934,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             }
           }
         } else {
+          /// local user show first
           final localUserIndex = users
               .indexWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
           if (-1 != localUserIndex) {
@@ -1048,6 +1050,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             (waitingAcceptUser) => user?.id == waitingAcceptUser.id,
           );
     }
+
     extraInfo[ZegoViewBuilderMapExtraInfoKey.isVirtualUser.name] =
         isWaitingCallAccept;
 

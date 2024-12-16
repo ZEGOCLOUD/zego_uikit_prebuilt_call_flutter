@@ -594,7 +594,7 @@ class ZegoCallInvitationServicePrivateImpl
 
   void onLocalInvitingUsersUpdated() {
     ZegoLoggerService.logInfo(
-      'onLocalInvitingUsersUpdated, state:${localInvitingUsersNotifier.value}, ',
+      'onLocalInvitingUsersUpdated, users:${localInvitingUsersNotifier.value}, ',
       tag: 'call-invitation',
       subTag: 'service private(${identityHashCode(this)})',
     );
@@ -878,7 +878,7 @@ class ZegoCallInvitationServicePrivateImpl
               ZegoLoggerService.logInfo(
                 'requestPermission of systemAlertWindow, not allow',
                 tag: 'call-invitation',
-                subTag: 'notification manager',
+                subTag: 'service(${identityHashCode(this)})',
               );
 
               return;
@@ -896,13 +896,13 @@ class ZegoCallInvitationServicePrivateImpl
       ZegoLoggerService.logInfo(
         'request system alert window permission result:$value',
         tag: 'call-invitation',
-        subTag: 'notification manager',
+        subTag: 'service(${identityHashCode(this)})',
       );
     }).then((_) {
       ZegoLoggerService.logInfo(
         'requestPermission of systemAlertWindow done',
         tag: 'call-invitation',
-        subTag: 'notification manager',
+        subTag: 'service(${identityHashCode(this)})',
       );
     });
   }

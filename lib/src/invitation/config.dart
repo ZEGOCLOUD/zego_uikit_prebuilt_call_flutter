@@ -122,7 +122,7 @@ class ZegoCallInvitationInCallingConfig {
 
 class ZegoCallInvitationMissedCallConfig {
   ZegoCallInvitationMissedCallConfig({
-    this.enabled = true,
+    this.enabled = false,
     @Deprecated('use enableDialBack instead$deprecatedTipsV4152')
     bool? enableReCall,
     bool? enableDialBack,

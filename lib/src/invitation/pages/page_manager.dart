@@ -66,6 +66,9 @@ class ZegoCallInvitationPageManager {
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
   bool _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
 
+  Timer? _remoteReceivedTimeoutGuard;
+  Timer? _localSendTimeoutGuard;
+
   ZegoCallInvitationData _invitationData = ZegoCallInvitationData.empty();
   List<ZegoUIKitUser> _invitingInvitees = []; //  only change by inviter
   ZegoCallInvitationLocalParameter _localInvitationParameter =
@@ -401,6 +404,7 @@ class ZegoCallInvitationPageManager {
 
     if (code.isNotEmpty) {
       ZegoLoggerService.logInfo(
+        'local send invitation, '
         'send invitation error!!! '
         'code:$code, message:$message',
         tag: 'call-invitation',
@@ -447,6 +451,30 @@ class ZegoCallInvitationPageManager {
           callingMachine?.stateCallingWithVideo.enter();
         }
       }
+
+      _localSendTimeoutGuard?.cancel();
+      _localSendTimeoutGuard = Timer.periodic(
+        Duration(seconds: localConfig.timeoutSeconds),
+        (_) {
+          if (ZegoUIKit().getNetworkState() == ZegoUIKitNetworkState.offline &&
+              !_invitationData.isEmpty) {
+            ZegoLoggerService.logInfo(
+              'local send invitation, '
+              'invitation timeout on offline network, '
+              '_invitationData:$_invitationData',
+              tag: 'call-invitation',
+              subTag: 'page manager',
+            );
+
+            onInvitationResponseTimeout(
+              {
+                'invitees': invitees,
+                'data': customData,
+              },
+            );
+          }
+        },
+      );
     } else {
       restoreToIdle();
     }
@@ -780,12 +808,14 @@ class ZegoCallInvitationPageManager {
           final index = _invitingInvitees
               .indexWhere((invitee) => invitee.id == userInfo.userID);
           if (-1 != index) {
-            onInvitationResponseTimeout({
-              'invitees': [
-                ZegoUIKitUser(id: userInfo.userID, name: ''),
-              ],
-              'data': userInfo.extendedData,
-            });
+            onInvitationResponseTimeout(
+              {
+                'invitees': [
+                  ZegoUIKitUser(id: userInfo.userID, name: ''),
+                ],
+                'data': userInfo.extendedData,
+              },
+            );
           }
           break;
         case ZegoSignalingPluginInvitationUserState.inviting:
@@ -862,9 +892,12 @@ class ZegoCallInvitationPageManager {
 
     /// zim call id
     final invitationID = params['invitation_id'] as String? ?? '';
+    final timeoutSecond = params['timeout_second'] as int? ?? 60;
 
     ZegoLoggerService.logInfo(
-      'on invitation received, state:${WidgetsBinding.instance.lifecycleState}, '
+      'on invitation received, '
+      'network state:${ZegoUIKit().getNetworkState()}, '
+      'state:${WidgetsBinding.instance.lifecycleState}, '
       '_init:$_init, inviter:$inviter, type:$type, in background: $_appInBackground, '
       'data:$data, params:$params',
       tag: 'call-invitation',
@@ -881,10 +914,6 @@ class ZegoCallInvitationPageManager {
       },
     );
 
-    /// call protocol
-    final sendRequestProtocol =
-        ZegoCallInvitationSendRequestProtocol.fromJson(data);
-
     if (_invitationData.callID.isNotEmpty ||
         CallingState.kIdle !=
             (callingMachine?.getPageState() ?? CallingState.kIdle)) {
@@ -896,6 +925,10 @@ class ZegoCallInvitationPageManager {
       return;
     }
 
+    /// call protocol
+    final sendRequestProtocol =
+        ZegoCallInvitationSendRequestProtocol.fromJson(data);
+
     _invitationData
       ..customData = sendRequestProtocol.customData
       ..callID = sendRequestProtocol.callID
@@ -906,9 +939,34 @@ class ZegoCallInvitationPageManager {
           ZegoCallInvitationType.voiceCall;
 
     ZegoLoggerService.logInfo(
+      'on invitation received, '
       '_invitationData:$_invitationData',
       tag: 'call-invitation',
       subTag: 'page manager',
+    );
+
+    _remoteReceivedTimeoutGuard?.cancel();
+    _remoteReceivedTimeoutGuard = Timer.periodic(
+      Duration(seconds: timeoutSecond),
+      (_) {
+        if (ZegoUIKit().getNetworkState() == ZegoUIKitNetworkState.offline &&
+            !_invitationData.isEmpty) {
+          ZegoLoggerService.logInfo(
+            'on invitation received, '
+            'invitation timeout on offline network, '
+            '_invitationData:$_invitationData',
+            tag: 'call-invitation',
+            subTag: 'page manager',
+          );
+
+          onInvitationTimeout(
+            {
+              'inviter': _invitationData.inviter,
+              'data': data,
+            },
+          );
+        }
+      },
     );
 
     if (_waitCallPageDisposeFlagInIOSCallKit.value) {
@@ -1169,7 +1227,9 @@ class ZegoCallInvitationPageManager {
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
-      'invitee:$invitee, data:$data',
+      'invitee:$invitee, '
+      'data:$data, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation accepted',
     );
@@ -1212,10 +1272,21 @@ class ZegoCallInvitationPageManager {
 
     ZegoLoggerService.logInfo(
       'inviter:$inviter, '
-      'data:$data',
+      'data:$data, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation timeout',
     );
+
+    if (_invitationData.isEmpty) {
+      ZegoLoggerService.logInfo(
+        'local invitation data is empty, ',
+        tag: 'call-invitation',
+        subTag: 'page manager, on invitation timeout',
+      );
+
+      return;
+    }
 
     callInvitationData.invitationEvents?.onIncomingCallTimeout?.call(
       _invitationData.callID,
@@ -1228,8 +1299,8 @@ class ZegoCallInvitationPageManager {
         onMissedCallNotificationClicked,
       );
     } else {
-      ZegoLoggerService.logError(
-        'missed-call not enabled',
+      ZegoLoggerService.logInfo(
+        'missed-call not enabled, please check on {config.missedCall.enabled}',
         tag: 'call-invitation',
         subTag: 'page manager, missed call notification click',
       );
@@ -1244,14 +1315,21 @@ class ZegoCallInvitationPageManager {
     ZegoCallInvitationData invitationData,
   ) async {
     if (!callInvitationData.config.missedCall.enableDialBack) {
-      ZegoLoggerService.logError(
-        'redial not enabled',
+      ZegoLoggerService.logInfo(
+        'redial not enabled, please check on {config.missedCall.enableDialBack}',
         tag: 'call-invitation',
         subTag: 'page manager, missed call notification click',
       );
 
       return;
     }
+
+    ZegoLoggerService.logInfo(
+      'missed-call clicked, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
+      tag: 'call-invitation',
+      subTag: 'page manager, missed call notification click',
+    );
 
     if (invitationData.invitees.length > 1) {
       /// group call, join in invitation directly
@@ -1343,7 +1421,8 @@ class ZegoCallInvitationPageManager {
     ZegoLoggerService.logInfo(
       'data: ${params['data']}, '
       'invitees:${invitees.map((e) => e.toString())}, '
-      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}',
+      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation response timeout',
     );
@@ -1394,7 +1473,8 @@ class ZegoCallInvitationPageManager {
       ZegoLoggerService.logInfo(
         'invitee is not in list, '
         'invitee:{${invitee.id}, ${invitee.name}}, '
-        'list:$_invitingInvitees',
+        'list:$_invitingInvitees, '
+        'network state:${ZegoUIKit().getNetworkState()}, ',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation refused',
       );
@@ -1486,24 +1566,43 @@ class ZegoCallInvitationPageManager {
 
   void onInvitationCanceled(Map<String, dynamic> params) {
     final ZegoUIKitUser inviter = params['inviter']!;
+    final String eventInvitationID = params['invitation_id'] ?? '';
     final String data = params['data']!; // extended field
 
     ZegoLoggerService.logInfo(
       'params:$params, '
       'inviter:$inviter, '
-      'data:$data',
+      'data:$data, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation canceled',
     );
 
+    if (_invitationData.isEmpty) {
+      ZegoLoggerService.logInfo(
+        'local invitation data is empty, ',
+        tag: 'call-invitation',
+        subTag: 'page manager, on invitation canceled',
+      );
+
+      return;
+    }
+
     var cancelRequestData =
         ZegoCallInvitationCancelRequestProtocol.fromJson(data);
 
-    if (cancelRequestData.callID != _invitationData.callID) {
+    if (cancelRequestData.callID != _invitationData.callID &&
+
+        /// Kill the app of inviter that in calling, and then open it again.
+        /// ZIM will automatically send the cancel event.
+        /// At this time, the data is empty and needs to be judged based on the invitation id
+        eventInvitationID != _invitationData.invitationID) {
       ZegoLoggerService.logInfo(
         'is not current call, '
         'data call id:${cancelRequestData.callID}, '
-        'current call id:${_invitationData.callID}',
+        'event invitation id:$eventInvitationID, '
+        'current call id:${_invitationData.callID}, '
+        'current invitation id:${_invitationData.invitationID}',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation canceled',
       );
@@ -1523,7 +1622,8 @@ class ZegoCallInvitationPageManager {
   void onInvitationEnded(Map<String, dynamic> params) {
     ZegoLoggerService.logInfo(
       'params:$params, '
-      'inCallPage:$inCallPage',
+      'inCallPage:$inCallPage, '
+      'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation ended',
     );
@@ -1563,6 +1663,11 @@ class ZegoCallInvitationPageManager {
       tag: 'call-invitation',
       subTag: 'page manager, restore to idle',
     );
+
+    _localSendTimeoutGuard?.cancel();
+    _remoteReceivedTimeoutGuard?.cancel();
+    _callerRingtone.stopRing();
+    _calleeRingtone.stopRing();
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {

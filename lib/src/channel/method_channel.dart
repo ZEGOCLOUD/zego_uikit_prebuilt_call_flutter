@@ -82,6 +82,7 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
         'accept_text': config.acceptButtonText,
         'reject_text': config.rejectButtonText,
         'vibrate': config.vibrate,
+        'is_video': config.isVideo,
       });
 
       /// set buttons callback

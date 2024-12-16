@@ -309,6 +309,22 @@ class ZegoUIKitPrebuiltCallInvitationService
       subTag: 'service(${identityHashCode(this)}), init',
     );
 
+    try {
+      await private._initPermissions().then((_) {
+        ZegoLoggerService.logInfo(
+          'initPermissions done',
+          tag: 'call-invitation',
+          subTag: 'service(${identityHashCode(this)}), init',
+        );
+      });
+    } catch (e) {
+      ZegoLoggerService.logError(
+        'initPermissions exception:$e',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), init',
+      );
+    }
+
     await private
         ._initPrivate(
       appID: appID,
@@ -370,20 +386,16 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     try {
-      await private._initPermissions().then(
-        (value) async {
-          await private._initContext(config: config);
-        },
-      ).then((_) {
+      await private._initContext().then((_) {
         ZegoLoggerService.logInfo(
-          'initPermissions done',
+          'initContext done',
           tag: 'call-invitation',
           subTag: 'service(${identityHashCode(this)}), init',
         );
       });
     } catch (e) {
       ZegoLoggerService.logError(
-        'initPermissions exception:$e',
+        'initContext exception:$e',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
