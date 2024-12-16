@@ -33,7 +33,6 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
-import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -166,7 +165,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     return isPlaying;
   }
-  
+
   String get version => "4.17.0-beta.2";
 
   @override
