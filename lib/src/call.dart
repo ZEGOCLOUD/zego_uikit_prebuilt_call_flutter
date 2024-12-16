@@ -24,13 +24,13 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
@@ -888,6 +888,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             }
           }
         } else {
+          /// local user show first
           final localUserIndex = users
               .indexWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
           if (-1 != localUserIndex) {
