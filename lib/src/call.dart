@@ -151,7 +151,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isAllEntered;
   }
 
-  String get version => "4.16.15";
+  String get version => "4.16.16";
 
   @override
   void initState() {
