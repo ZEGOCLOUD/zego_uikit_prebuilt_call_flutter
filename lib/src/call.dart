@@ -167,7 +167,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isPlaying;
   }
   
-  String get version => "4.17.0-beta.1";
+  String get version => "4.17.0-beta.2";
 
   @override
   void initState() {
