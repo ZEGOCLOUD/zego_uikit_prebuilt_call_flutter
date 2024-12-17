@@ -251,6 +251,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         innerText: _innerText,
       ),
     );
+
     Future<bool> sendInvitationCallback(
       ZegoSignalingPluginSendInvitationResult result,
     ) async {

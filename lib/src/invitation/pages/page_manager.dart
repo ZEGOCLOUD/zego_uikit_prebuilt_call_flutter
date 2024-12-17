@@ -1216,8 +1216,8 @@ class ZegoCallInvitationPageManager {
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitee is not in list, '
-        'invitee:{${invitee.id}, ${invitee.name}}, '
-        'list:$_invitingInvitees',
+        'invitee:${invitee.id}, '
+        'list:${_invitingInvitees.ids}',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation accepted',
       );
@@ -1398,7 +1398,7 @@ class ZegoCallInvitationPageManager {
     ZegoLoggerService.logInfo(
       'data: ${params['data']}, '
       'invitees:${invitees.map((e) => e.toString())}, '
-      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}, '
+      'inviting invitees: ${_invitingInvitees.ids}, '
       'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation response timeout',
@@ -1449,8 +1449,8 @@ class ZegoCallInvitationPageManager {
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitee is not in list, '
-        'invitee:{${invitee.id}, ${invitee.name}}, '
-        'list:$_invitingInvitees, '
+        'invitee:{${invitee.id}}, '
+        'list:${_invitingInvitees.ids}, '
         'network state:${ZegoUIKit().getNetworkState()}, ',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation refused',
@@ -1506,9 +1506,9 @@ class ZegoCallInvitationPageManager {
     _invitingInvitees.removeAt(inviteeIndex);
 
     ZegoLoggerService.logInfo(
-      'data: $data, '
       'invitee:$invitee, '
-      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}',
+      'inviting invitees: ${_invitingInvitees.ids}, '
+      'data: $data, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation refused',
     );
