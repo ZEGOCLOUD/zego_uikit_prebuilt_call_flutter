@@ -35,6 +35,15 @@ class ZegoCallInvitationServicePrivateImpl
   ZegoCallPrebuiltPlugins? _plugins;
 
   final localInvitingUsersNotifier = ValueNotifier<List<ZegoCallUser>>([]);
+  void updateLocalInvitingUsers(List<ZegoCallUser> users) {
+    ZegoLoggerService.logInfo(
+      'updateLocalInvitingUsers:$users',
+      tag: 'call-invitation',
+      subTag: 'service private(${identityHashCode(this)})',
+    );
+
+    localInvitingUsersNotifier.value = users;
+  }
 
   ZegoCallInvitationData get currentCallInvitationDataSafe =>
       _pageManager?.invitationData ?? ZegoCallInvitationData.empty();
@@ -612,10 +621,9 @@ class ZegoCallInvitationServicePrivateImpl
   }
 
   Future<void> clearInvitation() async {
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = [];
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
+      [],
+    );
 
     final invitationData =
         _pageManager?.invitationData ?? ZegoCallInvitationData.empty();

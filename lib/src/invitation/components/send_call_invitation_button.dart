@@ -350,10 +350,9 @@ class _ZegoSendCallInvitationButtonState
       subTag: 'components, send call button',
     );
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList();
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
+          widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
+        );
 
     return true;
   }
