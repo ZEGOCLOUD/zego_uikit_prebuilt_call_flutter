@@ -107,6 +107,7 @@ class ZegoCallControllerMinimizePrivateActiveUser {
       return;
     }
     isStarted = true;
+    this.showLocalUserView = showLocalUserView;
 
     ZegoLoggerService.logInfo(
       'start',

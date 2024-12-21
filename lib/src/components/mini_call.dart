@@ -27,7 +27,7 @@ class ZegoMinimizingCallPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
-    this.showLocalUserView = false,
+    this.showLocalUserView = true,
     this.showCameraButton = true,
     this.showMicrophoneButton = true,
     this.soundWaveColor = const Color(0xff2254f6),

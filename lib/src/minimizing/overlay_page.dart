@@ -98,7 +98,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
-    this.showLocalUserView = false,
+    this.showLocalUserView = true,
     this.leaveButtonIcon,
     this.foreground,
     this.builder,
