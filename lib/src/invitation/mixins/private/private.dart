@@ -35,6 +35,14 @@ class ZegoCallInvitationServicePrivateImpl
   ZegoCallPrebuiltPlugins? _plugins;
 
   final localInvitingUsersNotifier = ValueNotifier<List<ZegoCallUser>>([]);
+  void removeUserFromLocalInvitingUsers(List<String> userIDList) {
+    final oldValue = List<ZegoCallUser>.from(localInvitingUsersNotifier.value);
+    for (var userID in userIDList) {
+      oldValue.removeWhere((user) => user.id == userID);
+    }
+    updateLocalInvitingUsers(oldValue);
+  }
+
   void updateLocalInvitingUsers(List<ZegoCallUser> users) {
     ZegoLoggerService.logInfo(
       'updateLocalInvitingUsers:$users',
