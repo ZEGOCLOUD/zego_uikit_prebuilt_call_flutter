@@ -110,10 +110,10 @@ public class PluginNotification {
     public void addLocalCallNotification(Context context, String title, String body,
                                          String acceptButtonText, String rejectButtonText,
                                          String channelID, String soundSource, String iconSource,
-                                         String notificationIdString, Boolean isVibrate) {
+                                         String notificationIdString, Boolean isVibrate, Boolean isVideo) {
         Log.i("call plugin", "add Notification, title:" + title + ",body:" + body +
                 ",channelId:" + channelID + ",soundSource:" + soundSource + ",iconSource:" + iconSource +
-                ",notificationId:" + notificationIdString + ",isVibrate:" + isVibrate);
+                ",notificationId:" + notificationIdString + ",isVibrate:" + isVibrate + ",isVideo:" + isVideo);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             wakeUpScreen(context);
@@ -156,6 +156,11 @@ public class PluginNotification {
         contentView.setTextViewText(R.id.tvBody, body);
         contentView.setOnClickPendingIntent(R.id.llAccept, acceptPendingIntent);
         contentView.setOnClickPendingIntent(R.id.llDecline, rejectPendingIntent);
+        if (isVideo) {
+            contentView.setImageViewResource(R.id.ivAccept, R.drawable.ic_video_accept);
+        } else {
+            contentView.setImageViewResource(R.id.ivAccept, R.drawable.ic_audio_accept);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)
                 .setContent(contentView)

@@ -146,7 +146,8 @@ class ZegoCallControllerPIPImplPrivateImpl {
 
   void onPIPStatusUpdated(PiPStatus status) {
     ZegoLoggerService.logInfo(
-      'onPIPStatusUpdated, $status',
+      'onPIPStatusUpdated, $status, '
+      'lifecycleState: ${WidgetsBinding.instance.lifecycleState}',
       tag: 'call',
       subTag: 'controller.pip.p',
     );
@@ -159,6 +160,11 @@ class ZegoCallControllerPIPImplPrivateImpl {
         if (isInPIP) {
           isRestoreFromPIP = true;
           isInPIP = false;
+
+          if (AppLifecycleState.resumed !=
+              WidgetsBinding.instance.lifecycleState) {
+            ZegoUIKit().activeAppToForeground();
+          }
 
           /// can't know when the rendering will end after restoration.
           /// get default value of camera/microphone in bottom bar

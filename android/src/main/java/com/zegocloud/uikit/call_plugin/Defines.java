@@ -18,6 +18,7 @@ public interface Defines {
     String FLUTTER_PARAM_ICON_SOURCE = "icon_source";
     String FLUTTER_PARAM_ID = "id";
     String FLUTTER_PARAM_VIBRATE = "vibrate";
+    String FLUTTER_PARAM_IS_VIDEO = "is_video";
     String FLUTTER_PARAM_NOTIFICATION_ID = "notification_id";
     String ACTION_ACCEPT = "ACTION_ACCEPT";
     String ACTION_REJECT = "ACTION_REJECT";

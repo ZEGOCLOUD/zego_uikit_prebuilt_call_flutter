@@ -203,28 +203,17 @@ class _ZegoSendCallInvitationButtonState
   }
 
   Widget button() {
-    final canInvitingInCalling = ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .callInvitationConfig
-            ?.inCalling
-            .canInvitingInCalling ??
-        true;
-    final supportMissedCall = ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .callInvitationConfig
-            ?.missedCall
-            .enableDialBack ??
-        true;
     ZegoLoggerService.logInfo(
       'button, '
-      'canInvitingInCalling:$canInvitingInCalling, '
-      'supportMissedCall:$supportMissedCall, ',
+      'isAdvanceInvitationMode:${ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode}, ',
       tag: 'call-invitation',
       subTag: 'components, send call button',
     );
 
     return ZegoStartInvitationButton(
-      isAdvancedMode: canInvitingInCalling || supportMissedCall,
+      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .isAdvanceInvitationMode,
       invitationType: ZegoCallTypeExtension(
         widget.isVideoCall
             ? ZegoCallInvitationType.videoCall
@@ -290,13 +279,26 @@ class _ZegoSendCallInvitationButtonState
   Future<bool> onWillPressed() async {
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
+      String errorTips = 'network state:${ZegoUIKit().getNetworkState()}, '
+          'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
+          'ZegoUIKitPrebuiltCallInvitationService is init: '
+          '${ZegoUIKitPrebuiltCallInvitationService().isInit}, ';
+      if (!ZegoUIKitPrebuiltCallInvitationService().isInit) {
+        errorTips =
+            'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin, ' +
+                errorTips;
+      }
+
+      if (ZegoUIKitNetworkState.online != ZegoUIKit().getNetworkState()) {
+        errorTips = 'please check device network state, ' + errorTips;
+      }
+
       ZegoLoggerService.logError(
-        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
-        'ZegoUIKitPrebuiltCallInvitationService is init: ${ZegoUIKitPrebuiltCallInvitationService().isInit}'
-        'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin first',
+        errorTips,
         tag: 'call-invitation',
         subTag: 'components, send call button',
       );
+
       return false;
     }
 
@@ -348,10 +350,9 @@ class _ZegoSendCallInvitationButtonState
       subTag: 'components, send call button',
     );
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList();
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
+          widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
+        );
 
     return true;
   }

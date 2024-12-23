@@ -398,10 +398,10 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         maxAverageSoundLevel = averageSoundLevel;
       }
     });
-    activeUserIDNotifier.value = activeUserID;
-    if (activeUserIDNotifier.value?.isEmpty ?? true) {
-      activeUserIDNotifier.value = ZegoUIKit().getLocalUser().id;
+    if (activeUserID.isEmpty) {
+      activeUserID = ZegoUIKit().getLocalUser().id;
     }
+    activeUserIDNotifier.value = activeUserID;
 
     rangeSoundLevels.clear();
   }
