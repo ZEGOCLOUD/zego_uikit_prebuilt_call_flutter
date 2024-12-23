@@ -32,7 +32,8 @@ class ZegoCallInvitationPageManager {
     required this.callInvitationData,
   });
 
-  final _defaultPackagePrefix = 'packages/zego_uikit_prebuilt_call/';
+  final _defaultPackageName = 'zego_uikit_prebuilt_call';
+
   final _callerRingtone = ZegoRingtone();
   final _calleeRingtone = ZegoRingtone();
 
@@ -200,15 +201,17 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager',
       );
       _callerRingtone.init(
-        prefix: '',
+        packageName: '',
         sourcePath: ringtoneConfig.outgoingCallPath!,
         isVibrate: false,
+        skipSilent: true,
       );
     } else {
       _callerRingtone.init(
-        prefix: _defaultPackagePrefix,
+        packageName: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/outgoing.mp3',
         isVibrate: false,
+        skipSilent: true,
       );
     }
     if (ringtoneConfig.incomingCallPath != null) {
@@ -218,15 +221,17 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager',
       );
       _calleeRingtone.init(
-        prefix: '',
+        packageName: '',
         sourcePath: ringtoneConfig.incomingCallPath!,
         isVibrate: true,
+        skipSilent: false,
       );
     } else {
       _calleeRingtone.init(
-        prefix: _defaultPackagePrefix,
+        packageName: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/incoming.mp3',
         isVibrate: true,
+        skipSilent: false,
       );
     }
   }
@@ -438,7 +443,7 @@ class ZegoCallInvitationPageManager {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (_invitingInvitees.isNotEmpty) {
-      _callerRingtone.startRing();
+      _callerRingtone.startRing(testPlayRingtone: true);
 
       if (isGroupCall) {
         /// group call, enter room directly
@@ -1198,7 +1203,7 @@ class ZegoCallInvitationPageManager {
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
-    _calleeRingtone.startRing();
+    _calleeRingtone.startRing(testPlayRingtone: false);
 
     callInvitationData.invitationEvents?.onIncomingCallReceived?.call(
       _invitationData.callID,
