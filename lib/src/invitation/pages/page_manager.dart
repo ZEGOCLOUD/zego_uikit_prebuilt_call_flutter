@@ -32,7 +32,7 @@ class ZegoCallInvitationPageManager {
     required this.callInvitationData,
   });
 
-  final _defaultPackageName = 'zego_uikit_prebuilt_call';
+  final _defaultPackageName = 'packages/zego_uikit_prebuilt_call/';
 
   final _callerRingtone = ZegoRingtone();
   final _calleeRingtone = ZegoRingtone();
@@ -201,17 +201,15 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager',
       );
       _callerRingtone.init(
-        packageName: '',
+        prefix: '',
         sourcePath: ringtoneConfig.outgoingCallPath!,
         isVibrate: false,
-        skipSilent: true,
       );
     } else {
       _callerRingtone.init(
-        packageName: _defaultPackageName,
+        prefix: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/outgoing.mp3',
         isVibrate: false,
-        skipSilent: true,
       );
     }
     if (ringtoneConfig.incomingCallPath != null) {
@@ -221,17 +219,15 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager',
       );
       _calleeRingtone.init(
-        packageName: '',
+        prefix: '',
         sourcePath: ringtoneConfig.incomingCallPath!,
         isVibrate: true,
-        skipSilent: false,
       );
     } else {
       _calleeRingtone.init(
-        packageName: _defaultPackageName,
+        prefix: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/incoming.mp3',
         isVibrate: true,
-        skipSilent: false,
       );
     }
   }

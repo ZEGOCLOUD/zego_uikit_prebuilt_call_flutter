@@ -2,7 +2,7 @@
 import 'dart:async';
 
 // Package imports:
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -17,40 +17,40 @@ class ZegoRingtone {
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
-  String packageName = '';
+  String prefix = '';
+  String cachePrefix = '';
   String sourcePath = '';
 
   ZegoRingtone();
 
   void init({
-    required String packageName,
+    required String prefix,
     required String sourcePath,
     required bool isVibrate,
-    required bool skipSilent,
   }) {
     ZegoLoggerService.logInfo(
-      'init: packageName:$packageName, source path:$sourcePath',
+      'init: prefix:$prefix, source path:$sourcePath',
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
-    this.packageName = packageName;
+    this.prefix = prefix;
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 
-    audioPlayer
-        .setAudioSource(
-      AudioSource.asset(
-        sourcePath,
-        package: packageName,
+    final audioContext = AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.soloAmbient,
       ),
-    )
-        .then(
-      (_) async {
-        await audioPlayer.setSkipSilenceEnabled(skipSilent);
-        await audioPlayer.setLoopMode(LoopMode.one);
-      },
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: true,
+        contentType: AndroidContentType.unknown,
+        usageType: AndroidUsageType.notificationRingtone,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
     );
+    AudioPlayer.global.setAudioContext(audioContext);
   }
 
   bool isZero(double val) {
@@ -84,23 +84,28 @@ class ZegoRingtone {
 
     ZegoLoggerService.logInfo(
       'start ring, '
-      'packageName:$packageName, '
+      'prefix:$prefix, '
       'source path:$sourcePath, '
-      'isPlayByRingtone:$isPlayByRingtone, ',
+      'isPlayByRingtone:$isPlayByRingtone, '
+      '',
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
+
+    cachePrefix = AudioCache.instance.prefix;
+    AudioCache.instance.prefix = prefix;
 
     if (isPlayByRingtone) {
       isRingtoneRunning = true;
       FlutterRingtonePlayer().play(
         volume: 0.3,
-        fromAsset: 'packages/$packageName/$sourcePath',
+        fromAsset: '$prefix$sourcePath',
         looping: true,
       );
     } else {
+      audioPlayer.setReleaseMode(ReleaseMode.loop);
       try {
-        await audioPlayer.play().then((value) {
+        await audioPlayer.play(AssetSource(sourcePath)).then((value) {
           ZegoLoggerService.logInfo(
             'audioPlayer play done',
             tag: 'call-invitation',
@@ -180,6 +185,10 @@ class ZegoRingtone {
       subTag: 'ringtone',
     );
 
+    if (isRingTimerRunning) {
+      AudioCache.instance.prefix = cachePrefix;
+    }
+
     isRingTimerRunning = false;
 
     if (isRingtoneRunning) {
@@ -188,6 +197,7 @@ class ZegoRingtone {
       FlutterRingtonePlayer().stop();
       // await ZegoCallPluginPlatform.instance.stopRingtone();
     }
+
     try {
       await audioPlayer.stop().then((value) {
         ZegoLoggerService.logInfo(
