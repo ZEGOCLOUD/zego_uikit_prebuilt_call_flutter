@@ -411,6 +411,14 @@ class ZegoCallInvitationPageManager {
       return;
     }
 
+    callInvitationData.invitationEvents?.onOutgoingCallSent?.call(
+      callID,
+      ZegoCallUser.fromUIKit(ZegoUIKit().getLocalUser()),
+      invitationType,
+      invitees.map((e)=>ZegoCallUser.fromUIKit(e)).toList(),
+      customData,
+    );
+
     _localInvitationParameter = localConfig;
 
     _invitingInvitees = List.from(invitees);
