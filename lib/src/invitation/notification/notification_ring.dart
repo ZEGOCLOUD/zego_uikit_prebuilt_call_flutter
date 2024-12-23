@@ -96,6 +96,7 @@ class ZegoRingtone {
       FlutterRingtonePlayer().play(
         volume: 0.3,
         fromAsset: 'packages/$packageName/$sourcePath',
+        looping: true,
       );
     } else {
       try {

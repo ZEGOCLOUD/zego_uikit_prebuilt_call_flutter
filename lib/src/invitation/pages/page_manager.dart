@@ -420,7 +420,7 @@ class ZegoCallInvitationPageManager {
       callID,
       ZegoCallUser.fromUIKit(ZegoUIKit().getLocalUser()),
       invitationType,
-      invitees.map((e)=>ZegoCallUser.fromUIKit(e)).toList(),
+      invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
       customData,
     );
 
@@ -826,18 +826,9 @@ class ZegoCallInvitationPageManager {
         ZegoSignalingPluginInvitationUserState.timeout,
         ZegoSignalingPluginInvitationUserState.beCanceled,
       ].contains(userInfo.state)) {
-        /// localInvitingUsersNotifier
-        final oldValue = List<ZegoCallUser>.from(
-            ZegoUIKitPrebuiltCallInvitationService()
-                .private
-                .localInvitingUsersNotifier
-                .value);
-        oldValue.removeWhere((user) => user.id == userInfo.userID);
         ZegoUIKitPrebuiltCallInvitationService()
             .private
-            .updateLocalInvitingUsers(
-              oldValue,
-            );
+            .removeUserFromLocalInvitingUsers([userInfo.userID]);
       }
     }
 
@@ -1419,6 +1410,10 @@ class ZegoCallInvitationPageManager {
       _invitingInvitees
           .removeWhere((invitee) => timeoutInvitee.id == invitee.id);
     }
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .removeUserFromLocalInvitingUsers(invitees.map((e) => e.id).toList());
+
     ZegoLoggerService.logInfo(
       'data: ${params['data']}, '
       'invitees:${invitees.map((e) => e.toString())}, '
