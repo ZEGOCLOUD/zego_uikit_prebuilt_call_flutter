@@ -81,6 +81,15 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   /// missed call dial back failed
   Function()? onIncomingMissedCallDialBackFailed;
 
+  /// This callback will be triggered to **caller** when caller send a call
+  Function(
+    String callID,
+    ZegoCallUser caller,
+    ZegoCallInvitationType callType,
+    List<ZegoCallUser> callees,
+    String customData,
+  )? onOutgoingCallSent;
+
   /// This callback will be triggered to **caller** when caller cancels the call invitation by click the cancel button
   Function()? onOutgoingCallCancelButtonPressed;
 
@@ -122,6 +131,7 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
     Function()? onIncomingMissedCallReCallFailed,
     this.onIncomingMissedCallDialBackFailed,
     this.onOutgoingCallCancelButtonPressed,
+    this.onOutgoingCallSent,
     this.onOutgoingCallAccepted,
     this.onOutgoingCallRejectedCauseBusy,
     this.onOutgoingCallDeclined,
