@@ -100,37 +100,11 @@ class _ZegoCallInvitationNotifyDialogState
               const Expanded(child: SizedBox()),
               ...widget.declineButtonConfig.visible
                   ? [
-                      ZegoNetworkLoading(
-                        enabled: widget
-                                .callInvitationConfig.config.network?.enabled ??
-                            true,
-                        icon: widget.callInvitationConfig.config.network?.icon,
-                        iconColor: widget
-                            .callInvitationConfig.config.network?.iconColor,
-                        progressColor: widget.callInvitationConfig.config
-                                .network?.progressColor ??
-                            Colors.white,
-                        child: declineButton(),
-                      ),
+                      declineButton(),
                       SizedBox(width: 40.zW),
                     ]
                   : [],
-              ...widget.acceptButtonConfig.visible
-                  ? [
-                      ZegoNetworkLoading(
-                        enabled: widget
-                                .callInvitationConfig.config.network?.enabled ??
-                            true,
-                        icon: widget.callInvitationConfig.config.network?.icon,
-                        iconColor: widget
-                            .callInvitationConfig.config.network?.iconColor,
-                        progressColor: widget.callInvitationConfig.config
-                                .network?.progressColor ??
-                            Colors.white,
-                        child: acceptButton(),
-                      ),
-                    ]
-                  : [],
+              ...widget.acceptButtonConfig.visible ? [acceptButton()] : [],
             ],
           ),
     );
@@ -226,6 +200,12 @@ class _ZegoCallInvitationNotifyDialogState
             message,
           );
         },
+        networkLoadingConfig:
+            widget.callInvitationConfig.config.networkLoading ??
+                ZegoNetworkLoadingConfig(
+                  enabled: true,
+                  progressColor: Colors.white,
+                ),
       ),
     );
   }
@@ -257,6 +237,12 @@ class _ZegoCallInvitationNotifyDialogState
             message,
           );
         },
+        networkLoadingConfig:
+            widget.callInvitationConfig.config.networkLoading ??
+                ZegoNetworkLoadingConfig(
+                  enabled: true,
+                  progressColor: Colors.white,
+                ),
       ),
     );
   }

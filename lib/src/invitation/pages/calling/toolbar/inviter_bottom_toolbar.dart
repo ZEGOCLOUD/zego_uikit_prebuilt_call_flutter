@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
@@ -14,7 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 /// @nodoc
 class ZegoInviterCallingBottomToolBar extends StatelessWidget {
   final ZegoCallInvitationPageManager pageManager;
-  final ZegoCallInvitationNetworkConfig? networkConfig;
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
   final ZegoCallButtonUIConfig cancelButtonConfig;
 
   final List<ZegoUIKitUser> invitees;
@@ -24,7 +23,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
     required this.pageManager,
     required this.cancelButtonConfig,
     required this.invitees,
-    this.networkConfig,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   @override
@@ -34,10 +33,11 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
       child: Center(
         child: (cancelButtonConfig.visible)
             ? ZegoNetworkLoading(
-                enabled: networkConfig?.enabled ?? true,
-                icon: networkConfig?.icon,
-                iconColor: networkConfig?.iconColor,
-                progressColor: networkConfig?.progressColor ?? Colors.white,
+                config: networkLoadingConfig ??
+                    ZegoNetworkLoadingConfig(
+                      enabled: true,
+                      progressColor: Colors.white,
+                    ),
                 child: ZegoCancelInvitationButton(
                   isAdvancedMode: true,
                   invitees: invitees.map((e) => e.id).toList(),

@@ -137,7 +137,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
           invitationType: invitationType,
           declineButtonConfig: declineButtonConfig,
           acceptButtonConfig: acceptButtonConfig,
-          networkConfig: callInvitationData.config.network,
+          networkLoadingConfig: callInvitationData.config.networkLoading,
         ),
         SizedBox(height: 105.zR),
       ],

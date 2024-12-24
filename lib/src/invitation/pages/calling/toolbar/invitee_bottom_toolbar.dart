@@ -25,7 +25,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoCallButtonUIConfig declineButtonConfig;
   final ZegoCallButtonUIConfig acceptButtonConfig;
 
-  final ZegoCallInvitationNetworkConfig? networkConfig;
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
   const ZegoInviteeCallingBottomToolBar({
     Key? key,
@@ -35,7 +35,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
     required this.invitationType,
     required this.declineButtonConfig,
     required this.acceptButtonConfig,
-    this.networkConfig,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   @override
@@ -70,11 +70,11 @@ class ZegoInviteeCallingBottomToolBarState
             ...widget.declineButtonConfig.visible
                 ? [
                     ZegoNetworkLoading(
-                      enabled: widget.networkConfig?.enabled ?? true,
-                      icon: widget.networkConfig?.icon,
-                      iconColor: widget.networkConfig?.iconColor,
-                      progressColor:
-                          widget.networkConfig?.progressColor ?? Colors.white,
+                      config: widget.networkLoadingConfig ??
+                          ZegoNetworkLoadingConfig(
+                            enabled: true,
+                            progressColor: Colors.white,
+                          ),
                       child: declineButton(),
                     ),
                     SizedBox(width: 230.zR),
@@ -83,11 +83,11 @@ class ZegoInviteeCallingBottomToolBarState
             ...widget.acceptButtonConfig.visible
                 ? [
                     ZegoNetworkLoading(
-                      enabled: widget.networkConfig?.enabled ?? true,
-                      icon: widget.networkConfig?.icon,
-                      iconColor: widget.networkConfig?.iconColor,
-                      progressColor:
-                          widget.networkConfig?.progressColor ?? Colors.white,
+                      config: widget.networkLoadingConfig ??
+                          ZegoNetworkLoadingConfig(
+                            enabled: true,
+                            progressColor: Colors.white,
+                          ),
                       child: acceptButton(),
                     ),
                   ]

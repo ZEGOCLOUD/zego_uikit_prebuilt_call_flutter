@@ -25,10 +25,8 @@ class ZegoCallInvitationConfig {
     @Deprecated(
         'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
     bool onlyInitiatorCanInvite = false,
-    ZegoCallInvitationNetworkConfig? network,
   })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
             ZegoCallPermissionConfirmDialogConfig(),
-        network = network ?? ZegoCallInvitationNetworkConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -80,7 +78,7 @@ class ZegoCallInvitationConfig {
   ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
 
   /// network config
-  ZegoCallInvitationNetworkConfig? network;
+  ZegoNetworkLoadingConfig? networkLoading;
 
   @override
   String toString() {
@@ -89,7 +87,7 @@ class ZegoCallInvitationConfig {
         'calling:$inCalling, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
         'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
-        'network:$network, '
+        'networkLoading:$networkLoading, '
         '}';
   }
 }
@@ -561,28 +559,6 @@ class ZegoCallPermissionConfirmDialogConfig {
         'contentStyle:$contentStyle, '
         'actionTextStyle:$actionTextStyle, '
         'backgroundBrightness:$backgroundBrightness, '
-        '}';
-  }
-}
-
-class ZegoCallInvitationNetworkConfig {
-  ZegoCallInvitationNetworkConfig({
-    this.enabled = true,
-    this.icon,
-    this.iconColor,
-    this.progressColor,
-  });
-  bool enabled;
-
-  /// icon when network had error
-  Widget? icon;
-  Color? iconColor;
-  Color? progressColor;
-
-  @override
-  String toString() {
-    return 'ZegoCallInvitationNetworkConfig:{'
-        'enabled:$enabled, '
         '}';
   }
 }

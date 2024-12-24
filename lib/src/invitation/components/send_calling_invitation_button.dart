@@ -40,8 +40,7 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
     this.popUpBackIcon,
     this.inviteButtonIcon,
     this.defaultChecked = true,
-    this.showNetworkIcon = true,
-    this.networkIcon,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   /// icon
@@ -95,11 +94,8 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
   /// Whether [waitingSelectUsers] is checked by default
   final bool defaultChecked;
 
-  ///  show network loading icon if network had error
-  final bool showNetworkIcon;
-
-  /// icon when network had error
-  final Widget? networkIcon;
+  ///  network loading
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
   @override
   State<ZegoSendCallingInvitationButton> createState() =>
@@ -124,8 +120,8 @@ class _ZegoSendCallingInvitationButtonState
       splitScreenMode: true,
       builder: (context, child) {
         return ZegoNetworkLoading(
-          enabled: widget.showNetworkIcon,
-          icon: widget.networkIcon,
+          config: widget.networkLoadingConfig ??
+              ZegoNetworkLoadingConfig(enabled: true),
           child: button(),
         );
       },

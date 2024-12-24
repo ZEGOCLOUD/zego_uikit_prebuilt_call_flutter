@@ -56,8 +56,7 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.unclickableTextColor = Colors.black,
     this.clickableBackgroundColor = Colors.transparent,
     this.unclickableBackgroundColor = Colors.transparent,
-    this.showNetworkIcon = true,
-    this.networkIcon,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   /// The list of invitees to send the call invitation to.
@@ -118,11 +117,8 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
   /// Determines whether the layout is vertical or horizontal.
   final bool verticalLayout;
 
-  ///  show network loading icon if network had error
-  final bool showNetworkIcon;
-
-  /// icon when network had error
-  final Widget? networkIcon;
+  /// network loading
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
   /// padding of button
   final EdgeInsetsGeometry? margin;
@@ -187,11 +183,7 @@ class _ZegoSendCallInvitationButtonState
     return ValueListenableBuilder<String>(
       valueListenable: callIDNotifier,
       builder: (context, callID, _) {
-        return ZegoNetworkLoading(
-          enabled: widget.showNetworkIcon,
-          icon: widget.networkIcon,
-          child: button(),
-        );
+        return button();
       },
     );
   }
@@ -274,6 +266,8 @@ class _ZegoSendCallInvitationButtonState
       unclickableTextColor: widget.unclickableTextColor,
       clickableBackgroundColor: widget.clickableBackgroundColor,
       unclickableBackgroundColor: widget.unclickableBackgroundColor,
+      networkLoadingConfig: widget.networkLoadingConfig ??
+          ZegoNetworkLoadingConfig(enabled: true),
     );
   }
 
