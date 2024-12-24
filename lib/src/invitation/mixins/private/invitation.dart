@@ -113,16 +113,13 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       return false;
     }
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = [
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers([
       ...ZegoUIKitPrebuiltCallInvitationService()
           .private
           .localInvitingUsersNotifier
           .value,
       ...callees,
-    ];
+    ]);
 
     return ZegoUIKit()
         .getSignalingPlugin()
@@ -213,10 +210,9 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       subTag: 'service.p, send call invitation',
     );
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = List.from(callees);
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
+          List.from(callees),
+        );
 
     final sendProtocol = ZegoCallInvitationSendRequestProtocol(
       callID: callID,
@@ -251,6 +247,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         innerText: _innerText,
       ),
     );
+
     Future<bool> sendInvitationCallback(
       ZegoSignalingPluginSendInvitationResult result,
     ) async {

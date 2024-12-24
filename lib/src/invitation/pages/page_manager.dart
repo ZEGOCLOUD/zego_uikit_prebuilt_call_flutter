@@ -32,7 +32,8 @@ class ZegoCallInvitationPageManager {
     required this.callInvitationData,
   });
 
-  final _defaultPackagePrefix = 'packages/zego_uikit_prebuilt_call/';
+  final _defaultPackageName = 'packages/zego_uikit_prebuilt_call/';
+
   final _callerRingtone = ZegoRingtone();
   final _calleeRingtone = ZegoRingtone();
 
@@ -208,7 +209,7 @@ class ZegoCallInvitationPageManager {
       );
     } else {
       _callerRingtone.init(
-        prefix: _defaultPackagePrefix,
+        prefix: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/outgoing.mp3',
         isVibrate: false,
       );
@@ -226,7 +227,7 @@ class ZegoCallInvitationPageManager {
       );
     } else {
       _calleeRingtone.init(
-        prefix: _defaultPackagePrefix,
+        prefix: _defaultPackageName,
         sourcePath: 'assets/invitation/audio/incoming.mp3',
         isVibrate: true,
       );
@@ -389,7 +390,7 @@ class ZegoCallInvitationPageManager {
     ZegoLoggerService.logInfo(
       'local send invitation, '
       'call id:$callID, '
-      'invitees:$invitees, '
+      'invitees:${invitees.ids}, '
       'type:$invitationType, '
       'customData:$customData, '
       'code:$code, '
@@ -409,6 +410,7 @@ class ZegoCallInvitationPageManager {
         tag: 'call-invitation',
         subTag: 'page manager',
       );
+
       return;
     }
 
@@ -416,7 +418,7 @@ class ZegoCallInvitationPageManager {
       callID,
       ZegoCallUser.fromUIKit(ZegoUIKit().getLocalUser()),
       invitationType,
-      invitees.map((e)=>ZegoCallUser.fromUIKit(e)).toList(),
+      invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
       customData,
     );
 
@@ -439,7 +441,7 @@ class ZegoCallInvitationPageManager {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (_invitingInvitees.isNotEmpty) {
-      _callerRingtone.startRing();
+      _callerRingtone.startRing(testPlayRingtone: true);
 
       if (isGroupCall) {
         /// group call, enter room directly
@@ -762,10 +764,9 @@ class ZegoCallInvitationPageManager {
     callInvitationData.invitationEvents?.onOutgoingCallCancelButtonPressed
         ?.call();
 
-    ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value = [];
+    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
+      [],
+    );
     _invitingInvitees.clear();
 
     restoreToIdle();
@@ -843,17 +844,9 @@ class ZegoCallInvitationPageManager {
         ZegoSignalingPluginInvitationUserState.timeout,
         ZegoSignalingPluginInvitationUserState.beCanceled,
       ].contains(userInfo.state)) {
-        /// localInvitingUsersNotifier
-        final oldValue = List<ZegoCallUser>.from(
-            ZegoUIKitPrebuiltCallInvitationService()
-                .private
-                .localInvitingUsersNotifier
-                .value);
-        oldValue.removeWhere((user) => user.id == userInfo.userID);
         ZegoUIKitPrebuiltCallInvitationService()
             .private
-            .localInvitingUsersNotifier
-            .value = oldValue;
+            .removeUserFromLocalInvitingUsers([userInfo.userID]);
       }
     }
 
@@ -903,10 +896,14 @@ class ZegoCallInvitationPageManager {
 
     ZegoLoggerService.logInfo(
       'on invitation received, '
+      'is init:$_init, '
       'network state:${ZegoUIKit().getNetworkState()}, '
+      'in background: $_appInBackground, '
       'state:${WidgetsBinding.instance.lifecycleState}, '
-      '_init:$_init, inviter:$inviter, type:$type, in background: $_appInBackground, '
-      'data:$data, params:$params',
+      'page state:${callingMachine?.getPageState()}, '
+      'current invitation call id:${_invitationData.callID}, '
+      'local inviting users: ${ZegoUIKitPrebuiltCallInvitationService().private.localInvitingUsersNotifier.value}, '
+      'params:$params',
       tag: 'call-invitation',
       subTag: 'page manager',
     );
@@ -921,7 +918,12 @@ class ZegoCallInvitationPageManager {
       },
     );
 
-    if (_invitationData.callID.isNotEmpty ||
+    if (ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .localInvitingUsersNotifier
+            .value
+            .isNotEmpty ||
+        _invitationData.callID.isNotEmpty ||
         CallingState.kIdle !=
             (callingMachine?.getPageState() ?? CallingState.kIdle)) {
       refuseInCallingOnInvitationReceived(
@@ -947,7 +949,7 @@ class ZegoCallInvitationPageManager {
 
     ZegoLoggerService.logInfo(
       'on invitation received, '
-      '_invitationData:$_invitationData',
+      'save invitation data:$_invitationData',
       tag: 'call-invitation',
       subTag: 'page manager',
     );
@@ -1162,7 +1164,8 @@ class ZegoCallInvitationPageManager {
     ZegoLoggerService.logInfo(
       'auto refuse this call, because is busy, '
       'is inviting: ${_invitationData.callID.isNotEmpty}, '
-      'current state: ${callingMachine?.getPageState() ?? CallingState.kIdle}',
+      'current state: ${callingMachine?.getPageState() ?? CallingState.kIdle}, '
+      'local inviting users: ${ZegoUIKitPrebuiltCallInvitationService().private.localInvitingUsersNotifier.value}, ',
       tag: 'call-invitation',
       subTag: 'page manager',
     );
@@ -1209,7 +1212,7 @@ class ZegoCallInvitationPageManager {
     //  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
-    _calleeRingtone.startRing();
+    _calleeRingtone.startRing(testPlayRingtone: false);
 
     callInvitationData.invitationEvents?.onIncomingCallReceived?.call(
       _invitationData.callID,
@@ -1246,8 +1249,8 @@ class ZegoCallInvitationPageManager {
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitee is not in list, '
-        'invitee:{${invitee.id}, ${invitee.name}}, '
-        'list:$_invitingInvitees',
+        'invitee:${invitee.id}, '
+        'list:${_invitingInvitees.ids}',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation accepted',
       );
@@ -1425,10 +1428,14 @@ class ZegoCallInvitationPageManager {
       _invitingInvitees
           .removeWhere((invitee) => timeoutInvitee.id == invitee.id);
     }
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .removeUserFromLocalInvitingUsers(invitees.map((e) => e.id).toList());
+
     ZegoLoggerService.logInfo(
       'data: ${params['data']}, '
       'invitees:${invitees.map((e) => e.toString())}, '
-      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}, '
+      'inviting invitees: ${_invitingInvitees.ids}, '
       'network state:${ZegoUIKit().getNetworkState()}, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation response timeout',
@@ -1479,8 +1486,8 @@ class ZegoCallInvitationPageManager {
     if (-1 == inviteeIndex) {
       ZegoLoggerService.logInfo(
         'invitee is not in list, '
-        'invitee:{${invitee.id}, ${invitee.name}}, '
-        'list:$_invitingInvitees, '
+        'invitee:{${invitee.id}}, '
+        'list:${_invitingInvitees.ids}, '
         'network state:${ZegoUIKit().getNetworkState()}, ',
         tag: 'call-invitation',
         subTag: 'page manager, on invitation refused',
@@ -1536,9 +1543,9 @@ class ZegoCallInvitationPageManager {
     _invitingInvitees.removeAt(inviteeIndex);
 
     ZegoLoggerService.logInfo(
-      'data: $data, '
       'invitee:$invitee, '
-      'inviting invitees: ${_invitingInvitees.map((e) => e.toString())}',
+      'inviting invitees: ${_invitingInvitees.ids}, '
+      'data: $data, ',
       tag: 'call-invitation',
       subTag: 'page manager, on invitation refused',
     );
@@ -1559,6 +1566,12 @@ class ZegoCallInvitationPageManager {
     }
 
     if (restoreCauseByRefused) {
+      ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .updateLocalInvitingUsers(
+        [],
+      );
+
       restoreToIdle();
 
       if (ZegoCallMiniOverlayPageState.minimizing ==
