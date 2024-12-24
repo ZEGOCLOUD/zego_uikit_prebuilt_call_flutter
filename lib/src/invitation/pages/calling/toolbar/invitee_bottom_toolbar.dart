@@ -105,11 +105,11 @@ class ZegoInviteeCallingBottomToolBarState
       buttonSize:
           widget.declineButtonConfig.size ?? Size(120.zR, 120.zR + 50.zR),
       iconSize: widget.declineButtonConfig.iconSize ?? Size(108.zR, 108.zR),
-      onPressed: (String code, String message) {
+      onPressed: (ZegoRefuseInvitationButtonResult result) {
         widget.pageManager.onLocalRefuseInvitation(
           invitationID,
-          code,
-          message,
+          result.code,
+          result.message,
         );
       },
     );
@@ -136,11 +136,11 @@ class ZegoInviteeCallingBottomToolBarState
       buttonSize:
           widget.acceptButtonConfig.size ?? Size(120.zR, 120.zR + 50.zR),
       iconSize: widget.acceptButtonConfig.iconSize ?? Size(108.zR, 108.zR),
-      onPressed: (String code, String message) {
+      onPressed: (ZegoAcceptInvitationButtonResult result) {
         widget.pageManager.onLocalAcceptInvitation(
           invitationID,
-          code,
-          message,
+          result.code,
+          result.message,
         );
       },
     );

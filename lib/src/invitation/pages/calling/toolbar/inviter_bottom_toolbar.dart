@@ -49,13 +49,12 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
                 ),
                 buttonSize: cancelButtonConfig.size ?? Size(120.zR, 120.zR),
                 iconSize: cancelButtonConfig.iconSize ?? Size(120.zR, 120.zR),
-                onPressed:
-                    (String code, String message, List<String> errorInvitees) {
+                onPressed: (ZegoCancelInvitationButtonResult result) {
                   pageManager.onLocalCancelInvitation(
                     pageManager.invitationData.invitationID,
-                    code,
-                    message,
-                    errorInvitees,
+                    result.code,
+                    result.message,
+                    result.errorInvitees,
                   );
                 },
               )
