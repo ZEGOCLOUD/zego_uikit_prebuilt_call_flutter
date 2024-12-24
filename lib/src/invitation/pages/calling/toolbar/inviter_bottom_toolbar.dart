@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
@@ -13,6 +14,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 /// @nodoc
 class ZegoInviterCallingBottomToolBar extends StatelessWidget {
   final ZegoCallInvitationPageManager pageManager;
+  final ZegoCallInvitationNetworkConfig? networkConfig;
   final ZegoCallButtonUIConfig cancelButtonConfig;
 
   final List<ZegoUIKitUser> invitees;
@@ -22,6 +24,7 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
     required this.pageManager,
     required this.cancelButtonConfig,
     required this.invitees,
+    this.networkConfig,
   }) : super(key: key);
 
   @override
@@ -30,34 +33,40 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
       height: 120.zH,
       child: Center(
         child: (cancelButtonConfig.visible)
-            ? ZegoCancelInvitationButton(
-                isAdvancedMode: true,
-                invitees: invitees.map((e) => e.id).toList(),
-                targetInvitationID: pageManager.invitationData.invitationID,
-                data: ZegoCallInvitationCancelRequestProtocol(
-                  callID: pageManager.currentCallID,
-                ).toJson(),
-                textStyle: cancelButtonConfig.textStyle,
-                icon: ButtonIcon(
-                  icon: cancelButtonConfig.icon ??
-                      Image(
-                        image: ZegoCallImage.asset(
-                          InvitationStyleIconUrls.toolbarBottomCancel,
-                        ).image,
-                        fit: BoxFit.fill,
-                      ),
+            ? ZegoNetworkLoading(
+                enabled: networkConfig?.enabled ?? true,
+                icon: networkConfig?.icon,
+                iconColor: networkConfig?.iconColor,
+                progressColor: networkConfig?.progressColor ?? Colors.white,
+                child: ZegoCancelInvitationButton(
+                  isAdvancedMode: true,
+                  invitees: invitees.map((e) => e.id).toList(),
+                  targetInvitationID: pageManager.invitationData.invitationID,
+                  data: ZegoCallInvitationCancelRequestProtocol(
+                    callID: pageManager.currentCallID,
+                  ).toJson(),
+                  textStyle: cancelButtonConfig.textStyle,
+                  icon: ButtonIcon(
+                    icon: cancelButtonConfig.icon ??
+                        Image(
+                          image: ZegoCallImage.asset(
+                            InvitationStyleIconUrls.toolbarBottomCancel,
+                          ).image,
+                          fit: BoxFit.fill,
+                        ),
+                  ),
+                  buttonSize: cancelButtonConfig.size ?? Size(120.zR, 120.zR),
+                  iconSize: cancelButtonConfig.iconSize ?? Size(120.zR, 120.zR),
+                  onPressed: (String code, String message,
+                      List<String> errorInvitees) {
+                    pageManager.onLocalCancelInvitation(
+                      pageManager.invitationData.invitationID,
+                      code,
+                      message,
+                      errorInvitees,
+                    );
+                  },
                 ),
-                buttonSize: cancelButtonConfig.size ?? Size(120.zR, 120.zR),
-                iconSize: cancelButtonConfig.iconSize ?? Size(120.zR, 120.zR),
-                onPressed:
-                    (String code, String message, List<String> errorInvitees) {
-                  pageManager.onLocalCancelInvitation(
-                    pageManager.invitationData.invitationID,
-                    code,
-                    message,
-                    errorInvitees,
-                  );
-                },
               )
             : Container(),
       ),

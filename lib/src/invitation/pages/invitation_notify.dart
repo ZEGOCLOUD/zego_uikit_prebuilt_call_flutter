@@ -100,13 +100,35 @@ class _ZegoCallInvitationNotifyDialogState
               const Expanded(child: SizedBox()),
               ...widget.declineButtonConfig.visible
                   ? [
-                      declineButton(),
+                      ZegoNetworkLoading(
+                        enabled: widget
+                                .callInvitationConfig.config.network?.enabled ??
+                            true,
+                        icon: widget.callInvitationConfig.config.network?.icon,
+                        iconColor: widget
+                            .callInvitationConfig.config.network?.iconColor,
+                        progressColor: widget.callInvitationConfig.config
+                                .network?.progressColor ??
+                            Colors.white,
+                        child: declineButton(),
+                      ),
                       SizedBox(width: 40.zW),
                     ]
                   : [],
               ...widget.acceptButtonConfig.visible
                   ? [
-                      acceptButton(),
+                      ZegoNetworkLoading(
+                        enabled: widget
+                                .callInvitationConfig.config.network?.enabled ??
+                            true,
+                        icon: widget.callInvitationConfig.config.network?.icon,
+                        iconColor: widget
+                            .callInvitationConfig.config.network?.iconColor,
+                        progressColor: widget.callInvitationConfig.config
+                                .network?.progressColor ??
+                            Colors.white,
+                        child: acceptButton(),
+                      ),
                     ]
                   : [],
             ],
