@@ -7,7 +7,7 @@ class ZegoCallReporter {
   static String eventSendInvitation = 'call/invite';
   static String eventReceivedInvitation = 'call/invitationReceived';
   static String eventDisplayInvitationNotification = 'call/displayNotification';
-  static String eventRespondInvitation = 'call/respondInvitation';
+  static String eventCalleeRespondInvitation = 'call/callee/respondInvitation';
 
   static String eventKeyInvitationSource = "source";
   static String eventKeyInvitationSourceAPI = "api";

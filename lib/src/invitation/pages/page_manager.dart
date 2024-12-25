@@ -500,7 +500,7 @@ class ZegoCallInvitationPageManager {
     );
 
     ZegoUIKit().reporter().report(
-      event: ZegoCallReporter.eventRespondInvitation,
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
       params: {
         ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionAccept,
@@ -702,7 +702,7 @@ class ZegoCallInvitationPageManager {
     );
 
     ZegoUIKit().reporter().report(
-      event: ZegoCallReporter.eventRespondInvitation,
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
       params: {
         ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionRefuse,
@@ -731,7 +731,7 @@ class ZegoCallInvitationPageManager {
     );
 
     ZegoUIKit().reporter().report(
-      event: ZegoCallReporter.eventRespondInvitation,
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
       params: {
         ZegoUIKitSignalingReporter.eventKeyInvitationID: invitationID,
         ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionCancel,
@@ -1425,7 +1425,7 @@ class ZegoCallInvitationPageManager {
         invitees.map((user) => ZegoCallUser(user.id, user.name)).toList();
 
     ZegoUIKit().reporter().report(
-      event: ZegoCallReporter.eventRespondInvitation,
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
       params: {
         ZegoUIKitSignalingReporter.eventKeyInvitationID:
             _invitationData.invitationID,
@@ -1493,7 +1493,7 @@ class ZegoCallInvitationPageManager {
     if (ZegoCallInvitationProtocolKey.refuseByBusy ==
         rejectRequestData.reason) {
       ZegoUIKit().reporter().report(
-        event: ZegoCallReporter.eventRespondInvitation,
+        event: ZegoCallReporter.eventCalleeRespondInvitation,
         params: {
           ZegoUIKitSignalingReporter.eventKeyInvitationID:
               rejectRequestData.targetInvitationID,
