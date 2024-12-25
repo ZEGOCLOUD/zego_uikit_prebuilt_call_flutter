@@ -82,6 +82,9 @@ class ZegoCallInvitationConfig {
   /// Default will pop-up a confirmation box. If not, please set it to null.
   ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
 
+  /// network config
+  ZegoNetworkLoadingConfig? networkLoading;
+
   @override
   String toString() {
     return 'ZegoCallInvitationConfig:{'
@@ -89,6 +92,7 @@ class ZegoCallInvitationConfig {
         'calling:$inCalling, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
         'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
+        'networkLoading:$networkLoading, '
         '}';
   }
 }

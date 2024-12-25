@@ -56,6 +56,7 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.unclickableTextColor = Colors.black,
     this.clickableBackgroundColor = Colors.transparent,
     this.unclickableBackgroundColor = Colors.transparent,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   /// The list of invitees to send the call invitation to.
@@ -116,6 +117,9 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
   /// Determines whether the layout is vertical or horizontal.
   final bool verticalLayout;
 
+  /// network loading
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
+
   /// padding of button
   final EdgeInsetsGeometry? margin;
 
@@ -145,7 +149,7 @@ class _ZegoSendCallInvitationButtonState
   bool requesting = false;
   ValueNotifier<String> callIDNotifier = ValueNotifier<String>('');
 
-  StreamSubscription<dynamic>? localUserJoinedSubscriptiong;
+  StreamSubscription<dynamic>? localUserJoinedSubscription;
 
   ZegoCallInvitationPageManager? get pageManager =>
       ZegoCallInvitationInternalInstance.instance.pageManager;
@@ -160,7 +164,7 @@ class _ZegoSendCallInvitationButtonState
     super.initState();
 
     if (ZegoUIKit().getLocalUser().id.isEmpty) {
-      localUserJoinedSubscriptiong =
+      localUserJoinedSubscription =
           ZegoUIKit().getUserJoinStream().listen(onUserJoined);
     } else {
       updateCallID();
@@ -171,7 +175,7 @@ class _ZegoSendCallInvitationButtonState
   void dispose() {
     super.dispose();
 
-    localUserJoinedSubscriptiong?.cancel();
+    localUserJoinedSubscription?.cancel();
   }
 
   @override
@@ -187,11 +191,7 @@ class _ZegoSendCallInvitationButtonState
   void updateCallID() {
     callIDNotifier.value = widget.callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-    // ZegoLoggerService.logInfo(
-    //   'update call id, ${callIDNotifier.value}',
-    //   tag: 'call-invitation',
-    //   subTag: 'components, send call button',
-    // );
+
     if ((widget.callID?.isNotEmpty ?? false) &&
         callIDNotifier.value != widget.callID) {
       ZegoLoggerService.logWarn(
@@ -203,13 +203,6 @@ class _ZegoSendCallInvitationButtonState
   }
 
   Widget button() {
-    ZegoLoggerService.logInfo(
-      'button, '
-      'isAdvanceInvitationMode:${ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode}, ',
-      tag: 'call-invitation',
-      subTag: 'components, send call button',
-    );
-
     return ZegoStartInvitationButton(
       isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
           .private
@@ -273,6 +266,8 @@ class _ZegoSendCallInvitationButtonState
       unclickableTextColor: widget.unclickableTextColor,
       clickableBackgroundColor: widget.clickableBackgroundColor,
       unclickableBackgroundColor: widget.unclickableBackgroundColor,
+      networkLoadingConfig: widget.networkLoadingConfig ??
+          ZegoNetworkLoadingConfig(enabled: true),
     );
   }
 
@@ -285,12 +280,11 @@ class _ZegoSendCallInvitationButtonState
           '${ZegoUIKitPrebuiltCallInvitationService().isInit}, ';
       if (!ZegoUIKitPrebuiltCallInvitationService().isInit) {
         errorTips =
-            'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin, ' +
-                errorTips;
+            'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin, $errorTips';
       }
 
       if (ZegoUIKitNetworkState.online != ZegoUIKit().getNetworkState()) {
-        errorTips = 'please check device network state, ' + errorTips;
+        errorTips = 'please check device network state, $errorTips';
       }
 
       ZegoLoggerService.logError(
@@ -345,7 +339,8 @@ class _ZegoSendCallInvitationButtonState
 
     requesting = true;
     ZegoLoggerService.logInfo(
-      'start request',
+      'start request, '
+      'isAdvanceInvitationMode:${ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode}, ',
       tag: 'call-invitation',
       subTag: 'components, send call button',
     );
@@ -427,7 +422,7 @@ class _ZegoSendCallInvitationButtonState
     }
 
     /// local user joined
-    localUserJoinedSubscriptiong?.cancel();
+    localUserJoinedSubscription?.cancel();
     updateCallID();
   }
 }
