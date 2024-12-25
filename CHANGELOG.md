@@ -1,6 +1,17 @@
+## 4.16.18
+
+- Features
+  -  When the network is disconnected, invite related buttons to increase the loading effect
+- Update dependency
+
 ## 4.16.17
 
-- Fix Bugs
+- Bugs
+  - Fix the issue that the sound wave circle does not disappear when turned off the microphone on voice call.
+  - Fix the black screen issue caused by clicking the call button multiple times quickly and frequently.
+  - Fix the issue that  the invitation top pop-up window not closed when both users call each other at the same time.
+  - Fix UI issues for group call.
+  - Increase handling of network interruptions and application kills in invitation.
 
 ## 4.16.16
 
@@ -23,7 +34,7 @@
 ## 4.16.12
  
 - Bugs
-- Fix iOS offline call enter failure issue after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
+  - Fix iOS offline call enter failure issue after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
 
 
 ## 4.16.11
