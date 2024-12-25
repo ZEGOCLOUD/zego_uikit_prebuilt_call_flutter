@@ -192,12 +192,12 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.declineButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.declineButtonConfig.size ?? Size(74.zR, 74.zR),
-        onPressed: (String code, String message) {
+        onPressed: (ZegoRefuseInvitationButtonResult result) {
           widget.pageManager.hideInvitationTopSheet();
           widget.pageManager.onLocalRefuseInvitation(
             widget.invitationData.invitationID,
-            code,
-            message,
+            result.code,
+            result.message,
           );
         },
         networkLoadingConfig:
@@ -229,12 +229,12 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.acceptButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.acceptButtonConfig.size ?? Size(74.zR, 74.zR),
-        onPressed: (String code, String message) {
+        onPressed: (ZegoAcceptInvitationButtonResult result) {
           widget.pageManager.hideInvitationTopSheet();
           widget.pageManager.onLocalAcceptInvitation(
             widget.invitationData.invitationID,
-            code,
-            message,
+            result.code,
+            result.message,
           );
         },
         networkLoadingConfig:
