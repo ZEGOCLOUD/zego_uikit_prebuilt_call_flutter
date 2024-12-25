@@ -40,6 +40,7 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
     this.popUpBackIcon,
     this.inviteButtonIcon,
     this.defaultChecked = true,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   /// icon
@@ -93,6 +94,9 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
   /// Whether [waitingSelectUsers] is checked by default
   final bool defaultChecked;
 
+  ///  network loading
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
+
   @override
   State<ZegoSendCallingInvitationButton> createState() =>
       _ZegoSendCallingInvitationButtonState();
@@ -115,30 +119,41 @@ class _ZegoSendCallingInvitationButtonState
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final containerSize = widget.buttonSize ?? Size(96.zR, 96.zR);
-        final sizeBoxSize = widget.buttonIconSize ?? Size(56.zR, 56.zR);
-
-        return GestureDetector(
-          onTap: onPressed,
-          child: Container(
-            width: containerSize.width,
-            height: containerSize.height,
-            decoration: BoxDecoration(
-              color: widget.buttonIcon?.backgroundColor ??
-                  ZegoUIKitDefaultTheme.buttonBackgroundColor,
-              borderRadius: BorderRadius.all(
-                Radius.circular(
-                    math.min(containerSize.width, containerSize.height) / 2),
-              ),
-            ),
-            child: SizedBox.fromSize(
-              size: sizeBoxSize,
-              child: widget.buttonIcon?.icon ??
-                  const Icon(Icons.add, color: Colors.white),
-            ),
-          ),
+        return ZegoNetworkLoading(
+          config: widget.networkLoadingConfig ??
+              ZegoNetworkLoadingConfig(enabled: true),
+          child: button(),
         );
       },
+    );
+  }
+
+  Widget button() {
+    final containerSize = widget.buttonSize ?? Size(96.zR, 96.zR);
+    final sizeBoxSize = widget.buttonIconSize ?? Size(56.zR, 56.zR);
+
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: containerSize.width,
+        height: containerSize.height,
+        decoration: BoxDecoration(
+          color: widget.buttonIcon?.backgroundColor ??
+              ZegoUIKitDefaultTheme.buttonBackgroundColor,
+          borderRadius: BorderRadius.all(
+            Radius.circular(
+                math.min(containerSize.width, containerSize.height) / 2),
+          ),
+        ),
+        child: SizedBox.fromSize(
+          size: sizeBoxSize,
+          child: widget.buttonIcon?.icon ??
+              const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+        ),
+      ),
     );
   }
 

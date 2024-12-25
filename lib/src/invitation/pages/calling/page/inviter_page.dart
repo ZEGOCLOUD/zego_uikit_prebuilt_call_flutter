@@ -137,6 +137,7 @@ class ZegoCallingInviterView extends StatelessWidget {
         const Expanded(child: SizedBox()),
         ZegoInviterCallingBottomToolBar(
           pageManager: pageManager,
+          networkLoadingConfig: callInvitationData.config.networkLoading,
           cancelButtonConfig: config.cancelButton,
           invitees: invitees,
         ),

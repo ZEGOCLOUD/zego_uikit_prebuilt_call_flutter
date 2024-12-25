@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
@@ -24,6 +25,8 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoCallButtonUIConfig declineButtonConfig;
   final ZegoCallButtonUIConfig acceptButtonConfig;
 
+  final ZegoNetworkLoadingConfig? networkLoadingConfig;
+
   const ZegoInviteeCallingBottomToolBar({
     Key? key,
     required this.pageManager,
@@ -32,6 +35,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
     required this.invitationType,
     required this.declineButtonConfig,
     required this.acceptButtonConfig,
+    this.networkLoadingConfig,
   }) : super(key: key);
 
   @override
@@ -65,13 +69,27 @@ class ZegoInviteeCallingBottomToolBarState
           children: [
             ...widget.declineButtonConfig.visible
                 ? [
-                    declineButton(),
+                    ZegoNetworkLoading(
+                      config: widget.networkLoadingConfig ??
+                          ZegoNetworkLoadingConfig(
+                            enabled: true,
+                            progressColor: Colors.white,
+                          ),
+                      child: declineButton(),
+                    ),
                     SizedBox(width: 230.zR),
                   ]
                 : [],
             ...widget.acceptButtonConfig.visible
                 ? [
-                    acceptButton(),
+                    ZegoNetworkLoading(
+                      config: widget.networkLoadingConfig ??
+                          ZegoNetworkLoadingConfig(
+                            enabled: true,
+                            progressColor: Colors.white,
+                          ),
+                      child: acceptButton(),
+                    ),
                   ]
                 : [],
           ],
