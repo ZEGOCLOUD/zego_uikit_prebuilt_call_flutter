@@ -14,13 +14,24 @@
   - Fixed the issue of invitation cancel button appearing in group call
   - Fix the auto cancel issue when the callee is in the in-app minimization state in group call
   
+## 4.16.19
+
+- Fix screen-sharing outside the app, remote pull-based streaming has no sound
+  
+## 4.16.18
+
+- Features
+  -  When the network is disconnected, invite related buttons to increase the loading effect
+- Update dependency
+
 ## 4.16.17
 
-- Fix the issue that the sound wave circle does not disappear when turned off the microphone on voice call.
-- Fix the black screen issue caused by clicking the call button multiple times quickly and frequently.
-- Fix the issue that  the invitation top pop-up window not closed when both users call each other at the same time.
-- Fix UI issues for group call.
-- Increase handling of network interruptions and application kills in invitation.
+- Bugs
+  - Fix the issue that the sound wave circle does not disappear when turned off the microphone on voice call.
+  - Fix the black screen issue caused by clicking the call button multiple times quickly and frequently.
+  - Fix the issue that  the invitation top pop-up window not closed when both users call each other at the same time.
+  - Fix UI issues for group call.
+  - Increase handling of network interruptions and application kills in invitation.
 
 ## 4.16.16
 
