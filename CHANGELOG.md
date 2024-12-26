@@ -1,3 +1,8 @@
+
+## 4.16.19
+
+- Fix screen-sharing outside the app, remote pull-based streaming has no sound
+  
 ## 4.16.18
 
 - Features
