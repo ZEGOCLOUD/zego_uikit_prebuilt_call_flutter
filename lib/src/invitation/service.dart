@@ -137,7 +137,7 @@ part 'mixins/private/invitation.dart';
 /// ```
 class ZegoUIKitPrebuiltCallInvitationService
     with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
-  String get version => '4.16.18';
+  String get version => '4.16.19';
 
   bool get isInit => private._isInit;
 
