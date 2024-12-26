@@ -352,7 +352,7 @@ class _ZegoSendCallInvitationButtonState
     return true;
   }
 
-  void onPressed(ZegoStartInvitationButtonResult result) {
+  void onPressed(ZegoStartInvitationButtonResult result) async {
     ZegoLoggerService.logInfo(
       'pressed, result:$result',
       tag: 'call-invitation',
