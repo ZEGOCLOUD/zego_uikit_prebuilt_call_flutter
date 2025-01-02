@@ -1,7 +1,12 @@
+## 4.16.20
+
+- Bugs
+  - Fix voice calls with no call sound in iOS silent mode
 
 ## 4.16.19
 
-- Fix screen-sharing outside the app, remote pull-based streaming has no sound
+- Bugs
+  - Fix screen-sharing outside the app, remote pull-based streaming has no sound
   
 ## 4.16.18
 
@@ -17,6 +22,8 @@
   - Fix the issue that  the invitation top pop-up window not closed when both users call each other at the same time.
   - Fix UI issues for group call.
   - Increase handling of network interruptions and application kills in invitation.
+- Features
+  - Support playing call dial tone in silent mode
 
 ## 4.16.16
 
