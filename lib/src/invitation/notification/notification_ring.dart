@@ -40,7 +40,8 @@ class ZegoRingtone {
 
     final audioContext = AudioContext(
       iOS: AudioContextIOS(
-        category: AVAudioSessionCategory.soloAmbient,
+        /// not silenced
+        category: AVAudioSessionCategory.playback,
       ),
       android: const AudioContextAndroid(
         isSpeakerphoneOn: true,

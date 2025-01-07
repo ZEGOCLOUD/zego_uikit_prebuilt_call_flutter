@@ -724,7 +724,7 @@
   > ```dart
   > ..duration.isVisible = true
   > ..duration.onDurationUpdate = (Duration duration) {
-  >  if (duration.inSeconds >= 5 * 60) {
+  >  if (duration.inSeconds == 5 * 60) {
   >    callController?.hangUp(context);
   >  }
   > }
