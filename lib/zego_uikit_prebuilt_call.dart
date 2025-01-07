@@ -17,6 +17,7 @@ export 'src/events.dart';
 export 'src/events.defines.dart';
 export 'src/controller.dart';
 export 'src/defines.dart';
+export 'src/inner_text.dart';
 
 export 'src/minimizing/export.dart';
 
