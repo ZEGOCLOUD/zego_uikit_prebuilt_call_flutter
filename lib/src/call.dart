@@ -151,7 +151,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isAllEntered;
   }
 
-  String get version => "4.16.20";
+  String get version => "4.16.21";
 
   @override
   void initState() {
@@ -852,7 +852,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ...(widget.config.audioVideoView.showOnlyCameraMicrophoneOpened
             ? []
             : [
-                /// otherwise, all use is displayed
+                /// otherwise, all user is displayed
                 ZegoAudioVideoContainerSource.user,
               ]),
         ...(widget.config.audioVideoView.showWaitingCallAcceptAudioVideoView
