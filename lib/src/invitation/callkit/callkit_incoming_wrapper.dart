@@ -1,6 +1,8 @@
 // Package imports:
 
 // Package imports:
+import 'dart:convert';
+
 import 'package:flutter_callkit_incoming_yoer/entities/android_params.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/ios_params.dart';
@@ -334,5 +336,36 @@ Future<void> clearOfflineCallKitCacheParams() async {
     'clear offline callkit params done',
     tag: 'call-invitation',
     subTag: 'callkit',
+  );
+}
+
+/// cached ID of the current message
+Future<void> setOfflineIMKitMessageConversationInfo({
+  required String conversationID,
+  required int conversationTypeIndex,
+  required String senderID,
+}) async {
+  ZegoLoggerService.logInfo(
+    'set offline message, '
+    'conversationID:$conversationID, '
+    'conversationTypeIndex:$conversationTypeIndex, ',
+  );
+
+  /// same as zimkit
+  const String messageConversationCacheKey = 'msg_cv_cache';
+  const String messageConversationCacheID = 'msg_cv_id';
+  const String messageConversationCacheTypeIndex = 'msg_cv_type_idx';
+  const String messageConversationSenderID = 'msg_cv_sender_id';
+
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(
+    messageConversationCacheKey,
+    const JsonEncoder().convert(
+      {
+        messageConversationCacheID: conversationID,
+        messageConversationCacheTypeIndex: conversationTypeIndex,
+        messageConversationSenderID: senderID,
+      },
+    ),
   );
 }

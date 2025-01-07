@@ -135,6 +135,12 @@ StreamSubscription<CallEvent?>? flutterCallkitIncomingStreamSubscription;
 /// Note: @pragma('vm:entry-point') must be placed on a function to indicate that it can be parsed, allocated, or called directly from native or VM code in AOT mode.
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
+  debugPrint('onBackgroundMessageReceived wait init log...');
+
+  await ZegoUIKit().initLog();
+
+  debugPrint('onBackgroundMessageReceived init log done...');
+
   ZegoLoggerService.logInfo(
     'on message received: '
     'title:${message.title}, '
@@ -340,7 +346,7 @@ Future<void> _onBackgroundIMMessageReceived({
   final conversationTypeIndex = payloadMap['type'] as int? ?? -1;
 
   final senderInfo = payloadMap['sender'] as Map<String, dynamic>? ?? {};
-  // final senderID = senderInfo['id'] as String? ?? '';
+  final senderID = senderInfo['id'] as String? ?? '';
   final senderName = senderInfo['name'] as String? ?? '';
 
   ZegoLoggerService.logInfo(
@@ -370,6 +376,12 @@ Future<void> _onBackgroundIMMessageReceived({
         handlerInfo?.androidMessageSound ?? '',
       ),
       clickCallback: (int notificationID) async {
+        await setOfflineIMKitMessageConversationInfo(
+          conversationID: conversationID,
+          conversationTypeIndex: conversationTypeIndex,
+          senderID: senderID,
+        );
+
         await ZegoUIKit().activeAppToForeground();
         await ZegoUIKit().requestDismissKeyguard();
       },
