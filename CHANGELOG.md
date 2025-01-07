@@ -1,3 +1,9 @@
+## 4.17.0-beta.4
+
+- Merge to version 4.16.21
+- Features
+  -  Compatible with zimkit offline logic
+
 ## 4.17.0-beta.3
 
 - Merge to version 4.16.19
