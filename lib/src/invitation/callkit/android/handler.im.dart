@@ -1,8 +1,6 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:isolate';
 import 'dart:math';
-import 'dart:ui';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
@@ -15,7 +13,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dar
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
 
 import 'defines.dart';
-import 'handler.call.dart';
 
 class ZegoCallAndroidIMBackgroundMessageHandler {
   /// title:zimkit title, content:,

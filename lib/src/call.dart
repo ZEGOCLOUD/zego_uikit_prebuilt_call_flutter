@@ -609,7 +609,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           token: widget.token,
 
           /// accept offline call invitation on android, will join in advance
-          withoutJoin: isFromAcceptedAndroidOfflineInvitation,
+          isSimulated: isFromAcceptedAndroidOfflineInvitation,
         )
             .then((result) async {
           if (result.errorCode != 0) {
