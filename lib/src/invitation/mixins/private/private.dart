@@ -14,6 +14,24 @@ class ZegoCallInvitationServicePrivateImpl
         ZegoCallInvitationServiceIOSCallKitPrivatePrivate {
   set inCallPage(bool value) => _pageManager?.inCallPage = value;
 
+  bool isCurrentInvitationFromAcceptedAndroidOffline({
+    bool selfDestructing = true,
+  }) {
+    final result =
+        _pageManager?.isCurrentInvitationFromAcceptedAndroidOffline ?? false;
+
+    if (selfDestructing) {
+      ZegoLoggerService.logInfo(
+        'reset _pageManager.isCurrentInvitationFromAcceptedAndroidOffline',
+        tag: 'call-invitation',
+        subTag: 'service private(${identityHashCode(this)})',
+      );
+      _pageManager?.isCurrentInvitationFromAcceptedAndroidOffline = false;
+    }
+
+    return result;
+  }
+
   bool _isInit = false;
 
   ZegoCallInvitationServiceAPIImpl? invitationImpl;
@@ -383,42 +401,24 @@ class ZegoCallInvitationServicePrivateImpl
             subTag: 'service private(${identityHashCode(this)}), init plugins',
           );
 
+          clearOfflineCallKitCacheParams();
+
           if (offlineCallKitCacheParameter.isEmpty) {
             return;
           }
+
           ZegoLoggerService.logInfo(
-            'exist offline call, accept:${offlineCallKitCacheParameter.accept}',
+            'exist offline call, '
+            'room id:${ZegoUIKit().getRoom().id}, ',
             tag: 'call-invitation',
             subTag: 'service private(${identityHashCode(this)}), init plugins',
           );
 
-          /// todo 处理accept，在离线处理了
           if (offlineCallKitCacheParameter.accept) {
-            /// After setting, in the scenario of network disconnection,
-            /// for calls that have been canceled/ended,
-            /// zim says it will return the cancel/end event
-            ZegoUIKit()
-                .getSignalingPlugin()
-                .setAdvancedConfig(
-                  'zim_voip_call_id',
-                  offlineCallKitCacheParameter.invitationID,
-                )
-                .then((_) {
-              ZegoLoggerService.logInfo(
-                'set advanced config done',
-                tag: 'call-invitation',
-                subTag:
-                    'service private(${identityHashCode(this)}), init plugins',
-              );
-            });
+            _pageManager?.onAndroidOfflineInvitationAccepted(
+              offlineCallKitCacheParameter,
+            );
           }
-
-          /// exist offline call, wait auto enter room, or popup incoming call dialog
-          _pageManager
-                  ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-              offlineCallKitCacheParameter.accept;
-
-          _pageManager?.onInvitationReceived(offlineCallKitCacheParameter.dict);
         });
       }
     });

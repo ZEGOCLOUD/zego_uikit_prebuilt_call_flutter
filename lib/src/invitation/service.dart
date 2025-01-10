@@ -148,6 +148,30 @@ class ZegoUIKitPrebuiltCallInvitationService
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController.instance;
 
+  /// Due to some time-consuming and waiting operations, such as data loading
+  /// or user login in the App.
+  /// so in certain situations, it may not be appropriate to navigate to
+  /// [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  ///
+  /// This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  /// may be **overwritten by some subsequent jump behaviors of the App**.
+  /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  /// in App will be a better choice.
+  ///
+  /// When you want to do this, set it to **false** (default is true) and then
+  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  void enterAcceptedOfflineCall() {
+    if (!private._isInit) {
+      ZegoLoggerService.logInfo(
+        'enterAcceptedOfflineCall, '
+        'not init',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+    }
+    private._pageManager?.enterAcceptedOfflineCall();
+  }
+
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
@@ -467,6 +491,14 @@ class ZegoUIKitPrebuiltCallInvitationService
             ZegoCallReporter.eventKeyInvitationSourceService,
       },
     );
+
+    if (private._data?.config.offline.autoEnterAcceptedOfflineCall ?? true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          private._pageManager?.enterAcceptedOfflineCall();
+        });
+      });
+    }
   }
 
   ///   you must call this method as soon as the user logout from your app

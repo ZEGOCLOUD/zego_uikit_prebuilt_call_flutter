@@ -108,6 +108,12 @@ class ZegoCallingMachine {
       return;
     }
 
+    ZegoLoggerService.logInfo(
+      'entry, page state:${getPageState()}',
+      tag: 'call-invitation',
+      subTag: 'machine',
+    );
+
     try {
       final currentContext = callInvitationData.contextQuery?.call();
       Navigator.of(currentContext!).push(

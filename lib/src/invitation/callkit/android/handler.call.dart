@@ -24,7 +24,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart'
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
-
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'defines.dart';
 import 'entry_point.dart';
 
@@ -119,29 +119,140 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     });
   }
 
-  Future<void> _acceptCallInvitation(String callID) async {
+  Future<void> _refuseCallInvitation({
+    required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
+  }) async {
+    await clearOfflineCallKitCacheParams();
+    await clearOfflineCallKitCallID();
+
+    if (message.isAdvanceMode) {
+      await ZegoUIKit()
+          .getSignalingPlugin()
+          .refuseAdvanceInvitationByInvitationID(
+            invitationID: message.invitationID,
+            data: ZegoCallInvitationRejectRequestProtocol(
+              reason: ZegoCallInvitationProtocolKey.refuseByDecline,
+            ).toJson(),
+          );
+    } else {
+      await ZegoUIKit().getSignalingPlugin().refuseInvitationByInvitationID(
+            invitationID: message.invitationID,
+            data: ZegoCallInvitationRejectRequestProtocol(
+              reason: ZegoCallInvitationProtocolKey.refuseByDecline,
+            ).toJson(),
+          );
+    }
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
+      params: {
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: message.invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionRefuse,
+        ZegoUIKitReporter.eventKeyAppState:
+            ZegoUIKitReporter.eventKeyAppStateBackground,
+      },
+    );
+  }
+
+  Future<void> _acceptCallInvitation({
+    required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
+    required String appSign,
+    required String callID,
+  }) async {
     ZegoLoggerService.logInfo(
-      'background offline call cancel, callID:$callID',
+      'accept, ',
       tag: 'call-invitation',
       subTag: 'call handler',
     );
 
-    await getOfflineCallKitCallID().then((cacheCallID) async {
+    /// After setting, in the scenario of network disconnection,
+    /// for calls that have been canceled/ended,
+    /// zim says it will return the cancel/end event
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .setAdvancedConfig(
+          'zim_voip_call_id',
+          message.invitationID,
+        )
+        .then((_) {
       ZegoLoggerService.logInfo(
-        'background offline call cancel, cacheCallID:$cacheCallID',
+        'set advanced config done',
+        tag: 'call-invitation',
+        subTag: 'call handler',
+      );
+    });
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventCalleeRespondInvitation,
+      params: {
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: message.invitationID,
+        ZegoCallReporter.eventKeyAction: ZegoCallReporter.eventKeyActionAccept,
+        ZegoUIKitReporter.eventKeyAppState:
+            ZegoUIKitReporter.eventKeyAppStateBackground,
+      },
+    );
+
+    final result = message.isAdvanceMode
+        ? await ZegoUIKit().getSignalingPlugin().acceptAdvanceInvitation(
+              inviterID: message.inviter.id,
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+              invitationID: message.invitationID,
+            )
+        : await ZegoUIKit().getSignalingPlugin().acceptInvitation(
+              inviterID: message.inviter.id,
+              data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+              targetInvitationID: message.invitationID,
+            );
+
+    await clearAllCallKitCalls();
+
+    if (result.error?.code.isNotEmpty ?? false) {
+      ZegoLoggerService.logInfo(
+        'accept failed, '
+        'error code:${result.error?.code}, '
+        'error message:${result.error?.message}, ',
         tag: 'call-invitation',
         subTag: 'call handler',
       );
 
-      if (cacheCallID == callID) {
-        ZegoLoggerService.logInfo(
-          'background offline call cancel, callID is same as cacheCallID, clear...',
-          tag: 'call-invitation',
-          subTag: 'call handler',
-        );
+      await clearOfflineCallKitCacheParams();
+      await clearOfflineCallKitCallID();
 
-        await clearAllCallKitCalls();
-      }
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'accepted, try init ZegoUIKit',
+      tag: 'call-invitation',
+      subTag: 'call handler',
+    );
+
+    await ZegoUIKit()
+        .init(
+      appID: int.tryParse(message.handlerInfo?.appID ?? '') ?? 0,
+      appSign: appSign,
+      token: message.handlerInfo?.token ?? '',
+    )
+        .then((_) async {
+      ZegoLoggerService.logInfo(
+        'init ZegoUIKit done, try join room',
+        tag: 'call-invitation',
+        subTag: 'call handler',
+      );
+
+      ZegoUIKit().login(
+        message.handlerInfo?.userID ?? '',
+        message.handlerInfo?.userName ?? '',
+      );
+
+      await ZegoUIKit()
+          .joinRoom(
+        callID,
+        keepWakeScreen: false,
+      )
+          .then((_) {
+        ZegoUIKit().turnMicrophoneOn(true);
+      });
     });
   }
 
@@ -152,16 +263,17 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
   }) async {
     message.parseCallInvitationInfo();
 
+    final callSendRequestProtocol =
+        ZegoCallInvitationSendRequestProtocol.fromJson(message.customData);
+
     ZegoLoggerService.logInfo(
       'handle message, '
       'from other isolate:$messageFromIsolate, '
-      'message:$message, ',
+      'message:$message, '
+      'protocol:${callSendRequestProtocol.toJson()}, ',
       tag: 'call-invitation',
       subTag: 'call handler',
     );
-
-    final callSendRequestProtocol =
-        ZegoCallInvitationSendRequestProtocol.fromJson(message.customData);
 
     final signalingSubscriptions = <StreamSubscription<dynamic>>[];
     _listenFlutterCallkitIncomingEvent(
@@ -173,13 +285,13 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     );
     _listenSignalingEvents(signalingSubscriptions, message: message);
 
-    /// todo 这里的accept不需要设置，或者说整个不需要再设置？
-    /// cache and do when app run
+    /// cache and check when app run
     setOfflineCallKitCallID(callSendRequestProtocol.callID);
     await setOfflineCallKitCacheParams(
       ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
         invitationID: message.invitationID,
         inviter: message.inviter,
+        callID: callSendRequestProtocol.callID,
         callType: message.callType,
         payloadData: message.customData,
         accept: true,
@@ -254,76 +366,20 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
 
       switch (event.event) {
         case Event.actionCallAccept:
-
+          // /// todo 这里逻辑也要改，prebuilt-call 里面就不用再同意了
           /// After launching the app, will check in the [ZegoUIKitPrebuiltCallInvitationService.init] method.
           /// If there is exist an OfflineCallKitParams, simulate accepting the online call and join the room directly.
+          /// write accept to local, wait direct accept and enter call in ZegoUIKitPrebuiltCallInvitationService.init
 
-          // /// todo 这里逻辑也要改，prebuilt-call 里面就不用再同意了
-          // ZegoLoggerService.logInfo(
-          //   'accept, write accept to local, wait direct accept and enter call in ZegoUIKitPrebuiltCallInvitationService.init',
-          //   tag: 'call-invitation',
-          //   subTag: 'call handler',
-          // );
-          //
-          // await clearOfflineCallKitCacheParams();
-          // await clearOfflineCallKitCallID();
-          //
-          // if (message.isAdvanceMode) {
-          //   await ZegoUIKit().getSignalingPlugin().acceptAdvanceInvitation(
-          //         inviterID: message.inviter.id,
-          //         data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
-          //         invitationID: message.invitationID,
-          //       );
-          // } else {
-          //   await ZegoUIKit().getSignalingPlugin().acceptInvitation(
-          //         inviterID: message.inviter.id,
-          //         data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
-          //         targetInvitationID: message.invitationID,
-          //       );
-          // }
-          //
-          // await ZegoUIKit()
-          //     .init(
-          //   appID: int.tryParse(message.handlerInfo?.appID ?? '') ?? 0,
-          //   appSign: appSign,
-          //   token: message.handlerInfo?.token ?? '',
-          //
-          //   /// todo 配置项同步
-          // )
-          //     .then((_) async {
-          //   ZegoUIKit().login(
-          //     message.handlerInfo?.userID ?? '',
-          //     message.handlerInfo?.userName ?? '',
-          //   );
-          //   await ZegoUIKit().joinRoom(callID).then((_) {
-          //     ZegoUIKit().turnMicrophoneOn(true);
-          //   });
-          // });
+          await _acceptCallInvitation(
+            message: message,
+            appSign: appSign,
+            callID: callID,
+          );
 
           break;
         case Event.actionCallDecline:
-          await clearOfflineCallKitCacheParams();
-          await clearOfflineCallKitCallID();
-
-          if (message.isAdvanceMode) {
-            await ZegoUIKit()
-                .getSignalingPlugin()
-                .refuseAdvanceInvitationByInvitationID(
-                  invitationID: message.invitationID,
-                  data: ZegoCallInvitationRejectRequestProtocol(
-                    reason: ZegoCallInvitationProtocolKey.refuseByDecline,
-                  ).toJson(),
-                );
-          } else {
-            await ZegoUIKit()
-                .getSignalingPlugin()
-                .refuseInvitationByInvitationID(
-                  invitationID: message.invitationID,
-                  data: ZegoCallInvitationRejectRequestProtocol(
-                    reason: ZegoCallInvitationProtocolKey.refuseByDecline,
-                  ).toJson(),
-                );
-          }
+          await _refuseCallInvitation(message: message);
           break;
         case Event.actionCallTimeout:
           await clearOfflineCallKitCacheParams();

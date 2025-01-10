@@ -17,6 +17,7 @@ class ZegoCallInvitationConfig {
       ZegoCallInvitationPermission.systemAlertWindow,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
+    ZegoCallInvitationOfflineConfig? offline,
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
@@ -28,6 +29,7 @@ class ZegoCallInvitationConfig {
     bool onlyInitiatorCanInvite = false,
   })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
             ZegoCallPermissionConfirmDialogConfig(),
+        offline = offline ?? ZegoCallInvitationOfflineConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -69,6 +71,9 @@ class ZegoCallInvitationConfig {
   /// 2. other participants can enter the call after the initiator leaves.
   bool endCallWhenInitiatorLeave;
 
+  /// offline config
+  ZegoCallInvitationOfflineConfig offline;
+
   ///  calling config
   ZegoCallInvitationInCallingConfig inCalling;
 
@@ -90,9 +95,39 @@ class ZegoCallInvitationConfig {
     return 'ZegoCallInvitationConfig:{'
         'permissions:$permissions, '
         'calling:$inCalling, '
+        'offline:$offline, '
+        'missedCall:$missedCall, '
+        'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
         'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
         'networkLoading:$networkLoading, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationOfflineConfig {
+  ZegoCallInvitationOfflineConfig({
+    this.autoEnterAcceptedOfflineCall = true,
+  });
+
+  /// Due to some time-consuming and waiting operations, such as data loading
+  /// or user login in the App.
+  /// so in certain situations, it may not be appropriate to navigate to
+  /// [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  ///
+  /// This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  /// may be **overwritten by some subsequent jump behaviors of the App**.
+  /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  /// in App will be a better choice.
+  ///
+  /// When you want to do this, set it to **false** (default is true) and then
+  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  bool autoEnterAcceptedOfflineCall;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationOfflineConfig:{'
+        'autoEnterAcceptedOfflineCall:$autoEnterAcceptedOfflineCall, '
         '}';
   }
 }
@@ -115,6 +150,7 @@ class ZegoCallInvitationInCallingConfig {
   ///
   /// If set to false, all participants in the call can invite others.
   bool onlyInitiatorCanInvite;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInCallingConfig:{'

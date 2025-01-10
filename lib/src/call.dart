@@ -561,14 +561,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// first set before create express
       await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
+      final isFromAcceptedAndroidOfflineInvitation =
+          ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .isCurrentInvitationFromAcceptedAndroidOffline();
+
+      ZegoLoggerService.logInfo(
+        'isFromAcceptedAndroidOfflineInvitation:$isFromAcceptedAndroidOfflineInvitation',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
       ZegoUIKit()
           .init(
         appID: widget.appID,
         appSign: widget.appSign,
         enablePlatformView: playingStreamInPIPUnderIOS,
         playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
+
+        /// accept offline call invitation on android, will create in advance
+        withoutCreateEngine: isFromAcceptedAndroidOfflineInvitation,
       )
-          .then((value) async {
+          .then((_) async {
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
@@ -590,7 +604,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         await ZegoUIKit()
-            .joinRoom(widget.callID, token: widget.token)
+            .joinRoom(
+          widget.callID,
+          token: widget.token,
+
+          /// accept offline call invitation on android, will join in advance
+          withoutJoin: isFromAcceptedAndroidOfflineInvitation,
+        )
             .then((result) async {
           if (result.errorCode != 0) {
             ZegoLoggerService.logError(

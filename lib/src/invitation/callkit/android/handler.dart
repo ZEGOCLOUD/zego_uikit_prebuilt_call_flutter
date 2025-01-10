@@ -10,7 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/isolate_name_server_guard.dart';
-
+import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'defines.dart';
 import 'entry_point.dart';
 import 'handler.call.dart';
@@ -193,6 +193,18 @@ class ZegoCallAndroidBackgroundMessageHandler {
       title: messageTitle,
       extras: messageExtras,
     );
+
+    ZegoUIKit().reporter().report(
+      event: ZegoCallReporter.eventReceivedInvitation,
+      params: {
+        ZegoUIKitSignalingReporter.eventKeyInvitationID: message.invitationID,
+        ZegoUIKitSignalingReporter.eventKeyInviter: message.inviter.id,
+        ZegoUIKitReporter.eventKeyAppState:
+            ZegoUIKitReporter.eventKeyAppStateBackground,
+        ZegoCallReporter.eventKeyExtendedData: message.customData,
+      },
+    );
+
     await message.parse().then((_) {
       if (message.isIMType) {
         imHandler.handle(message);
