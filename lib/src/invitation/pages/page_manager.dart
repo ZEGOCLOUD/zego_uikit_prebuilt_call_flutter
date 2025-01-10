@@ -1055,7 +1055,8 @@ class ZegoCallInvitationPageManager {
         }
       }
     } else {
-      // ios
+      /// ios
+
       // The logic here is a bit confusing. Todo requires adam to look at this part of the logic.
       if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
           (callKitCallID != null && callKitCallID == _invitationData.callID)) {
@@ -1566,9 +1567,7 @@ class ZegoCallInvitationPageManager {
     }
 
     if (restoreCauseByRefused) {
-      ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .updateLocalInvitingUsers(
+      ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
         [],
       );
 

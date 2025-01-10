@@ -484,7 +484,7 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated call channel config, please use callChannel
     @Deprecated('use callChannel.channelID instead$deprecatedTipsV4150')
-    String channelID = 'CallInvitation',
+    String channelID = 'call_invitation',
     @Deprecated('use callChannel.channelName instead$deprecatedTipsV4150')
     String channelName = 'Call Invitation',
     @Deprecated('use callChannel.icon instead$deprecatedTipsV4150')
@@ -497,9 +497,9 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated message channel config, please use messageChannel
     @Deprecated('use messageChannel.channelID instead$deprecatedTipsV4150')
-    String messageChannelID = 'Message',
+    String messageChannelID = 'zimkit_message',
     @Deprecated('use messageChannel.channelName instead$deprecatedTipsV4150')
-    String messageChannelName = 'Message',
+    String messageChannelName = 'Chat Message',
     @Deprecated('use messageChannel.icon instead$deprecatedTipsV4150')
     String? messageIcon = '',
     @Deprecated('use messageChannel.sound instead$deprecatedTipsV4150')
@@ -519,7 +519,7 @@ class ZegoCallAndroidNotificationConfig {
             ),
         missedCallChannel = missedCallChannel ??
             ZegoCallAndroidNotificationChannelConfig(
-              channelID: 'Missed Call',
+              channelID: 'missed_call',
               channelName: 'Missed Call',
               icon: '',
               sound: '',
@@ -567,8 +567,8 @@ class ZegoCallAndroidNotificationChannelConfig {
   bool vibrate;
 
   ZegoCallAndroidNotificationChannelConfig({
-    this.channelID = 'CallInvitation',
-    this.channelName = 'Call Invitation',
+    this.channelID = 'unknown_channel',
+    this.channelName = 'Unknown Channel',
     this.icon = '',
     this.sound = '',
     this.vibrate = true,

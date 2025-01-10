@@ -26,7 +26,6 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.android.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
@@ -45,6 +44,9 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notificatio
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
+
+import 'callkit/android/defines.dart';
+import 'callkit/android/entry_point.dart';
 
 part 'mixins/private/callkit.dart';
 
@@ -507,6 +509,21 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
   }
 
+  ///  enable offline system calling UI
+  ///
+  ///  [FBI WARING]
+  ///
+  ///  if you use CallKit with ZIMKit, please note that.
+  ///  useSystemCallingUI Must be called AFTER ZIMKit().init!!!
+  ///  otherwise the offline handler will be caught by zimkit, resulting in callkit unable to receive the offline handler
+  ///
+  /// ```dart
+  /// await ZIMKit().init(..)
+  /// ...
+  /// ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+  ///   [ZegoUIKitSignalingPlugin()],
+  /// );
+  /// ```
   void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
     ZegoLoggerService.logInfo(
       'plugins size: ${plugins.length}',
