@@ -139,8 +139,6 @@ part 'mixins/private/invitation.dart';
 /// ```
 class ZegoUIKitPrebuiltCallInvitationService
     with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
-  String get version => '4.17.0-beta.4';
-
   bool get isInit => private._isInit;
 
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
@@ -270,7 +268,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       signOrToken: appSign.isNotEmpty ? appSign : token,
       params: {
         ZegoCallReporter.eventKeyKitVersion:
-            ZegoUIKitPrebuiltCallInvitationService().version,
+            ZegoUIKitPrebuiltCallController().version,
         ZegoUIKitReporter.eventKeyUserID: userID,
       },
     );
@@ -332,10 +330,10 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
 
     private._isInit = true;
-    
+
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'versions: zego_uikit_prebuilt_call:$version; $uikitVersion',
+        'versions: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)}), init',
       );
