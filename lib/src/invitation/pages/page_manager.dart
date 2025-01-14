@@ -915,6 +915,10 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .waitingEnterAcceptedOfflineCallWhenInitNotDone = false;
+
     isWaitingEnterAcceptedOfflineCall = false;
     callingMachine?.stateOnlineAudioVideo.enter();
   }

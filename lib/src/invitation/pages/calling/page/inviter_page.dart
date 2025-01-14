@@ -88,6 +88,8 @@ class ZegoCallingInviterView extends StatelessWidget {
 
     final firstInvitee =
         invitees.isNotEmpty ? invitees.first : ZegoUIKitUser.empty();
+    final firstInviteeName =
+        firstInvitee.name.isNotEmpty ? firstInvitee.name : firstInvitee.id;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +110,7 @@ class ZegoCallingInviterView extends StatelessWidget {
                           firstInvitee,
                           {},
                         ) ??
-                        circleAvatar(firstInvitee.name);
+                        circleAvatar(firstInviteeName);
                   },
                 )
               : Container(),
@@ -122,7 +124,7 @@ class ZegoCallingInviterView extends StatelessWidget {
                     : (invitees.length > 1
                         ? innerText.outgoingGroupVoiceCallPageTitle
                         : innerText.outgoingVoiceCallPageTitle))
-                .replaceFirst(param_1, firstInvitee.name))
+                .replaceFirst(param_1, firstInviteeName))
             : SizedBox(height: 59.zH),
         SizedBox(height: config.spacingBetweenNameAndCallingText ?? 47.zR),
         config.showCallingText

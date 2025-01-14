@@ -158,17 +158,37 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
   /// in App will be a better choice.
   ///
-  /// When you want to do this, set it to **false** (default is true) and then
-  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  /// SO! please
+  /// 1. set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
+  /// to false in  [ZegoUIKitPrebuiltCallInvitationService.init]
+  /// 2. call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  /// after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
+  /// finish loading(data or user login)
   void enterAcceptedOfflineCall() {
-    if (!private._isInit) {
+    if (private.waitingEnterAcceptedOfflineCallWhenInitNotDone) {
       ZegoLoggerService.logInfo(
         'enterAcceptedOfflineCall, '
-        'not init',
+        'will be call when init done',
         tag: 'call-invitation',
         subTag: 'page manager',
       );
+
+      return;
     }
+
+    if (!private._isInit) {
+      ZegoLoggerService.logInfo(
+        'enterAcceptedOfflineCall, '
+        'not init, will be enter after init done',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+
+      private.waitingEnterAcceptedOfflineCallWhenInitNotDone = true;
+
+      return;
+    }
+
     private._pageManager?.enterAcceptedOfflineCall();
   }
 
@@ -311,6 +331,8 @@ class ZegoUIKitPrebuiltCallInvitationService
       return;
     }
 
+    private._isInit = true;
+    
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'versions: zego_uikit_prebuilt_call:$version; $uikitVersion',
@@ -318,8 +340,6 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
     });
-
-    private._isInit = true;
 
     ZegoLoggerService.logInfo(
       'service init, '
@@ -492,11 +512,19 @@ class ZegoUIKitPrebuiltCallInvitationService
       },
     );
 
-    if (private._data?.config.offline.autoEnterAcceptedOfflineCall ?? true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          private._pageManager?.enterAcceptedOfflineCall();
-        });
+    ZegoLoggerService.logInfo(
+      'waitingEnterAcceptedOfflineCallWhenInitNotDone:${private.waitingEnterAcceptedOfflineCallWhenInitNotDone}, '
+      'autoEnterAcceptedOfflineCall: ${private._data?.config.offline.autoEnterAcceptedOfflineCall}',
+      tag: 'call-invitation',
+      subTag: 'service(${identityHashCode(this)}), uninit',
+    );
+
+    if ((private._data?.config.offline.autoEnterAcceptedOfflineCall ?? true) ||
+        private.waitingEnterAcceptedOfflineCallWhenInitNotDone) {
+      private.waitingEnterAcceptedOfflineCallWhenInitNotDone = false;
+
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        private._pageManager?.enterAcceptedOfflineCall();
       });
     }
   }

@@ -33,6 +33,7 @@ class ZegoCallInvitationServicePrivateImpl
   }
 
   bool _isInit = false;
+  bool waitingEnterAcceptedOfflineCallWhenInitNotDone = false;
 
   ZegoCallInvitationServiceAPIImpl? invitationImpl;
 
