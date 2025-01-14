@@ -1,3 +1,8 @@
+## 4.17.0-beta.5
+
+- Features
+  - Support answering offline call when lock screen on Android
+
 ## 4.17.0-beta.4
 
 - Merge to version 4.16.21
