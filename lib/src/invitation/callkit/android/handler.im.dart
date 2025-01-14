@@ -38,7 +38,7 @@ class ZegoCallAndroidIMBackgroundMessageHandler {
       'body:$body, conversationID:$conversationID, '
       'conversationTypeIndex:$conversationTypeIndex',
       tag: 'call-invitation',
-      subTag: 'im handler',
+      subTag: 'offline, im handler',
     );
 
     var channelID =
@@ -64,6 +64,11 @@ class ZegoCallAndroidIMBackgroundMessageHandler {
             conversationID: conversationID,
             conversationTypeIndex: conversationTypeIndex,
             senderID: senderID,
+          );
+          ZegoLoggerService.logInfo(
+            'click offline message',
+            tag: 'call-invitation',
+            subTag: 'offline, im handler',
           );
 
           await ZegoUIKit().activeAppToForeground();
