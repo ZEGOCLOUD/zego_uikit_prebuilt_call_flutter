@@ -44,6 +44,23 @@ class ZegoCallInvitationPageManager {
   bool _appInBackground = false;
   bool inCallPage = false;
 
+  ///  App (main) hasn't started yet when android offline handler received.
+  ///  At this time, if you accept it, it will initialize express engine and
+  ///  enter the room in advance.
+  ///  here record this status, and there is no need to re-initialize express
+  ///  and enter the room in prebuilt.
+  ///  when entering the call page and exiting, the state will be reset in
+  ///  restoreToIdle
+  bool isCurrentInvitationFromAcceptedAndroidOffline = false;
+
+  ///  Due to some time-consuming and waiting operations such as data loading
+  /// and user login in the App, it cannot be directly navigate to call page in
+  /// the service.
+  ///  When service init, the behavior which jump to the call page will be
+  ///  overwritten by the app's jump behavior). Here, manually jump to the
+  ///  call page by the API through the App
+  bool isWaitingEnterAcceptedOfflineCall = false;
+
   /// If the call is ended by the end button of iOS CallKit,
   /// the widget navigation of the CallPage will not be properly
   /// execute dispose function.
@@ -59,8 +76,8 @@ class ZegoCallInvitationPageManager {
   StreamSubscription<dynamic>?
       userListStreamSubscriptionInCallingByIOSBackgroundLock;
 
-  /// iOS的bug, 锁屏下接受呼叫，有时候会先收到CallKit的performAnswerCallAction, 后才收到ZIM的onCallInvitationReceived
-  /// 这时候需要在onCallInvitationReceived直接同意
+  ///iOS bug, accept calls under lock screen, sometimes receive CallKit's performAnswerCallAction first, then receive ZIM's onCallInvitationReceived
+  ///At this time, you need to agree directly onCallInvitationReceived
   /// todo wait zim sdk fix bug
   bool _hasCallkitIncomingCauseAppInBackground = false;
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
@@ -854,6 +871,58 @@ class ZegoCallInvitationPageManager {
         ?.call(event.callUserList);
   }
 
+  void onAndroidOfflineInvitationAccepted(
+    ZegoCallInvitationOfflineCallKitCacheParameterProtocol protocol,
+  ) {
+    ZegoLoggerService.logInfo(
+      'on android offline invitation received, '
+      'protocol:${protocol.dict}',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    /// call protocol
+    final sendRequestProtocol =
+        ZegoCallInvitationSendRequestProtocol.fromJson(protocol.payloadData);
+
+    _invitationData
+      ..customData = sendRequestProtocol.customData
+      ..callID = sendRequestProtocol.callID
+      ..invitationID = protocol.invitationID
+      ..invitees = List.from(sendRequestProtocol.invitees)
+      ..inviter = protocol.inviter
+      ..type = protocol.callType;
+
+    isCurrentInvitationFromAcceptedAndroidOffline = true;
+    isWaitingEnterAcceptedOfflineCall = true;
+  }
+
+  void enterAcceptedOfflineCall() {
+    if (!isWaitingEnterAcceptedOfflineCall) {
+      ZegoLoggerService.logInfo(
+        'enterAcceptedOfflineCall, '
+        'not waiting enter',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'enterAcceptedOfflineCall, ',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .waitingEnterAcceptedOfflineCallWhenInitNotDone = false;
+
+    isWaitingEnterAcceptedOfflineCall = false;
+    callingMachine?.stateOnlineAudioVideo.enter();
+  }
+
   ///title:user_073493,
   ///content:,
   ///extras:{
@@ -991,71 +1060,21 @@ class ZegoCallInvitationPageManager {
     );
 
     if (Platform.isAndroid) {
-      if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted) {
-        _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+      if (_appInBackground) {
         ZegoLoggerService.logInfo(
-          'auto agree, cause waiting invitation received after callkit accept',
+          'app in background, app in background:$_appInBackground, create notification',
           tag: 'call-invitation',
           subTag: 'page manager',
         );
 
-        /// todo wait zim sdk fix bug
-        if (Platform.isAndroid) {
-          clearAllCallKitCalls();
-        }
-
-        clearOfflineCallKitCallID();
-        clearOfflineCallKitCacheParams();
-
-        if (isAdvanceInvitationMode) {
-          ZegoUIKit()
-              .getSignalingPlugin()
-              .acceptAdvanceInvitation(
-                inviterID: _invitationData.inviter?.id ?? '',
-                invitationID: invitationID,
-                data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
-              )
-              .then((result) {
-            onLocalAcceptInvitation(
-              result.invitationID,
-              result.error?.code ?? '',
-              result.error?.message ?? '',
-            );
-          });
-        } else {
-          ZegoUIKit()
-              .getSignalingPlugin()
-              .acceptInvitation(
-                inviterID: _invitationData.inviter?.id ?? '',
-                targetInvitationID: invitationID,
-                data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
-              )
-              .then((result) {
-            onLocalAcceptInvitation(
-              result.invitationID,
-              result.error?.code ?? '',
-              result.error?.message ?? '',
-            );
-          });
-        }
+        hasCallkitIncomingCauseAppInBackground = true;
+        _notificationManager?.showInvitationNotification(invitationData);
       } else {
-        if (_appInBackground) {
-          ZegoLoggerService.logInfo(
-            'app in background, app in background:$_appInBackground, create notification',
-            tag: 'call-invitation',
-            subTag: 'page manager',
-          );
-
-          hasCallkitIncomingCauseAppInBackground = true;
-          // ZegoUIKit().getSignalingPlugin().addLocalCallNotification();
-          /// android 先弹prebuilt 呼叫邀请弹框
-          _notificationManager?.showInvitationNotification(invitationData);
-        } else {
-          showNotificationOnInvitationReceived();
-        }
+        showNotificationOnInvitationReceived();
       }
     } else {
-      // ios
+      /// ios
+
       // The logic here is a bit confusing. Todo requires adam to look at this part of the logic.
       if (_waitingCallInvitationReceivedAfterCallKitIncomingAccepted ||
           (callKitCallID != null && callKitCallID == _invitationData.callID)) {
@@ -1566,9 +1585,7 @@ class ZegoCallInvitationPageManager {
     }
 
     if (restoreCauseByRefused) {
-      ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .updateLocalInvitingUsers(
+      ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
         [],
       );
 
@@ -1684,6 +1701,8 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager, restore to idle',
     );
 
+    isCurrentInvitationFromAcceptedAndroidOffline = false;
+
     _localSendTimeoutGuard?.cancel();
     _remoteReceivedTimeoutGuard?.cancel();
     _callerRingtone.stopRing();
@@ -1740,7 +1759,6 @@ class ZegoCallInvitationPageManager {
 
     if (needClearCallKit) {
       clearOfflineCallKitCallID();
-      clearOfflineCallKitCacheParams();
       clearAllCallKitCalls();
     }
 

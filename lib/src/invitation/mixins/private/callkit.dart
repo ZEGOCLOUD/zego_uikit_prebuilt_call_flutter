@@ -48,11 +48,6 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       subTag: 'callkit',
     );
 
-    /// In iOS, it is not necessary to explicitly clear the call as it may result in automatically disconnecting the offline call.
-    if (Platform.isAndroid) {
-      await clearAllCallKitCalls();
-    }
-
     _myPageManager = pageManager;
 
     _setCallKitVariables({

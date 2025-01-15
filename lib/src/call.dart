@@ -166,8 +166,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isPlaying;
   }
 
-  String get version => "4.17.0-beta.4";
-
   @override
   void initState() {
     super.initState();
@@ -176,7 +174,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       appID: widget.appID,
       signOrToken: widget.appSign.isNotEmpty ? widget.appSign : widget.token,
       params: {
-        ZegoCallReporter.eventKeyKitVersion: version,
+        ZegoCallReporter.eventKeyKitVersion:
+            ZegoUIKitPrebuiltCallController().version,
         ZegoUIKitReporter.eventKeyUserID: widget.userID,
       },
     ).then((_) {
@@ -194,7 +193,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:$version; $uikitVersion, \n'
+        'version: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -561,14 +560,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// first set before create express
       await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
+      final isFromAcceptedAndroidOfflineInvitation =
+          ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .isCurrentInvitationFromAcceptedAndroidOffline();
+
+      ZegoLoggerService.logInfo(
+        'isFromAcceptedAndroidOfflineInvitation:$isFromAcceptedAndroidOfflineInvitation',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
       ZegoUIKit()
           .init(
         appID: widget.appID,
         appSign: widget.appSign,
         enablePlatformView: playingStreamInPIPUnderIOS,
         playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
+
+        /// accept offline call invitation on android, will create in advance
+        withoutCreateEngine: isFromAcceptedAndroidOfflineInvitation,
       )
-          .then((value) async {
+          .then((_) async {
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
@@ -590,7 +603,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         await ZegoUIKit()
-            .joinRoom(widget.callID, token: widget.token)
+            .joinRoom(
+          widget.callID,
+          token: widget.token,
+
+          /// accept offline call invitation on android, will join in advance
+          isSimulated: isFromAcceptedAndroidOfflineInvitation,
+        )
             .then((result) async {
           if (result.errorCode != 0) {
             ZegoLoggerService.logError(

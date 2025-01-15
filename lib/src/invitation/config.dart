@@ -17,6 +17,7 @@ class ZegoCallInvitationConfig {
       ZegoCallInvitationPermission.systemAlertWindow,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
+    ZegoCallInvitationOfflineConfig? offline,
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
@@ -28,6 +29,7 @@ class ZegoCallInvitationConfig {
     bool onlyInitiatorCanInvite = false,
   })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
             ZegoCallPermissionConfirmDialogConfig(),
+        offline = offline ?? ZegoCallInvitationOfflineConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -69,6 +71,9 @@ class ZegoCallInvitationConfig {
   /// 2. other participants can enter the call after the initiator leaves.
   bool endCallWhenInitiatorLeave;
 
+  /// offline config
+  ZegoCallInvitationOfflineConfig offline;
+
   ///  calling config
   ZegoCallInvitationInCallingConfig inCalling;
 
@@ -90,9 +95,39 @@ class ZegoCallInvitationConfig {
     return 'ZegoCallInvitationConfig:{'
         'permissions:$permissions, '
         'calling:$inCalling, '
+        'offline:$offline, '
+        'missedCall:$missedCall, '
+        'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
         'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
         'networkLoading:$networkLoading, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationOfflineConfig {
+  ZegoCallInvitationOfflineConfig({
+    this.autoEnterAcceptedOfflineCall = true,
+  });
+
+  /// Due to some time-consuming and waiting operations, such as data loading
+  /// or user login in the App.
+  /// so in certain situations, it may not be appropriate to navigate to
+  /// [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  ///
+  /// This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  /// may be **overwritten by some subsequent jump behaviors of the App**.
+  /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  /// in App will be a better choice.
+  ///
+  /// When you want to do this, set it to **false** (default is true) and then
+  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  bool autoEnterAcceptedOfflineCall;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationOfflineConfig:{'
+        'autoEnterAcceptedOfflineCall:$autoEnterAcceptedOfflineCall, '
         '}';
   }
 }
@@ -115,6 +150,7 @@ class ZegoCallInvitationInCallingConfig {
   ///
   /// If set to false, all participants in the call can invite others.
   bool onlyInitiatorCanInvite;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInCallingConfig:{'
@@ -484,7 +520,7 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated call channel config, please use callChannel
     @Deprecated('use callChannel.channelID instead$deprecatedTipsV4150')
-    String channelID = 'CallInvitation',
+    String channelID = 'call_invitation',
     @Deprecated('use callChannel.channelName instead$deprecatedTipsV4150')
     String channelName = 'Call Invitation',
     @Deprecated('use callChannel.icon instead$deprecatedTipsV4150')
@@ -497,9 +533,9 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated message channel config, please use messageChannel
     @Deprecated('use messageChannel.channelID instead$deprecatedTipsV4150')
-    String messageChannelID = 'Message',
+    String messageChannelID = 'zimkit_message',
     @Deprecated('use messageChannel.channelName instead$deprecatedTipsV4150')
-    String messageChannelName = 'Message',
+    String messageChannelName = 'Chat Message',
     @Deprecated('use messageChannel.icon instead$deprecatedTipsV4150')
     String? messageIcon = '',
     @Deprecated('use messageChannel.sound instead$deprecatedTipsV4150')
@@ -519,7 +555,7 @@ class ZegoCallAndroidNotificationConfig {
             ),
         missedCallChannel = missedCallChannel ??
             ZegoCallAndroidNotificationChannelConfig(
-              channelID: 'Missed Call',
+              channelID: 'missed_call',
               channelName: 'Missed Call',
               icon: '',
               sound: '',
@@ -567,8 +603,8 @@ class ZegoCallAndroidNotificationChannelConfig {
   bool vibrate;
 
   ZegoCallAndroidNotificationChannelConfig({
-    this.channelID = 'CallInvitation',
-    this.channelName = 'Call Invitation',
+    this.channelID = 'unknown_channel',
+    this.channelName = 'Unknown Channel',
     this.icon = '',
     this.sound = '',
     this.vibrate = true,
