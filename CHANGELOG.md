@@ -1,3 +1,7 @@
+## 4.17.0-beta.6
+- Fix the issue applying beauty to other kits after exiting LIVE if using beauty on mixing multiple kits
+- Fix enableCustomVideoProcessing Occasional Failure
+
 ## 4.17.0-beta.5
 
 - Features
