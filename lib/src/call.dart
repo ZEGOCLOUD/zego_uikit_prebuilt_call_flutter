@@ -343,6 +343,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
       ZegoUIKit().getBeautyPlugin().uninit();
+
+      ZegoUIKit().uninstallPlugins(
+        widget.plugins
+                ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
+                .toList() ??
+            [],
+      );
     }
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
@@ -648,15 +655,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   Future<void> _setBeautyConfig() async {
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-      ZegoUIKit().enableCustomVideoProcessing(true);
-    }
+    ZegoUIKit().enableCustomVideoProcessing(
+      ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null,
+    );
   }
 
   Future<void> initEffectsPlugins() async {
-    if (widget.plugins != null) {
-      ZegoUIKit().installPlugins(widget.plugins!);
-    }
+    ZegoUIKit().installPlugins(widget.plugins ?? []);
 
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
       ZegoUIKit()

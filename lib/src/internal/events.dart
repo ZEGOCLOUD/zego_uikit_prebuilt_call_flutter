@@ -48,6 +48,8 @@ class ZegoCallEventListener {
         .getAudioOutputDeviceNotifier(ZegoUIKit().getLocalUser().id)
         .removeListener(_onAudioOutputChanged);
 
+    ZegoUIKit().getRoomStateStream().removeListener(_onRoomStateChanged);
+
     for (final subscription in _subscriptions) {
       subscription?.cancel();
     }

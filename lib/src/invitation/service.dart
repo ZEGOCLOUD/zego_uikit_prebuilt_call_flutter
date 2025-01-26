@@ -430,7 +430,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     try {
-      await private._initContext().then((_) {
+      await private._initContext(config: config).then((_) {
         ZegoLoggerService.logInfo(
           'initContext done',
           tag: 'call-invitation',

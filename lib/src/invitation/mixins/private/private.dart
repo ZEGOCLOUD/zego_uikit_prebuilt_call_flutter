@@ -494,10 +494,9 @@ class ZegoCallInvitationServicePrivateImpl
 
     await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);
 
-    // enableCustomVideoProcessing
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-      ZegoUIKit().enableCustomVideoProcessing(true);
-    }
+    ZegoUIKit().enableCustomVideoProcessing(
+      ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null,
+    );
 
     ZegoUIKit.instance.turnCameraOn(false);
   }
