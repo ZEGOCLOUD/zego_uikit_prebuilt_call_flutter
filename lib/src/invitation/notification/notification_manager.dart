@@ -349,7 +349,7 @@ class ZegoCallInvitationNotificationManager {
     ZegoLoggerService.logInfo(
       'show invitation notification, check permission...',
       tag: 'call-invitation',
-      subTag: 'notification manager, missed call notification',
+      subTag: 'notification manager',
     );
 
     requestPermissions().then((_) {
@@ -357,7 +357,7 @@ class ZegoCallInvitationNotificationManager {
         'show invitation notification, check permission done, '
         'show, data: $invitationData',
         tag: 'call-invitation',
-        subTag: 'notification manager, missed call notification',
+        subTag: 'notification manager',
       );
 
       cancelInvitationNotification();
