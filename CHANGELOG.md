@@ -1,3 +1,7 @@
+## 4.17.0-beta.8
+
+- Merge to version 4.16.22
+
 ## 4.17.0-beta.7
 
 - update doc.
@@ -36,6 +40,11 @@
   - Fixed the issue of invitation cancel button appearing in group call
   - Fix the auto cancel issue when the callee is in the in-app minimization state in group call
   
+## 4.16.22
+
+- Bugs
+  - the remote caller has no effect when local callee click the receive and reject buttons of notification on background mode
+
 ## 4.16.21
 
 - Update dependency

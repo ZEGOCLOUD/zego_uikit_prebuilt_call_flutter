@@ -72,6 +72,8 @@ class ZegoCallKitBackgroundService {
             .getSignalingPlugin()
             .acceptInvitation(
               inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+              targetInvitationID:
+                  _pageManager?.invitationData.invitationID ?? '',
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
@@ -133,6 +135,7 @@ class ZegoCallKitBackgroundService {
           .getSignalingPlugin()
           .refuseInvitation(
             inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+            targetInvitationID: _pageManager?.invitationData.invitationID ?? '',
             data: const JsonEncoder().convert({
               ZegoCallInvitationProtocolKey.reason:
                   ZegoCallInvitationProtocolKey.refuseByDecline,
@@ -199,6 +202,8 @@ class ZegoCallKitBackgroundService {
             .getSignalingPlugin()
             .acceptInvitation(
               inviterID: _pageManager?.invitationData.inviter?.id ?? '',
+              targetInvitationID:
+                  _pageManager?.invitationData.invitationID ?? '',
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
