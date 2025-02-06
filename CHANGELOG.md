@@ -1,3 +1,8 @@
+## 4.16.22
+
+- Bugs
+  - the remote caller has no effect when local callee click the receive and reject buttons of notification on background mode
+
 ## 4.16.21
 
 - Update dependency

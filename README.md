@@ -16,6 +16,12 @@ And it includes the business logic with the UI, you can add or remove features a
 
 [![ZEGOCLOUD Video Call Feature Intro](https://res.cloudinary.com/marcomontalbano/image/upload/v1682407474/video_to_markdown/images/youtube--mEg32GyIqgI-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/embed/mEg32GyIqgI "ZEGOCLOUD Video Call Feature Intro")
 
+## Demo
+
+[Kits Demo](https://github.com/yoer/zego_uikits_flutter)
+
+[CallKit Demo](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
+
 ## When do you need the Call Kit
 
 - Build apps faster and easier
@@ -97,10 +103,6 @@ And it includes the business logic with the UI, you can add or remove features a
 - [Migrating from 3.x to 4.0.0](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400).  **(💥 breaking changes)**
 
 ## More
-
-[Sample Code](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_example_flutter)
-
-<br />
 
 [Please visit our official website for more details.](https://docs.zegocloud.com/article/14746)
 

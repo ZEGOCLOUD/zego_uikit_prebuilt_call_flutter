@@ -151,8 +151,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return isAllEntered;
   }
 
-  String get version => "4.16.21";
-
   @override
   void initState() {
     super.initState();
@@ -161,7 +159,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       appID: widget.appID,
       signOrToken: widget.appSign.isNotEmpty ? widget.appSign : widget.token,
       params: {
-        ZegoCallReporter.eventKeyKitVersion: version,
+        ZegoCallReporter.eventKeyKitVersion:
+            ZegoUIKitPrebuiltCallController().version,
         ZegoUIKitReporter.eventKeyUserID: widget.userID,
       },
     ).then((_) {
@@ -179,7 +178,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
-        'version: zego_uikit_prebuilt_call:$version; $uikitVersion, \n'
+        'version: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
