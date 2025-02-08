@@ -44,7 +44,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notificatio
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
-
 import 'callkit/android/defines.dart';
 import 'callkit/android/entry_point.dart';
 
@@ -597,9 +596,10 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
       );
 
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .setBackgroundMessageHandler(onBackgroundMessageReceived);
+      ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(
+            onBackgroundMessageReceived,
+            key: 'zego_callkit',
+          );
     } else if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',

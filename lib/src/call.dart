@@ -21,6 +21,8 @@ import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
@@ -31,8 +33,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
 
 /// Call Widget.
 /// You can embed this widget into any page of your project to integrate the functionality of a call.
