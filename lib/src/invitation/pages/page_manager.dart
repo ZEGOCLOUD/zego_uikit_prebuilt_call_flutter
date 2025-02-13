@@ -10,9 +10,10 @@ import 'package:zego_callkit/zego_callkit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
@@ -22,6 +23,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.da
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/invitation_notify.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import '../notification/defines.dart';
 
 /// @nodoc
 class ZegoCallInvitationPageManager {
@@ -133,6 +135,11 @@ class ZegoCallInvitationPageManager {
     return (CallingState.kCallingWithVoice == pageState ||
             CallingState.kCallingWithVideo == pageState) ||
         inCallingByIOSBackgroundLock;
+  }
+
+  bool get isInCall {
+    final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
+    return CallingState.kOnlineAudioVideo == pageState;
   }
 
   Future<void> init({
@@ -452,6 +459,7 @@ class ZegoCallInvitationPageManager {
       ..inviter = ZegoUIKit().getLocalUser()
       ..invitees = List.from(invitees)
       ..type = invitationType
+      ..timeoutSeconds = localConfig.timeoutSeconds
       ..customData = customData;
 
     //  if inputting right now
@@ -891,6 +899,7 @@ class ZegoCallInvitationPageManager {
       ..invitationID = protocol.invitationID
       ..invitees = List.from(sendRequestProtocol.invitees)
       ..inviter = protocol.inviter
+      ..timeoutSeconds = protocol.timeoutSeconds
       ..type = protocol.callType;
 
     isCurrentInvitationFromAcceptedAndroidOffline = true;
@@ -1051,7 +1060,7 @@ class ZegoCallInvitationPageManager {
       cacheInvitationDataForWaitCallPageDisposeInIOSCallKit(true);
     }
 
-    final callKitCallID = await getOfflineCallKitCallID();
+    final callKitCallID = await ZegoUIKitCallCache().offlineCallKit.getCallID();
     ZegoLoggerService.logInfo(
       '_waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$_waitingCallInvitationReceivedAfterCallKitIncomingAccepted, '
       'callkit call id:$callKitCallID',
@@ -1146,7 +1155,10 @@ class ZegoCallInvitationPageManager {
 
           hasCallkitIncomingCauseAppInBackground = true;
 
-          await getOfflineCallKitCallID().then((offlineCallID) {
+          await ZegoUIKitCallCache()
+              .offlineCallKit
+              .getCallID()
+              .then((offlineCallID) {
             ZegoLoggerService.logInfo(
               'offlineCallID:$offlineCallID, _invitationData.callID:${_invitationData.callID}',
               tag: 'call-invitation',
@@ -1154,12 +1166,24 @@ class ZegoCallInvitationPageManager {
             );
 
             if (offlineCallID != _invitationData.callID) {
-              setOfflineCallKitCallID(_invitationData.callID);
+              ZegoUIKitCallCache()
+                  .offlineCallKit
+                  .setCallID(_invitationData.callID);
 
               showCallkitIncoming(
                 caller: inviter,
                 callType: _invitationData.type,
-                sendRequestProtocol: sendRequestProtocol,
+                callID: sendRequestProtocol.callID,
+                timeoutSeconds: sendRequestProtocol.timeout,
+                callChannelName: callInvitationData.notificationConfig
+                        .androidNotificationConfig?.callChannel.channelName ??
+                    defaultCallChannelName,
+                missedCallChannelName: callInvitationData
+                        .notificationConfig
+                        .androidNotificationConfig
+                        ?.missedCallChannel
+                        .channelName ??
+                    defaultMissedCallChannelName,
                 ringtonePath: callInvitationData.notificationConfig
                         .androidNotificationConfig?.callChannel.sound ??
                     '',
@@ -1758,7 +1782,7 @@ class ZegoCallInvitationPageManager {
     }
 
     if (needClearCallKit) {
-      clearOfflineCallKitCallID();
+      ZegoUIKitCallCache().offlineCallKit.clearCallID();
       clearAllCallKitCalls();
     }
 

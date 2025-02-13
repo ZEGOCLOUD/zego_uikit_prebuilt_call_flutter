@@ -10,9 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
-import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
@@ -23,8 +22,8 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
@@ -32,11 +31,11 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/isolate_name_server_guard.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/notification.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/permission.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
@@ -141,6 +140,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   bool get isInit => private._isInit;
 
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
+  bool get isInCall => private._pageManager?.isInCall ?? false;
 
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController.instance;
@@ -429,12 +429,26 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     try {
-      await private._initContext(config: config).then((_) {
+      await private._initContext(config: config).then((_) async {
         ZegoLoggerService.logInfo(
           'initContext done',
           tag: 'call-invitation',
           subTag: 'service(${identityHashCode(this)}), init',
         );
+
+        if (Platform.isAndroid) {
+          final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
+          if (mobileSystemVersion.major >= 14) {
+            await FlutterCallkitIncoming.requestFullIntentPermission()
+                .then((res) {
+              ZegoLoggerService.logInfo(
+                'requestFullIntentPermission done, res:$res',
+                tag: 'call-invitation',
+                subTag: 'callkit',
+              );
+            });
+          }
+        }
       });
     } catch (e) {
       ZegoLoggerService.logError(
@@ -444,15 +458,18 @@ class ZegoUIKitPrebuiltCallInvitationService
       );
     }
 
-    await getOfflineMissedCallNotificationID().then((notificationID) async {
+    await ZegoUIKitCallCache()
+        .missedCall
+        .getNotificationID()
+        .then((notificationID) async {
       if (null == notificationID) {
         return;
       }
 
-      await clearOfflineMissedCallNotificationID();
+      await ZegoUIKitCallCache().missedCall.clearNotificationID();
       final missedCallInvitationData =
-          await getOfflineMissedCallNotification(notificationID);
-      await clearOfflineMissedCallNotification(notificationID);
+          await ZegoUIKitCallCache().missedCall.getNotification(notificationID);
+      await ZegoUIKitCallCache().missedCall.clearNotification(notificationID);
 
       ZegoLoggerService.logInfo(
         'exist missed call notification clicked id,'

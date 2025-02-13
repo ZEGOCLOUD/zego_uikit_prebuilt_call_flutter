@@ -7,15 +7,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import '../callkit/background_service.dart';
 
 /// @nodoc
 class ZegoCallInvitationNotificationManager {
@@ -101,13 +104,6 @@ class ZegoCallInvitationNotificationManager {
         subTag: 'notification manager',
       );
     });
-
-    if (callInvitationData.config.permissions
-        .contains(ZegoCallInvitationPermission.systemAlertWindow)) {
-      await ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .requestSystemAlertWindowPermission();
-    }
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
@@ -364,85 +360,99 @@ class ZegoCallInvitationNotificationManager {
 
       ZegoCallInvitationNotificationManager.hasInvitation = true;
 
-      ZegoCallPluginPlatform.instance.addLocalCallNotification(
-        ZegoSignalingPluginLocalCallNotificationConfig(
-            id: _callInvitationNotificationID,
-            channelID: callChannelKey,
-            iconSource: getIconSource(callInvitationData.notificationConfig
-                .androidNotificationConfig?.callChannel.icon),
-            soundSource: getSoundSource(callInvitationData.notificationConfig
-                .androidNotificationConfig?.callChannel.sound),
-            vibrate: callInvitationData.notificationConfig
-                    .androidNotificationConfig?.callChannel.vibrate ??
-                true,
-            isVideo: ZegoCallInvitationType.videoCall == invitationData.type,
-            title: invitationData.inviter?.name ?? 'unknown',
-            content: ZegoCallInvitationType.videoCall == invitationData.type
-                ? ((invitationData.invitees.length > 1
-                    ? callInvitationData
-                        .innerText.incomingGroupVideoCallDialogMessage
-                    : callInvitationData
-                        .innerText.incomingVideoCallDialogMessage))
-                : ((invitationData.invitees.length > 1
-                    ? callInvitationData
-                        .innerText.incomingGroupVoiceCallDialogMessage
-                    : callInvitationData
-                        .innerText.incomingVoiceCallDialogMessage)),
-            acceptButtonText:
-                callInvitationData.innerText.incomingCallPageAcceptButton,
-            rejectButtonText:
-                callInvitationData.innerText.incomingCallPageDeclineButton,
-            acceptCallback: () async {
-              ZegoLoggerService.logInfo(
-                'LocalNotification, acceptCallback',
-                tag: 'call-invitation',
-                subTag: 'notification manager',
-              );
-
-              ZegoCallInvitationNotificationManager.hasInvitation = false;
-
-              await cancelInvitationNotification();
-              await ZegoUIKit().activeAppToForeground();
-              await ZegoUIKit().requestDismissKeyguard();
-
-              ZegoCallKitBackgroundService().acceptInvitationInBackground();
-            },
-            rejectCallback: () async {
-              ZegoLoggerService.logInfo(
-                'LocalNotification, rejectCallback',
-                tag: 'call-invitation',
-                subTag: 'notification manager',
-              );
-
-              ZegoCallInvitationNotificationManager.hasInvitation = false;
-
-              await cancelInvitationNotification();
-
-              ZegoCallKitBackgroundService().refuseInvitationInBackground();
-            },
-            cancelCallback: () {
-              ZegoLoggerService.logInfo(
-                'LocalNotification, cancelCallback',
-                tag: 'call-invitation',
-                subTag: 'notification manager',
-              );
-
-              ZegoCallInvitationNotificationManager.hasInvitation = false;
-
-              ZegoCallKitBackgroundService().refuseInvitationInBackground();
-            },
-            clickCallback: () async {
-              ZegoLoggerService.logInfo(
-                'LocalNotification, clickCallback',
-                tag: 'call-invitation',
-                subTag: 'notification manager',
-              );
-
-              await cancelInvitationNotification();
-              await ZegoUIKit().activeAppToForeground();
-              await ZegoUIKit().requestDismissKeyguard();
-            }),
+      showCallkitIncoming(
+        caller: invitationData.inviter,
+        callType: invitationData.type,
+        callID: invitationData.callID,
+        timeoutSeconds: invitationData.timeoutSeconds,
+        callChannelName: callChannelName,
+        missedCallChannelName: missedCallChannelName,
+        ringtonePath: callInvitationData.notificationConfig
+                .androidNotificationConfig?.callChannel.sound ??
+            '',
+        iOSIconName: callInvitationData
+            .notificationConfig.iOSNotificationConfig?.systemCallingIconName,
       );
+
+      // ZegoCallPluginPlatform.instance.addLocalCallNotification(
+      //   ZegoSignalingPluginLocalCallNotificationConfig(
+      //       id: _callInvitationNotificationID,
+      //       channelID: callChannelKey,
+      //       iconSource: getIconSource(callInvitationData.notificationConfig
+      //           .androidNotificationConfig?.callChannel.icon),
+      //       soundSource: getSoundSource(callInvitationData.notificationConfig
+      //           .androidNotificationConfig?.callChannel.sound),
+      //       vibrate: callInvitationData.notificationConfig
+      //               .androidNotificationConfig?.callChannel.vibrate ??
+      //           true,
+      //       isVideo: ZegoCallInvitationType.videoCall == invitationData.type,
+      //       title: invitationData.inviter?.name ?? 'unknown',
+      //       content: ZegoCallInvitationType.videoCall == invitationData.type
+      //           ? ((invitationData.invitees.length > 1
+      //               ? callInvitationData
+      //                   .innerText.incomingGroupVideoCallDialogMessage
+      //               : callInvitationData
+      //                   .innerText.incomingVideoCallDialogMessage))
+      //           : ((invitationData.invitees.length > 1
+      //               ? callInvitationData
+      //                   .innerText.incomingGroupVoiceCallDialogMessage
+      //               : callInvitationData
+      //                   .innerText.incomingVoiceCallDialogMessage)),
+      //       acceptButtonText:
+      //           callInvitationData.innerText.incomingCallPageAcceptButton,
+      //       rejectButtonText:
+      //           callInvitationData.innerText.incomingCallPageDeclineButton,
+      //       acceptCallback: () async {
+      //         ZegoLoggerService.logInfo(
+      //           'LocalNotification, acceptCallback',
+      //           tag: 'call-invitation',
+      //           subTag: 'notification manager',
+      //         );
+      //
+      //         ZegoCallInvitationNotificationManager.hasInvitation = false;
+      //
+      //         await cancelInvitationNotification();
+      //         await ZegoUIKit().activeAppToForeground();
+      //         await ZegoUIKit().requestDismissKeyguard();
+      //
+      //         ZegoCallKitBackgroundService().acceptInvitationInBackground();
+      //       },
+      //       rejectCallback: () async {
+      //         ZegoLoggerService.logInfo(
+      //           'LocalNotification, rejectCallback',
+      //           tag: 'call-invitation',
+      //           subTag: 'notification manager',
+      //         );
+      //
+      //         ZegoCallInvitationNotificationManager.hasInvitation = false;
+      //
+      //         await cancelInvitationNotification();
+      //
+      //         ZegoCallKitBackgroundService().refuseInvitationInBackground();
+      //       },
+      //       cancelCallback: () {
+      //         ZegoLoggerService.logInfo(
+      //           'LocalNotification, cancelCallback',
+      //           tag: 'call-invitation',
+      //           subTag: 'notification manager',
+      //         );
+      //
+      //         ZegoCallInvitationNotificationManager.hasInvitation = false;
+      //
+      //         ZegoCallKitBackgroundService().refuseInvitationInBackground();
+      //       },
+      //       clickCallback: () async {
+      //         ZegoLoggerService.logInfo(
+      //           'LocalNotification, clickCallback',
+      //           tag: 'call-invitation',
+      //           subTag: 'notification manager',
+      //         );
+      //
+      //         await cancelInvitationNotification();
+      //         await ZegoUIKit().activeAppToForeground();
+      //         await ZegoUIKit().requestDismissKeyguard();
+      //       }),
+      // );
     });
   }
 

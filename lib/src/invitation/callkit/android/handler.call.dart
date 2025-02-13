@@ -9,8 +9,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
-import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
-import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:zego_zpns/zego_zpns.dart';
@@ -19,8 +19,9 @@ import 'package:zego_zpns/zego_zpns.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
@@ -100,7 +101,10 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       subTag: 'offline, call handler',
     );
 
-    await getOfflineCallKitCallID().then((cacheCallID) async {
+    await ZegoUIKitCallCache()
+        .offlineCallKit
+        .getCallID()
+        .then((cacheCallID) async {
       ZegoLoggerService.logInfo(
         'background offline call cancel, cacheCallID:$cacheCallID',
         tag: 'call-invitation',
@@ -122,8 +126,8 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
   Future<void> _refuseCallInvitation({
     required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
   }) async {
-    await clearOfflineCallKitCacheParams();
-    await clearOfflineCallKitCallID();
+    await ZegoUIKitCallCache().offlineCallKit.clearCacheParams();
+    await ZegoUIKitCallCache().offlineCallKit.clearCallID();
 
     if (message.isAdvanceMode) {
       await ZegoUIKit()
@@ -215,8 +219,8 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         subTag: 'offline, call handler',
       );
 
-      await clearOfflineCallKitCacheParams();
-      await clearOfflineCallKitCallID();
+      await ZegoUIKitCallCache().offlineCallKit.clearCacheParams();
+      await ZegoUIKitCallCache().offlineCallKit.clearCallID();
 
       return;
     }
@@ -286,27 +290,47 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     _listenSignalingEvents(signalingSubscriptions, message: message);
 
     /// cache and check when app run
-    setOfflineCallKitCallID(callSendRequestProtocol.callID);
-    await setOfflineCallKitCacheParams(
-      ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
-        invitationID: message.invitationID,
-        inviter: message.inviter,
-        callID: callSendRequestProtocol.callID,
-        callType: message.callType,
-        payloadData: message.customData,
-        accept: true,
-      ),
-    );
+    await ZegoUIKitCallCache()
+        .offlineCallKit
+        .setCallID(callSendRequestProtocol.callID);
+    await ZegoUIKitCallCache().offlineCallKit.setCacheParams(
+          ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
+            invitationID: message.invitationID,
+            inviter: message.inviter,
+            callID: callSendRequestProtocol.callID,
+            callType: message.callType,
+            payloadData: message.customData,
+            timeoutSeconds: 60,
+            accept: true,
+          ),
+        );
 
     if (messageFromIsolate) {
       /// the app is in the background or locked, brought to the foreground and prompt the user to unlock it
       await ZegoUIKit().activeAppToForeground();
       await ZegoUIKit().requestDismissKeyguard();
     } else {
+      final handlerInfoJson =
+          await getPreferenceString(serializationKeyHandlerInfo);
+      ZegoLoggerService.logInfo(
+        'parsing handler info:$handlerInfoJson',
+        tag: 'call-invitation',
+        subTag: 'call handler, missed call',
+      );
+      final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
+
+      var callChannelName =
+          handlerInfo?.androidCallChannelName ?? defaultCallChannelName;
+      var missedCallChannelName = handlerInfo?.androidMissedCallChannelName ??
+          defaultMissedCallChannelName;
+
       await showCallkitIncoming(
         caller: message.inviter,
         callType: message.callType,
-        sendRequestProtocol: callSendRequestProtocol,
+        callID: callSendRequestProtocol.callID,
+        timeoutSeconds: callSendRequestProtocol.timeout,
+        callChannelName: callChannelName,
+        missedCallChannelName: missedCallChannelName,
         title: message.extras['title'] as String? ?? '',
         body: message.extras['body'] as String? ?? '',
       );
@@ -382,8 +406,8 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           await _refuseCallInvitation(message: message);
           break;
         case Event.actionCallTimeout:
-          await clearOfflineCallKitCacheParams();
-          await clearOfflineCallKitCallID();
+          await ZegoUIKitCallCache().offlineCallKit.clearCacheParams();
+          await ZegoUIKitCallCache().offlineCallKit.clearCallID();
           break;
         default:
           break;
@@ -537,8 +561,11 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       invitees: sendRequestProtocol.invitees,
       inviter: inviter,
       customData: sendRequestProtocol.customData,
+      timeoutSeconds: sendRequestProtocol.timeout,
     );
-    await addOfflineMissedCallNotification(notificationID, callInvitationData);
+    await ZegoUIKitCallCache()
+        .missedCall
+        .addNotification(notificationID, callInvitationData);
 
     await ZegoCallPluginPlatform.instance.addLocalIMNotification(
       ZegoSignalingPluginLocalIMNotificationConfig(
@@ -561,7 +588,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
             subTag: 'call handler, missed call',
           );
 
-          await setOfflineMissedCallNotificationID(notificationID)
+          await ZegoUIKitCallCache()
+              .missedCall
+              .setNotificationID(notificationID)
               .then((_) async {
             await ZegoUIKit().activeAppToForeground();
             await ZegoUIKit().requestDismissKeyguard();

@@ -8,7 +8,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/offline.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
 import 'defines.dart';
@@ -59,7 +60,7 @@ class ZegoCallAndroidIMBackgroundMessageHandler {
           message.handlerInfo?.androidMessageSound ?? '',
         ),
         clickCallback: (int notificationID) async {
-          await setOfflineIMKitMessageConversationInfo(
+          await ZegoUIKitCallCache().setOfflineIMKitMessageConversationInfo(
             conversationID: conversationID,
             conversationTypeIndex: conversationTypeIndex,
             senderID: senderID,

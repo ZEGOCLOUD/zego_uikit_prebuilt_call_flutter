@@ -14,10 +14,10 @@ class ZegoCallInvitationConfig {
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
-      ZegoCallInvitationPermission.systemAlertWindow,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallInvitationOfflineConfig? offline,
+    @Deprecated('removed')
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
@@ -27,9 +27,7 @@ class ZegoCallInvitationConfig {
     @Deprecated(
         'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
     bool onlyInitiatorCanInvite = false,
-  })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
-            ZegoCallPermissionConfirmDialogConfig(),
-        offline = offline ?? ZegoCallInvitationOfflineConfig(),
+  })  : offline = offline ?? ZegoCallInvitationOfflineConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -83,10 +81,6 @@ class ZegoCallInvitationConfig {
   /// pip
   ZegoCallInvitationPIPConfig pip;
 
-  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
-  /// Default will pop-up a confirmation box. If not, please set it to null.
-  ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
-
   /// network config
   ZegoNetworkLoadingConfig? networkLoading;
 
@@ -99,7 +93,6 @@ class ZegoCallInvitationConfig {
         'missedCall:$missedCall, '
         'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
-        'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
         'networkLoading:$networkLoading, '
         '}';
   }
@@ -218,7 +211,7 @@ class ZegoCallInvitationPIPConfig {
 /// only available on 15.0
 class ZegoCallInvitationPIPIOSConfig {
   ZegoCallInvitationPIPIOSConfig({
-    this.support = true,
+    this.support = false,
   });
 
   /// Whether to enable PIP under iOS

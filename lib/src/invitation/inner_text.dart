@@ -135,10 +135,6 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is **Audio Call**.
   String missedAudioCallNotificationContent;
 
-  /// The title of the systemAlertWindow permission request confirmation dialog,
-  /// The **default value** is **Display over other apps**.
-  String systemAlertWindowConfirmDialogSubTitle;
-
   /// The allow button text of the permission request,
   /// The **default value** is *"Allow $appName to $subTitle"*.
   String permissionConfirmDialogTitle;
@@ -184,7 +180,6 @@ class ZegoCallInvitationInnerText {
     String? missedGroupAudioCallNotificationContent,
     String? missedVideoCallNotificationContent,
     String? missedAudioCallNotificationContent,
-    String? systemAlertWindowConfirmDialogSubTitle,
     String? permissionConfirmDialogTitle,
     String? permissionConfirmDialogAllowButton,
     String? permissionConfirmDialogDenyButton,
@@ -247,8 +242,6 @@ class ZegoCallInvitationInnerText {
             missedVideoCallNotificationContent ?? 'Video Call',
         missedAudioCallNotificationContent =
             missedAudioCallNotificationContent ?? 'Audio Call',
-        systemAlertWindowConfirmDialogSubTitle =
-            systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
         permissionConfirmDialogTitle =
             permissionConfirmDialogTitle ?? 'Allow $param_1 to',
         permissionConfirmDialogAllowButton =

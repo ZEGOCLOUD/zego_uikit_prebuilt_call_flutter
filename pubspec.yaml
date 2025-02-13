@@ -24,6 +24,7 @@ dependencies:
   zego_zpns: ^2.6.0+3
   zego_callkit: ^1.0.0+4
 
+  device_info_plus: ^11.3.0
   vibration: ^1.9.0
   audioplayers: ^6.0.0
   just_audio: ^0.9.42
@@ -38,7 +39,7 @@ dependencies:
 
   #  1. make kotlin version >= 1.8.0, open the your_project/android/app/build.gradle file, and modify the kotlin_version to 1.8.0.
   #  2. make gradle version >= 7.0, open the your_project/android/gradle/wrapper/gradle-wrapper.properties file, and modify the distributionUrl to https\://services.gradle.org/distributions/gradle-7.0-all.zip.
-  flutter_callkit_incoming_yoer: ^2.0.4+1
+  flutter_callkit_incoming: ^2.5.0
   floating: ^5.0.1
 
 dev_dependencies:

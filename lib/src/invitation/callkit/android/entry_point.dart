@@ -7,7 +7,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
-import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_zpns/zego_zpns.dart';
