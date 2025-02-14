@@ -1,6 +1,3 @@
-// Flutter imports:
-import 'package:flutter/services.dart';
-
 /// @nodoc
 class ZegoSignalingPluginLocalIMNotificationConfig {
   const ZegoSignalingPluginLocalIMNotificationConfig({

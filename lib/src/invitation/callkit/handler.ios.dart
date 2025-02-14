@@ -7,7 +7,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/cache/offline.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 
 UUID? iOSIncomingPushUUID;
