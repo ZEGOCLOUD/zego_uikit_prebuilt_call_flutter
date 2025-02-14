@@ -17,7 +17,7 @@ class ZegoCallInvitationConfig {
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallInvitationOfflineConfig? offline,
-    @Deprecated('removed')
+    @Deprecated('deprecated since 4.17.0-beta.9')
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
@@ -613,6 +613,8 @@ class ZegoCallAndroidNotificationChannelConfig {
         '}';
   }
 }
+
+@Deprecated('deprecated since 4.17.0-beta.9')
 
 /// Confirmation dialog when requestPermission.
 class ZegoCallPermissionConfirmDialogConfig {
