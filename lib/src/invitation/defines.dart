@@ -48,6 +48,7 @@ class ZegoCallInvitationData {
   ZegoCallInvitationType type = ZegoCallInvitationType.voiceCall;
   List<ZegoUIKitUser> invitees = [];
   ZegoUIKitUser? inviter;
+  int timeoutSeconds = 60;
   String customData = '';
 
   ZegoCallInvitationData({
@@ -56,6 +57,7 @@ class ZegoCallInvitationData {
     required this.type,
     required this.inviter,
     required this.invitees,
+    required this.timeoutSeconds,
     required this.customData,
   });
 
@@ -88,6 +90,7 @@ class ZegoCallInvitationData {
     type = ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
         ZegoCallInvitationType.voiceCall;
     customData = dict['data'] as String? ?? '';
+    timeoutSeconds = dict['timeout'] as int? ?? 60;
 
     for (final invitee in dict['invitees'] as List) {
       final inviteeDict = invitee as Map<String, dynamic>;
@@ -109,6 +112,7 @@ class ZegoCallInvitationData {
       'call_id': callID,
       'invitation_id': invitationID,
       'type': type.index,
+      'timeout': timeoutSeconds,
       'data': customData,
       'inviter_id': inviter?.id ?? '',
       'inviter_name': inviter?.name ?? '',
@@ -125,6 +129,7 @@ class ZegoCallInvitationData {
         'callID: $callID, '
         'invitationID: $invitationID, '
         'type: $type, '
+        'timeoutSeconds: $timeoutSeconds, '
         'invitees: ${invitees.map((invitee) => invitee.toString())}, '
         'inviter: $inviter, '
         'customData: $customData.'

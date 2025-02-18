@@ -291,6 +291,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
     required this.callType,
     required this.callID,
     required this.payloadData,
+    required this.timeoutSeconds,
     this.accept = false,
   });
 
@@ -300,6 +301,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   String payloadData = '';
   String callID = '';
   bool accept = false;
+  int timeoutSeconds = 60;
   int datetime = 0;
 
   bool get isEmpty => invitationID.isEmpty || payloadData.isEmpty;
@@ -352,7 +354,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
         ZegoCallInvitationType.voiceCall;
     payloadData = dict['data'] as String? ?? '';
     callID = dict['call_id'] as String? ?? '';
-
+    timeoutSeconds = dict['timeout'] as int? ?? 60;
     accept = dict['accept'] as bool? ?? false;
     datetime = dict['datetime'] as int? ?? 0;
   }
@@ -368,6 +370,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
         'call_id': callID,
         'data': payloadData,
         'accept': accept,
+        'timeout': timeoutSeconds,
         'datetime': datetime,
       };
 }

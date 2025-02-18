@@ -395,14 +395,17 @@ class ZegoCallInvitationServicePrivateImpl
       _pageManager?.listenStream();
 
       if (Platform.isAndroid) {
-        getOfflineCallKitCacheParams().then((offlineCallKitCacheParameter) {
+        ZegoUIKitCallCache()
+            .offlineCallKit
+            .getCacheParams()
+            .then((offlineCallKitCacheParameter) {
           ZegoLoggerService.logInfo(
             'offline callkit params: ${offlineCallKitCacheParameter.dict}',
             tag: 'call-invitation',
             subTag: 'service private(${identityHashCode(this)}), init plugins',
           );
 
-          clearOfflineCallKitCacheParams();
+          ZegoUIKitCallCache().offlineCallKit.clearCacheParams();
 
           if (offlineCallKitCacheParameter.isEmpty) {
             return;
@@ -857,72 +860,6 @@ class ZegoCallInvitationServicePrivateImpl
             );
       }
     }
-  }
-
-  Future<void> requestSystemAlertWindowPermission() async {
-    if (!Platform.isAndroid) {
-      return;
-    }
-
-    if (!_isInit) {
-      ZegoLoggerService.logInfo(
-        'service not init',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
-      );
-
-      return;
-    }
-
-    if (null == _data?.config.systemAlertWindowConfirmDialog) {
-      await requestSystemAlertWindowPermissionImpl();
-    } else {
-      PermissionStatus status = await Permission.systemAlertWindow.status;
-      if (status != PermissionStatus.granted) {
-        await PackageInfo.fromPlatform().then((info) async {
-          await permissionConfirmationDialog(
-            _data?.contextQuery?.call(),
-            dialogConfig: _data!.config.systemAlertWindowConfirmDialog!,
-            dialogInfo: ZegoCallPermissionConfirmDialogInfo(
-              title:
-                  '${_data!.innerText.permissionConfirmDialogTitle.replaceFirst(param_1, info.packageName.isEmpty ? 'App' : info.appName)} ${_data!.innerText.systemAlertWindowConfirmDialogSubTitle}',
-              cancelButtonName:
-                  _data!.innerText.permissionConfirmDialogDenyButton,
-              confirmButtonName:
-                  _data!.innerText.permissionConfirmDialogAllowButton,
-            ),
-          ).then((isAllow) async {
-            if (!isAllow) {
-              ZegoLoggerService.logInfo(
-                'requestPermission of systemAlertWindow, not allow',
-                tag: 'call-invitation',
-                subTag: 'service(${identityHashCode(this)})',
-              );
-
-              return;
-            }
-            await requestSystemAlertWindowPermissionImpl();
-          });
-        });
-      }
-    }
-  }
-
-  Future<void> requestSystemAlertWindowPermissionImpl() async {
-    /// for bring app to foreground from background in Android 10
-    await requestPermission(Permission.systemAlertWindow).then((value) {
-      ZegoLoggerService.logInfo(
-        'request system alert window permission result:$value',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)})',
-      );
-    }).then((_) {
-      ZegoLoggerService.logInfo(
-        'requestPermission of systemAlertWindow done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)})',
-      );
-    });
   }
 }
 

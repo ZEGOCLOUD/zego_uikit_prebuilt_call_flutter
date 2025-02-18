@@ -1,3 +1,7 @@
+## 4.17.0-beta.9
+
+- Modify the way notifications pop up in android background mode
+
 ## 4.17.0-beta.8
 
 - Merge to version 4.16.22
