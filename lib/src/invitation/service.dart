@@ -158,6 +158,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// SO! please
   /// 1. set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
   /// to false in  [ZegoUIKitPrebuiltCallInvitationService.init]
+  ///
   /// 2. call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
   /// after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
   /// finish loading(data or user login)

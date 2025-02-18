@@ -196,6 +196,12 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       },
     );
 
+    _initUIKITOnAcceptCallInvitation(
+      message: message,
+      appSign: appSign,
+      callID: callID,
+    );
+
     final result = message.isAdvanceMode
         ? await ZegoUIKit().getSignalingPlugin().acceptAdvanceInvitation(
               inviterID: message.inviter.id,
@@ -207,6 +213,11 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
               targetInvitationID: message.invitationID,
             );
+    ZegoLoggerService.logInfo(
+      'accept done',
+      tag: 'call-invitation',
+      subTag: 'offline, call handler',
+    );
 
     await clearAllCallKitCalls();
 
@@ -224,9 +235,15 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
 
       return;
     }
+  }
 
+  Future<void> _initUIKITOnAcceptCallInvitation({
+    required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
+    required String appSign,
+    required String callID,
+  }) async {
     ZegoLoggerService.logInfo(
-      'accepted, try init ZegoUIKit',
+      'try init ZegoUIKit on accept',
       tag: 'call-invitation',
       subTag: 'offline, call handler',
     );
