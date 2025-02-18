@@ -1,3 +1,7 @@
+## 4.17.0-beta.10
+
+- Fix the problem of occasionally not entering the call room after agreeing to offline calls on android
+
 ## 4.17.0-beta.9
 
 - Modify the way notifications pop up in android background mode
