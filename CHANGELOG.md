@@ -1,3 +1,8 @@
+## 4.16.23
+
+- Bugs
+  - Fix the issue where setting permission to empty in ZegoUIKitPrebuiltCallInvitationService.init still requests camera/microphone permissions
+
 ## 4.16.22
 
 - Bugs

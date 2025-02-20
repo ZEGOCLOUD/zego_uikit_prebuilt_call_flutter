@@ -307,6 +307,23 @@ class ZegoUIKitPrebuiltCallInvitationService
       subTag: 'service(${identityHashCode(this)}), init',
     );
 
+    private._initData(
+      appID: appID,
+      appSign: appSign,
+      token: token,
+      userID: userID,
+      userName: userName,
+      plugins: plugins,
+      requireConfig: requireConfig,
+      ringtoneConfig: ringtoneConfig,
+      config: config,
+      uiConfig: uiConfig,
+      notificationConfig: notificationConfig,
+      innerText: innerText,
+      events: events,
+      invitationEvents: invitationEvents,
+    );
+
     try {
       await private._initPermissions().then((_) {
         ZegoLoggerService.logInfo(
