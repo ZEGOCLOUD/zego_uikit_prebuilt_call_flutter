@@ -137,23 +137,6 @@ class ZegoCallInvitationServicePrivateImpl
 
     this.invitationImpl = invitationImpl;
 
-    _data = ZegoUIKitPrebuiltCallInvitationData(
-      appID: appID,
-      appSign: appSign,
-      token: token,
-      userID: userID,
-      userName: userName,
-      plugins: plugins,
-      requireConfig: requireConfig ?? _defaultConfig,
-      events: events,
-      invitationEvents: invitationEvents,
-      innerText: innerText,
-      ringtoneConfig: ringtoneConfig,
-      config: config,
-      uiConfig: uiConfig,
-      notificationConfig: notificationConfig,
-    );
-
     if (null != _contextQuery) {
       ZegoLoggerService.logInfo(
         'update contextQuery in call invitation config',
@@ -440,12 +423,61 @@ class ZegoCallInvitationServicePrivateImpl
     await _plugins?.uninit();
   }
 
+  void _initData({
+    required int appID,
+    required String appSign,
+    required String token,
+    required String userID,
+    required String userName,
+    required List<IZegoUIKitPlugin> plugins,
+    ZegoCallPrebuiltConfigQuery? requireConfig,
+    ZegoCallInvitationConfig? config,
+    ZegoCallRingtoneConfig? ringtoneConfig,
+    ZegoCallInvitationUIConfig? uiConfig,
+    ZegoCallInvitationNotificationConfig? notificationConfig,
+    ZegoCallInvitationInnerText? innerText,
+    ZegoUIKitPrebuiltCallEvents? events,
+    ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
+  }) {
+    ZegoLoggerService.logInfo(
+      'init data, ',
+      tag: 'call-invitation',
+      subTag: 'service private(${identityHashCode(this)})',
+    );
+
+    _data = ZegoUIKitPrebuiltCallInvitationData(
+      appID: appID,
+      appSign: appSign,
+      token: token,
+      userID: userID,
+      userName: userName,
+      plugins: plugins,
+      requireConfig: requireConfig ?? _defaultConfig,
+      events: events,
+      invitationEvents: invitationEvents,
+      innerText: innerText,
+      ringtoneConfig: ringtoneConfig,
+      config: config,
+      uiConfig: uiConfig,
+      notificationConfig: notificationConfig,
+    );
+  }
+
   Future<void> _initPermissions() async {
     ZegoLoggerService.logInfo(
       'init permissions',
       tag: 'call-invitation',
       subTag: 'service private(${identityHashCode(this)})',
     );
+
+    if (_data?.config.permissions.isEmpty ?? true) {
+      ZegoLoggerService.logInfo(
+        'skip permissions check due to empty permissions list',
+        tag: 'call-invitation',
+        subTag: 'service private(${identityHashCode(this)})',
+      );
+      return;
+    }
 
     if (_data?.config.permissions
             .contains(ZegoCallInvitationPermission.camera) ??
