@@ -1,3 +1,8 @@
+## 4.17.0-beta.12
+
+- Bugs
+  - Fix the problem of init issue on android 14
+
 ## 4.17.0-beta.11
 
 - Merge to version 4.16.23

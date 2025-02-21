@@ -163,6 +163,12 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
   /// finish loading(data or user login)
   void enterAcceptedOfflineCall() {
+    ZegoLoggerService.logInfo(
+      'try enterAcceptedOfflineCall',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
     if (private.waitingEnterAcceptedOfflineCallWhenInitNotDone) {
       ZegoLoggerService.logInfo(
         'enterAcceptedOfflineCall, '
@@ -177,7 +183,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     if (!private._isInit) {
       ZegoLoggerService.logInfo(
         'enterAcceptedOfflineCall, '
-        'not init, will be enter after init done',
+        'not init, please call after init done',
         tag: 'call-invitation',
         subTag: 'page manager',
       );
@@ -456,9 +462,14 @@ class ZegoUIKitPrebuiltCallInvitationService
 
         if (Platform.isAndroid) {
           final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
+          ZegoLoggerService.logError(
+            'mobile system version:$mobileSystemVersion',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), init',
+          );
+
           if (mobileSystemVersion.major >= 14) {
-            await FlutterCallkitIncoming.requestFullIntentPermission()
-                .then((res) {
+            FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
               ZegoLoggerService.logInfo(
                 'requestFullIntentPermission done, res:$res',
                 tag: 'call-invitation',
