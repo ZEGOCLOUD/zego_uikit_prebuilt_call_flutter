@@ -332,7 +332,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       ZegoLoggerService.logInfo(
         'parsing handler info:$handlerInfoJson',
         tag: 'call-invitation',
-        subTag: 'call handler, missed call',
+        subTag: 'offline, call handler',
       );
       final handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
 
@@ -372,7 +372,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       final lookup =
           IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
       ZegoLoggerService.logInfo(
-        'isolate: FlutterCallkitIncoming.onEvent, '
+        'FlutterCallkitIncoming.onEvent, '
         'lookupPortResult(${lookup?.hashCode}), '
         'backgroundPort(${backgroundPort?.hashCode}), '
         'backgroundPort!.sendPort(${backgroundPort?.sendPort.hashCode}), ',
