@@ -55,7 +55,7 @@ enum ZegoCallMenuBarButtonName {
   /// In PIP Mode, just only show video, some configs maybe useless
   pipButton,
 
-  /// Button for controlling the display or hiding of the beauty effect adjustment panel.
+  /// Button for controlling the display or hiding of the ADVANCE/BASE beauty effect adjustment panel.
   beautyEffectButton,
 
   /// Button to open/hide the chat UI.

@@ -20,6 +20,7 @@ import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart
 import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
@@ -331,24 +332,19 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.permission.private.uninitByPrebuilt();
       controller.pip.private.uninitByPrebuilt();
 
-      ZegoUIKit().leaveRoom();
+      uninitBaseBeautyConfig();
+      uninitAdvanceEffectsPlugins();
+
+      ZegoUIKit().leaveRoom().then((_) {
+        /// only effect call after leave room
+        ZegoUIKit().enableCustomVideoProcessing(false);
+      });
       // await ZegoUIKit().uninit();
     } else {
       ZegoLoggerService.logInfo(
         'mini machine state is minimizing, room will not be leave',
         tag: 'call',
         subTag: 'prebuilt',
-      );
-    }
-
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-      ZegoUIKit().getBeautyPlugin().uninit();
-
-      ZegoUIKit().uninstallPlugins(
-        widget.plugins
-                ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
-                .toList() ??
-            [],
       );
     }
 
@@ -558,7 +554,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     assert(widget.appID > 0);
     assert(widget.appSign.isNotEmpty || widget.token.isNotEmpty);
 
-    await initEffectsPlugins();
+    await initAdvanceEffectsPlugins();
 
     final config = widget.config;
     await initPermissions().then((value) async {
@@ -595,7 +591,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);
 
         _setVideoConfig();
-        _setBeautyConfig();
+        initBaseBeautyConfig();
 
         ZegoUIKit()
 
@@ -654,34 +650,73 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
   }
 
-  Future<void> _setBeautyConfig() async {
-    ZegoUIKit().enableCustomVideoProcessing(
-      ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null,
-    );
+  Future<void> initBaseBeautyConfig() async {
+    final useBeautyEffect = widget.config.bottomMenuBar.buttons
+        .contains(ZegoCallMenuBarButtonName.beautyEffectButton);
+    final useAdvanceEffect =
+        ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) != null;
+
+    ZegoUIKit()
+        .enableCustomVideoProcessing(useBeautyEffect || useAdvanceEffect);
+
+    if (!useBeautyEffect || useAdvanceEffect) {
+      return;
+    }
+
+    await ZegoUIKit()
+        .startEffectsEnv()
+        .then((value) => ZegoUIKit().enableBeauty(true));
   }
 
-  Future<void> initEffectsPlugins() async {
-    ZegoUIKit().installPlugins(widget.plugins ?? []);
+  Future<void> uninitBaseBeautyConfig() async {
+    await ZegoUIKit().resetSoundEffect();
+    await ZegoUIKit().resetBeautyEffect();
+    await ZegoUIKit().stopEffectsEnv();
+    await ZegoUIKit().enableBeauty(false);
+  }
 
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-      ZegoUIKit()
-          .getBeautyPlugin()
-          .setConfig(widget.config.beauty ?? ZegoBeautyPluginConfig());
-      await ZegoUIKit()
-          .getBeautyPlugin()
-          .init(
-            widget.appID,
-            appSign: widget.appSign,
-            licence: widget.config.beauty?.license?.call() ?? '',
-          )
-          .then((value) {
-        ZegoLoggerService.logInfo(
-          'effects plugin init done',
-          tag: 'call',
-          subTag: 'plugin',
-        );
-      });
+  Future<void> initAdvanceEffectsPlugins() async {
+    ZegoUIKit().installPlugins(
+      widget.plugins
+              ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
+              .toList() ??
+          [],
+    );
+
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) == null) {
+      return;
     }
+
+    ZegoUIKit()
+        .getBeautyPlugin()
+        .setConfig(widget.config.beauty ?? ZegoBeautyPluginConfig());
+    await ZegoUIKit()
+        .getBeautyPlugin()
+        .init(
+          widget.appID,
+          appSign: widget.appSign,
+          licence: widget.config.beauty?.license?.call() ?? '',
+        )
+        .then((value) {
+      ZegoLoggerService.logInfo(
+        'effects plugin init done',
+        tag: 'call',
+        subTag: 'plugin',
+      );
+    });
+  }
+
+  Future<void> uninitAdvanceEffectsPlugins() async {
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().getBeautyPlugin().uninit();
+    }
+
+    ZegoUIKit().uninstallPlugins(
+      widget.plugins
+              ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
+              .toList() ??
+          [],
+    );
   }
 
   void correctConfigValue() {
