@@ -499,10 +499,7 @@ class ZegoCallInvitationServicePrivateImpl
       token: _data?.token ?? '',
     );
 
-    // enableCustomVideoProcessing
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
-      ZegoUIKit().enableCustomVideoProcessing(true);
-    }
+    ZegoUIKit().enableCustomVideoProcessing(false);
 
     ZegoUIKit.instance.turnCameraOn(false);
   }
@@ -880,11 +877,11 @@ class ZegoCallInvitationServicePrivateImpl
       return;
     }
 
-    if (null == _data?.config.systemAlertWindowConfirmDialog) {
-      await requestSystemAlertWindowPermissionImpl();
-    } else {
-      PermissionStatus status = await Permission.systemAlertWindow.status;
-      if (status != PermissionStatus.granted) {
+    PermissionStatus status = await Permission.systemAlertWindow.status;
+    if (status != PermissionStatus.granted) {
+      if (null == _data?.config.systemAlertWindowConfirmDialog) {
+        await requestSystemAlertWindowPermissionImpl();
+      } else {
         await PackageInfo.fromPlatform().then((info) async {
           await permissionConfirmationDialog(
             _data?.contextQuery?.call(),
