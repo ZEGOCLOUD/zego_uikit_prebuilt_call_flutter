@@ -1,4 +1,9 @@
 
+## 4.17.0-beta.14
+
+- Bugs
+  - Fix the video black screen problem caused by kits mix use
+
 ## 4.17.0-beta.13
 
 - Bugs
