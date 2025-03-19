@@ -1,3 +1,8 @@
+## 4.16.25
+
+- Bugs
+  - Fix the video black screen problem caused by kits mix use
+
 ## 4.16.24
 
 - Bugs

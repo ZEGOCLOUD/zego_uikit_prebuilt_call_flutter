@@ -33,72 +33,79 @@ Future<bool> permissionConfirmationDialog(
           context: context!,
           barrierDismissible: false,
           builder: (BuildContext context) {
-            return CupertinoTheme(
-              data: CupertinoThemeData(
-                brightness:
+            return ZegoScreenUtilInit(
+              designSize: const Size(750, 1334),
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (context, child) {
+                return CupertinoTheme(
+                  data: CupertinoThemeData(
+                    brightness:
                     dialogConfig.backgroundBrightness ?? Brightness.light,
-              ),
-              child: CupertinoAlertDialog(
-                title: Text(
-                  dialogInfo.title,
-                  textAlign: TextAlign.center,
-                  style: dialogConfig.titleStyle ??
-                      const TextStyle(
-                        fontSize: 18.0,
-                        // fontWeight: FontWeight.normal,
-                        color: Colors.black,
-                      ),
-                ),
-                actions: [
-                  CupertinoDialogAction(
-                    child: Text(
-                      dialogInfo.cancelButtonName,
-                      style: dialogConfig.actionTextStyle ??
-                          const TextStyle(
-                            fontSize: 18,
-                            color: Colors.blue,
+                  ),
+                  child: CupertinoAlertDialog(
+                    title: Text(
+                      dialogInfo.title,
+                      textAlign: TextAlign.center,
+                      style: dialogConfig.titleStyle ??
+                          TextStyle(
+                            fontSize: 25.zR,
+                            // fontWeight: FontWeight.normal,
+                            color: Colors.black,
                           ),
                     ),
-                    onPressed: () {
-                      //  pop this dialog
-                      try {
-                        Navigator.of(
-                          context,
-                          rootNavigator: rootNavigator,
-                        ).pop(false);
-                      } catch (e) {
-                        ZegoLoggerService.logError(
-                          'navigator exception:$e, ',
-                          tag: 'call-invitation',
-                          subTag: 'permission confirmation dialog',
-                        );
-                      }
-                    },
+                    actions: [
+                      CupertinoDialogAction(
+                        child: Text(
+                          dialogInfo.cancelButtonName,
+                          style: dialogConfig.actionTextStyle ??
+                              TextStyle(
+                                fontSize: 25.zR,
+                                color: Colors.blue,
+                              ),
+                        ),
+                        onPressed: () {
+                          //  pop this dialog
+                          try {
+                            Navigator.of(
+                              context,
+                              rootNavigator: rootNavigator,
+                            ).pop(false);
+                          } catch (e) {
+                            ZegoLoggerService.logError(
+                              'navigator exception:$e, ',
+                              tag: 'call-invitation',
+                              subTag: 'permission confirmation dialog',
+                            );
+                          }
+                        },
+                      ),
+                      CupertinoDialogAction(
+                        child: Text(
+                          dialogInfo.confirmButtonName,
+                          style: dialogConfig.actionTextStyle ??
+                              TextStyle(fontSize: 25.zR, color: Colors.blue),
+                        ),
+                        onPressed: () {
+                          //  pop this dialog
+                          try {
+                            Navigator.of(
+                              context,
+                              rootNavigator: rootNavigator,
+                            ).pop(true);
+                          } catch (e) {
+                            ZegoLoggerService.logError(
+                              'navigator exception:$e, ',
+                              tag: 'call-invitation',
+                              subTag: 'permission confirmation dialog',
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  CupertinoDialogAction(
-                    child: Text(
-                      dialogInfo.confirmButtonName,
-                      style: dialogConfig.actionTextStyle ??
-                          const TextStyle(fontSize: 18, color: Colors.blue),
-                    ),
-                    onPressed: () {
-                      //  pop this dialog
-                      try {
-                        Navigator.of(
-                          context,
-                          rootNavigator: rootNavigator,
-                        ).pop(true);
-                      } catch (e) {
-                        ZegoLoggerService.logError(
-                          'navigator exception:$e, ',
-                          tag: 'call-invitation',
-                          subTag: 'permission confirmation dialog',
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
+                );
+              },
             );
           },
         ) ??
