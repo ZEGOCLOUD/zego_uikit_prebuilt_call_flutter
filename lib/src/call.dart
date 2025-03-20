@@ -654,10 +654,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     final useBeautyEffect = widget.config.bottomMenuBar.buttons
         .contains(ZegoCallMenuBarButtonName.beautyEffectButton);
     final useAdvanceEffect =
-        ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) != null;
-
-    ZegoUIKit()
-        .enableCustomVideoProcessing(useBeautyEffect || useAdvanceEffect);
+        ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null;
 
     if (!useBeautyEffect || useAdvanceEffect) {
       return;
@@ -683,7 +680,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           [],
     );
 
-    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) == null) {
+    final useAdvanceEffect =
+        ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null;
+    ZegoUIKit().enableCustomVideoProcessing(useAdvanceEffect);
+
+    if (!useAdvanceEffect) {
       return;
     }
 
