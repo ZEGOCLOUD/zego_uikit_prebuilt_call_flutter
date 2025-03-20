@@ -1,3 +1,8 @@
+## 4.16.26
+
+- Bugs
+  - Fix the video black screen in calling view
+
 ## 4.16.25
 
 - Bugs
