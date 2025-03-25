@@ -705,6 +705,7 @@ void _listenFlutterCallkitIncomingEvent({
 
         break;
       case Event.actionCallDecline:
+      case Event.actionCallTimeout:
         await clearOfflineCallKitCacheParams();
         await clearOfflineCallKitCallID();
 
@@ -725,10 +726,6 @@ void _listenFlutterCallkitIncomingEvent({
                 ).toJson(),
               );
         }
-        break;
-      case Event.actionCallTimeout:
-        await clearOfflineCallKitCacheParams();
-        await clearOfflineCallKitCallID();
         break;
       default:
         break;
