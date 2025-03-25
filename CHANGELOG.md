@@ -1,3 +1,8 @@
+## 4.16.27
+
+- Bugs
+  - when offline notification swiped away, should be regarded as refusal
+
 ## 4.16.26
 
 - Bugs
