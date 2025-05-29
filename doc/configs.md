@@ -760,11 +760,35 @@
 
 - int `aspectHeight`: aspect height
 
-- bool `enableWhenBackground`: android: only available on SDK higher than 31(>=31)
+- bool `enableWhenBackground`: android: only available on SDK higher than 31(>=31); iOS: only available on 15.0;
 
 - [ZegoCallPIPAndroidConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPIPAndroidConfig-class.html) `android`: android config
 
   - Widget? `background`: background widget, default is black
+
+- [ZegoCallPIPIOSConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPIPIOSConfig-class.html) `iOS`: iOS config
+  
+  - bool? `support`: 
+  
+  >   Whether to enable PIP under iOS
+  >   After setting, it cannot be modified again within one lifetime of prebuilt
+  >
+  >   If you use [ZegoUIKitPrebuiltCallInvitationService], then the value of
+  >   [support] and [ZegoCallInvitationPIPConfig.pip.iOS.support] must be
+  >   consistent, otherwise, the video frame will not be rendered.
+  >   ```dart
+  >   ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
+  >
+  >   ZegoUIKitPrebuiltCallInvitationService().init(
+  >      config: ZegoCallInvitationConfig(
+  >        pip: ZegoCallInvitationPIPConfig(
+  >          iOS: ZegoCallInvitationPIPIOSConfig(
+  >            support: true,
+  >          ),
+  >        ),
+  >      ),
+  >    );
+  >   ```
 
 ### user
 

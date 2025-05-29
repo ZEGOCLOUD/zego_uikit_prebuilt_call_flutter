@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:floating/floating.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -15,6 +16,9 @@ import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_interface.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
@@ -49,6 +53,8 @@ part 'controller/private/user.dart';
 
 part 'controller/private/permission.dart';
 
+part 'controller/private/screen_sharing.dart';
+
 part 'controller/private/private.dart';
 
 /// Used to control the call functionality.
@@ -74,7 +80,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
-  String get version => "4.16.29";
+  String get version => "4.17.0";
 
   /// This function is used to end the current call.
   ///
@@ -179,6 +185,7 @@ class ZegoUIKitPrebuiltCallController
     minimize.private.uninitByPrebuilt();
     permission.private.uninitByPrebuilt();
     pip.private.uninitByPrebuilt();
+    screenSharing.private.uninitByPrebuilt();
 
     final result = await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(

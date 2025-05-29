@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -289,7 +290,9 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
     required this.invitationID,
     required this.inviter,
     required this.callType,
+    required this.callID,
     required this.payloadData,
+    required this.timeoutSeconds,
     this.accept = false,
   });
 
@@ -297,7 +300,9 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   ZegoUIKitUser inviter = ZegoUIKitUser.empty();
   ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
   String payloadData = '';
+  String callID = '';
   bool accept = false;
+  int timeoutSeconds = 60;
   int datetime = 0;
 
   bool get isEmpty => invitationID.isEmpty || payloadData.isEmpty;
@@ -349,7 +354,8 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
     callType = ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
         ZegoCallInvitationType.voiceCall;
     payloadData = dict['data'] as String? ?? '';
-
+    callID = dict['call_id'] as String? ?? '';
+    timeoutSeconds = dict['timeout'] as int? ?? 60;
     accept = dict['accept'] as bool? ?? false;
     datetime = dict['datetime'] as int? ?? 0;
   }
@@ -362,8 +368,10 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
         ZegoCallInvitationProtocolKey.invitationID: invitationID,
         'inviter': inviter.toJson(),
         'type': callType.value,
+        'call_id': callID,
         'data': payloadData,
         'accept': accept,
+        'timeout': timeoutSeconds,
         'datetime': datetime,
       };
 }

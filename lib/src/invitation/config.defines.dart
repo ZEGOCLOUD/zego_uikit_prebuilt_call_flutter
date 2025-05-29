@@ -141,6 +141,7 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
+  @Deprecated('deprecated since 4.17.0')
   systemAlertWindow,
 }
 
@@ -152,7 +153,6 @@ class ZegoCallInvitationPermissions {
   static List<ZegoCallInvitationPermission> get audio => [
         ZegoCallInvitationPermission.camera,
         ZegoCallInvitationPermission.microphone,
-        ZegoCallInvitationPermission.systemAlertWindow,
       ];
 }
 

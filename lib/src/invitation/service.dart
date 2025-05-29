@@ -10,11 +10,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:flutter_callkit_incoming_yoer/entities/call_event.dart';
-import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -23,21 +23,20 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.android.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal_instance.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/isolate_name_server_guard.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/notification.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/permission.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
@@ -45,6 +44,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notificatio
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
+import 'callkit/android/defines.dart';
+import 'callkit/android/entry_point.dart';
 
 part 'mixins/private/callkit.dart';
 
@@ -140,9 +141,61 @@ class ZegoUIKitPrebuiltCallInvitationService
   bool get isInit => private._isInit;
 
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
+  bool get isInCall => private._pageManager?.isInCall ?? false;
 
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController.instance;
+
+  /// Due to some time-consuming and waiting operations, such as data loading
+  /// or user login in the App.
+  /// so in certain situations, it may not be appropriate to navigate to
+  /// [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  ///
+  /// This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  /// may be **overwritten by some subsequent jump behaviors of the App**.
+  /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  /// in App will be a better choice.
+  ///
+  /// SO! please
+  /// 1. set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
+  /// to false in  [ZegoUIKitPrebuiltCallInvitationService.init]
+  ///
+  /// 2. call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  /// after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
+  /// finish loading(data or user login)
+  void enterAcceptedOfflineCall() {
+    ZegoLoggerService.logInfo(
+      'try enterAcceptedOfflineCall',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    if (private.waitingEnterAcceptedOfflineCallWhenInitNotDone) {
+      ZegoLoggerService.logInfo(
+        'enterAcceptedOfflineCall, '
+        'will be call when init done',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+
+      return;
+    }
+
+    if (!private._isInit) {
+      ZegoLoggerService.logInfo(
+        'enterAcceptedOfflineCall, '
+        'not init, please call after init done',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+
+      private.waitingEnterAcceptedOfflineCallWhenInitNotDone = true;
+
+      return;
+    }
+
+    private._pageManager?.enterAcceptedOfflineCall();
+  }
 
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
@@ -283,6 +336,8 @@ class ZegoUIKitPrebuiltCallInvitationService
       return;
     }
 
+    private._isInit = true;
+
     await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'versions: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion',
@@ -290,8 +345,6 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
     });
-
-    private._isInit = true;
 
     ZegoLoggerService.logInfo(
       'service init, '
@@ -401,12 +454,31 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
 
     try {
-      await private._initContext().then((_) {
+      await private._initContext(config: config).then((_) async {
         ZegoLoggerService.logInfo(
           'initContext done',
           tag: 'call-invitation',
           subTag: 'service(${identityHashCode(this)}), init',
         );
+
+        if (Platform.isAndroid) {
+          final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
+          ZegoLoggerService.logError(
+            'mobile system version:$mobileSystemVersion',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), init',
+          );
+
+          if (mobileSystemVersion.major >= 14) {
+            FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
+              ZegoLoggerService.logInfo(
+                'requestFullIntentPermission done, res:$res',
+                tag: 'call-invitation',
+                subTag: 'callkit',
+              );
+            });
+          }
+        }
       });
     } catch (e) {
       ZegoLoggerService.logError(
@@ -416,15 +488,18 @@ class ZegoUIKitPrebuiltCallInvitationService
       );
     }
 
-    await getOfflineMissedCallNotificationID().then((notificationID) async {
+    await ZegoUIKitCallCache()
+        .missedCall
+        .getNotificationID()
+        .then((notificationID) async {
       if (null == notificationID) {
         return;
       }
 
-      await clearOfflineMissedCallNotificationID();
+      await ZegoUIKitCallCache().missedCall.clearNotificationID();
       final missedCallInvitationData =
-          await getOfflineMissedCallNotification(notificationID);
-      await clearOfflineMissedCallNotification(notificationID);
+          await ZegoUIKitCallCache().missedCall.getNotification(notificationID);
+      await ZegoUIKitCallCache().missedCall.clearNotification(notificationID);
 
       ZegoLoggerService.logInfo(
         'exist missed call notification clicked id,'
@@ -480,6 +555,22 @@ class ZegoUIKitPrebuiltCallInvitationService
             ZegoCallReporter.eventKeyInvitationSourceService,
       },
     );
+
+    ZegoLoggerService.logInfo(
+      'waitingEnterAcceptedOfflineCallWhenInitNotDone:${private.waitingEnterAcceptedOfflineCallWhenInitNotDone}, '
+      'autoEnterAcceptedOfflineCall: ${private._data?.config.offline.autoEnterAcceptedOfflineCall}',
+      tag: 'call-invitation',
+      subTag: 'service(${identityHashCode(this)}), uninit',
+    );
+
+    if ((private._data?.config.offline.autoEnterAcceptedOfflineCall ?? true) ||
+        private.waitingEnterAcceptedOfflineCallWhenInitNotDone) {
+      private.waitingEnterAcceptedOfflineCallWhenInitNotDone = false;
+
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        private._pageManager?.enterAcceptedOfflineCall();
+      });
+    }
   }
 
   ///   you must call this method as soon as the user logout from your app
@@ -522,6 +613,21 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
   }
 
+  ///  enable offline system calling UI
+  ///
+  ///  [FBI WARING]
+  ///
+  ///  if you use CallKit with ZIMKit, please note that.
+  ///  useSystemCallingUI Must be called AFTER ZIMKit().init!!!
+  ///  otherwise the offline handler will be caught by zimkit, resulting in callkit unable to receive the offline handler
+  ///
+  /// ```dart
+  /// await ZIMKit().init(..)
+  /// ...
+  /// ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+  ///   [ZegoUIKitSignalingPlugin()],
+  /// );
+  /// ```
   void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
     ZegoLoggerService.logInfo(
       'plugins size: ${plugins.length}',
@@ -537,9 +643,10 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
       );
 
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .setBackgroundMessageHandler(onBackgroundMessageReceived);
+      ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(
+            onBackgroundMessageReceived,
+            key: 'zego_callkit',
+          );
     } else if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',

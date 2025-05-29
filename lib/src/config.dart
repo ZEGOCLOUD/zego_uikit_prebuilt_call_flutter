@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -43,6 +44,9 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// Configuration options for voice changer and reverberation effects.
   ZegoCallAudioEffectConfig audioEffect;
+
+  /// screen sharing
+  ZegoCallScreenSharingConfig screenSharing;
 
   ZegoCallPIPConfig pip;
 
@@ -232,7 +236,8 @@ class ZegoUIKitPrebuiltCallConfig {
             ),
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
         audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
-        pip = pipConfig ?? ZegoCallPIPConfig();
+        pip = pipConfig ?? ZegoCallPIPConfig(),
+        screenSharing = ZegoCallScreenSharingConfig();
 
   @override
   String toString() {
@@ -247,6 +252,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'user:$user, '
         'layout:$layout, '
         'pip:$pip, '
+        'screenSharing:$screenSharing, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
         'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
@@ -261,10 +267,16 @@ class ZegoUIKitPrebuiltCallConfig {
 }
 
 /// Configuration options for audio/video views.
-/// You can use the [ZegoUIKitPrebuiltCallConfig.audioVideoView] property to set the properties inside this class.
-/// These options allow you to customize the display effects of the audio/video views, such as showing microphone status and usernames.
-/// If you need to customize the foreground or background of the audio/video view, you can use foregroundBuilder and backgroundBuilder.
-/// If you want to hide user avatars or sound waveforms in audio mode, you can set showAvatarInAudioMode and showSoundWavesInAudioMode to false.
+///
+/// You can use the [ZegoUIKitPrebuiltCallConfig.audioVideoView] property to
+/// set the properties inside this class.
+/// These options allow you to customize the display effects of the
+/// audio/video views, such as showing microphone status and usernames.
+///
+/// If you need to customize the foreground or background of the audio/video
+/// view, you can use [foregroundBuilder] and [backgroundBuilder].
+/// If you want to hide user avatars or sound waveforms in audio mode, you
+/// can set [showAvatarInAudioMode] and  [showSoundWavesInAudioMode] to false.
 class ZegoCallAudioVideoViewConfig {
   /// Whether to mirror the displayed video captured by the camera.
   /// This mirroring effect only applies to the front-facing camera.
@@ -929,10 +941,15 @@ class ZegoCallPIPConfig {
     this.aspectHeight = 16,
     this.enableWhenBackground = true,
     ZegoCallPIPAndroidConfig? android,
-  }) : android = android ?? ZegoCallPIPAndroidConfig();
+    ZegoCallPIPIOSConfig? iOS,
+  })  : android = android ?? ZegoCallPIPAndroidConfig(),
+        iOS = iOS ?? ZegoCallPIPIOSConfig();
 
   /// android config
   ZegoCallPIPAndroidConfig android;
+
+  /// ios config
+  ZegoCallPIPIOSConfig iOS;
 
   /// aspect width
   int aspectWidth;
@@ -940,14 +957,25 @@ class ZegoCallPIPConfig {
   /// aspect height
   int aspectHeight;
 
-  /// android: only available on SDK higher than 31(>=31)
-  /// iOS: not limit
+  /// android: only available on SDK higher than 31(>=31), Android 12
+  ///
+  /// Add android:supportsPictureInPicture="true" line to the <activity> tag in android/src/main/AndroidManifest.xml:
+  ///
+  /// <manifest>
+  ///    <application>
+  ///         <activity
+  ///             android:name=".MainActivity"
+  ///             android:supportsPictureInPicture="true"
+  ///             ...
+  ///
+  /// iOS: SDK higher than 15(>=15), only play remote user
   bool enableWhenBackground;
 
   @override
   String toString() {
     return 'ZegoCallPIPConfig:{'
         'android:$android, '
+        'iOS:$iOS, '
         'aspectWidth:$aspectWidth, '
         'aspectHeight:$aspectHeight, '
         'enableWhenAppBackToDesktop:$enableWhenBackground, '
@@ -969,6 +997,42 @@ class ZegoCallPIPAndroidConfig {
   String toString() {
     return 'ZegoCallPIPAndroidConfig:{'
         'background:$background, '
+        '}';
+  }
+}
+
+/// iOS pip
+/// only available on 15.0
+class ZegoCallPIPIOSConfig {
+  ZegoCallPIPIOSConfig({
+    this.support = true,
+  });
+
+  /// Whether to enable PIP under iOS
+  /// After setting, it cannot be modified again within one lifetime of prebuilt
+  ///
+  /// If you use [ZegoUIKitPrebuiltCallInvitationService], then the value of
+  /// [support] and [ZegoCallInvitationPIPConfig.pip.iOS.support] must be
+  /// consistent, otherwise, the video frame will not be rendered.
+  /// ```dart
+  /// ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
+  ///
+  /// ZegoUIKitPrebuiltCallInvitationService().init(
+  ///    config: ZegoCallInvitationConfig(
+  ///      pip: ZegoCallInvitationPIPConfig(
+  ///        iOS: ZegoCallInvitationPIPIOSConfig(
+  ///          support: true,
+  ///        ),
+  ///      ),
+  ///    ),
+  ///  );
+  /// ```
+  bool support;
+
+  @override
+  String toString() {
+    return 'ZegoCallPIPIOSConfig:{'
+        'support:$support, '
         '}';
   }
 }

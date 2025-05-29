@@ -91,7 +91,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     if (ZegoCallMiniOverlayPageState.minimizing ==
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
-        'minimize, is minimizing, ignore',
+        'is minimizing now, ignore',
         tag: 'call',
         subTag: 'controller.minimize',
       );

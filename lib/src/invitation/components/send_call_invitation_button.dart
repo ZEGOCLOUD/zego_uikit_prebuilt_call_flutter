@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -352,7 +353,7 @@ class _ZegoSendCallInvitationButtonState
     return true;
   }
 
-  void onPressed(ZegoStartInvitationButtonResult result) {
+  void onPressed(ZegoStartInvitationButtonResult result) async {
     ZegoLoggerService.logInfo(
       'pressed, result:$result',
       tag: 'call-invitation',
@@ -368,7 +369,7 @@ class _ZegoSendCallInvitationButtonState
       },
     );
 
-    pageManager?.onLocalSendInvitation(
+    await pageManager?.onLocalSendInvitation(
       callID: callIDNotifier.value,
       invitees: List.from(widget.invitees),
       invitationType: widget.isVideoCall

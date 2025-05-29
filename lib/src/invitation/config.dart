@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -14,25 +15,27 @@ class ZegoCallInvitationConfig {
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
-      ZegoCallInvitationPermission.systemAlertWindow,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
+    ZegoCallInvitationOfflineConfig? offline,
+    @Deprecated('deprecated since 4.17.0')
     ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
+    ZegoCallInvitationPIPConfig? pip,
     @Deprecated(
         'use inCalling.canInvitingInCalling instead$deprecatedTipsV4150')
     bool canInvitingInCalling = false,
     @Deprecated(
         'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
     bool onlyInitiatorCanInvite = false,
-  })  : systemAlertWindowConfirmDialog = systemAlertWindowConfirmDialog ??
-            ZegoCallPermissionConfirmDialogConfig(),
+  })  : offline = offline ?? ZegoCallInvitationOfflineConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
               onlyInitiatorCanInvite: onlyInitiatorCanInvite,
             ),
-        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig();
+        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig(),
+        pip = pip ?? ZegoCallInvitationPIPConfig();
 
   /// If you want to a pure audio call with invitation without popping up
   /// camera permission requests, you can remove the camera in [permissions]
@@ -67,15 +70,17 @@ class ZegoCallInvitationConfig {
   /// 2. other participants can enter the call after the initiator leaves.
   bool endCallWhenInitiatorLeave;
 
+  /// offline config
+  ZegoCallInvitationOfflineConfig offline;
+
   ///  calling config
   ZegoCallInvitationInCallingConfig inCalling;
 
   ///  missed call config
   ZegoCallInvitationMissedCallConfig missedCall;
 
-  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
-  /// Default will pop-up a confirmation box. If not, please set it to null.
-  ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog;
+  /// pip
+  ZegoCallInvitationPIPConfig pip;
 
   /// network config
   ZegoNetworkLoadingConfig? networkLoading;
@@ -85,9 +90,38 @@ class ZegoCallInvitationConfig {
     return 'ZegoCallInvitationConfig:{'
         'permissions:$permissions, '
         'calling:$inCalling, '
+        'offline:$offline, '
+        'missedCall:$missedCall, '
+        'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
-        'systemAlertWindowConfirmDialog:$systemAlertWindowConfirmDialog, '
         'networkLoading:$networkLoading, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationOfflineConfig {
+  ZegoCallInvitationOfflineConfig({
+    this.autoEnterAcceptedOfflineCall = true,
+  });
+
+  /// Due to some time-consuming and waiting operations, such as data loading
+  /// or user login in the App.
+  /// so in certain situations, it may not be appropriate to navigate to
+  /// [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  ///
+  /// This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  /// may be **overwritten by some subsequent jump behaviors of the App**.
+  /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  /// in App will be a better choice.
+  ///
+  /// When you want to do this, set it to **false** (default is true) and then
+  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  bool autoEnterAcceptedOfflineCall;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationOfflineConfig:{'
+        'autoEnterAcceptedOfflineCall:$autoEnterAcceptedOfflineCall, '
         '}';
   }
 }
@@ -110,6 +144,7 @@ class ZegoCallInvitationInCallingConfig {
   ///
   /// If set to false, all participants in the call can invite others.
   bool onlyInitiatorCanInvite;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInCallingConfig:{'
@@ -159,6 +194,51 @@ class ZegoCallInvitationMissedCallConfig {
         'enableDialBack:$enableDialBack, '
         'timeoutSeconds:$timeoutSeconds, '
         'resourceID:$resourceID, '
+        '}';
+  }
+}
+
+/// pip config
+class ZegoCallInvitationPIPConfig {
+  /// ios config
+  ZegoCallInvitationPIPIOSConfig iOS;
+
+  ZegoCallInvitationPIPConfig({
+    ZegoCallInvitationPIPIOSConfig? iOS,
+  }) : iOS = iOS ?? ZegoCallInvitationPIPIOSConfig();
+}
+
+/// iOS pip
+/// only available on 15.0
+class ZegoCallInvitationPIPIOSConfig {
+  ZegoCallInvitationPIPIOSConfig({
+    this.support = false,
+  });
+
+  /// Whether to enable PIP under iOS
+  /// After setting, it cannot be modified again within one lifetime of prebuilt
+  ///
+  /// the value of [support] and [ZegoUIKitPrebuiltCallConfig.pip.iOS.support] must be consistent,
+  /// otherwise, the video frame will not be rendered.
+  /// ```dart
+  /// ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
+  ///
+  /// ZegoUIKitPrebuiltCallInvitationService().init(
+  ///    config: ZegoCallInvitationConfig(
+  ///      pip: ZegoCallInvitationPIPConfig(
+  ///        iOS: ZegoCallInvitationPIPIOSConfig(
+  ///          support: true,
+  ///        ),
+  ///      ),
+  ///    ),
+  ///  );
+  /// ```
+  bool support;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationPIPIOSConfig:{'
+        'support:$support, '
         '}';
   }
 }
@@ -434,7 +514,7 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated call channel config, please use callChannel
     @Deprecated('use callChannel.channelID instead$deprecatedTipsV4150')
-    String channelID = 'CallInvitation',
+    String channelID = 'call_invitation',
     @Deprecated('use callChannel.channelName instead$deprecatedTipsV4150')
     String channelName = 'Call Invitation',
     @Deprecated('use callChannel.icon instead$deprecatedTipsV4150')
@@ -447,9 +527,9 @@ class ZegoCallAndroidNotificationConfig {
 
     /// Deprecated message channel config, please use messageChannel
     @Deprecated('use messageChannel.channelID instead$deprecatedTipsV4150')
-    String messageChannelID = 'Message',
+    String messageChannelID = 'zimkit_message',
     @Deprecated('use messageChannel.channelName instead$deprecatedTipsV4150')
-    String messageChannelName = 'Message',
+    String messageChannelName = 'Chat Message',
     @Deprecated('use messageChannel.icon instead$deprecatedTipsV4150')
     String? messageIcon = '',
     @Deprecated('use messageChannel.sound instead$deprecatedTipsV4150')
@@ -469,7 +549,7 @@ class ZegoCallAndroidNotificationConfig {
             ),
         missedCallChannel = missedCallChannel ??
             ZegoCallAndroidNotificationChannelConfig(
-              channelID: 'Missed Call',
+              channelID: 'missed_call',
               channelName: 'Missed Call',
               icon: '',
               sound: '',
@@ -517,8 +597,8 @@ class ZegoCallAndroidNotificationChannelConfig {
   bool vibrate;
 
   ZegoCallAndroidNotificationChannelConfig({
-    this.channelID = 'CallInvitation',
-    this.channelName = 'Call Invitation',
+    this.channelID = 'unknown_channel',
+    this.channelName = 'Unknown Channel',
     this.icon = '',
     this.sound = '',
     this.vibrate = true,
@@ -535,6 +615,7 @@ class ZegoCallAndroidNotificationChannelConfig {
   }
 }
 
+@Deprecated('deprecated since 4.17.0')
 /// Confirmation dialog when requestPermission.
 class ZegoCallPermissionConfirmDialogConfig {
   String? title;

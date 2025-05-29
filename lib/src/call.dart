@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:floating/floating.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -20,8 +21,10 @@ import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart
 import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
+import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/events.dart';
@@ -114,6 +117,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
 
 class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     with SingleTickerProviderStateMixin {
+  var contextInitNotifier = ValueNotifier<bool>(false);
+
   var barVisibilityNotifier = ValueNotifier<bool>(true);
   var barRestartHideTimerNotifier = ValueNotifier<int>(0);
   var chatViewVisibleNotifier = ValueNotifier<bool>(false);
@@ -150,6 +155,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     });
 
     return isAllEntered;
+  }
+
+  bool get playingStreamInPIPUnderIOS {
+    bool isPlaying = false;
+    if (Platform.isIOS) {
+      isPlaying = (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
+              as ZegoCallControllerIOSPIP)
+          .isSupportInConfig;
+    }
+
+    return isPlaying;
   }
 
   @override
@@ -228,6 +244,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
 
+      contextInitNotifier.value = true;
       listenUserEvents();
     } else {
       controller.private.initByPrebuilt(
@@ -242,6 +259,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
       controller.minimize.private.initByPrebuilt(
         minimizeData: minimizeData,
+        config: widget.config,
+        plugins: widget.plugins,
       );
       controller.permission.private.initByPrebuilt(
         config: widget.config,
@@ -249,9 +268,20 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.pip.private.initByPrebuilt(
         config: widget.config,
       );
+      controller.screenSharing.private.initByPrebuilt(
+        config: widget.config,
+      );
 
       /// not wake from mini page
       initContext().then((_) {
+        ZegoLoggerService.logInfo(
+          'initContext done',
+          tag: 'call',
+          subTag: 'prebuilt',
+        );
+
+        contextInitNotifier.value = true;
+
         listenUserEvents();
       }).catchError((e) {
         ZegoLoggerService.logError(
@@ -306,6 +336,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.minimize.private.uninitByPrebuilt();
       controller.permission.private.uninitByPrebuilt();
       controller.pip.private.uninitByPrebuilt();
+      controller.screenSharing.private.uninitByPrebuilt();
 
       uninitBaseBeautyConfig();
       uninitAdvanceEffectsPlugins();
@@ -314,7 +345,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         /// only effect call after leave room
         ZegoUIKit().enableCustomVideoProcessing(false);
       });
-      // await ZegoUIKit().uninit();
     } else {
       ZegoLoggerService.logInfo(
         'mini machine state is minimizing, room will not be leave',
@@ -386,17 +416,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isAndroid) {
-      return PiPSwitcher(
-        floating: ZegoUIKitPrebuiltCallController().pip.private.floating,
-        childWhenDisabled: normalPage(),
-        childWhenEnabled: screenUtil(
-          childWidget: pipPage(),
-        ),
-      );
-    }
+    return ValueListenableBuilder<bool>(
+      valueListenable: contextInitNotifier,
+      builder: (context, isDone, _) {
+        if (isDone) {
+          if (Platform.isAndroid) {
+            return PiPSwitcher(
+              floating: (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
+                      as ZegoCallControllerPIPAndroid)
+                  .floating,
+              childWhenDisabled: normalPage(),
+              childWhenEnabled: screenUtil(
+                childWidget: pipPage(),
+              ),
+            );
+          }
 
-    return normalPage();
+          return normalPage();
+        }
+
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
   }
 
   Widget screenUtil({required Widget childWidget}) {
@@ -527,19 +568,41 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       /// first set before create express
       await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 
+      final isFromAcceptedAndroidOfflineInvitation =
+          ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .isCurrentInvitationFromAcceptedAndroidOffline();
+
+      ZegoLoggerService.logInfo(
+        'isFromAcceptedAndroidOfflineInvitation:$isFromAcceptedAndroidOfflineInvitation',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
       ZegoUIKit()
-          .init(appID: widget.appID, appSign: widget.appSign)
-          .then((value) async {
+          .init(
+        appID: widget.appID,
+        appSign: widget.appSign,
+        enablePlatformView: playingStreamInPIPUnderIOS,
+        playingStreamInPIPUnderIOS: playingStreamInPIPUnderIOS,
+
+        /// accept offline call invitation on android, will create in advance
+        withoutCreateEngine: isFromAcceptedAndroidOfflineInvitation,
+      )
+          .then((_) async {
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
+
+        await ZegoUIKit().enableCustomVideoRender(playingStreamInPIPUnderIOS);
 
         _setVideoConfig();
         initBaseBeautyConfig();
 
         ZegoUIKit()
-
-          /// maybe change back by button in calling, this call will reset to front
-          // ..useFrontFacingCamera(true)
+          ..useFrontFacingCamera(
+            true,
+            ignoreCameraStatus: true,
+          )
           ..updateVideoViewMode(
             config.audioVideoView.useVideoViewAspectFill,
           )
@@ -549,7 +612,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         await ZegoUIKit()
-            .joinRoom(widget.callID, token: widget.token)
+            .joinRoom(
+          widget.callID,
+          token: widget.token,
+
+          /// accept offline call invitation on android, will join in advance
+          isSimulated: isFromAcceptedAndroidOfflineInvitation,
+        )
             .then((result) async {
           if (result.errorCode != 0) {
             ZegoLoggerService.logError(
@@ -841,6 +910,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
     }
 
+    final defaultAudioVideoContainerWidget = defaultAudioVideoContainer();
+
     return Positioned.fromRect(
       rect: widget.config.audioVideoView.containerRect?.call() ??
           Rect.fromLTWH(0, 0, preferWidth, preferHeight),
@@ -857,7 +928,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                     ZegoUIKit().getAudioVideoList(),
                     audioVideoViewCreator,
                   ) ??
-                  defaultAudioVideoContainer();
+                  defaultAudioVideoContainerWidget;
             },
           );
         },
