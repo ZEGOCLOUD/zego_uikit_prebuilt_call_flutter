@@ -1,3 +1,7 @@
+## 4.17.1
+
+- Update dependency
+
 ## 4.17.0
 
 - Features
@@ -6,10 +10,12 @@
   - Support PIP in iOS, default is open, you can set **ZegoCallInvitationConfig.pip.iOS.support** or **ZegoUIKitPrebuiltCallConfig.pip.iOS.support** to false to turn off
   - Modify the in-app minimization interface
   - Modify the way notifications pop up in android background mode
+  - Support slow-entry offline call page. When your app has some time-consuming operations that cause the automatic call page to fail (the internal jumping logic is overwritten by your 
+    page jump operation). You can call `enterAcceptedOfflineCall` of ZegoUIKitPrebuiltCallInvitationService and set false to `autoEnterAcceptedOfflineCall` of ZegoCallInvitationOfflineConfig when you enter your home page (after completing your time-consuming operations, such as login, loading data, etc.) 
+    
 - Bugs
   - Fix the video black screen problem in calling view
   - Fix the video black screen problem caused by kits mix use
-  - Flutter version 3.29.0 Adaptation
   - Fix the problem of init issue on android 14
   - Fix the problem of occasionally not entering the call room after agreeing to offline calls on android
   - Fix the issue applying beauty to other kits after exiting LIVE if using beauty on mixing multiple kits

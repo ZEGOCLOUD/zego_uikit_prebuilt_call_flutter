@@ -1,4 +1,3 @@
-
 - [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcall)
 - [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
   - [setNavigatorKey](#setnavigatorkey)
@@ -6,6 +5,7 @@
   - [init](#init)
   - [uninit](#uninit)
   - [useSystemCallingUI](#usesystemcallingui)
+  - [enterAcceptedOfflineCall](#enteracceptedofflinecall)
     - [send](#send)
     - [cancel](#cancel)
     - [reject](#reject)
@@ -191,6 +191,45 @@
 > void useSystemCallingUI(List<IZegoUIKitPlugin> plugins)
 > ```
 
+## enterAcceptedOfflineCall
+
+> Due to some time-consuming and waiting operations, such as data loading
+> or user login in the App.
+> so in certain situations, it may not be appropriate to navigate to
+> [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+>
+> This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+> may be **overwritten by some subsequent jump behaviors of the App**.
+> Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+> in App will be a better choice.
+>
+> When you want to do this, set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
+> to false in [ZegoUIKitPrebuiltCallInvitationService.init] and then
+> call this method after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
+> finish loading(data or user login)
+>
+> - function prototype:
+>
+> ```dart
+> void enterAcceptedOfflineCall()
+> ```
+>
+> - example:
+>
+> ```dart
+> @override
+> void initState() {
+>   super.initState();
+>
+>   WidgetsBinding.instance.addPostFrameCallback((_) {
+>     ZegoUIKitPrebuiltCallInvitationService().init().then((_) {
+>       /// When you enter your home page (after completing your time-consuming operations, such as login, loading data, etc.)
+>       /// skip to call page page if app active by offline call
+>       ZegoUIKitPrebuiltCallInvitationService().enterAcceptedOfflineCall();
+>     });
+>   });
+> }
+> ```
 
 ### send
 
