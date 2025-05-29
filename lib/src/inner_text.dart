@@ -90,6 +90,12 @@ class ZegoUIKitPrebuiltCallInnerText {
   /// Reverb effect：Gramophone
   String reverbTypeGramophoneTitle;
 
+  ///When sharing the screen, the text prompt on the sharing side.
+  String screenSharingTipText;
+
+  ///When screen sharing, stop sharing button on the sharing side
+  String stopScreenSharingButtonText;
+
   ZegoUIKitPrebuiltCallInnerText({
     String? audioEffectTitle,
     String? audioEffectReverbTitle,
@@ -119,6 +125,8 @@ class ZegoUIKitPrebuiltCallInnerText {
     String? reverbTypeBasementTitle,
     String? reverbTypePopularTitle,
     String? reverbTypeGramophoneTitle,
+    String? screenSharingTipText,
+    String? stopScreenSharingButtonText,
   })  : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
         audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',
         audioEffectVoiceChangingTitle =
@@ -152,5 +160,7 @@ class ZegoUIKitPrebuiltCallInnerText {
             reverbTypeRecordingStudioTitle ?? 'Recording studio',
         reverbTypeBasementTitle = reverbTypeBasementTitle ?? 'Basement',
         reverbTypePopularTitle = reverbTypePopularTitle ?? 'Pop',
-        reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone';
+        reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone',
+        screenSharingTipText = 'You are sharing screen',
+        stopScreenSharingButtonText = 'Stop sharing';
 }

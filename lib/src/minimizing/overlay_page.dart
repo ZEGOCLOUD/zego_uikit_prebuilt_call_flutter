@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -98,6 +99,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showDevices = true,
     this.showUserName = true,
     this.showLeaveButton = true,
+    this.showLocalUserView = true,
     this.leaveButtonIcon,
     this.foreground,
     this.builder,
@@ -116,6 +118,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final bool showUserName;
 
   final bool showLeaveButton;
+  final bool showLocalUserView;
   final Widget? leaveButtonIcon;
 
   final Widget? foreground;
@@ -259,6 +262,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             showDevices: widget.showDevices,
             showUserName: widget.showUserName,
             showLeaveButton: widget.showLeaveButton,
+            showLocalUserView: widget.showLocalUserView,
             leaveButtonIcon: widget.leaveButtonIcon,
             foreground: widget.foreground,
             builder: widget.builder,
@@ -325,6 +329,27 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     defaultAction() {
       /// now is minimizing state, not need to navigate, just switch to idle
       ZegoUIKitPrebuiltCallController().minimize.hide();
+
+      uninitBaseBeautyConfig();
+      uninitAdvanceEffectsPlugins();
+
+      ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
+
+      ZegoUIKitPrebuiltCallController().private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().user.private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().audioVideo.private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().minimize.private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().permission.private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().pip.private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController()
+          .screenSharing
+          .private
+          .uninitByPrebuilt();
+
+      ZegoUIKit().leaveRoom().then((_) {
+        /// only effect call after leave room
+        ZegoUIKit().enableCustomVideoProcessing(false);
+      });
     }
 
     if (minimizeData?.events.onCallEnd != null) {
@@ -332,5 +357,28 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     } else {
       defaultAction.call();
     }
+  }
+
+  Future<void> uninitBaseBeautyConfig() async {
+    await ZegoUIKit().resetSoundEffect();
+    await ZegoUIKit().resetBeautyEffect();
+    await ZegoUIKit().stopEffectsEnv();
+    await ZegoUIKit().enableBeauty(false);
+  }
+
+  Future<void> uninitAdvanceEffectsPlugins() async {
+    if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.beauty) != null) {
+      ZegoUIKit().getBeautyPlugin().uninit();
+    }
+
+    ZegoUIKit().uninstallPlugins(
+      ZegoUIKitPrebuiltCallController()
+              .minimize
+              .private
+              .plugins
+              ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
+              .toList() ??
+          [],
+    );
   }
 }

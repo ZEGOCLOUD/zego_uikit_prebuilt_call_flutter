@@ -32,14 +32,6 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
     throw UnimplementedError('activeAudioByCallKit has not been implemented.');
   }
 
-  /// addLocalCallNotification
-  Future<void> addLocalCallNotification(
-    ZegoSignalingPluginLocalCallNotificationConfig config,
-  ) {
-    throw UnimplementedError(
-        'addLocalCallNotification has not been implemented.');
-  }
-
   /// addLocalIMNotification
   Future<void> addLocalIMNotification(
     ZegoSignalingPluginLocalIMNotificationConfig config,

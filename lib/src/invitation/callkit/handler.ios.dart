@@ -6,7 +6,7 @@ import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_incoming_wrapper.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 
 UUID? iOSIncomingPushUUID;
@@ -68,11 +68,14 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
 
   /// cache callkit param,
   /// and wait for the onInvitationReceive callback of page manger
-  await setOfflineCallKitCallID(invitationInternalData.callID).then((value) {
+  await ZegoUIKitCallCache()
+      .offlineCallKit
+      .setCallID(invitationInternalData.callID)
+      .then((value) {
     // flag[0] = true;
 
     ZegoLoggerService.logInfo(
-      'cache ${invitationInternalData.callID}',
+      'cache ${invitationInternalData.callID} done',
       tag: 'call-invitation',
       subTag: 'offline',
     );

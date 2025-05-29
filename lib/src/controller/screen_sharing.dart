@@ -7,10 +7,9 @@ mixin ZegoCallControllerScreenSharing {
   ZegoCallControllerScreenSharingImpl get screenSharing => _impl;
 }
 
-class ZegoCallControllerScreenSharingImpl {
-  final _viewController = ZegoScreenSharingViewController();
-
-  ZegoScreenSharingViewController get viewController => _viewController;
+class ZegoCallControllerScreenSharingImpl
+    with ZegoCallControllerScreenImplPrivate {
+  ZegoScreenSharingViewController get viewController => private.viewController;
 
   /// This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
   ///
@@ -24,6 +23,6 @@ class ZegoCallControllerScreenSharingImpl {
       subTag: 'controller.screenSharing',
     );
 
-    _viewController.showScreenSharingViewInFullscreenMode(userID, isFullscreen);
+    viewController.showScreenSharingViewInFullscreenMode(userID, isFullscreen);
   }
 }

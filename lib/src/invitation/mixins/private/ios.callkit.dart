@@ -198,10 +198,10 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     onAnswerCallPerform() {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
-      getOfflineCallKitCallID().then((callKitCallID) {
+      ZegoUIKitCallCache().offlineCallKit.getCallID().then((callKitCallID) {
         ZegoCallKitBackgroundService()
             .acceptCallKitIncomingCauseInBackground(callKitCallID);
-        clearOfflineCallKitCallID();
+        ZegoUIKitCallCache().offlineCallKit.clearCallID();
       });
 
       ZegoCallPluginPlatform.instance.activeAudioByCallKit();
@@ -279,21 +279,21 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
     if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
-      /// exit call
-      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
-    } else {
       /// There is no need to clear CallKit here;  manually clear the CallKit ID.
       ///
       /// This is because offline calls on iOS will wake up the app,
       /// and when you reject the call for the first time,
       /// you need to wait for a certain period of time for the refusal callback.
       /// Otherwise, it will automatically reject the second offline call that comes immediately after.
-      clearOfflineCallKitCallID();
+      ZegoUIKitCallCache().offlineCallKit.clearCallID();
 
       /// refuse call request
       ZegoCallKitBackgroundService().refuseInvitationInBackground(
         needClearCallKit: false,
       );
+    } else {
+      /// exit call
+      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
     }
   }
 

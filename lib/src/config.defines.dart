@@ -24,4 +24,60 @@ class ZegoCallHangUpConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
           title: title,
           message: message,
         );
+
+  @override
+  String toString() {
+    return 'ZegoCallHangUpConfirmDialogInfo:{'
+        'title:$title, '
+        'message:$message, '
+        '}';
+  }
+}
+
+/// screen sharing
+class ZegoCallScreenSharingConfig {
+  /// when ending screen sharing from a non-app,
+  /// the automatic check end mechanism will be triggered.
+  ZegoCallScreenSharingAutoStopConfig autoStop;
+
+  /// If true, then when there is screen sharing display, it will automatically be full screen
+  /// default is false
+  bool defaultFullScreen;
+
+  ZegoCallScreenSharingConfig({
+    ZegoCallScreenSharingAutoStopConfig? autoStop,
+    this.defaultFullScreen = false,
+  }) : autoStop = autoStop ?? ZegoCallScreenSharingAutoStopConfig();
+
+  @override
+  String toString() {
+    return 'ZegoCallScreenSharingConfig:{'
+        'autoStop:$autoStop, '
+        'defaultFullScreen:$defaultFullScreen, '
+        '}';
+  }
+}
+
+/// when ending screen sharing from a non-app,
+/// the automatic check end mechanism will be triggered.
+class ZegoCallScreenSharingAutoStopConfig {
+  /// Count of the check fails before automatically end the screen sharing
+  int invalidCount;
+
+  /// Determines whether to end;
+  /// returns false if you don't want to end
+  bool Function()? canEnd;
+
+  ZegoCallScreenSharingAutoStopConfig({
+    this.invalidCount = 3,
+    this.canEnd,
+  });
+
+  @override
+  String toString() {
+    return 'ZegoCallScreenSharingAutoStopConfig:{'
+        'invalidCount:$invalidCount, '
+        'canEnd:${canEnd != null}, '
+        '}';
+  }
 }

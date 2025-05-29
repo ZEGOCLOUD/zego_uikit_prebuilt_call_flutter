@@ -260,7 +260,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         },
       );
 
-      _pageManager?.onLocalSendInvitation(
+      await _pageManager?.onLocalSendInvitation(
         callID: callID,
         invitees: callees
             .map((invitee) => ZegoUIKitUser(

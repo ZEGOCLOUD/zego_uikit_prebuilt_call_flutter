@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 // Package imports:
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -134,6 +135,11 @@ class ZegoCallPrebuiltPlugins {
     // await ZegoUIKit().getSignalingPlugin().logout();
     /// not need destroy signaling sdk
     await ZegoUIKit().getSignalingPlugin().uninit(forceDestroy: false);
+    ZegoUIKit().uninstallPlugins(
+      plugins
+          .where((e) => e.getPluginType() == ZegoUIKitPluginType.signaling)
+          .toList(),
+    );
 
     for (final streamSubscription in subscriptions) {
       streamSubscription?.cancel();

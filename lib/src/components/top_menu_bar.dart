@@ -169,7 +169,11 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   List<Widget> getDisplayButtons(BuildContext context) {
     final needRestoreDeviceState =
         widget.minimizeData.isPrebuiltFromMinimizing ||
-            ZegoUIKitPrebuiltCallController().pip.private.isRestoreFromPIP;
+            ZegoUIKitPrebuiltCallController()
+                .pip
+                .private
+                .pipImpl()
+                .isRestoredFromPIP;
 
     final buttons = [
       ...getDefaultButtons(
