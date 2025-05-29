@@ -1,5 +1,6 @@
 - [Invitation](#invitation)
   - [ZegoCallInvitationConfig](#zegocallinvitationconfig)
+    - [offline](#offline)
     - [inCalling](#incalling)
     - [systemAlertWindowConfirmDialog](#systemalertwindowconfirmdialog)
     - [missedCall](#missedcall)
@@ -30,6 +31,8 @@
     - [Widget? `foreground`](#widget-foreground)
     - [Widget? `background`](#widget-background)
     - [bool `rootNavigator`](#bool-rootnavigator)
+    - [audioEffect](#audioeffect)
+    - [screenSharing](#screensharing)
 
 ---
 
@@ -75,27 +78,57 @@
   > 2. other participants can enter the call after the initiator leaves.
   >
 
+### offline
+
+> [ZegoCallInvitationOfflineConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationOfflineConfig-class.html)
+
+- bool `autoEnterAcceptedOfflineCall`:
+  > Due to some time-consuming and waiting operations, such as data loading
+  > or user login in the App.
+  > so in certain situations, it may not be appropriate to navigate to
+  > [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
+  >
+  > This is because the behavior of jumping to ZegoUIKitPrebuiltCall
+  > may be **overwritten by some subsequent jump behaviors of the App**.
+  > Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
+  > in App will be a better choice.
+  >
+  > When you want to do this, set it to **false** (default is true) and then
+  > call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  >
+  > Example:
+  > ```dart
+  > @override
+  > void initState() {
+  >   super.initState();
+  >
+  >   WidgetsBinding.instance.addPostFrameCallback((_) {
+  >     ZegoUIKitPrebuiltCallInvitationService().init().then((_) {
+  >       /// When you enter your home page (after completing your time-consuming operations, such as login, loading data, etc.)
+  >       /// skip to call page page if app active by offline call
+  >       ZegoUIKitPrebuiltCallInvitationService().enterAcceptedOfflineCall();
+  >     });
+  >   });
+  > }
+  > ```
+  >
+
 ### inCalling
 
 > [ZegoCallInvitationInCallingConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInCallingConfig-class.html)
 
-- bool `onlyInitiatorCanInvite`
+- bool `canInvitingInCalling`:
+  > whether to allow invitations in calling
+  > Default value is false.
+  > Please note that if allowed, it will be incompatible with versions before v4.12.0,
+  > which means mutual invitations cannot be made between the old and new versions of zego_uikit_prebuilt_call.
 
+- bool `onlyInitiatorCanInvite`:
   > whether only the call initiator has the permission to invite others to
   > join the call.
   > Default value is false.
   >
   > If set to false, all participants in the call can invite others.
-  >
-  
-- bool `endCallWhenInitiatorLeave`
-
-  > whether the entire call should end when the initiator leaves the call
-  > (will causing other participants to leave together).
-  > Default value is false.
-  >
-  > If set to false, the call can continue even after the initiator leaves.
-  >
 
 ### systemAlertWindowConfirmDialog
 
@@ -176,7 +209,7 @@
 
 - bool `prebuiltWithSafeArea`: does [ZegoUIKitPrebuiltCall] display with SafeArea or not
   
-- [ZegoCallInvitationInviterUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviterUIConfig.html)? `inviter`:
+- [ZegoCallInvitationInviterUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviterUIConfig-class.html) `inviter`:
 
   - bool `showAvatar`: show avatar or not
   
@@ -206,7 +239,7 @@
   
     - TextStyle? `textStyle`
   
-- [ZegoCallInvitationInviteeUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviteeUIConfig.html)? `invitee`:
+- [ZegoCallInvitationInviteeUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviteeUIConfig-class.html) `invitee`:
 
   - bool `showAvatar`: show avatar or not
   
@@ -220,15 +253,15 @@
   
   - [ZegoCallInvitationNotifyPopUpUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationNotifyPopUpUIConfig-class.html) `popUp`: config of call invitation pop-up dialog
 
-    - EdgeInsetsGeometry? `padding`: popup's padding
+    - EdgeInsetsGeometry? `padding`
   
-    - double? `width`: popup's width
+    - double? `width`
   
-    - double? `height`: popup's height
+    - double? `height`
   
-    - Decoration? `decoration`: popup's decoration
+    - Decoration? `decoration`
   
-    - bool `visible`:
+    - bool `visible`
 
       > when receiving an online call, whether to pop up the top pop-up dialog
       >
@@ -257,7 +290,7 @@
       > ```
       >
 
-    - ZegoCallInvitationNotifyDialogBuilder? `builder`:
+    - ZegoCallInvitationNotifyDialogBuilder? `builder`
 
       > custom the top pop-up dialog which receiving an online call
       >
@@ -754,7 +787,7 @@
 
 ### pip
 
-> [ZegoCallPIPConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPIPConfig-class.html)
+> [ZegoCallInvitationPIPConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationPIPConfig-class.html)
 
 - int `aspectWidth`: aspect width
 
@@ -762,33 +795,27 @@
 
 - bool `enableWhenBackground`: android: only available on SDK higher than 31(>=31); iOS: only available on 15.0;
 
-- [ZegoCallPIPAndroidConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPIPAndroidConfig-class.html) `android`: android config
-
-  - Widget? `background`: background widget, default is black
-
-- [ZegoCallPIPIOSConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallPIPIOSConfig-class.html) `iOS`: iOS config
-  
-  - bool? `support`: 
-  
-  >   Whether to enable PIP under iOS
-  >   After setting, it cannot be modified again within one lifetime of prebuilt
-  >
-  >   If you use [ZegoUIKitPrebuiltCallInvitationService], then the value of
-  >   [support] and [ZegoCallInvitationPIPConfig.pip.iOS.support] must be
-  >   consistent, otherwise, the video frame will not be rendered.
-  >   ```dart
-  >   ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
-  >
-  >   ZegoUIKitPrebuiltCallInvitationService().init(
-  >      config: ZegoCallInvitationConfig(
-  >        pip: ZegoCallInvitationPIPConfig(
-  >          iOS: ZegoCallInvitationPIPIOSConfig(
-  >            support: true,
-  >          ),
-  >        ),
-  >      ),
-  >    );
-  >   ```
+- [ZegoCallInvitationPIPIOSConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationPIPIOSConfig-class.html) `iOS`:
+  - bool `support`:
+    > Whether to enable PIP under iOS
+    > After setting, it cannot be modified again within one lifetime of prebuilt
+    >
+    > If you use [ZegoUIKitPrebuiltCallInvitationService], then the value of
+    > [support] and [ZegoCallInvitationPIPConfig.pip.iOS.support] must be
+    > consistent, otherwise, the video frame will not be rendered.
+    > ```dart
+    > ZegoUIKitPrebuiltCallConfig.pip.iOS.support = true;
+    >
+    > ZegoUIKitPrebuiltCallInvitationService().init(
+    >    config: ZegoCallInvitationConfig(
+    >      pip: ZegoCallInvitationPIPConfig(
+    >        iOS: ZegoCallInvitationPIPIOSConfig(
+    >          support: true,
+    >        ),
+    >      ),
+    >    ),
+    >  );
+    > ```
 
 ### user
 
@@ -945,3 +972,94 @@
 > If `rootNavigator` is set to true, the state from the furthest instance of this class is given instead.
 >
 > Useful for pushing contents above all subsequent instances of [Navigator].
+
+### audioEffect
+
+> [ZegoCallAudioEffectConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallAudioEffectConfig-class.html)
+>
+> Configuration options for voice changer, beauty effects and reverberation effects.
+>
+> If you want to replace icons and colors to sheet or slider, some of our widgets also provide modification options.
+>
+> Example:
+>
+> ```dart
+> ZegoCallAudioEffectConfig(
+>   backgroundColor: Colors.black.withOpacity(0.5),
+>   backIcon: Icon(Icons.arrow_back),
+>   sliderTextBackgroundColor: Colors.black.withOpacity(0.5),
+> );
+> ```
+
+- List<VoiceChangerType> `voiceChangeEffect`:
+  > List of voice changer effects.
+  > If you don't want a certain effect, simply remove it from the list.
+
+- List<ReverbType> `reverbEffect`:
+  > List of revert effects types.
+  > If you don't want a certain effect, simply remove it from the list.
+
+- Color? `backgroundColor`:
+  > The background color of the sheet.
+
+- TextStyle? `headerTitleTextStyle`:
+  > The text style of the head title sheet.
+
+- Widget? `backIcon`:
+  > Back button icon on the left side of the title.
+
+- Widget? `resetIcon`:
+  > Reset button icon on the right side of the title.
+
+- Color? `normalIconColor`:
+  > Color of the icons in the normal (unselected) state.
+
+- Color? `selectedIconColor`:
+  > Color of the icons in the highlighted (selected) state.
+
+- Color? `normalIconBorderColor`:
+  > Border color of the icons in the normal (unselected) state.
+
+- Color? `selectedIconBorderColor`:
+  > Border color of the icons in the highlighted (selected) state.
+
+- TextStyle? `selectedTextStyle`:
+  > Text-style of buttons in the highlighted (selected) state.
+
+- TextStyle? `normalTextStyle`:
+  > Text-style of buttons in the normal (unselected) state.
+
+- TextStyle? `sliderTextStyle`:
+  > The style of the text displayed on the Slider's thumb.
+
+- Color? `sliderTextBackgroundColor`:
+  > The background color of the text displayed on the Slider's thumb.
+
+- Color? `sliderActiveTrackColor`:
+  > The color of the track that is active when sliding the Slider.
+
+- Color? `sliderInactiveTrackColor`:
+  > The color of the track that is inactive when sliding the Slider.
+
+- Color? `sliderThumbColor`:
+  > The color of the Slider's thumb.
+
+- double? `sliderThumbRadius`:
+  > The radius of the Slider's thumb.
+
+### screenSharing
+
+> [ZegoCallScreenSharingConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallScreenSharingConfig-class.html)
+>
+> Screen sharing configuration.
+
+- [ZegoCallScreenSharingAutoStopConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallScreenSharingAutoStopConfig-class.html) `autoStop`:
+  > When ending screen sharing from a non-app,
+  > the automatic check end mechanism will be triggered.
+  >
+  > - int `invalidCount`: Count of the check fails before automatically end the screen sharing
+  > - bool Function()? `canEnd`: Determines whether to end; returns false if you don't want to end
+
+- bool `defaultFullScreen`:
+  > If true, then when there is screen sharing display, it will automatically be full screen.
+  > Default is false.
