@@ -41,6 +41,7 @@ const String callkitMissedCalIDCacheKey = 'callkit_missed_call_id';
 ///             }
 /// 	}
 /// }
+@pragma('vm:entry-point')
 Future<CallKitParams> _makeCallKitParam({
   required ZegoUIKitUser? caller,
   required ZegoCallInvitationType callType,
@@ -54,9 +55,7 @@ Future<CallKitParams> _makeCallKitParam({
 
   var tempRingtonePath = ringtonePath ?? '';
   if (tempRingtonePath.isEmpty) {
-    tempRingtonePath =
-        prefs.getString(CallKitInnerVariable.ringtonePath.cacheKey) ??
-            CallKitInnerVariable.ringtonePath.defaultValue;
+    tempRingtonePath = prefs.getString(CallKitInnerVariable.ringtonePath.cacheKey) ?? CallKitInnerVariable.ringtonePath.defaultValue;
   }
 
   var tempTitle = title ?? '';
@@ -66,54 +65,38 @@ Future<CallKitParams> _makeCallKitParam({
 
   var tempBody = body ?? '';
   if (tempBody.isEmpty) {
-    tempBody = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
-            CallKitInnerVariable.callIDVisibility.defaultValue)
-        ? sendRequestProtocol.callID
-        : '';
+    tempBody = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ?? CallKitInnerVariable.callIDVisibility.defaultValue) ? sendRequestProtocol.callID : '';
   }
 
-  final isShowFullScreen =
-      (prefs.getBool(CallKitInnerVariable.showFullScreen.cacheKey) ??
-          CallKitInnerVariable.showFullScreen.defaultValue);
+  final isShowFullScreen = (prefs.getBool(CallKitInnerVariable.showFullScreen.cacheKey) ?? CallKitInnerVariable.showFullScreen.defaultValue);
 
   return CallKitParams(
     id: const Uuid().v4(),
     nameCaller: tempTitle,
-    appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
-        CallKitInnerVariable.textAppName.defaultValue,
+    appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ?? CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
     handle: tempBody,
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
     duration: sendRequestProtocol.timeout * 1000,
-    textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
-        CallKitInnerVariable.textAccept.defaultValue,
-    textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
-        CallKitInnerVariable.textDecline.defaultValue,
+    textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ?? CallKitInnerVariable.textAccept.defaultValue,
+    textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ?? CallKitInnerVariable.textDecline.defaultValue,
     extra: <String, dynamic>{},
     headers: <String, dynamic>{},
     missedCallNotification: NotificationParams(
       showNotification: false,
       isShowCallback: true,
-      subtitle: prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
-          CallKitInnerVariable.textMissedCall.defaultValue,
-      callbackText:
-          prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
-              CallKitInnerVariable.textCallback.defaultValue,
+      subtitle: prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ?? CallKitInnerVariable.textMissedCall.defaultValue,
+      callbackText: prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ?? CallKitInnerVariable.textCallback.defaultValue,
     ),
     android: AndroidParams(
       isCustomNotification: true,
       isShowFullLockedScreen: isShowFullScreen,
       isShowLogo: false,
       ringtonePath: tempRingtonePath,
-      backgroundColor:
-          prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
-              CallKitInnerVariable.backgroundColor.defaultValue,
-      backgroundUrl:
-          prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
-              CallKitInnerVariable.backgroundUrl.defaultValue,
-      actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
-          CallKitInnerVariable.actionColor.defaultValue,
+      backgroundColor: prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ?? CallKitInnerVariable.backgroundColor.defaultValue,
+      backgroundUrl: prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ?? CallKitInnerVariable.backgroundUrl.defaultValue,
+      actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ?? CallKitInnerVariable.actionColor.defaultValue,
     ),
     ios: IOSParams(
       iconName: iOSIconName,
@@ -141,6 +124,7 @@ Future<CallKitParams> _makeCallKitParam({
 /// - callType
 /// - invitationInternalData
 /// - ringtonePath
+@pragma('vm:entry-point')
 Future<void> showCallkitIncoming({
   required ZegoUIKitUser? caller,
   required ZegoCallInvitationType callType,
@@ -185,6 +169,7 @@ Future<void> clearAllCallKitCalls() async {
 }
 
 /// cached ID of the current cal
+@pragma('vm:entry-point')
 Future<void> setOfflineCallKitCallID(String callID) async {
   ZegoLoggerService.logInfo(
     'set offline callkit id:$callID',
@@ -205,6 +190,7 @@ Future<String?> getOfflineCallKitCallID() async {
 }
 
 /// cached ID of the current cal
+@pragma('vm:entry-point')
 Future<void> clearOfflineCallKitCallID() async {
   ZegoLoggerService.logInfo(
     'clear offline callkit id',
@@ -288,9 +274,9 @@ Future<void> clearOfflineMissedCallNotification(int notificationID) async {
 }
 
 /// cached ID of the current params
+@pragma('vm:entry-point')
 Future<void> setOfflineCallKitCacheParams(
-  ZegoCallInvitationOfflineCallKitCacheParameterProtocol
-      callKitParameterProtocol,
+  ZegoCallInvitationOfflineCallKitCacheParameterProtocol callKitParameterProtocol,
 ) async {
   callKitParameterProtocol.datetime = DateTime.now().millisecondsSinceEpoch;
   final jsonString = callKitParameterProtocol.toJson();
@@ -310,8 +296,7 @@ Future<void> setOfflineCallKitCacheParams(
   });
 }
 
-Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol>
-    getOfflineCallKitCacheParams() async {
+Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol> getOfflineCallKitCacheParams() async {
   final prefs = await SharedPreferences.getInstance();
   final jsonString = prefs.getString(callkitParamsCacheKey) ?? '';
 
@@ -320,6 +305,7 @@ Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol>
   );
 }
 
+@pragma('vm:entry-point')
 Future<void> clearOfflineCallKitCacheParams() async {
   ZegoLoggerService.logInfo(
     'clear offline callkit params',
