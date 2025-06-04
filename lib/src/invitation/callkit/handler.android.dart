@@ -387,6 +387,7 @@ Future<void> _onBackgroundIMMessageReceived({
   );
 }
 
+@pragma('vm:entry-point')
 Future<void> _onBackgroundCallMessageReceived({
   required bool isAdvanceMode,
   required String messageTitle,
@@ -498,6 +499,7 @@ Future<void> _onBackgroundInvitationCanceled(String callID) async {
   });
 }
 
+@pragma('vm:entry-point')
 Future<void> _onBackgroundOfflineCall({
   required bool isAdvanceMode,
   required Map<String, Object?> messageExtras,
@@ -641,6 +643,7 @@ Future<void> _onBackgroundOfflineCall({
   }
 }
 
+@pragma('vm:entry-point')
 void _listenFlutterCallkitIncomingEvent({
   required bool isAdvanceMode,
   required String invitationID,
@@ -770,6 +773,7 @@ void _listenFlutterCallkitIncomingEvent({
   });
 }
 
+@pragma('vm:entry-point')
 void _listenSignalingEvents(
   List<StreamSubscription<dynamic>> signalingSubscriptions, {
   required HandlerPrivateInfo? handlerInfo,
@@ -810,6 +814,7 @@ void _listenSignalingEvents(
   }
 }
 
+@pragma('vm:entry-point')
 void _onInvitationTimeout(Map<String, dynamic> params) async {
   ZegoLoggerService.logInfo(
     'params:$params, ',
@@ -921,6 +926,7 @@ Future<void> _addMissedCallNotification(Map<String, dynamic> params) async {
   );
 }
 
+@pragma('vm:entry-point')
 Future<void> _onInvitationCanceled(Map<String, dynamic> params) async {
   var inviter = ZegoUIKitUser.empty();
   if (params['inviter'] is ZegoUIKitUser) {
@@ -1026,6 +1032,7 @@ Future<void> _uninstallSignalingPlugin() async {
   ZegoUIKit().uninstallPlugins([ZegoUIKitSignalingPlugin()]);
 }
 
+@pragma('vm:entry-point')
 void _onThroughMessage(
   ZPNsMessage message,
 ) {
