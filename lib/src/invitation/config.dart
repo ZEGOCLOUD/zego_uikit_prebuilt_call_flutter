@@ -15,7 +15,6 @@ class ZegoCallInvitationConfig {
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
-      ZegoCallInvitationPermission.manuallyByUser,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallInvitationOfflineConfig? offline,
