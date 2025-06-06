@@ -141,8 +141,12 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
-  @Deprecated('deprecated since 4.17.0')
+
+  /// Not using it will cause full-screen pop-ups to fail to appear on the lock screen
   systemAlertWindow,
+
+  /// Some permissions cannot be obtained directly and must be set manually by the user
+  manuallyByUser,
 }
 
 class ZegoCallInvitationPermissions {
@@ -151,19 +155,19 @@ class ZegoCallInvitationPermissions {
         ZegoCallInvitationPermission.microphone,
       ];
   static List<ZegoCallInvitationPermission> get audio => [
-        ZegoCallInvitationPermission.camera,
         ZegoCallInvitationPermission.microphone,
       ];
 }
 
-class ZegoCallPermissionConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
-  ZegoCallPermissionConfirmDialogInfo({
+class ZegoCallSystemConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
+  ZegoCallSystemConfirmDialogInfo({
     required String title,
+    String message = '',
     String cancelButtonName = 'Deny',
     String confirmButtonName = 'Allow',
   }) : super(
           title: title,
-          message: '',
+          message: message,
           cancelButtonName: cancelButtonName,
           confirmButtonName: confirmButtonName,
         );

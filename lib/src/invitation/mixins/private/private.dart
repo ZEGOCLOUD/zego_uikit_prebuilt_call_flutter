@@ -896,6 +896,127 @@ class ZegoCallInvitationServicePrivateImpl
       }
     }
   }
+
+  Future<void> requestPermissionsNeedManuallyByUser() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    if (!_isInit) {
+      ZegoLoggerService.logInfo(
+        'service not init',
+        tag: 'call-invitation',
+        subTag:
+            'service(${identityHashCode(this)}), requestPermissionsNeedManuallyByUser',
+      );
+
+      return;
+    }
+
+    const prefsKey = 'manual_permission_dialog_shown';
+
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool(prefsKey) ?? false;
+
+    if (hasShown) {
+      return;
+    }
+
+    await PackageInfo.fromPlatform().then((info) async {
+      await showSystemConfirmationDialog(
+        _data?.contextQuery?.call(),
+        dialogConfig: _data!.config.systemWindowConfirmDialog!,
+        dialogInfo: ZegoCallSystemConfirmDialogInfo(
+          title: _data!.innerText.permissionManuallyConfirmDialogTitle,
+          message: _data!.innerText.permissionManuallyConfirmDialogSubTitle,
+          cancelButtonName:
+              _data!.innerText.permissionConfirmDialogCancelButton,
+          confirmButtonName: _data!.innerText.permissionConfirmDialogOKButton,
+        ),
+      ).then((isAllow) async {
+        await prefs.setBool(prefsKey, true);
+
+        if (!isAllow) {
+          ZegoLoggerService.logInfo(
+            'requestPermission of systemAlertWindow, not allow',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)})',
+          );
+
+          return;
+        }
+
+        await ZegoUIKit().openAppSettings();
+      });
+    });
+  }
+
+  Future<void> requestSystemAlertWindowPermission() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    if (!_isInit) {
+      ZegoLoggerService.logInfo(
+        'service not init',
+        tag: 'call-invitation',
+        subTag:
+            'service(${identityHashCode(this)}), requestSystemAlertWindowPermission',
+      );
+
+      return;
+    }
+
+    PermissionStatus status = await Permission.systemAlertWindow.status;
+    if (status != PermissionStatus.granted) {
+      if (null == _data?.config.systemWindowConfirmDialog) {
+        await requestSystemAlertWindowPermissionImpl();
+      } else {
+        await PackageInfo.fromPlatform().then((info) async {
+          await showSystemConfirmationDialog(
+            _data?.contextQuery?.call(),
+            dialogConfig: _data!.config.systemWindowConfirmDialog!,
+            dialogInfo: ZegoCallSystemConfirmDialogInfo(
+              title:
+                  '${_data!.innerText.permissionConfirmDialogTitle.replaceFirst(param_1, info.packageName.isEmpty ? 'App' : info.appName)} ${_data!.innerText.systemAlertWindowConfirmDialogSubTitle}',
+              cancelButtonName:
+                  _data!.innerText.permissionConfirmDialogDenyButton,
+              confirmButtonName:
+                  _data!.innerText.permissionConfirmDialogAllowButton,
+            ),
+          ).then((isAllow) async {
+            if (!isAllow) {
+              ZegoLoggerService.logInfo(
+                'requestPermission of systemAlertWindow, not allow',
+                tag: 'call-invitation',
+                subTag: 'service(${identityHashCode(this)})',
+              );
+
+              return;
+            }
+            await requestSystemAlertWindowPermissionImpl();
+          });
+        });
+      }
+    }
+  }
+
+  Future<void> requestSystemAlertWindowPermissionImpl() async {
+    /// for bring app to foreground from background in Android 10
+    await requestPermission(Permission.systemAlertWindow).then((value) {
+      ZegoLoggerService.logInfo(
+        'request system alert window permission result:$value',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)})',
+      );
+    }).then((_) {
+      ZegoLoggerService.logInfo(
+        'requestPermission of systemAlertWindow done',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)})',
+      );
+    });
+  }
 }
 
 extension ZegoCallInvitationInnerTextForCallInvitationServicePrivate

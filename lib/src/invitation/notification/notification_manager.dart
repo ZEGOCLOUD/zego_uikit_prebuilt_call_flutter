@@ -103,6 +103,20 @@ class ZegoCallInvitationNotificationManager {
       );
     });
 
+    if (callInvitationData.config.permissions
+        .contains(ZegoCallInvitationPermission.systemAlertWindow)) {
+      await ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .requestSystemAlertWindowPermission();
+    }
+
+    if (callInvitationData.config.permissions
+        .contains(ZegoCallInvitationPermission.manuallyByUser)) {
+      await ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .requestPermissionsNeedManuallyByUser();
+    }
+
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
       ZegoSignalingPluginLocalNotificationChannelConfig(

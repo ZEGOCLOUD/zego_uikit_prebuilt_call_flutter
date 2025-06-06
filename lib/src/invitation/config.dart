@@ -15,11 +15,11 @@ class ZegoCallInvitationConfig {
     this.permissions = const [
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
+      ZegoCallInvitationPermission.manuallyByUser,
     ],
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallInvitationOfflineConfig? offline,
-    @Deprecated('deprecated since 4.17.0')
-    ZegoCallPermissionConfirmDialogConfig? systemAlertWindowConfirmDialog,
+    ZegoCallSystemConfirmDialogConfig? systemWindowConfirmDialog,
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
     @Deprecated(
@@ -28,7 +28,11 @@ class ZegoCallInvitationConfig {
     @Deprecated(
         'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
     bool onlyInitiatorCanInvite = false,
-  })  : offline = offline ?? ZegoCallInvitationOfflineConfig(),
+    @Deprecated('use systemWindowConfirmDialog instead$deprecatedTipsV4172')
+    ZegoCallSystemConfirmDialogConfig? systemAlertWindowConfirmDialog,
+  })  : systemWindowConfirmDialog =
+            systemWindowConfirmDialog ?? ZegoCallSystemConfirmDialogConfig(),
+        offline = offline ?? ZegoCallInvitationOfflineConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -79,6 +83,10 @@ class ZegoCallInvitationConfig {
   ///  missed call config
   ZegoCallInvitationMissedCallConfig missedCall;
 
+  /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
+  /// Default will pop-up a confirmation box. If not, please set it to null.
+  ZegoCallSystemConfirmDialogConfig? systemWindowConfirmDialog;
+
   /// pip
   ZegoCallInvitationPIPConfig pip;
 
@@ -92,6 +100,7 @@ class ZegoCallInvitationConfig {
         'calling:$inCalling, '
         'offline:$offline, '
         'missedCall:$missedCall, '
+        'systemWindowConfirmDialog:$systemWindowConfirmDialog, '
         'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
         'networkLoading:$networkLoading, '
@@ -615,16 +624,15 @@ class ZegoCallAndroidNotificationChannelConfig {
   }
 }
 
-@Deprecated('deprecated since 4.17.0')
-/// Confirmation dialog when requestPermission.
-class ZegoCallPermissionConfirmDialogConfig {
+/// Confirmation dialog like system.
+class ZegoCallSystemConfirmDialogConfig {
   String? title;
   TextStyle? titleStyle;
   TextStyle? contentStyle;
   TextStyle? actionTextStyle;
   Brightness? backgroundBrightness;
 
-  ZegoCallPermissionConfirmDialogConfig({
+  ZegoCallSystemConfirmDialogConfig({
     this.title,
     this.titleStyle,
     this.contentStyle,
@@ -634,7 +642,7 @@ class ZegoCallPermissionConfirmDialogConfig {
 
   @override
   String toString() {
-    return 'ZegoCallPermissionConfirmDialogConfig:{'
+    return 'ZegoCallSystemConfirmDialogConfig:{'
         'title:$title, '
         'titleStyle:$titleStyle, '
         'contentStyle:$contentStyle, '
