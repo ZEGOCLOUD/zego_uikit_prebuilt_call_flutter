@@ -146,6 +146,9 @@ enum ZegoCallInvitationPermission {
   systemAlertWindow,
 
   /// Some permissions cannot be obtained directly and must be set manually by the user
+  ///
+  /// If this item is included, a pop-up window will guide the customer to
+  /// turn on these options when ZegoUIKitPrebuiltCallInvitationService is initialized for the first time
   manuallyByUser,
 }
 

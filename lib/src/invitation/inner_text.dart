@@ -148,9 +148,12 @@ class ZegoCallInvitationInnerText {
   /// The title of the dialog tips for some permissions cannot be obtained
   /// directly and must be set manually by the user
   /// The **default value** is:
-  /// • self auto start
-  /// • lock screen display
-  /// • background pop-up notification
+  /// '• Allow auto launch\n'
+  /// '• Allow notification on Banner and Lock screen\n'
+  /// '• Allow display over other apps\n'
+  /// '• Show on lock screen\n'
+  /// '• Show floating window\n'
+  /// '• Pop up interface in background\n'
   String permissionManuallyConfirmDialogSubTitle;
 
   /// The allow button text of the permission request,
@@ -277,12 +280,15 @@ class ZegoCallInvitationInnerText {
             systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
         permissionManuallyConfirmDialogTitle =
             permissionManuallyConfirmDialogTitle ??
-                'Please manually enable the following permissions',
+                'Please turn on the following permissions to receive call invitations',
         permissionManuallyConfirmDialogSubTitle =
             permissionManuallyConfirmDialogSubTitle ??
-                '• self auto start\n'
-                    '• lock screen display\n'
-                    '• background pop-up notification\n',
+                '• Allow auto launch\n'
+                    '• Allow notification on Banner and Lock screen\n'
+                    '• Allow display over other apps\n'
+                    '• Show on lock screen\n'
+                    '• Show floating window\n'
+                    '• Pop up interface in background\n',
         permissionConfirmDialogTitle =
             permissionConfirmDialogTitle ?? 'Allow $param_1 to',
         permissionConfirmDialogAllowButton =
