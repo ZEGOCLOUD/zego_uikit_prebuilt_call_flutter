@@ -1,3 +1,9 @@
+## 4.17.2
+
+- Features
+  - Support dismiss notification in iOS, please add `NSUserNotificationUsageDescription` in Info.plist for iOS notification permission
+  - Add `manuallyByUser` option in `ZegoCallInvitationPermission`, default is false, if you want to prompt user to manually enable permissions, please add this option
+
 ## 4.17.1
 
 - Update dependency
