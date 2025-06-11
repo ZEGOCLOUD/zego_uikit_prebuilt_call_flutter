@@ -32,10 +32,10 @@ import java.util.List;
 public class PluginNotification {
     public static String TAG = "ZEGO_Notification";
 
-    public void addLocalIMNotification(Context context, String title, String body,
+    public void handleShowNormalNotification(Context context, String title, String body,
                                        String channelID, String soundSource, String iconSource,
                                        String notificationIdString, Boolean isVibrate) {
-        Log.i("call plugin", "add IM Notification, title:" + title + ",body:" + body + ",channelId:" + channelID +
+        Log.i("call plugin", "show normal Notification, title:" + title + ",body:" + body + ",channelId:" + channelID +
                 ",soundSource:" + soundSource + ",iconSource:" + iconSource + "," +
                 "notificationId:" + notificationIdString + ", isVibrate:" + isVibrate);
 
@@ -63,7 +63,7 @@ public class PluginNotification {
 
         ClickReceiver clickReceiver = new ClickReceiver();
         Intent clickIntent = new Intent(context, clickReceiver.getClass());
-        clickIntent.setAction(Defines.ACTION_CLICK_IM);
+        clickIntent.setAction(Defines.ACTION_NORMAL_NOTIFICATION_CLICK);
         clickIntent.putExtra(Defines.FLUTTER_PARAM_NOTIFICATION_ID, notificationId);
         PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context, 0, clickIntent, flags);
 
@@ -107,11 +107,11 @@ public class PluginNotification {
         }
     }
 
-    public void addLocalCallNotification(Context context, String title, String body,
+    public void showCallNotification(Context context, String title, String body,
                                          String acceptButtonText, String rejectButtonText,
                                          String channelID, String soundSource, String iconSource,
                                          String notificationIdString, Boolean isVibrate, Boolean isVideo) {
-        Log.i("call plugin", "add Notification, title:" + title + ",body:" + body +
+        Log.i("call plugin", "show call Notification, title:" + title + ",body:" + body +
                 ",channelId:" + channelID + ",soundSource:" + soundSource + ",iconSource:" + iconSource +
                 ",notificationId:" + notificationIdString + ",isVibrate:" + isVibrate + ",isVideo:" + isVideo);
 
@@ -126,12 +126,12 @@ public class PluginNotification {
 
         CancelReceiver cancelReceiver = new CancelReceiver();
         Intent intentCancel = new Intent(context, cancelReceiver.getClass());
-        intentCancel.setAction(Defines.ACTION_CANCEL);
+        intentCancel.setAction(Defines.ACTION_CALL_NOTIFICATION_CANCEL);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, 0, intentCancel, flags);
 
         ClickReceiver clickReceiver = new ClickReceiver();
         Intent clickIntent = new Intent(context, clickReceiver.getClass());
-        clickIntent.setAction(Defines.ACTION_CLICK);
+        clickIntent.setAction(Defines.ACTION_CALL_NOTIFICATION_CLICK);
         PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context, 0, clickIntent, flags);
 
         /// avoid head-up notification disappear after a few seconds
@@ -141,12 +141,12 @@ public class PluginNotification {
         /// content view
         AcceptReceiver acceptReceiver = new AcceptReceiver();
         Intent acceptIntent = new Intent(context, acceptReceiver.getClass());
-        acceptIntent.setAction(Defines.ACTION_ACCEPT);
+        acceptIntent.setAction(Defines.ACTION_CALL_NOTIFICATION_ACCEPT);
         PendingIntent acceptPendingIntent = PendingIntent.getBroadcast(context, 0, acceptIntent, flags);
 
         RejectReceiver rejectReceiver = new RejectReceiver();
         Intent rejectIntent = new Intent(context, rejectReceiver.getClass());
-        rejectIntent.setAction(Defines.ACTION_REJECT);
+        rejectIntent.setAction(Defines.ACTION_CALL_NOTIFICATION_REJECT);
         PendingIntent rejectPendingIntent = PendingIntent.getBroadcast(context, 0, rejectIntent, flags);
 
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.layout_small_notification);
