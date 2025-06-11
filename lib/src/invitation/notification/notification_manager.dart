@@ -103,9 +103,23 @@ class ZegoCallInvitationNotificationManager {
       );
     });
 
+    if (callInvitationData.config.permissions
+        .contains(ZegoCallInvitationPermission.systemAlertWindow)) {
+      await ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .requestSystemAlertWindowPermission();
+    }
+
+    if (callInvitationData.config.permissions
+        .contains(ZegoCallInvitationPermission.manuallyByUser)) {
+      await ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .requestPermissionsNeedManuallyByUser();
+    }
+
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoSignalingPluginLocalNotificationChannelConfig(
+      ZegoCallNotificationChannelConfig(
         channelID: callChannelKey,
         channelName: callChannelName,
         vibrate: callInvitationData.notificationConfig.androidNotificationConfig
@@ -127,7 +141,7 @@ class ZegoCallInvitationNotificationManager {
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoSignalingPluginLocalNotificationChannelConfig(
+      ZegoCallNotificationChannelConfig(
         channelID: missedCallChannelKey,
         channelName: missedCallChannelName,
         vibrate: callInvitationData.notificationConfig.androidNotificationConfig
@@ -149,7 +163,7 @@ class ZegoCallInvitationNotificationManager {
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoSignalingPluginLocalNotificationChannelConfig(
+      ZegoCallNotificationChannelConfig(
         channelID: messageChannelID,
         channelName: messageChannelName,
         vibrate: callInvitationData.notificationConfig.androidNotificationConfig
@@ -255,8 +269,9 @@ class ZegoCallInvitationNotificationManager {
           ZegoCallInvitationType.videoCall == invitationData.type
               ? callInvitationData.innerText.missedVideoCallNotificationContent
               : callInvitationData.innerText.missedAudioCallNotificationContent;
-      ZegoCallPluginPlatform.instance.addLocalIMNotification(
-        ZegoSignalingPluginLocalIMNotificationConfig(
+
+      ZegoCallPluginPlatform.instance.showNormalNotification(
+        ZegoCallNormalNotificationConfig(
           id: notificationID,
           channelID: missedCallChannelKey,
           title: callInvitationData.innerText.missedCallNotificationTitle,

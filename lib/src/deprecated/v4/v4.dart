@@ -9,3 +9,4 @@ export 'deprecated_4100.dart';
 export 'deprecated_4120.dart';
 export 'deprecated_4150.dart';
 export 'deprecated_4152.dart';
+export 'deprecated_4172.dart';

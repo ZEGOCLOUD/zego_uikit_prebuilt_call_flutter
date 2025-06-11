@@ -135,6 +135,27 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is **Audio Call**.
   String missedAudioCallNotificationContent;
 
+  /// The title of the systemAlertWindow permission request confirmation dialog,
+  /// The **default value** is **Display over other apps**.
+  String systemAlertWindowConfirmDialogSubTitle;
+
+  /// The title of the dialog tips for some permissions cannot be obtained
+  /// directly and must be set manually by the user
+  /// The **default value** is:
+  /// Please manually enable the following permissions:
+  String permissionManuallyConfirmDialogTitle;
+
+  /// The title of the dialog tips for some permissions cannot be obtained
+  /// directly and must be set manually by the user
+  /// The **default value** is:
+  /// '• Allow auto launch\n'
+  /// '• Allow notification on Banner and Lock screen\n'
+  /// '• Allow display over other apps\n'
+  /// '• Show on lock screen\n'
+  /// '• Show floating window\n'
+  /// '• Pop up interface in background\n'
+  String permissionManuallyConfirmDialogSubTitle;
+
   /// The allow button text of the permission request,
   /// The **default value** is *"Allow $appName to $subTitle"*.
   String permissionConfirmDialogTitle;
@@ -146,6 +167,14 @@ class ZegoCallInvitationInnerText {
   /// The deny button text of the permission request,
   /// The **default value** is *"Deny"*.
   String permissionConfirmDialogDenyButton;
+
+  /// The deny button text of the permission request,
+  /// The **default value** is *"Cancel"*.
+  String permissionConfirmDialogCancelButton;
+
+  /// The deny button text of the permission request,
+  /// The **default value** is *"OK"*.
+  String permissionConfirmDialogOKButton;
 
   ZegoCallInvitationInnerText({
     String? incomingVideoCallDialogTitle,
@@ -180,11 +209,14 @@ class ZegoCallInvitationInnerText {
     String? missedGroupAudioCallNotificationContent,
     String? missedVideoCallNotificationContent,
     String? missedAudioCallNotificationContent,
-    @Deprecated('deprecated since 4.17.0')
     String? systemAlertWindowConfirmDialogSubTitle,
+    String? permissionManuallyConfirmDialogTitle,
+    String? permissionManuallyConfirmDialogSubTitle,
     String? permissionConfirmDialogTitle,
     String? permissionConfirmDialogAllowButton,
     String? permissionConfirmDialogDenyButton,
+    String? permissionConfirmDialogCancelButton,
+    String? permissionConfirmDialogOKButton,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
@@ -244,12 +276,29 @@ class ZegoCallInvitationInnerText {
             missedVideoCallNotificationContent ?? 'Video Call',
         missedAudioCallNotificationContent =
             missedAudioCallNotificationContent ?? 'Audio Call',
+        systemAlertWindowConfirmDialogSubTitle =
+            systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
+        permissionManuallyConfirmDialogTitle =
+            permissionManuallyConfirmDialogTitle ??
+                'Please turn on the following permissions to receive call invitations',
+        permissionManuallyConfirmDialogSubTitle =
+            permissionManuallyConfirmDialogSubTitle ??
+                '• Allow auto launch\n'
+                    '• Allow notification on Banner and Lock screen\n'
+                    '• Allow display over other apps\n'
+                    '• Show on lock screen\n'
+                    '• Show floating window\n'
+                    '• Pop up interface in background\n',
         permissionConfirmDialogTitle =
             permissionConfirmDialogTitle ?? 'Allow $param_1 to',
         permissionConfirmDialogAllowButton =
             permissionConfirmDialogAllowButton ?? 'Allow',
         permissionConfirmDialogDenyButton =
-            permissionConfirmDialogDenyButton ?? 'Deny';
+            permissionConfirmDialogDenyButton ?? 'Deny',
+        permissionConfirmDialogCancelButton =
+            permissionConfirmDialogCancelButton ?? 'Cancel',
+        permissionConfirmDialogOKButton =
+            permissionConfirmDialogOKButton ?? 'OK';
 
   /// if add a new text, need check [ZegoCallInvitationInnerTextForCallInvitationServicePrivate]
 }

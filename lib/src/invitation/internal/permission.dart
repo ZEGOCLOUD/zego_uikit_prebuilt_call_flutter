@@ -9,11 +9,11 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
-Future<bool> permissionConfirmationDialog(
+Future<bool> showSystemConfirmationDialog(
   BuildContext? context, {
   bool rootNavigator = true,
-  required ZegoCallPermissionConfirmDialogConfig dialogConfig,
-  required ZegoCallPermissionConfirmDialogInfo dialogInfo,
+  required ZegoCallSystemConfirmDialogConfig dialogConfig,
+  required ZegoCallSystemConfirmDialogInfo dialogInfo,
 }) async {
   if (!(context?.mounted ?? false)) {
     ZegoLoggerService.logInfo(
@@ -41,7 +41,8 @@ Future<bool> permissionConfirmationDialog(
                 return CupertinoTheme(
                   data: CupertinoThemeData(
                     brightness:
-                    dialogConfig.backgroundBrightness ?? Brightness.light,
+                        dialogConfig.backgroundBrightness ?? Brightness.light,
+                    primaryColor: CupertinoColors.systemBlue,
                   ),
                   child: CupertinoAlertDialog(
                     title: Text(
@@ -50,22 +51,34 @@ Future<bool> permissionConfirmationDialog(
                       style: dialogConfig.titleStyle ??
                           TextStyle(
                             fontSize: 25.zR,
-                            // fontWeight: FontWeight.normal,
-                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            color: CupertinoColors.label,
                           ),
+                    ),
+                    content: Padding(
+                      padding: EdgeInsets.only(top: 8.zR),
+                      child: Text(
+                        dialogInfo.message ?? '',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 25.zR,
+                          color: CupertinoColors.secondaryLabel,
+                        ),
+                      ),
                     ),
                     actions: [
                       CupertinoDialogAction(
+                        isDestructiveAction: false,
                         child: Text(
                           dialogInfo.cancelButtonName,
                           style: dialogConfig.actionTextStyle ??
                               TextStyle(
                                 fontSize: 25.zR,
-                                color: Colors.blue,
+                                fontWeight: FontWeight.w400,
+                                color: CupertinoColors.systemBlue,
                               ),
                         ),
                         onPressed: () {
-                          //  pop this dialog
                           try {
                             Navigator.of(
                               context,
@@ -81,10 +94,15 @@ Future<bool> permissionConfirmationDialog(
                         },
                       ),
                       CupertinoDialogAction(
+                        isDefaultAction: true,
                         child: Text(
                           dialogInfo.confirmButtonName,
                           style: dialogConfig.actionTextStyle ??
-                              TextStyle(fontSize: 25.zR, color: Colors.blue),
+                              TextStyle(
+                                fontSize: 25.zR,
+                                fontWeight: FontWeight.w600,
+                                color: CupertinoColors.systemBlue,
+                              ),
                         ),
                         onPressed: () {
                           //  pop this dialog

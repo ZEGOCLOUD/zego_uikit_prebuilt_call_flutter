@@ -582,8 +582,8 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         .missedCall
         .addNotification(notificationID, callInvitationData);
 
-    await ZegoCallPluginPlatform.instance.addLocalIMNotification(
-      ZegoSignalingPluginLocalIMNotificationConfig(
+    await ZegoCallPluginPlatform.instance.showNormalNotification(
+      ZegoCallNormalNotificationConfig(
         id: notificationID,
         channelID: channelID,
         title: handlerInfo?.missedCallNotificationTitle ?? 'Missed Call',

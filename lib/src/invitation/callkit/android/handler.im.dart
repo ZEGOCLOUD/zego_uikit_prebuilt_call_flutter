@@ -45,8 +45,8 @@ class ZegoCallAndroidIMBackgroundMessageHandler {
     if (channelID.isEmpty) {
       channelID = defaultMessageChannelID;
     }
-    await ZegoCallPluginPlatform.instance.addLocalIMNotification(
-      ZegoSignalingPluginLocalIMNotificationConfig(
+    await ZegoCallPluginPlatform.instance.showNormalNotification(
+      ZegoCallNormalNotificationConfig(
         id: Random().nextInt(2147483647),
         channelID: channelID,
         title: senderName,
