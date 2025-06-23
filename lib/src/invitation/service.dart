@@ -562,7 +562,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       'waitingEnterAcceptedOfflineCallWhenInitNotDone:${private.waitingEnterAcceptedOfflineCallWhenInitNotDone}, '
       'autoEnterAcceptedOfflineCall: ${private._data?.config.offline.autoEnterAcceptedOfflineCall}',
       tag: 'call-invitation',
-      subTag: 'service(${identityHashCode(this)}), uninit',
+      subTag: 'service(${identityHashCode(this)}), init',
     );
 
     if ((private._data?.config.offline.autoEnterAcceptedOfflineCall ?? true) ||
