@@ -1,3 +1,8 @@
+## 4.17.3
+
+- Bugs
+  - Fixed the issue that the caller remains on the call interface when the iOS client rejects an offline call
+
 ## 4.17.2
 
 - Features

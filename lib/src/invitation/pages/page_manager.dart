@@ -134,6 +134,15 @@ class ZegoCallInvitationPageManager {
 
   bool get isInCalling {
     final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
+
+    ZegoLoggerService.logInfo(
+      'check is in calling, '
+      'state:$pageState, '
+      'inCallingByIOSBackgroundLock:$inCallingByIOSBackgroundLock, ',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
     return (CallingState.kCallingWithVoice == pageState ||
             CallingState.kCallingWithVideo == pageState) ||
         inCallingByIOSBackgroundLock;
@@ -141,6 +150,14 @@ class ZegoCallInvitationPageManager {
 
   bool get isInCall {
     final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
+
+    ZegoLoggerService.logInfo(
+      'check is in call, '
+      'state:$pageState, ',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
     return CallingState.kOnlineAudioVideo == pageState;
   }
 
@@ -580,6 +597,11 @@ class ZegoCallInvitationPageManager {
         );
       } else {
         inCallingByIOSBackgroundLock = true;
+        ZegoLoggerService.logInfo(
+          'in calling by ios background lock, update to $inCallingByIOSBackgroundLock',
+          tag: 'call-invitation',
+          subTag: 'page manager, inCallingByIOSBackgroundLock',
+        );
 
         /// At this point, when answering a CallKit call on iOS lock screen,
         /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
@@ -1982,6 +2004,12 @@ class ZegoCallInvitationPageManager {
       /// At this point, since the device is no longer on lock screen,
       /// it is necessary to manually re-render the audio-video page.
       inCallingByIOSBackgroundLock = false;
+
+      ZegoLoggerService.logInfo(
+        'in calling by ios background lock, update to $inCallingByIOSBackgroundLock',
+        tag: 'call-invitation',
+        subTag: 'page manager, inCallingByIOSBackgroundLock',
+      );
       userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
 
       callingMachine?.stateOnlineAudioVideo.enter();

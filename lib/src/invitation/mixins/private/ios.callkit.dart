@@ -279,6 +279,9 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
     if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
+      /// exit call
+      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
+    } else {
       /// There is no need to clear CallKit here;  manually clear the CallKit ID.
       ///
       /// This is because offline calls on iOS will wake up the app,
@@ -291,9 +294,6 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       ZegoCallKitBackgroundService().refuseInvitationInBackground(
         needClearCallKit: false,
       );
-    } else {
-      /// exit call
-      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
     }
   }
 
