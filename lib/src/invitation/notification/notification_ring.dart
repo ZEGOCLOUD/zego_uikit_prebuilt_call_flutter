@@ -12,6 +12,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 /// @nodoc
 class ZegoRingtone {
+  double audioPlayerVolume = 1.0;
   bool isRingTimerRunning = false;
   bool isRingtoneRunning = false;
   var audioPlayer = AudioPlayer();
@@ -37,6 +38,8 @@ class ZegoRingtone {
     this.prefix = prefix;
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
+
+    audioPlayerVolume = audioPlayer.volume;
 
     final audioContext = AudioContext(
       iOS: AudioContextIOS(
@@ -105,6 +108,8 @@ class ZegoRingtone {
       );
     } else {
       audioPlayer.setReleaseMode(ReleaseMode.loop);
+      audioPlayer.setVolume(audioPlayerVolume);
+
       try {
         await audioPlayer.play(AssetSource(sourcePath)).then((value) {
           ZegoLoggerService.logInfo(
@@ -145,6 +150,11 @@ class ZegoRingtone {
         );
 
         try {
+          audioPlayerVolume = audioPlayer.volume;
+
+          /// Turn off the sound first, otherwise it may still ring
+          audioPlayer.setVolume(0);
+
           audioPlayer.stop().then((value) {
             ZegoLoggerService.logInfo(
               'audioPlayer stop done',
