@@ -1,3 +1,9 @@
+## 4.17.4
+
+- Bugs
+  - Fixed the issue that the ringing sound would last for several seconds after the call was answered on some iOS devices
+  - Fixed issues caused by closing the call pop-up window using the back button on Android
+
 ## 4.17.3
 
 - Bugs
