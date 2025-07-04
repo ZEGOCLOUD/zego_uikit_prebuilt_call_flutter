@@ -117,20 +117,41 @@ class ZegoCallInvitationPageManager {
   bool get hasCallkitIncomingCauseAppInBackground =>
       _hasCallkitIncomingCauseAppInBackground;
 
-  set hasCallkitIncomingCauseAppInBackground(value) =>
-      _hasCallkitIncomingCauseAppInBackground = value;
+  set hasCallkitIncomingCauseAppInBackground(value) {
+    ZegoLoggerService.logInfo(
+      'set hasCallkitIncomingCauseAppInBackground:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    _hasCallkitIncomingCauseAppInBackground = value;
+  }
 
   bool get waitingCallInvitationReceivedAfterCallKitIncomingAccepted =>
       _waitingCallInvitationReceivedAfterCallKitIncomingAccepted;
 
-  set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(value) =>
-      _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = value;
+  set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(value) {
+    ZegoLoggerService.logInfo(
+      'set waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = value;
+  }
 
   bool get waitingCallInvitationReceivedAfterCallKitIncomingRejected =>
       _waitingCallInvitationReceivedAfterCallKitIncomingRejected;
 
-  set waitingCallInvitationReceivedAfterCallKitIncomingRejected(value) =>
-      _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
+  set waitingCallInvitationReceivedAfterCallKitIncomingRejected(value) {
+    ZegoLoggerService.logInfo(
+      'set waitingCallInvitationReceivedAfterCallKitIncomingRejected:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    _waitingCallInvitationReceivedAfterCallKitIncomingRejected = value;
+  }
 
   bool get isInCalling {
     final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
@@ -223,9 +244,9 @@ class ZegoCallInvitationPageManager {
 
     _invitationTopSheetVisibility = false;
     _appInBackground = false;
-    _hasCallkitIncomingCauseAppInBackground = false;
-    _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
-    _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
+    hasCallkitIncomingCauseAppInBackground = false;
+    waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+    waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
     userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
 
     _invitationData = ZegoCallInvitationData.empty();
