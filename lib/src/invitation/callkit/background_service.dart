@@ -103,6 +103,7 @@ class ZegoCallKitBackgroundService {
       return;
     }
 
+    /// hasCallkitIncomingCauseAppInBackground is true
     _pageManager?.hasCallkitIncomingCauseAppInBackground = false;
 
     ZegoLoggerService.logInfo(

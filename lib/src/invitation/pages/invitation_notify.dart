@@ -11,6 +11,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 // Project imports:
 
@@ -44,6 +45,9 @@ class ZegoCallInvitationNotifyDialog extends StatefulWidget {
 
 class _ZegoCallInvitationNotifyDialogState
     extends State<ZegoCallInvitationNotifyDialog> {
+  bool _hasUserResponded =
+      false; // Mark whether user has responded (clicked a button)
+
   @override
   void dispose() {
     super.dispose();
@@ -51,62 +55,71 @@ class _ZegoCallInvitationNotifyDialogState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding:
-          widget.config?.padding ?? EdgeInsets.symmetric(horizontal: 24.zW),
-      width: widget.config?.width ?? 718.zW,
-      height: widget.config?.height ?? 160.zH,
-      decoration: widget.config?.decoration ??
-          BoxDecoration(
-            color: const Color(0xff333333).withOpacity(0.8),
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-      child: widget.config?.builder?.call(
-            widget.invitationData,
-          ) ??
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ValueListenableBuilder(
-                valueListenable: ZegoUIKitUserPropertiesNotifier(
-                  widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (bool didPop) async {
+        if (didPop && !_hasUserResponded) {
+          // Back button pressed and user hasn't responded yet, execute reject operation
+          ZegoUIKitPrebuiltCallInvitationService().reject();
+        }
+      },
+      child: Container(
+        padding:
+            widget.config?.padding ?? EdgeInsets.symmetric(horizontal: 24.zW),
+        width: widget.config?.width ?? 718.zW,
+        height: widget.config?.height ?? 160.zH,
+        decoration: widget.config?.decoration ??
+            BoxDecoration(
+              color: const Color(0xff333333).withOpacity(0.8),
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+        child: widget.config?.builder?.call(
+              widget.invitationData,
+            ) ??
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: ZegoUIKitUserPropertiesNotifier(
+                    widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
+                  ),
+                  builder: (context, _, __) {
+                    return Container(
+                      width: 84.zR,
+                      height: 84.zR,
+                      decoration: const BoxDecoration(
+                          color: Color(0xffDBDDE3), shape: BoxShape.circle),
+                      child: widget.avatarBuilder?.call(
+                            context,
+                            Size(84.zR, 84.zR),
+                            widget.invitationData.inviter,
+                            {},
+                          ) ??
+                          circleName(widget.invitationData.inviter?.name ?? ''),
+                    );
+                  },
                 ),
-                builder: (context, _, __) {
-                  return Container(
-                    width: 84.zR,
-                    height: 84.zR,
-                    decoration: const BoxDecoration(
-                        color: Color(0xffDBDDE3), shape: BoxShape.circle),
-                    child: widget.avatarBuilder?.call(
-                          context,
-                          Size(84.zR, 84.zR),
-                          widget.invitationData.inviter,
-                          {},
-                        ) ??
-                        circleName(widget.invitationData.inviter?.name ?? ''),
-                  );
-                },
-              ),
-              SizedBox(width: 26.zW),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  userName(),
-                  SizedBox(height: 7.zH),
-                  subtitle(),
-                ],
-              ),
-              const Expanded(child: SizedBox()),
-              ...widget.declineButtonConfig.visible
-                  ? [
-                      declineButton(),
-                      SizedBox(width: 40.zW),
-                    ]
-                  : [],
-              ...widget.acceptButtonConfig.visible ? [acceptButton()] : [],
-            ],
-          ),
+                SizedBox(width: 26.zW),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    userName(),
+                    SizedBox(height: 7.zH),
+                    subtitle(),
+                  ],
+                ),
+                const Expanded(child: SizedBox()),
+                ...widget.declineButtonConfig.visible
+                    ? [
+                        declineButton(),
+                        SizedBox(width: 40.zW),
+                      ]
+                    : [],
+                ...widget.acceptButtonConfig.visible ? [acceptButton()] : [],
+              ],
+            ),
+      ),
     );
   }
 
@@ -192,6 +205,10 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.declineButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.declineButtonConfig.size ?? Size(74.zR, 74.zR),
+        onWillPress: () {
+          /// Mark user has responded immediately when tapped
+          _hasUserResponded = true;
+        },
         onPressed: (ZegoRefuseInvitationButtonResult result) {
           widget.pageManager.hideInvitationTopSheet();
           widget.pageManager.onLocalRefuseInvitation(
@@ -229,6 +246,10 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.acceptButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.acceptButtonConfig.size ?? Size(74.zR, 74.zR),
+        onWillPress: () {
+          /// Mark user has responded immediately when tapped
+          _hasUserResponded = true;
+        },
         onPressed: (ZegoAcceptInvitationButtonResult result) {
           widget.pageManager.hideInvitationTopSheet();
           widget.pageManager.onLocalAcceptInvitation(
