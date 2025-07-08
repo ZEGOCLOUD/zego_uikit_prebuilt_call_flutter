@@ -1,3 +1,8 @@
+## 4.17.5
+
+- Bugs
+  - Update Android 14+ compatibility(force CallStyle/FOREGROUND_SERVICE_PHONE_CALL for https://developer.android.com/about/versions/14/behavior-changes-all#non-dismissable-notifications)
+
 ## 4.17.4
 
 - Bugs
