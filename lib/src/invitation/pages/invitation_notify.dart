@@ -212,6 +212,9 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoRefuseInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .isAdvanceInvitationMode,
         targetInvitationID: widget.invitationData.invitationID,
         // customization is not supported
         data: ZegoCallInvitationRejectRequestProtocol(
@@ -255,6 +258,9 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoAcceptInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .isAdvanceInvitationMode,
         targetInvitationID: widget.invitationData.invitationID,
         customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
         textStyle: widget.acceptButtonConfig.textStyle,

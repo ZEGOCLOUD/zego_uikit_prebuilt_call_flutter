@@ -9,6 +9,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 /// @nodoc
 class ZegoInviterCallingBottomToolBar extends StatelessWidget {
@@ -39,7 +40,9 @@ class ZegoInviterCallingBottomToolBar extends StatelessWidget {
                       progressColor: Colors.white,
                     ),
                 child: ZegoCancelInvitationButton(
-                  isAdvancedMode: true,
+                  isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+                      .private
+                      .isAdvanceInvitationMode,
                   invitees: invitees.map((e) => e.id).toList(),
                   targetInvitationID: pageManager.invitationData.invitationID,
                   data: ZegoCallInvitationCancelRequestProtocol(
