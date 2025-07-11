@@ -49,6 +49,11 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     );
 
     try {
+      ZegoLoggerService.logInfo(
+        'push from restore, ',
+        tag: 'call',
+        subTag: 'controller.minimize Navigator',
+      );
       Navigator.of(context, rootNavigator: rootNavigator).push(
         MaterialPageRoute(builder: (context) {
           final prebuiltCall = ZegoUIKitPrebuiltCall(
@@ -106,6 +111,12 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
 
     try {
+      ZegoLoggerService.logInfo(
+        'pop from minimize, ',
+        tag: 'call',
+        subTag: 'controller.minimize, Navigator',
+      );
+
       /// pop call page
       Navigator.of(
         context,

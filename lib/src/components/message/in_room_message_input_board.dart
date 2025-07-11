@@ -49,10 +49,17 @@ class ZegoCallInRoomMessageInputBoard extends ModalRoute<String> {
         children: <Widget>[
           Expanded(
             child: GestureDetector(
-              onTap: () => Navigator.of(
-                context,
-                rootNavigator: rootNavigator,
-              ).pop(),
+              onTap: () {
+                ZegoLoggerService.logInfo(
+                  'pop , ',
+                  tag: 'call',
+                  subTag: 'in room message input board, Navigator',
+                );
+                Navigator.of(
+                  context,
+                  rootNavigator: rootNavigator,
+                ).pop();
+              },
               child: Container(color: Colors.transparent),
             ),
           ),
@@ -61,6 +68,11 @@ class ZegoCallInRoomMessageInputBoard extends ModalRoute<String> {
             valueNotifier: valueNotifier,
             focusNotifier: focusNotifier,
             onSubmit: () {
+              ZegoLoggerService.logInfo(
+                'pop from submit, ',
+                tag: 'call',
+                subTag: 'in room message input board, Navigator',
+              );
               Navigator.of(
                 context,
                 rootNavigator: rootNavigator,

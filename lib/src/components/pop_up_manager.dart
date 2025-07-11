@@ -1,6 +1,9 @@
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 
+// Package imports:
+import 'package:zego_uikit/zego_uikit.dart';
+
 /// @nodoc
 class ZegoCallPopUpManager {
   final List<int> _popupSheetKeys = [];
@@ -15,6 +18,11 @@ class ZegoCallPopUpManager {
 
   void autoPop(BuildContext context, bool rootNavigator) {
     for (final _ in _popupSheetKeys) {
+      ZegoLoggerService.logInfo(
+        'pop, ',
+        tag: 'call',
+        subTag: 'popup manager, Navigator',
+      );
       Navigator.of(
         context,
         rootNavigator: rootNavigator,

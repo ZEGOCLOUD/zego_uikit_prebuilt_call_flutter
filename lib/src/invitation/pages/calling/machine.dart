@@ -115,6 +115,11 @@ class ZegoCallingMachine {
     );
 
     try {
+      ZegoLoggerService.logInfo(
+        'push from onCallingEntry, ',
+        tag: 'call',
+        subTag: 'machine, Navigator',
+      );
       final currentContext = callInvitationData.contextQuery?.call();
       Navigator.of(currentContext!).push(
         MaterialPageRoute(

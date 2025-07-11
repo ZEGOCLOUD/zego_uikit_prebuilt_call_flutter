@@ -1466,6 +1466,12 @@ class ZegoCallInvitationPageManager {
         }
 
         try {
+          ZegoLoggerService.logInfo(
+            'push from missed call, ',
+            tag: 'call',
+            subTag: 'page manager, missed call notification click, Navigator',
+          );
+
           final currentContext = callInvitationData.contextQuery?.call();
           Navigator.of(currentContext!).push(
             MaterialPageRoute(
@@ -1835,6 +1841,11 @@ class ZegoCallInvitationPageManager {
         inCallPage = false;
 
         try {
+          ZegoLoggerService.logInfo(
+            'push from restore to idle, ',
+            tag: 'call',
+            subTag: 'page manager, restore to idle, Navigator',
+          );
           Navigator.of(callInvitationData.contextQuery!.call()).pop();
         } catch (e) {
           ZegoLoggerService.logError(
@@ -1938,6 +1949,11 @@ class ZegoCallInvitationPageManager {
     if (_invitationTopSheetVisibility) {
       assert(callInvitationData.contextQuery != null);
       try {
+        ZegoLoggerService.logInfo(
+          'push from hideInvitationTopSheet, ',
+          tag: 'call',
+          subTag: 'page manager, hideInvitationTopSheet, Navigator',
+        );
         Navigator.of(callInvitationData.contextQuery!.call()).pop();
       } catch (e) {
         ZegoLoggerService.logError(

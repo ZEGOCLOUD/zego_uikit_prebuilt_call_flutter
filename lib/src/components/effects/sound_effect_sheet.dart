@@ -103,6 +103,11 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
         children: [
           GestureDetector(
             onTap: () {
+              ZegoLoggerService.logInfo(
+                'pop from header, ',
+                tag: 'call',
+                subTag: 'sound effect sheet, Navigator',
+              );
               Navigator.of(
                 context,
                 rootNavigator: widget.rootNavigator,

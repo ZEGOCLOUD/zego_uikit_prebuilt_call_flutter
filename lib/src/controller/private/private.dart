@@ -84,6 +84,11 @@ class ZegoCallControllerPrivateImpl {
           onPressed: () {
             //  pop this confirm dialog
             try {
+              ZegoLoggerService.logInfo(
+                'pop from default cancel hangup, ',
+                tag: 'call',
+                subTag: 'controller.p, Navigator',
+              );
               Navigator.of(
                 context,
                 rootNavigator: _prebuiltConfig?.rootNavigator ?? false,
@@ -106,6 +111,11 @@ class ZegoCallControllerPrivateImpl {
                 TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
+            ZegoLoggerService.logInfo(
+              'pop from default confirm hangup, ',
+              tag: 'call',
+              subTag: 'controller.p, Navigator',
+            );
             //  pop this confirm dialog
             try {
               Navigator.of(
@@ -153,6 +163,11 @@ class ZegoCallControllerPrivateImpl {
       ZegoUIKitPrebuiltCallController().minimize.hide();
     } else {
       try {
+        ZegoLoggerService.logInfo(
+          'pop from default end, ',
+          tag: 'call',
+          subTag: 'controller.p, Navigator',
+        );
         Navigator.of(
           context,
           rootNavigator: _prebuiltConfig?.rootNavigator ?? false,
