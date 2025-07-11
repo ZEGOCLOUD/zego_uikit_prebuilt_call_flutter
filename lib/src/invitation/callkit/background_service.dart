@@ -260,6 +260,12 @@ class ZegoCallKitBackgroundService {
             (_pageManager?.appInBackground ?? false))) {
       _pageManager?.restoreToIdle();
     } else {
+      ZegoLoggerService.logInfo(
+        'pop from hangup, ',
+        tag: 'call',
+        subTag: 'call invitation service, Navigator',
+      );
+
       /// background callkit call, not need to navigate
       try {
         Navigator.of(_pageManager!.callInvitationData.contextQuery!.call())

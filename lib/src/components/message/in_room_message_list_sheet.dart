@@ -131,6 +131,11 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
         children: [
           GestureDetector(
             onTap: () {
+              ZegoLoggerService.logInfo(
+                'pop from header, ',
+                tag: 'call',
+                subTag: 'in room message list sheet, Navigator',
+              );
               Navigator.of(
                 context,
                 rootNavigator: widget.rootNavigator,

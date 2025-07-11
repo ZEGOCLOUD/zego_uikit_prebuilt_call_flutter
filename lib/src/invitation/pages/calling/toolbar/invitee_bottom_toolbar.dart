@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 /// @nodoc
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
@@ -100,7 +101,9 @@ class ZegoInviteeCallingBottomToolBarState
   Widget declineButton() {
     final invitationID = widget.pageManager.invitationData.invitationID;
     return ZegoRefuseInvitationButton(
-      isAdvancedMode: true,
+      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .isAdvanceInvitationMode,
       inviterID: widget.inviter.id,
       targetInvitationID: invitationID,
       // data customization is not supported
@@ -135,7 +138,9 @@ class ZegoInviteeCallingBottomToolBarState
   Widget acceptButton() {
     final invitationID = widget.pageManager.invitationData.invitationID;
     return ZegoAcceptInvitationButton(
-      isAdvancedMode: true,
+      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .isAdvanceInvitationMode,
       inviterID: widget.inviter.id,
       targetInvitationID: invitationID,
       customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),

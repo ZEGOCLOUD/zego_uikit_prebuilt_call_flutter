@@ -65,6 +65,9 @@ class ZegoCallInvitationPageManager {
   ///  call page by the API through the App
   bool isWaitingEnterAcceptedOfflineCall = false;
 
+  ///
+  bool isHidingInvitationTopSheetDuringSheetEmptyClicked = false;
+
   /// If the call is ended by the end button of iOS CallKit,
   /// the widget navigation of the CallPage will not be properly
   /// execute dispose function.
@@ -1463,6 +1466,12 @@ class ZegoCallInvitationPageManager {
         }
 
         try {
+          ZegoLoggerService.logInfo(
+            'push from missed call, ',
+            tag: 'call',
+            subTag: 'page manager, missed call notification click, Navigator',
+          );
+
           final currentContext = callInvitationData.contextQuery?.call();
           Navigator.of(currentContext!).push(
             MaterialPageRoute(
@@ -1795,37 +1804,6 @@ class ZegoCallInvitationPageManager {
     }
 
     _notificationManager?.cancelInvitationNotification();
-    hideInvitationTopSheet();
-
-    if (CallingState.kIdle !=
-        (callingMachine?.machine.current?.identifier ?? CallingState.kIdle)) {
-      ZegoLoggerService.logInfo(
-        'restore to idle, '
-        'current state:${callingMachine?.machine.current?.identifier}, '
-        'inCallPage:$inCallPage',
-        tag: 'call-invitation',
-        subTag: 'page manager, restore to idle',
-      );
-
-      if (needPop) {
-        assert(callInvitationData.contextQuery != null);
-
-        inCallPage = false;
-
-        try {
-          Navigator.of(callInvitationData.contextQuery!.call()).pop();
-        } catch (e) {
-          ZegoLoggerService.logError(
-            'Navigator pop exception:$e, '
-            'contextQuery:${callInvitationData.contextQuery}, ',
-            tag: 'call-invitation',
-            subTag: 'page manager, restore to idle',
-          );
-        }
-      }
-
-      callingMachine?.stateIdle.enter();
-    }
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
@@ -1844,10 +1822,63 @@ class ZegoCallInvitationPageManager {
         ZegoCallMiniOverlayMachine().state()) {
       _invitationData = ZegoCallInvitationData.empty();
     }
+
+    hideInvitationTopSheet();
+
+    if (CallingState.kIdle !=
+        (callingMachine?.machine.current?.identifier ?? CallingState.kIdle)) {
+      ZegoLoggerService.logInfo(
+        'restore to idle, '
+        'current state:${callingMachine?.machine.current?.identifier}, '
+        'inCallPage:$inCallPage',
+        tag: 'call-invitation',
+        subTag: 'page manager, restore to idle',
+      );
+
+      if (needPop) {
+        assert(callInvitationData.contextQuery != null);
+
+        inCallPage = false;
+
+        try {
+          ZegoLoggerService.logInfo(
+            'push from restore to idle, ',
+            tag: 'call',
+            subTag: 'page manager, restore to idle, Navigator',
+          );
+          Navigator.of(callInvitationData.contextQuery!.call()).pop();
+        } catch (e) {
+          ZegoLoggerService.logError(
+            'Navigator pop exception:$e, '
+            'contextQuery:${callInvitationData.contextQuery}, ',
+            tag: 'call-invitation',
+            subTag: 'page manager, restore to idle',
+          );
+        }
+      }
+
+      callingMachine?.stateIdle.enter();
+    }
   }
 
   void onInvitationTopSheetEmptyClicked() {
+    ZegoLoggerService.logInfo(
+      'start',
+      tag: 'call-invitation',
+      subTag: 'page manager, onInvitationTopSheetEmptyClicked',
+    );
+
+    isHidingInvitationTopSheetDuringSheetEmptyClicked = true;
+
     hideInvitationTopSheet();
+
+    isHidingInvitationTopSheetDuringSheetEmptyClicked = false;
+
+    ZegoLoggerService.logInfo(
+      'end',
+      tag: 'call-invitation',
+      subTag: 'page manager, onInvitationTopSheetEmptyClicked',
+    );
 
     if (ZegoCallInvitationType.voiceCall == _invitationData.type) {
       callingMachine?.stateCallingWithVoice.enter();
@@ -1918,6 +1949,11 @@ class ZegoCallInvitationPageManager {
     if (_invitationTopSheetVisibility) {
       assert(callInvitationData.contextQuery != null);
       try {
+        ZegoLoggerService.logInfo(
+          'push from hideInvitationTopSheet, ',
+          tag: 'call',
+          subTag: 'page manager, hideInvitationTopSheet, Navigator',
+        );
         Navigator.of(callInvitationData.contextQuery!.call()).pop();
       } catch (e) {
         ZegoLoggerService.logError(

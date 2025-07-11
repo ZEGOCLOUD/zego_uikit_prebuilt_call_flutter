@@ -59,6 +59,29 @@ class _ZegoCallInvitationNotifyDialogState
       canPop: true,
       onPopInvoked: (bool didPop) async {
         if (didPop && !_hasUserResponded) {
+          ZegoLoggerService.logInfo(
+            'onPopInvoked',
+            tag: 'call-invitation',
+            subTag: 'invitation notify',
+          );
+
+          if (ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .isHidingInvitationTopSheetDuringSheetEmptyClicked) {
+            ZegoLoggerService.logInfo(
+              'from empty clicked, ignore',
+              tag: 'call-invitation',
+              subTag: 'invitation notify',
+            );
+
+            return;
+          }
+
+          ZegoLoggerService.logInfo(
+            'try reject',
+            tag: 'call-invitation',
+            subTag: 'invitation notify',
+          );
           // Back button pressed and user hasn't responded yet, execute reject operation
           ZegoUIKitPrebuiltCallInvitationService().reject();
         }
@@ -189,6 +212,9 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoRefuseInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .isAdvanceInvitationMode,
         targetInvitationID: widget.invitationData.invitationID,
         // customization is not supported
         data: ZegoCallInvitationRejectRequestProtocol(
@@ -232,6 +258,9 @@ class _ZegoCallInvitationNotifyDialogState
       absorbing: false,
       child: ZegoAcceptInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
+        isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .isAdvanceInvitationMode,
         targetInvitationID: widget.invitationData.invitationID,
         customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
         textStyle: widget.acceptButtonConfig.textStyle,

@@ -79,6 +79,11 @@ Future<bool> showSystemConfirmationDialog(
                               ),
                         ),
                         onPressed: () {
+                          ZegoLoggerService.logInfo(
+                            'pop from cancel, ',
+                            tag: 'call',
+                            subTag: 'permission confirmation dialog, Navigator',
+                          );
                           try {
                             Navigator.of(
                               context,
@@ -105,6 +110,11 @@ Future<bool> showSystemConfirmationDialog(
                               ),
                         ),
                         onPressed: () {
+                          ZegoLoggerService.logInfo(
+                            'pop from confrim, ',
+                            tag: 'call',
+                            subTag: 'permission confirmation dialog, Navigator',
+                          );
                           //  pop this dialog
                           try {
                             Navigator.of(

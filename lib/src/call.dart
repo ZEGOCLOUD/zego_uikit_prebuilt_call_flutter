@@ -1306,6 +1306,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this confirm dialog
+            ZegoLoggerService.logInfo(
+              'pop from cancel call hangup confirmation, ',
+              tag: 'call',
+              subTag: 'prebuilt, Navigator',
+            );
             try {
               Navigator.of(
                 context,
@@ -1329,6 +1334,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           ),
           onPressed: () {
             //  pop this confirm dialog
+            ZegoLoggerService.logInfo(
+              'pop from confrim call hangup confirmation, ',
+              tag: 'call',
+              subTag: 'prebuilt, Navigator',
+            );
             try {
               Navigator.of(
                 context,
@@ -1374,6 +1384,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       controller.minimize.hide();
     } else {
       try {
+        ZegoLoggerService.logInfo(
+          'pop from call end, ',
+          tag: 'call',
+          subTag: 'prebuilt, Navigator',
+        );
         Navigator.of(
           context,
           rootNavigator: widget.config.rootNavigator,

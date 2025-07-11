@@ -172,6 +172,11 @@ class ZegoCallInvitationServiceAPIImpl
       return false;
     }
 
+    ZegoLoggerService.logInfo(
+      'invitationData:${private._pageManager?.invitationData}',
+      tag: 'call-invitation',
+      subTag: 'service, reject',
+    );
     return private._rejectInvitation(
       callerID: private._pageManager?.invitationData.inviter?.id ?? '',
       customData: customData,

@@ -241,6 +241,11 @@ class _ZegoSendCallingInvitationListState
             bottom: 0,
             child: IconButton(
               onPressed: () {
+                ZegoLoggerService.logInfo(
+                  'pop from title, ',
+                  tag: 'call',
+                  subTag: 'sending calling invation list, Navigator',
+                );
                 Navigator.of(context).pop();
               },
               iconSize: 20,
@@ -270,6 +275,12 @@ class _ZegoSendCallingInvitationListState
   Widget controls({required double height}) {
     return GestureDetector(
       onTap: () {
+        ZegoLoggerService.logInfo(
+          'pop from controls, ',
+          tag: 'call',
+          subTag: 'sending calling invation list, Navigator',
+        );
+
         Navigator.of(context).pop();
 
         final inviteeSelectedUsers = userSelectedStatusNotifier.value;
