@@ -65,6 +65,9 @@ class ZegoCallInvitationPageManager {
   ///  call page by the API through the App
   bool isWaitingEnterAcceptedOfflineCall = false;
 
+  ///
+  bool isHidingInvitationTopSheetDuringSheetEmptyClicked = false;
+
   /// If the call is ended by the end button of iOS CallKit,
   /// the widget navigation of the CallPage will not be properly
   /// execute dispose function.
@@ -1795,6 +1798,25 @@ class ZegoCallInvitationPageManager {
     }
 
     _notificationManager?.cancelInvitationNotification();
+
+    if (null != iOSIncomingPushUUID) {
+      ZegoUIKit().getSignalingPlugin().reportCallEnded(
+            CXCallEndedReason.CXCallEndedReasonRemoteEnded,
+            iOSIncomingPushUUID!,
+          );
+      iOSIncomingPushUUID = null;
+    }
+
+    if (needClearCallKit) {
+      ZegoUIKitCallCache().offlineCallKit.clearCallID();
+      clearAllCallKitCalls();
+    }
+
+    if (ZegoCallMiniOverlayPageState.minimizing !=
+        ZegoCallMiniOverlayMachine().state()) {
+      _invitationData = ZegoCallInvitationData.empty();
+    }
+
     hideInvitationTopSheet();
 
     if (CallingState.kIdle !=
@@ -1826,28 +1848,26 @@ class ZegoCallInvitationPageManager {
 
       callingMachine?.stateIdle.enter();
     }
-
-    if (null != iOSIncomingPushUUID) {
-      ZegoUIKit().getSignalingPlugin().reportCallEnded(
-            CXCallEndedReason.CXCallEndedReasonRemoteEnded,
-            iOSIncomingPushUUID!,
-          );
-      iOSIncomingPushUUID = null;
-    }
-
-    if (needClearCallKit) {
-      ZegoUIKitCallCache().offlineCallKit.clearCallID();
-      clearAllCallKitCalls();
-    }
-
-    if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoCallMiniOverlayMachine().state()) {
-      _invitationData = ZegoCallInvitationData.empty();
-    }
   }
 
   void onInvitationTopSheetEmptyClicked() {
+    ZegoLoggerService.logInfo(
+      'start',
+      tag: 'call-invitation',
+      subTag: 'page manager, onInvitationTopSheetEmptyClicked',
+    );
+
+    isHidingInvitationTopSheetDuringSheetEmptyClicked = true;
+
     hideInvitationTopSheet();
+
+    isHidingInvitationTopSheetDuringSheetEmptyClicked = false;
+
+    ZegoLoggerService.logInfo(
+      'end',
+      tag: 'call-invitation',
+      subTag: 'page manager, onInvitationTopSheetEmptyClicked',
+    );
 
     if (ZegoCallInvitationType.voiceCall == _invitationData.type) {
       callingMachine?.stateCallingWithVoice.enter();

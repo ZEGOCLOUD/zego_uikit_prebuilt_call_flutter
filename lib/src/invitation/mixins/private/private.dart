@@ -14,6 +14,9 @@ class ZegoCallInvitationServicePrivateImpl
         ZegoCallInvitationServiceIOSCallKitPrivatePrivate {
   set inCallPage(bool value) => _pageManager?.inCallPage = value;
 
+  bool get isHidingInvitationTopSheetDuringSheetEmptyClicked =>
+      _pageManager?.isHidingInvitationTopSheetDuringSheetEmptyClicked ?? false;
+
   bool isCurrentInvitationFromAcceptedAndroidOffline({
     bool selfDestructing = true,
   }) {

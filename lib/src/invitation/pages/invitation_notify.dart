@@ -59,6 +59,29 @@ class _ZegoCallInvitationNotifyDialogState
       canPop: true,
       onPopInvoked: (bool didPop) async {
         if (didPop && !_hasUserResponded) {
+          ZegoLoggerService.logInfo(
+            'onPopInvoked',
+            tag: 'call-invitation',
+            subTag: 'invitation notify',
+          );
+
+          if (ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .isHidingInvitationTopSheetDuringSheetEmptyClicked) {
+            ZegoLoggerService.logInfo(
+              'from empty clicked, ignore',
+              tag: 'call-invitation',
+              subTag: 'invitation notify',
+            );
+
+            return;
+          }
+
+          ZegoLoggerService.logInfo(
+            'try reject',
+            tag: 'call-invitation',
+            subTag: 'invitation notify',
+          );
           // Back button pressed and user hasn't responded yet, execute reject operation
           ZegoUIKitPrebuiltCallInvitationService().reject();
         }
