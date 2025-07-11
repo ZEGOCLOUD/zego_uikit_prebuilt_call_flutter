@@ -7,7 +7,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ZegoCallBeautyEffectButton extends StatefulWidget {
   const ZegoCallBeautyEffectButton({
