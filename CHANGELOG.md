@@ -1,3 +1,9 @@
+## 4.17.6
+
+- Bugs
+  - Fixed the issue where the called party experiences a black screen when the caller cancels the call
+  - Fixed the issue of occasional failure to decline call invitations
+
 ## 4.17.5
 
 - Bugs
