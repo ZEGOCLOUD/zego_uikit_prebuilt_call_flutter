@@ -253,14 +253,14 @@ class ZegoCallInvitationPIPIOSConfig {
 
 class ZegoCallInvitationUIConfig {
   ZegoCallInvitationUIConfig({
-    this.prebuiltWithSafeArea = true,
+    this.withSafeArea = true,
     ZegoCallInvitationInviterUIConfig? inviter,
     ZegoCallInvitationInviteeUIConfig? invitee,
   })  : inviter = inviter ?? ZegoCallInvitationInviterUIConfig(),
         invitee = invitee ?? ZegoCallInvitationInviteeUIConfig();
 
-  /// does [ZegoUIKitPrebuiltCall] display with SafeArea or not
-  bool prebuiltWithSafeArea;
+  /// does invitation widget display with SafeArea or not
+  bool withSafeArea;
 
   ZegoCallInvitationInviterUIConfig inviter;
   ZegoCallInvitationInviteeUIConfig invitee;
@@ -268,7 +268,7 @@ class ZegoCallInvitationUIConfig {
   @override
   String toString() {
     return 'ZegoCallInvitationUIConfig:{'
-        'prebuiltWithSafeArea:$prebuiltWithSafeArea, '
+        'withSafeArea:$withSafeArea, '
         'inviter:$inviter, '
         'invitee:$invitee, '
         '}';

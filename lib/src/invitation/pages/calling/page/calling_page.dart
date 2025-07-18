@@ -146,9 +146,11 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   declineButtonConfig:
                       widget.callInvitationData.uiConfig.invitee.declineButton,
                 ));
-        view = SafeArea(
-          child: invitationView,
-        );
+        view = widget.callInvitationData.uiConfig.withSafeArea
+            ? SafeArea(
+                child: invitationView,
+              )
+            : invitationView;
         break;
       case CallingState.kOnlineAudioVideo:
         view = prebuiltCallPage();
@@ -255,7 +257,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
       plugins: widget.callInvitationData.plugins,
     );
 
-    return widget.callInvitationData.uiConfig.prebuiltWithSafeArea
+    return widget.callInvitationData.uiConfig.withSafeArea
         ? SafeArea(
             child: prebuiltCall,
           )
