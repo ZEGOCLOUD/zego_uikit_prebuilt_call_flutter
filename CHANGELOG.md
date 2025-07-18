@@ -1,3 +1,10 @@
+## 4.17.7
+
+- Features
+  - Rename prebuiltWithSafeArea of ZegoCallInvitationUIConfig to withSafeArea, the calling widget will also be affected by this property simultaneously
+- Bugs
+  - The `useSystemCallingUI` has been modified to **an asynchronous method**, and external calls **need to await** to register the offline call event; otherwise, occasional issues of not receiving offline calls may occur. Such as `await ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(..)`
+
 ## 4.17.6
 
 - Bugs

@@ -630,7 +630,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   ///   [ZegoUIKitSignalingPlugin()],
   /// );
   /// ```
-  void useSystemCallingUI(List<IZegoUIKitPlugin> plugins) {
+  Future<void> useSystemCallingUI(List<IZegoUIKitPlugin> plugins) async {
     ZegoLoggerService.logInfo(
       'plugins size: ${plugins.length}',
       tag: 'call-invitation',
@@ -645,10 +645,16 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
       );
 
-      ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(
+      await ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(
             onBackgroundMessageReceived,
             key: 'zego_callkit',
-          );
+          ).then((_) {
+        ZegoLoggerService.logInfo(
+          'setBackgroundMessageHandler done',
+          tag: 'call-invitation',
+          subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
+        );
+      });
     } else if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',
@@ -658,7 +664,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
       private._enableIOSVoIP = true;
 
-      ZegoUIKit()
+      await ZegoUIKit()
           .getSignalingPlugin()
           .setIncomingPushReceivedHandler(onIncomingPushReceived);
 
