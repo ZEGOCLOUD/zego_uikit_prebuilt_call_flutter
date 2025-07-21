@@ -283,6 +283,7 @@ class ZegoCallInvitationInviterUIConfig {
     this.showAvatar = true,
     this.showCentralName = true,
     this.showCallingText = true,
+    this.useVideoViewAspectFill = false,
     this.spacingBetweenAvatarAndName,
     this.spacingBetweenNameAndCallingText,
     ZegoCallButtonUIConfig? cancelButton,
@@ -310,12 +311,18 @@ class ZegoCallInvitationInviterUIConfig {
   /// spacing between name and calling text
   double? spacingBetweenNameAndCallingText;
 
+  /// Video view mode.
+  /// Set it to true if you want the video view to scale proportionally to fill the entire view, potentially resulting in partial cropping.
+  /// Set it to false if you want the video view to scale proportionally, potentially resulting in black borders.
+  bool useVideoViewAspectFill;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInviterUIConfig:{'
         'showAvatar:$showAvatar, '
         'showCentralName:$showCentralName, '
         'showCallingText:$showCallingText, '
+        'useVideoViewAspectFill:$useVideoViewAspectFill, '
         'foregroundBuilder:$foregroundBuilder, '
         'pageBuilder:$pageBuilder, '
         'backgroundBuilder:$backgroundBuilder, '
