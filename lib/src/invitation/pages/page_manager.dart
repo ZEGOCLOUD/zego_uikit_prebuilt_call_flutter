@@ -522,7 +522,10 @@ class ZegoCallInvitationPageManager {
           if (callInvitationData
               .requireConfig(_invitationData)
               .turnOnCameraWhenJoining) {
-            ZegoUIKit.instance.turnCameraOn(true);
+            ZegoUIKit().updateVideoViewMode(
+              callInvitationData.uiConfig.inviter.useVideoViewAspectFill,
+            );
+            ZegoUIKit().turnCameraOn(true);
           }
 
           callingMachine?.stateCallingWithVideo.enter();
