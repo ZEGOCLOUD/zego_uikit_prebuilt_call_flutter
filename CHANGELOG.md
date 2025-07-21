@@ -1,10 +1,31 @@
+## 4.17.8
+
+- Features
+  - the calling page supports the video fill rendering mode.  
+    If you want the inviter's video to fill the entire screen, please set `withSafeArea` to false and `useVideoViewAspectFill` to true in the inviter's configuration.
+    ```
+      await ZegoUIKitPrebuiltCallInvitationService().init(
+        ...
+        uiConfig: ZegoCallInvitationUIConfig(
+          withSafeArea: false,
+          inviter: ZegoCallInvitationInviterUIConfig(
+            useVideoViewAspectFill: true,
+          ),
+        ),
+        ...
+      );
+    ```
+
 ## 4.17.7
 
 - Features
   - Rename prebuiltWithSafeArea of ZegoCallInvitationUIConfig to withSafeArea, the calling widget will also be affected by this property simultaneously
 - Bugs
-  - The `useSystemCallingUI` has been modified to **an asynchronous method**, and external calls **need to await** to register the offline call event; otherwise, occasional issues of not receiving offline calls may occur. Such as `await ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(..)`
-
+  - The `useSystemCallingUI` has been modified to **an asynchronous method**, and external calls **need to await** to register the offline call event; otherwise, occasional issues of not receiving offline calls may occur.
+    ```
+    await ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(..);
+    ```
+    
 ## 4.17.6
 
 - Bugs
