@@ -307,18 +307,20 @@ void showSoundEffectSheet(
       return AnimatedPadding(
         padding: MediaQuery.of(context).viewInsets,
         duration: const Duration(milliseconds: 50),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: SizedBox(
-            height: 600.zR,
-            child: ZegoCallSoundEffectSheet(
-              translationText: translationText,
-              rootNavigator: rootNavigator,
-              voiceChangerEffect: voiceChangeEffect,
-              voiceChangerSelectedIDNotifier: voiceChangerSelectedIDNotifier,
-              reverbEffect: reverbEffect,
-              reverbSelectedIDNotifier: reverbSelectedIDNotifier,
-              config: config,
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: SizedBox(
+              height: 600.zR,
+              child: ZegoCallSoundEffectSheet(
+                translationText: translationText,
+                rootNavigator: rootNavigator,
+                voiceChangerEffect: voiceChangeEffect,
+                voiceChangerSelectedIDNotifier: voiceChangerSelectedIDNotifier,
+                reverbEffect: reverbEffect,
+                reverbSelectedIDNotifier: reverbSelectedIDNotifier,
+                config: config,
+              ),
             ),
           ),
         ),
