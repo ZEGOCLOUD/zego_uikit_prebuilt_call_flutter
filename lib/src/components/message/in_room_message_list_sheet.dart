@@ -203,13 +203,15 @@ void showMessageSheet(
         child: AnimatedPadding(
           padding: MediaQuery.of(context).viewInsets,
           duration: const Duration(milliseconds: 50),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: ZegoCallMessageListSheet(
-              avatarBuilder: avatarBuilder,
-              itemBuilder: itemBuilder,
-              scrollController: scrollController,
-              rootNavigator: rootNavigator,
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              child: ZegoCallMessageListSheet(
+                avatarBuilder: avatarBuilder,
+                itemBuilder: itemBuilder,
+                scrollController: scrollController,
+                rootNavigator: rootNavigator,
+              ),
             ),
           ),
         ),

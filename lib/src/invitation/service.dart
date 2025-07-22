@@ -645,10 +645,13 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
       );
 
-      await ZegoUIKit().getSignalingPlugin().setBackgroundMessageHandler(
+      await ZegoUIKit()
+          .getSignalingPlugin()
+          .setBackgroundMessageHandler(
             onBackgroundMessageReceived,
             key: 'zego_callkit',
-          ).then((_) {
+          )
+          .then((_) {
         ZegoLoggerService.logInfo(
           'setBackgroundMessageHandler done',
           tag: 'call-invitation',

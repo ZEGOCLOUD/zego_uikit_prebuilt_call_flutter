@@ -126,14 +126,16 @@ void showMemberListSheet(
         child: AnimatedPadding(
           padding: MediaQuery.of(context).viewInsets,
           duration: const Duration(milliseconds: 50),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            child: ZegoCallMemberListSheet(
-              showCameraState: showCameraState,
-              showMicrophoneState: showMicrophoneState,
-              itemBuilder: itemBuilder,
-              avatarBuilder: avatarBuilder,
-              rootNavigator: rootNavigator,
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              child: ZegoCallMemberListSheet(
+                showCameraState: showCameraState,
+                showMicrophoneState: showMicrophoneState,
+                itemBuilder: itemBuilder,
+                avatarBuilder: avatarBuilder,
+                rootNavigator: rootNavigator,
+              ),
             ),
           ),
         ),
