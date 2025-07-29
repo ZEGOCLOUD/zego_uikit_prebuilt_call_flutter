@@ -58,7 +58,8 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
           left: 0,
           right: 0,
           top: headerHeight,
-          child: Container(height: 1.zR, color: Colors.white.withOpacity(0.15)),
+          child: Container(
+              height: 1.zR, color: Colors.white.withValues(alpha: 0.15)),
         ),
         messageList(
           height: viewHeight -
@@ -115,7 +116,8 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
               ),
             ),
           ),
-          Container(height: lineHeight, color: Colors.white.withOpacity(0.15)),
+          Container(
+              height: lineHeight, color: Colors.white.withValues(alpha: 0.15)),
         ],
       ),
     );

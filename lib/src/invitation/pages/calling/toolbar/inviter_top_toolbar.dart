@@ -38,7 +38,7 @@ class ZegoInviterCallingVideoTopToolBar extends StatelessWidget {
       child: Container(
         //test
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
         ),
         padding: EdgeInsets.only(left: 36.zR, right: 36.zR),
         height: 88.zH,

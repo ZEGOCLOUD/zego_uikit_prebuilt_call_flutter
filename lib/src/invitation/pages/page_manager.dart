@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_callkit/zego_callkit.dart';
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -1476,23 +1475,25 @@ class ZegoCallInvitationPageManager {
           );
 
           final currentContext = callInvitationData.contextQuery?.call();
-          Navigator.of(currentContext!).push(
-            MaterialPageRoute(
-              builder: (context) => ZegoUIKitPrebuiltCall(
-                appID: callInvitationData.appID,
-                appSign: callInvitationData.appSign,
-                token: callInvitationData.token,
-                callID: invitationData.callID,
-                userID: callInvitationData.userID,
-                userName: callInvitationData.userName,
-                config: callInvitationData.requireConfig(
-                  invitationData,
+          if (currentContext != null && currentContext.mounted) {
+            Navigator.of(currentContext).push(
+              MaterialPageRoute(
+                builder: (context) => ZegoUIKitPrebuiltCall(
+                  appID: callInvitationData.appID,
+                  appSign: callInvitationData.appSign,
+                  token: callInvitationData.token,
+                  callID: invitationData.callID,
+                  userID: callInvitationData.userID,
+                  userName: callInvitationData.userName,
+                  config: callInvitationData.requireConfig(
+                    invitationData,
+                  ),
+                  events: callInvitationData.events,
+                  plugins: callInvitationData.plugins,
                 ),
-                events: callInvitationData.events,
-                plugins: callInvitationData.plugins,
               ),
-            ),
-          );
+            );
+          }
         } catch (e) {
           ZegoLoggerService.logError(
             'Navigator push exception:$e, '

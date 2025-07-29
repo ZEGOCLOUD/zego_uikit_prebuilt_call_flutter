@@ -295,7 +295,7 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
               ),
               width: widget.size.width / 3 * 2,
               child: Text(

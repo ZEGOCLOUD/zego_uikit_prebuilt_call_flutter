@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:floating/floating.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -457,7 +456,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         resizeToAvoidBottomInset: false,
         body: PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) async {
+          onPopInvokedWithResult: (bool didPop, Object? result) async {
             if (didPop) {
               return;
             }
@@ -509,7 +508,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 5.0),
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
       durationNotifier: durationNotifier,

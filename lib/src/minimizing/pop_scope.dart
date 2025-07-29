@@ -43,7 +43,7 @@ class ZegoUIKitPrebuiltCallMiniPopScopeState
         return PopScope(
           /// Don't pop current widget directly when in minimizing
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

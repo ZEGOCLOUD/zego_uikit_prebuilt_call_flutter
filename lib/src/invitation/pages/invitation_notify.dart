@@ -57,10 +57,10 @@ class _ZegoCallInvitationNotifyDialogState
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvoked: (bool didPop) async {
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (didPop && !_hasUserResponded) {
           ZegoLoggerService.logInfo(
-            'onPopInvoked',
+            'onPopInvokedWithResult',
             tag: 'call-invitation',
             subTag: 'invitation notify',
           );
@@ -93,7 +93,7 @@ class _ZegoCallInvitationNotifyDialogState
         height: widget.config?.height ?? 160.zH,
         decoration: widget.config?.decoration ??
             BoxDecoration(
-              color: const Color(0xff333333).withOpacity(0.8),
+              color: const Color(0xff333333).withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(16.0),
             ),
         child: widget.config?.builder?.call(

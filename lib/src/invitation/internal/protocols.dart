@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 // Package imports:
-import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:

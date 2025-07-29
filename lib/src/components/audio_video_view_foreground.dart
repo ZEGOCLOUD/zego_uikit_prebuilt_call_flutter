@@ -42,7 +42,7 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   borderRadius: const BorderRadius.all(Radius.circular(4)),
                 ),
                 child: Row(
