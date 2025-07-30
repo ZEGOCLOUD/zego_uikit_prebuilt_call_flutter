@@ -117,6 +117,16 @@ class ZegoCallInvitationPageManager {
   /// still ring mean nobody accept this invitation
   bool get isNobodyAccepted => _callerRingtone.isRingTimerRunning;
 
+  set invitationTopSheetVisibility(value) {
+    ZegoLoggerService.logInfo(
+      'set invitationTopSheetVisibility:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    _invitationTopSheetVisibility = value;
+  }
+
   bool get hasCallkitIncomingCauseAppInBackground =>
       _hasCallkitIncomingCauseAppInBackground;
 
@@ -792,6 +802,7 @@ class ZegoCallInvitationPageManager {
     String code,
     String message, {
     bool needClearCallKit = true,
+    bool needHideInvitationTopSheet = true,
   }) {
     ZegoLoggerService.logInfo(
       'local refuse invitation, code:$code, message:$message, lifecycleState:${WidgetsBinding.instance.lifecycleState}',
@@ -813,6 +824,7 @@ class ZegoCallInvitationPageManager {
 
     restoreToIdle(
       needClearCallKit: needClearCallKit,
+      needHideInvitationTopSheet: needHideInvitationTopSheet,
     );
   }
 
@@ -1783,9 +1795,11 @@ class ZegoCallInvitationPageManager {
   void restoreToIdle({
     bool needPop = true,
     bool needClearCallKit = true,
+    bool needHideInvitationTopSheet = true,
   }) {
     ZegoLoggerService.logInfo(
       'needPop:$needPop, '
+      'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
       'needClearCallKit:$needClearCallKit',
       tag: 'call-invitation',
       subTag: 'page manager, restore to idle',
@@ -1826,7 +1840,9 @@ class ZegoCallInvitationPageManager {
       _invitationData = ZegoCallInvitationData.empty();
     }
 
-    hideInvitationTopSheet();
+    if (needHideInvitationTopSheet) {
+      hideInvitationTopSheet();
+    }
 
     if (CallingState.kIdle !=
         (callingMachine?.machine.current?.identifier ?? CallingState.kIdle)) {

@@ -83,7 +83,9 @@ class _ZegoCallInvitationNotifyDialogState
             subTag: 'invitation notify',
           );
           // Back button pressed and user hasn't responded yet, execute reject operation
-          ZegoUIKitPrebuiltCallInvitationService().reject();
+          ZegoUIKitPrebuiltCallInvitationService().reject(
+            causeByPopScope: true,
+          );
         }
       },
       child: Container(

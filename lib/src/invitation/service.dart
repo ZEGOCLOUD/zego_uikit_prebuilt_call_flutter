@@ -727,8 +727,23 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// [onOutgoingCallDeclined] when the other party declines the call invitation.
   Future<bool> reject({
     String customData = '',
+    bool causeByPopScope = false,
   }) async {
-    return _invitation.reject(customData: customData);
+    /// will be auto hide if cause by pop scope, so no need to manually call hide
+    final needHideInvitationTopSheet = !causeByPopScope;
+    return _invitation
+        .reject(
+      customData: customData,
+      needHideInvitationTopSheet: needHideInvitationTopSheet,
+    )
+        .then((result) {
+      if (!needHideInvitationTopSheet) {
+        /// update state
+        _private._pageManager?.invitationTopSheetVisibility = false;
+      }
+
+      return result;
+    });
   }
 
   /// To accept the current call invitation, you can use the [customData]
