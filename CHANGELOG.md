@@ -1,3 +1,8 @@
+## 4.17.10
+
+- Bugs
+  - Fixed the black screen issue caused by the back navigation key canceling the current call invitation pop-up window
+
 ## 4.17.9
 
 - Bugs
