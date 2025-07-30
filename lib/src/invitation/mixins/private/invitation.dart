@@ -372,14 +372,19 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   Future<bool> _rejectInvitation({
     required String callerID,
     String customData = '',
+    bool needHideInvitationTopSheet = true,
   }) async {
     ZegoLoggerService.logInfo(
-      'callerID:$callerID',
+      'callerID:$callerID, '
+      'customData:$customData, '
+      'needHideInvitationTopSheet:$needHideInvitationTopSheet, ',
       tag: 'call-invitation',
       subTag: 'service.p, reject call invitation',
     );
 
-    _pageManager?.hideInvitationTopSheet();
+    if (needHideInvitationTopSheet) {
+      _pageManager?.hideInvitationTopSheet();
+    }
 
     Future<bool> callback(
       ZegoSignalingPluginResponseInvitationResult result,
@@ -388,6 +393,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
+        needHideInvitationTopSheet: needHideInvitationTopSheet,
       );
 
       return result.error?.code.isEmpty ?? true;
