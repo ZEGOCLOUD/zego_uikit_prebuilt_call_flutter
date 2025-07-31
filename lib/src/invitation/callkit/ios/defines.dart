@@ -11,9 +11,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 
-const backgroundMessageIsolatePortName = 'bg_msg_isolate_port';
-const backgroundMessageIsolateCloseCommand = 'close';
-
 class HandlerPrivateInfo {
   String appID;
   String token;
@@ -25,27 +22,7 @@ class HandlerPrivateInfo {
   String appName;
   bool canInvitingInCalling;
 
-  /// call
-  String androidCallChannelID;
-  String androidCallChannelName;
-  String androidCallIcon;
-  String androidCallSound;
-  bool androidCallVibrate;
-
-  /// message
-  String androidMessageChannelID;
-  String androidMessageChannelName;
-  String androidMessageIcon;
-  String androidMessageSound;
-  bool androidMessageVibrate;
-
   /// missed call
-  bool androidMissedCallEnabled;
-  String androidMissedCallChannelID;
-  String androidMissedCallChannelName;
-  String androidMissedCallIcon;
-  String androidMissedCallSound;
-  bool androidMissedCallVibrate;
   String missedCallNotificationTitle;
   String missedGroupVideoCallNotificationContent;
   String missedGroupAudioCallNotificationContent;
@@ -62,22 +39,6 @@ class HandlerPrivateInfo {
     this.enableIOSVoIP = true,
     this.certificateIndex = 1,
     this.appName = '',
-    this.androidCallChannelID = '',
-    this.androidCallChannelName = '',
-    this.androidCallIcon = '',
-    this.androidCallSound = '',
-    this.androidCallVibrate = true,
-    this.androidMessageChannelID = '',
-    this.androidMessageChannelName = '',
-    this.androidMessageIcon = '',
-    this.androidMessageSound = '',
-    this.androidMessageVibrate = false,
-    this.androidMissedCallEnabled = true,
-    this.androidMissedCallChannelID = '',
-    this.androidMissedCallChannelName = '',
-    this.androidMissedCallIcon = '',
-    this.androidMissedCallSound = '',
-    this.androidMissedCallVibrate = false,
     this.missedCallNotificationTitle = '',
     this.missedGroupVideoCallNotificationContent = '',
     this.missedGroupAudioCallNotificationContent = '',
@@ -96,22 +57,6 @@ class HandlerPrivateInfo {
       certificateIndex: json['ci'] ?? 1,
       appName: json['an'] ?? '',
       canInvitingInCalling: json['ciic'] ?? '',
-      androidCallChannelID: json['aci'] ?? '',
-      androidCallChannelName: json['acn'] ?? '',
-      androidCallIcon: json['ai'] ?? '',
-      androidCallSound: json['as'] ?? '',
-      androidCallVibrate: json['av'] ?? '',
-      androidMessageChannelID: json['amci'] ?? '',
-      androidMessageChannelName: json['amcn'] ?? '',
-      androidMessageIcon: json['ami'] ?? '',
-      androidMessageSound: json['ams'] ?? '',
-      androidMessageVibrate: json['amv'] ?? '',
-      androidMissedCallEnabled: json['amdce'] ?? '',
-      androidMissedCallChannelID: json['amdcci'] ?? '',
-      androidMissedCallChannelName: json['amdccn'] ?? '',
-      androidMissedCallIcon: json['amdci'] ?? '',
-      androidMissedCallSound: json['amdcs'] ?? '',
-      androidMissedCallVibrate: json['amdcv'] ?? '',
       missedCallNotificationTitle: json['amdnt'] ?? '',
       missedGroupVideoCallNotificationContent: json['amdncgv'] ?? '',
       missedGroupAudioCallNotificationContent: json['amdncga'] ?? '',
@@ -131,22 +76,6 @@ class HandlerPrivateInfo {
       'ci': certificateIndex,
       'an': appName,
       'ciic': canInvitingInCalling,
-      'aci': androidCallChannelID,
-      'acn': androidCallChannelName,
-      'ai': androidCallIcon,
-      'as': androidCallSound,
-      'av': androidCallVibrate,
-      'amci': androidMessageChannelID,
-      'amcn': androidMessageChannelName,
-      'ams': androidMessageSound,
-      'ami': androidMessageIcon,
-      'amv': androidMessageVibrate,
-      'amdce': androidMissedCallEnabled,
-      'amdcci': androidMissedCallChannelID,
-      'amdccn': androidMissedCallChannelName,
-      'amdcs': androidMissedCallSound,
-      'amdci': androidMissedCallIcon,
-      'amdcv': androidMissedCallVibrate,
       'amdnt': missedCallNotificationTitle,
       'amdncgv': missedGroupVideoCallNotificationContent,
       'amdncga': missedGroupAudioCallNotificationContent,
@@ -167,22 +96,6 @@ class HandlerPrivateInfo {
         'certificateIndex:$certificateIndex,'
         'appName:$appName,'
         'canInvitingInCalling:$canInvitingInCalling,'
-        'androidCallChannelID:$androidCallChannelID,'
-        'androidCallChannelName:$androidCallChannelName,'
-        'androidCallIcon:$androidCallIcon,'
-        'androidCallSound:$androidCallSound,'
-        'androidCallVibrate:$androidCallVibrate,'
-        'androidMessageChannelID:$androidMessageChannelID,'
-        'androidMessageChannelName:$androidMessageChannelName,'
-        'androidMessageSound:$androidMessageSound,'
-        'androidMessageIcon:$androidMessageIcon,'
-        'androidMessageVibrate:$androidMessageVibrate,'
-        'androidMissedCallEnabled:$androidMissedCallEnabled,'
-        'androidMissedCallChannelID:$androidMissedCallChannelID,'
-        'androidMissedCallChannelName:$androidMissedCallChannelName,'
-        'androidMissedCallSound:$androidMissedCallSound,'
-        'androidMissedCallIcon:$androidMissedCallIcon,'
-        'androidMissedCallVibrate:$androidMissedCallVibrate,'
         'missedCallNotificationTitle:$missedCallNotificationTitle,'
         'missedGroupVideoCallNotificationContent:$missedGroupVideoCallNotificationContent,'
         'missedGroupAudioCallNotificationContent:$missedGroupAudioCallNotificationContent,'
@@ -211,8 +124,7 @@ class HandlerPrivateInfo {
   }
 }
 
-class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
-  final String title;
+class ZegoCallIOSBackgroundMessageHandlerMessage {
   final Map<String, Object?> extras;
 
   Map<String, dynamic> payloadMap = {};
@@ -226,12 +138,11 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
   String customData = '';
   ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
 
-  ZegoCallAndroidCallBackgroundMessageHandlerMessage({
-    required this.title,
+  ZegoCallIOSBackgroundMessageHandlerMessage({
     required this.extras,
   }) {
     invitationID =
-        extras[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
+        extras[ZegoCallInvitationProtocolKey.callID]?.toString() ?? '';
   }
 
   bool get isIMType =>
@@ -249,7 +160,7 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
     ZegoLoggerService.logInfo(
       'parsing type:$type',
       tag: 'call-invitation',
-      subTag: 'android-handler',
+      subTag: 'ios call handler',
     );
   }
 
@@ -262,6 +173,116 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
     /// cancel:
     /// zego_uikit_prebuilt_call/lib/src/invitation/pages/page_manager.dart#cancelGroupCallInvitation
     ///
+    /// ==========web===========
+    /// title:Call invitation,
+    /// content:,
+    /// extras:{
+    ///   zego: {
+    ///     "call_id":"172604065779740667",
+    ///     "version":1,
+    ///     "zpns_request_id":"2819825754101714171"
+    ///   },
+    ///   body: Please join your call with our care personnel,
+    ///   title: Call invitation,
+    ///   payload: {
+    ///     "call_id":"call_248232fd96ba4f8e9d938cc2b9e7cdb7_1726040657797",
+    ///     "invitees":[
+    ///       {"user_id":"3ae894260de84e389900e42b3bd987ab","user_name":"April Ninth"}
+    ///     ],
+    ///     "inviter":{"id":"248232fd96ba4f8e9d938cc2b9e7cdb7","name":"William Alias"},
+    ///     "type":1,
+    ///     "custom_data":"",
+    ///     "inviter_name":"William Alias",
+    ///     "data":"{
+    ///       "call_id":"call_248232fd96ba4f8e9d938cc2b9e7cdb7_1726040657797",
+    ///       "invitees":[
+    ///         {"user_id":"3ae894260de84e389900e42b3bd987ab","user_name":"April Ninth"}
+    ///       ],
+    ///       "inviter":{"id":"248232fd96ba4f8e9d938cc2b9e7cdb7","name":"William Alias"},
+    ///       "type":1,
+    ///       "custom_data":""
+    ///     }"
+    ///   },
+    ///   call_id: 172604065779740667
+    /// }
+    ///
+    /// ==========flutter===========
+    ///
+    /// ----- cancel
+    /// title:,
+    /// content:,
+    /// extras:
+    /// {
+    ///   "body": "",
+    ///   "title": "",
+    ///   "payload": {
+    ///     "call_id": "call_073493_1693908313900",
+    ///     "operation_type": "cancel_invitation"
+    ///   },
+    ///   "call_id": 4172113646365410763
+    /// }
+    ///
+    /// ----- normal
+    /// title:user_542,
+    /// content:,
+    /// extras:{
+    ///   zego: {
+    ///     "call_id":"14292543900357708322",
+    ///     "version":1,
+    ///     "zpns_request_id":"702041001865190434"
+    ///   },
+    ///   body: Incoming video call...,
+    ///   title: user_542,
+    ///   payload: {
+    ///     "inviter_id":"542",
+    ///     "inviter_name":"user_542",
+    ///     "type":1,
+    ///     "data":"{
+    ///       "call_id":"call_542_1726039827282",
+    ///       "inviter_name":"user_542",
+    ///       "invitees":[
+    ///         {"user_id":"946042","user_name":"user_946042"}
+    ///       ],
+    ///       "timeout":60,
+    ///       "custom_data":"",
+    ///       "v":"f1.0"
+    ///     }"
+    ///   },
+    ///   call_id: 14292543900357708322
+    /// },
+    ///
+    /// ----- advance
+    /// title:user_542,
+    /// content:,
+    /// extras:{
+    ///   zego: {
+    ///     "call_id":"1204724609078844523",
+    ///     "version":1,
+    ///     "zpns_request_id":"6983256569312803082"
+    ///   },
+    ///   body: Incoming video call...,
+    ///   title: user_542,
+    ///   payload: {
+    ///     "inviter":{"id":"542","name":"user_542"},
+    ///     "invitees":[
+    ///       "946042"
+    ///     ],
+    ///     "type":1,
+    ///     "custom_data":"{
+    ///       "call_id":"call_542_1726040168792",
+    ///       "inviter_name":"user_542",
+    ///       "invitees":[
+    ///         {"user_id":"946042","user_name":"user_946042"}
+    ///       ],
+    ///       "timeout":60,
+    ///       "custom_data":"",
+    ///       "v":"f1.0"
+    ///     }
+    ///   },
+    ///   call_id: 1204724609078844523
+    /// }
+    ///
+    ///
     isAdvanceMode = ZegoUIKitAdvanceInvitationSendProtocol.typeOf(payloadMap);
 
     int invitationType = -1;
@@ -272,7 +293,7 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
       ZegoLoggerService.logInfo(
         'advance send protocol:$sendProtocol',
         tag: 'call-invitation',
-        subTag: 'call handler',
+        subTag: 'ios call handler',
       );
 
       inviter = sendProtocol.inviter;
@@ -284,7 +305,7 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
       ZegoLoggerService.logInfo(
         'simple send protocol:$sendProtocol',
         tag: 'call-invitation',
-        subTag: 'call handler',
+        subTag: 'ios call handler',
       );
 
       inviter = sendProtocol.inviter;
@@ -297,7 +318,7 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
   }
 
   void _parsePayloadMap() {
-    final payload = extras['payload'] as String? ?? '';
+    final payload = extras['payload']?.toString() ?? '';
 
     payloadMap = <String, dynamic>{};
     try {
@@ -306,13 +327,13 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
       ZegoLoggerService.logError(
         'payload， json decode data exception:$e',
         tag: 'call-invitation',
-        subTag: 'android-handler',
+        subTag: 'ios-handler',
       );
     }
     ZegoLoggerService.logInfo(
       'payloadMap:$payloadMap',
       tag: 'call-invitation',
-      subTag: 'android-handler',
+      subTag: 'ios-handler',
     );
   }
 
@@ -322,14 +343,14 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
     ZegoLoggerService.logInfo(
       'parsing handler info:$handlerInfoJson',
       tag: 'call-invitation',
-      subTag: 'android-handler',
+      subTag: 'ios-handler',
     );
 
     handlerInfo = HandlerPrivateInfo.fromJsonString(handlerInfoJson);
     ZegoLoggerService.logInfo(
       'parsing handler object:$handlerInfo',
       tag: 'call-invitation',
-      subTag: 'android-handler',
+      subTag: 'ios-handler',
     );
   }
 
@@ -342,7 +363,6 @@ class ZegoCallAndroidCallBackgroundMessageHandlerMessage {
         'callType:$callType, '
         'custom data:$customData, '
         '----'
-        'title:$title,'
         'extra:$extras, ';
   }
 }
