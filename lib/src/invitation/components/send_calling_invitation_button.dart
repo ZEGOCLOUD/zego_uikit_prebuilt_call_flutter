@@ -233,7 +233,7 @@ class _ZegoSendCallingInvitationButtonState
         userSort: widget.userSort,
         onPressed: sendInvitation,
         backgroundColor:
-            ZegoUIKitDefaultTheme.viewBackgroundColor.withOpacity(0.6),
+            ZegoUIKitDefaultTheme.viewBackgroundColor.withValues(alpha: 0.6),
         defaultChecked: widget.defaultChecked,
         buttonIcon: widget.buttonIcon,
         buttonIconSize: widget.buttonIconSize,

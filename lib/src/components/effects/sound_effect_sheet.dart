@@ -64,7 +64,7 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
     return Column(
       children: [
         header(98.zR),
-        Container(height: 1.zR, color: Colors.white.withOpacity(0.15)),
+        Container(height: 1.zR, color: Colors.white.withValues(alpha: 0.15)),
         SizedBox(height: 36.zR),
         SizedBox(
           height: 600.zR - 98.zR - 36.zR - 1.zR,

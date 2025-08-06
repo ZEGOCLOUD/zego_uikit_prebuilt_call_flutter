@@ -18,7 +18,7 @@ UUID? iOSIncomingPushUUID;
 void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
   ///   extras:{
   ///     aps: {
-  ///        alert: {title: user_870125, body: 喝酒据斤斤计较}
+  ///        alert: {title: user_870125, body: im message}
   ///     },
   ///     payload: {
   ///        "operation_type":"text_msg",

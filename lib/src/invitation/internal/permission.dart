@@ -58,7 +58,7 @@ Future<bool> showSystemConfirmationDialog(
                     content: Padding(
                       padding: EdgeInsets.only(top: 8.zR),
                       child: Text(
-                        dialogInfo.message ?? '',
+                        dialogInfo.message,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 25.zR,

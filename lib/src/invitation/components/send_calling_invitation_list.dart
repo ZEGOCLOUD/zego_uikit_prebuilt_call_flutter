@@ -56,7 +56,7 @@ void showCallingInvitationListSheet(
     context: context,
     barrierColor: ZegoUIKitDefaultTheme.viewBarrierColor,
     backgroundColor: backgroundColor ??
-        ZegoUIKitDefaultTheme.viewBackgroundColor.withOpacity(0.6),
+        ZegoUIKitDefaultTheme.viewBackgroundColor.withValues(alpha: 0.6),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(32.0),
@@ -206,7 +206,7 @@ class _ZegoSendCallingInvitationListState
           height: totalHeight,
           decoration: BoxDecoration(
             color: Colors.transparent,
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0.zR),
               topRight: Radius.circular(16.0.zR),
@@ -302,7 +302,7 @@ class _ZegoSendCallingInvitationListState
         width: double.infinity,
         height: height,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.all(Radius.circular(8.0.zR)),
         ),
         child: const Center(
@@ -359,7 +359,7 @@ class _ZegoSendCallingInvitationListState
                 ),
               ),
               Divider(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 thickness: 1.0,
               ),
             ],

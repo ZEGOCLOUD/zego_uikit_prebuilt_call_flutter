@@ -129,7 +129,7 @@ class ZegoRingtone {
 
     if (isVibrate) {
       Vibration.hasVibrator().then((hasVibrator) {
-        if (hasVibrator ?? false) {
+        if (hasVibrator) {
           Vibration.vibrate();
         } else {
           ZegoLoggerService.logWarn(
@@ -174,7 +174,7 @@ class ZegoRingtone {
       } else {
         if (isVibrate) {
           Vibration.hasVibrator().then((hasVibrator) {
-            if (hasVibrator ?? false) {
+            if (hasVibrator) {
               Vibration.vibrate();
             } else {
               ZegoLoggerService.logWarn(

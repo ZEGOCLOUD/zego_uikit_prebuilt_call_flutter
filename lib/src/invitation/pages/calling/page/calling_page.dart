@@ -159,7 +159,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop) async {
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (didPop) {
           return;
         }
