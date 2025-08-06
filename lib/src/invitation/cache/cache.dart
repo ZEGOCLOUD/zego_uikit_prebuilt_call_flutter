@@ -30,7 +30,7 @@ class ZegoUIKitCallCache {
       'conversationTypeIndex:$conversationTypeIndex, ',
     );
 
-    /// same as zimkit
+    /// same as zimkit(zego_zimkit/lib/src/callkit/cache.dart)
     const String messageConversationCacheKey = 'msg_cv_cache';
     const String messageConversationCacheID = 'msg_cv_id';
     const String messageConversationCacheTypeIndex = 'msg_cv_type_idx';
