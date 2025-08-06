@@ -137,15 +137,22 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     );
 
     try {
-      await methodChannel.invokeMethod('showNormalNotification', {
+      Map<String, dynamic> parameters = {
         'id': config.id.toString(),
-        'sound_source': config.soundSource ?? '',
-        'icon_source': config.iconSource ?? '',
-        'channel_id': config.channelID,
         'title': config.title,
         'content': config.content,
-        'vibrate': config.vibrate,
-      });
+      };
+      if (Platform.isAndroid) {
+        /// only for android
+        parameters.addAll(<String, dynamic>{
+          'vibrate': config.vibrate,
+          'sound_source': config.soundSource ?? '',
+          'icon_source': config.iconSource ?? '',
+          'channel_id': config.channelID,
+        });
+      }
+
+      await methodChannel.invokeMethod('showNormalNotification', parameters);
 
       /// set buttons callback
       methodChannel.setMethodCallHandler((call) async {

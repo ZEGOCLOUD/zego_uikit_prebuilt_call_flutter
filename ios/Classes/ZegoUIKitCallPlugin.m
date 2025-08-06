@@ -50,12 +50,8 @@
 - (void)showNormalNotification:(NSDictionary *)arguments result:(FlutterResult)result {
     NSString *title = arguments[@"title"];
     NSString *content = arguments[@"content"];
-    NSString *channelID = arguments[@"channelID"];
-    NSString *iconSource = arguments[@"iconSource"];
-    NSString *soundSource = arguments[@"soundSource"];
     NSString *notificationId = arguments[@"id"];
-    BOOL isVibrate = [arguments[@"isVibrate"] boolValue];
-    
+
     UNMutableNotificationContent *notificationContent = [[UNMutableNotificationContent alloc] init];
     notificationContent.title = title;
     notificationContent.body = content;
@@ -67,7 +63,6 @@
     // 添加自定义数据
     notificationContent.userInfo = @{
         @"notificationId": notificationId ?: @"",
-        @"channelID": channelID ?: @""
     };
     
     // 创建通知请求
