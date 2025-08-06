@@ -137,9 +137,12 @@ class ZegoCallInvitationServiceAPIImpl
 
   Future<bool> reject({
     String customData = '',
+    bool needHideInvitationTopSheet = true,
   }) async {
     ZegoLoggerService.logInfo(
-      'reject call invitation',
+      'reject call invitation, '
+      'customData:$customData, '
+      'needHideInvitationTopSheet:$needHideInvitationTopSheet, ',
       tag: 'call-invitation',
       subTag: 'service, invitation',
     );
@@ -180,6 +183,7 @@ class ZegoCallInvitationServiceAPIImpl
     return private._rejectInvitation(
       callerID: private._pageManager?.invitationData.inviter?.id ?? '',
       customData: customData,
+      needHideInvitationTopSheet: needHideInvitationTopSheet,
     );
   }
 

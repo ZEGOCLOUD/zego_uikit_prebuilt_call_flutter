@@ -13,7 +13,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
@@ -115,6 +115,16 @@ class ZegoCallInvitationPageManager {
 
   /// still ring mean nobody accept this invitation
   bool get isNobodyAccepted => _callerRingtone.isRingTimerRunning;
+
+  set invitationTopSheetVisibility(value) {
+    ZegoLoggerService.logInfo(
+      'set invitationTopSheetVisibility:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    _invitationTopSheetVisibility = value;
+  }
 
   bool get hasCallkitIncomingCauseAppInBackground =>
       _hasCallkitIncomingCauseAppInBackground;
@@ -791,6 +801,7 @@ class ZegoCallInvitationPageManager {
     String code,
     String message, {
     bool needClearCallKit = true,
+    bool needHideInvitationTopSheet = true,
   }) {
     ZegoLoggerService.logInfo(
       'local refuse invitation, code:$code, message:$message, lifecycleState:${WidgetsBinding.instance.lifecycleState}',
@@ -812,6 +823,7 @@ class ZegoCallInvitationPageManager {
 
     restoreToIdle(
       needClearCallKit: needClearCallKit,
+      needHideInvitationTopSheet: needHideInvitationTopSheet,
     );
   }
 
@@ -1784,9 +1796,11 @@ class ZegoCallInvitationPageManager {
   void restoreToIdle({
     bool needPop = true,
     bool needClearCallKit = true,
+    bool needHideInvitationTopSheet = true,
   }) {
     ZegoLoggerService.logInfo(
       'needPop:$needPop, '
+      'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
       'needClearCallKit:$needClearCallKit',
       tag: 'call-invitation',
       subTag: 'page manager, restore to idle',
@@ -1827,7 +1841,9 @@ class ZegoCallInvitationPageManager {
       _invitationData = ZegoCallInvitationData.empty();
     }
 
-    hideInvitationTopSheet();
+    if (needHideInvitationTopSheet) {
+      hideInvitationTopSheet();
+    }
 
     if (CallingState.kIdle !=
         (callingMachine?.machine.current?.identifier ?? CallingState.kIdle)) {

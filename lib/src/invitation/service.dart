@@ -26,7 +26,7 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/handler.ios.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
@@ -726,8 +726,23 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// [onOutgoingCallDeclined] when the other party declines the call invitation.
   Future<bool> reject({
     String customData = '',
+    bool causeByPopScope = false,
   }) async {
-    return _invitation.reject(customData: customData);
+    /// will be auto hide if cause by pop scope, so no need to manually call hide
+    final needHideInvitationTopSheet = !causeByPopScope;
+    return _invitation
+        .reject(
+      customData: customData,
+      needHideInvitationTopSheet: needHideInvitationTopSheet,
+    )
+        .then((result) {
+      if (!needHideInvitationTopSheet) {
+        /// update state
+        _private._pageManager?.invitationTopSheetVisibility = false;
+      }
+
+      return result;
+    });
   }
 
   /// To accept the current call invitation, you can use the [customData]

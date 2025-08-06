@@ -52,9 +52,9 @@ class ZegoCallCallNotificationConfig {
 /// @nodoc
 class ZegoCallNormalNotificationConfig {
   const ZegoCallNormalNotificationConfig({
-    required this.channelID,
     required this.title,
     required this.content,
+    this.channelID = '',
     this.id,
     this.vibrate = false,
     this.iconSource,
