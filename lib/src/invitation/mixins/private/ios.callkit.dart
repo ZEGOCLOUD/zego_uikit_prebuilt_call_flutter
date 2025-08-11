@@ -265,35 +265,50 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     }
   }
 
-  void _onCallkitPerformEndCallActionEvent(
+  Future<void> _onCallkitPerformEndCallActionEvent(
     ZegoSignalingPluginCallKitActionEvent event,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'on callkit perform end call call action',
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
 
-    event.fulfill?.call();
-
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
-    if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
-      /// exit call
-      ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
-    } else {
-      /// There is no need to clear CallKit here;  manually clear the CallKit ID.
-      ///
-      /// This is because offline calls on iOS will wake up the app,
-      /// and when you reject the call for the first time,
-      /// you need to wait for a certain period of time for the refusal callback.
-      /// Otherwise, it will automatically reject the second offline call that comes immediately after.
-      ZegoUIKitCallCache().offlineCallKit.clearCallID();
+    try {
+      if (ZegoUIKitPrebuiltCallInvitationService().isInCalling) {
+        /// exit call
+        await ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
+      } else {
+        /// There is no need to clear CallKit here;  manually clear the CallKit ID.
+        ///
+        /// This is because offline calls on iOS will wake up the app,
+        /// and when you reject the call for the first time,
+        /// you need to wait for a certain period of time for the refusal callback.
+        /// Otherwise, it will automatically reject the second offline call that comes immediately after.
+        await ZegoUIKitCallCache().offlineCallKit.clearCallID();
 
-      /// refuse call request
-      ZegoCallKitBackgroundService().refuseInvitationInBackground(
-        needClearCallKit: false,
+        /// refuse call request
+        await ZegoCallKitBackgroundService().refuseInvitationInBackground(
+          needClearCallKit: false,
+        );
+
+        ZegoLoggerService.logInfo(
+          'refuse done',
+          tag: 'call-invitation',
+          subTag: 'ios callkit, perform end call call action',
+        );
+      }
+    } finally {
+      ZegoLoggerService.logInfo(
+        'start fulfill event action',
+        tag: 'call-invitation',
+        subTag: 'ios callkit, perform end call call action',
       );
+
+      /// Delayed until zim interaction is completed
+      event.fulfill?.call();
     }
   }
 
