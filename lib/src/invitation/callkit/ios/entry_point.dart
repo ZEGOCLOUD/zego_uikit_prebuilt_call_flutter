@@ -2,7 +2,7 @@
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'handler.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/handler.dart';
 
 String? iOSIncomingPushUUID;
 
