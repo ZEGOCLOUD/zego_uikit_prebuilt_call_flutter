@@ -10,7 +10,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
-import 'handler.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/handler.dart';
 
 StreamSubscription<CallEvent?>? flutterCallkitIncomingStreamSubscription;
 

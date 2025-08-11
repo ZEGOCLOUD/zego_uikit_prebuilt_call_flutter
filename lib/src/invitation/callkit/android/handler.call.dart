@@ -20,23 +20,20 @@ import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/entry_point.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
-import 'defines.dart';
-import 'entry_point.dart';
 
 class ZegoCallAndroidCallBackgroundMessageHandler {
   ReceivePort? backgroundPort;
   bool messageFromIsolate = false;
 
-  void init({
-    required ReceivePort? port,
-    required bool messageFromIsolate,
-  }) {
+  void init({required ReceivePort? port, required bool messageFromIsolate}) {
     ZegoLoggerService.logInfo(
       'init, '
       'isolate port:${backgroundPort.hashCode}, '
@@ -101,10 +98,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       subTag: 'offline, call handler',
     );
 
-    await ZegoUIKitCallCache()
-        .offlineCallKit
-        .getCallID()
-        .then((cacheCallID) async {
+    await ZegoUIKitCallCache().offlineCallKit.getCallID().then((
+      cacheCallID,
+    ) async {
       ZegoLoggerService.logInfo(
         'background offline call cancel, cacheCallID:$cacheCallID',
         tag: 'call-invitation',
@@ -174,10 +170,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     /// zim says it will return the cancel/end event
     await ZegoUIKit()
         .getSignalingPlugin()
-        .setAdvancedConfig(
-          'zim_voip_call_id',
-          message.invitationID,
-        )
+        .setAdvancedConfig('zim_voip_call_id', message.invitationID)
         .then((_) {
       ZegoLoggerService.logInfo(
         'set advanced config done',
@@ -266,12 +259,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         message.handlerInfo?.userName ?? '',
       );
 
-      await ZegoUIKit()
-          .joinRoom(
-        callID,
-        keepWakeScreen: false,
-      )
-          .then((_) {
+      await ZegoUIKit().joinRoom(callID, keepWakeScreen: false).then((_) {
         ZegoUIKit().turnMicrophoneOn(true);
       });
     });
@@ -307,9 +295,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     _listenSignalingEvents(signalingSubscriptions, message: message);
 
     /// cache and check when app run
-    await ZegoUIKitCallCache()
-        .offlineCallKit
-        .setCallID(callSendRequestProtocol.callID);
+    await ZegoUIKitCallCache().offlineCallKit.setCallID(
+          callSendRequestProtocol.callID,
+        );
     await ZegoUIKitCallCache().offlineCallKit.setCacheParams(
           ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
             invitationID: message.invitationID,
@@ -327,8 +315,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       await ZegoUIKit().activeAppToForeground();
       await ZegoUIKit().requestDismissKeyguard();
     } else {
-      final handlerInfoJson =
-          await getPreferenceString(serializationKeyHandlerInfo);
+      final handlerInfoJson = await getPreferenceString(
+        serializationKeyHandlerInfo,
+      );
       ZegoLoggerService.logInfo(
         'parsing handler info:$handlerInfoJson',
         tag: 'call-invitation',
@@ -362,15 +351,18 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     required String callID,
   }) {
     flutterCallkitIncomingStreamSubscription =
-        FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
+        FlutterCallkitIncoming.onEvent.listen((
+      CallEvent? event,
+    ) async {
       /// check isolate
       /// After receiving the offline pop-up window,
       /// if the user directly clicks the app icon to open the app, the main
       /// isolate will register the desired isolate
       /// to the IsolateNameServer. So here we can use this to determine
       /// whether we need to ignore the old event.
-      final lookup =
-          IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
+      final lookup = IsolateNameServer.lookupPortByName(
+        backgroundMessageIsolatePortName,
+      );
       ZegoLoggerService.logInfo(
         'FlutterCallkitIncoming.onEvent, '
         'lookupPortResult(${lookup?.hashCode}), '
@@ -469,30 +461,36 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       return;
     }
 
-    ZegoUIKit()
-        .getSignalingPlugin()
-        .setThroughMessageHandler(_onThroughMessage);
+    ZegoUIKit().getSignalingPlugin().setThroughMessageHandler(
+          _onThroughMessage,
+        );
 
     if (message.isAdvanceMode) {
       signalingSubscriptions
-        ..add(ZegoUIKit()
-            .getSignalingPlugin()
-            .getAdvanceInvitationCanceledStream()
-            .listen(_onInvitationCanceled))
-        ..add(ZegoUIKit()
-            .getSignalingPlugin()
-            .getAdvanceInvitationTimeoutStream()
-            .listen(_onInvitationTimeout));
+        ..add(
+          ZegoUIKit()
+              .getSignalingPlugin()
+              .getAdvanceInvitationCanceledStream()
+              .listen(_onInvitationCanceled),
+        )
+        ..add(
+          ZegoUIKit()
+              .getSignalingPlugin()
+              .getAdvanceInvitationTimeoutStream()
+              .listen(_onInvitationTimeout),
+        );
     } else {
       signalingSubscriptions
-        ..add(ZegoUIKit()
-            .getSignalingPlugin()
-            .getInvitationCanceledStream()
-            .listen(_onInvitationCanceled))
-        ..add(ZegoUIKit()
-            .getSignalingPlugin()
-            .getInvitationTimeoutStream()
-            .listen(_onInvitationTimeout));
+        ..add(
+          ZegoUIKit().getSignalingPlugin().getInvitationCanceledStream().listen(
+                _onInvitationCanceled,
+              ),
+        )
+        ..add(
+          ZegoUIKit().getSignalingPlugin().getInvitationTimeoutStream().listen(
+                _onInvitationTimeout,
+              ),
+        );
     }
   }
 
@@ -509,8 +507,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
   }
 
   Future<void> _addMissedCallNotification(Map<String, dynamic> params) async {
-    final handlerInfoJson =
-        await getPreferenceString(serializationKeyHandlerInfo);
+    final handlerInfoJson = await getPreferenceString(
+      serializationKeyHandlerInfo,
+    );
     ZegoLoggerService.logInfo(
       'parsing handler info:$handlerInfoJson',
       tag: 'call-invitation',
@@ -539,15 +538,17 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
             ZegoCallInvitationType.voiceCall;
     final invitationID = params['invitation_id'] as String? ?? '';
 
-    final sendRequestProtocol =
-        ZegoCallInvitationSendRequestProtocol.fromJson(data);
+    final sendRequestProtocol = ZegoCallInvitationSendRequestProtocol.fromJson(
+      data,
+    );
 
     var inviter = ZegoUIKitUser.empty();
     if (params['inviter'] is ZegoUIKitUser) {
       inviter = params['inviter']!;
     } else if (params['inviter'] is Map<String, dynamic>) {
-      inviter =
-          ZegoUIKitUser.fromJson(params['inviter'] as Map<String, dynamic>);
+      inviter = ZegoUIKitUser.fromJson(
+        params['inviter'] as Map<String, dynamic>,
+      );
     }
     inviter.name = sendRequestProtocol.inviterName;
 
@@ -577,9 +578,10 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       customData: sendRequestProtocol.customData,
       timeoutSeconds: sendRequestProtocol.timeout,
     );
-    await ZegoUIKitCallCache()
-        .missedCall
-        .addNotification(notificationID, callInvitationData);
+    await ZegoUIKitCallCache().missedCall.addNotification(
+          notificationID,
+          callInvitationData,
+        );
 
     await ZegoCallPluginPlatform.instance.showNormalNotification(
       ZegoCallNormalNotificationConfig(
@@ -619,8 +621,9 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     if (params['inviter'] is ZegoUIKitUser) {
       inviter = params['inviter']!;
     } else if (params['inviter'] is Map<String, dynamic>) {
-      inviter =
-          ZegoUIKitUser.fromJson(params['inviter'] as Map<String, dynamic>);
+      inviter = ZegoUIKitUser.fromJson(
+        params['inviter'] as Map<String, dynamic>,
+      );
     }
     final String data = params['data']!; // extended field
 
@@ -756,8 +759,6 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     backgroundPort?.close();
     backgroundPort = null;
 
-    IsolateNameServer.removePortNameMapping(
-      backgroundMessageIsolatePortName,
-    );
+    IsolateNameServer.removePortNameMapping(backgroundMessageIsolatePortName);
   }
 }

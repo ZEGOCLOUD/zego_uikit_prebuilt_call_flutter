@@ -107,7 +107,8 @@ class ZegoCallKitBackgroundService {
     _pageManager?.hasCallkitIncomingCauseAppInBackground = false;
 
     ZegoLoggerService.logInfo(
-      'refuse invitation(${_pageManager?.invitationData}) by callkit',
+      'refuse invitation(${_pageManager?.invitationData}) by callkit, '
+      'isAdvanceInvitationMode:${_pageManager?.isAdvanceInvitationMode}, ',
       tag: 'call-invitation',
       subTag: 'call invitation service',
     );
@@ -123,8 +124,14 @@ class ZegoCallKitBackgroundService {
                   ZegoCallInvitationProtocolKey.refuseByDecline,
             }),
           )
-          .then((result) {
-        _pageManager?.onLocalRefuseInvitation(
+          .then((result) async {
+        ZegoLoggerService.logInfo(
+          'refuse advance done',
+          tag: 'call-invitation',
+          subTag: 'call invitation service',
+        );
+
+        await _pageManager?.onLocalRefuseInvitation(
           result.invitationID,
           result.error?.code ?? '',
           result.error?.message ?? '',
@@ -142,8 +149,14 @@ class ZegoCallKitBackgroundService {
                   ZegoCallInvitationProtocolKey.refuseByDecline,
             }),
           )
-          .then((result) {
-        _pageManager?.onLocalRefuseInvitation(
+          .then((result) async {
+        ZegoLoggerService.logInfo(
+          'refuse done',
+          tag: 'call-invitation',
+          subTag: 'call invitation service',
+        );
+
+        await _pageManager?.onLocalRefuseInvitation(
           result.invitationID,
           result.error?.code ?? '',
           result.error?.message ?? '',
