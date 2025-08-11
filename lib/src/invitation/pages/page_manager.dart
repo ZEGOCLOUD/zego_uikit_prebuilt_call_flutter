@@ -86,7 +86,11 @@ class ZegoCallInvitationPageManager {
   ///At this time, you need to agree directly onCallInvitationReceived
   /// todo wait zim sdk fix bug
   bool _hasCallkitIncomingCauseAppInBackground = false;
+
+  /// First click the Agree button in the offline pop-up, and then receive the invitation event later
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
+
+  /// First click the Reject button in the offline pop-up, and then receive the invitation event later
   bool _waitingCallInvitationReceivedAfterCallKitIncomingRejected = false;
 
   Timer? _remoteReceivedTimeoutGuard;
@@ -796,13 +800,13 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onLocalRefuseInvitation(
+  Future<void> onLocalRefuseInvitation(
     String invitationID,
     String code,
     String message, {
     bool needClearCallKit = true,
     bool needHideInvitationTopSheet = true,
-  }) {
+  }) async {
     ZegoLoggerService.logInfo(
       'local refuse invitation, code:$code, message:$message, lifecycleState:${WidgetsBinding.instance.lifecycleState}',
       tag: 'call-invitation',
@@ -821,10 +825,16 @@ class ZegoCallInvitationPageManager {
     callInvitationData.invitationEvents?.onIncomingCallDeclineButtonPressed
         ?.call();
 
-    restoreToIdle(
+    await restoreToIdle(
       needClearCallKit: needClearCallKit,
       needHideInvitationTopSheet: needHideInvitationTopSheet,
-    );
+    ).then((_) {
+      ZegoLoggerService.logInfo(
+        'local refuse invitation, restore idle done',
+        tag: 'call-invitation',
+        subTag: 'page manager',
+      );
+    });
   }
 
   void onLocalCancelInvitation(
@@ -1140,6 +1150,7 @@ class ZegoCallInvitationPageManager {
     );
 
     if (Platform.isAndroid) {
+      /// android
       if (_appInBackground) {
         ZegoLoggerService.logInfo(
           'app in background, app in background:$_appInBackground, create notification',
@@ -1150,6 +1161,7 @@ class ZegoCallInvitationPageManager {
         hasCallkitIncomingCauseAppInBackground = true;
         _notificationManager?.showInvitationNotification(invitationData);
       } else {
+        ///  in foregorund
         showNotificationOnInvitationReceived();
       }
     } else {
@@ -1532,7 +1544,21 @@ class ZegoCallInvitationPageManager {
         notificationMessage:
             callInvitationData.config.missedCall.notificationMessage?.call(),
         timeoutSeconds: callInvitationData.config.missedCall.timeoutSeconds,
-      );
+      ).then((result) {
+        if (!result) {
+          ZegoLoggerService.logError(
+            'send failed',
+            tag: 'call-invitation',
+            subTag: 'page manager, missed call notification click',
+          );
+
+          callInvitationData
+              .invitationEvents?.onIncomingMissedCallDialBackFailed
+              ?.call();
+
+          return;
+        }
+      });
     }
   }
 
@@ -1793,11 +1819,11 @@ class ZegoCallInvitationPageManager {
     restoreToIdle(needPop: false);
   }
 
-  void restoreToIdle({
+  Future<void> restoreToIdle({
     bool needPop = true,
     bool needClearCallKit = true,
     bool needHideInvitationTopSheet = true,
-  }) {
+  }) async {
     ZegoLoggerService.logInfo(
       'needPop:$needPop, '
       'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
@@ -1810,18 +1836,23 @@ class ZegoCallInvitationPageManager {
 
     _localSendTimeoutGuard?.cancel();
     _remoteReceivedTimeoutGuard?.cancel();
-    _callerRingtone.stopRing();
-    _calleeRingtone.stopRing();
+    await _callerRingtone.stopRing();
+    await _calleeRingtone.stopRing();
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
-      _callerRingtone.stopRing();
-      _calleeRingtone.stopRing();
+      await _callerRingtone.stopRing();
+      await _calleeRingtone.stopRing();
 
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
-    _notificationManager?.cancelInvitationNotification();
+    ZegoLoggerService.logInfo(
+      'cancelInvitationNotification',
+      tag: 'call-invitation',
+      subTag: 'page manager, restore to idle',
+    );
+    await _notificationManager?.cancelInvitationNotification();
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
@@ -1832,8 +1863,20 @@ class ZegoCallInvitationPageManager {
     }
 
     if (needClearCallKit) {
-      ZegoUIKitCallCache().offlineCallKit.clearCallID();
-      clearAllCallKitCalls();
+      ZegoLoggerService.logInfo(
+        'clear callkit infos',
+        tag: 'call-invitation',
+        subTag: 'page manager, restore to idle',
+      );
+
+      await ZegoUIKitCallCache().offlineCallKit.clearCallID();
+      await clearAllCallKitCalls();
+
+      ZegoLoggerService.logInfo(
+        'clear callkit infos done',
+        tag: 'call-invitation',
+        subTag: 'page manager, restore to idle',
+      );
     }
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
@@ -1878,6 +1921,12 @@ class ZegoCallInvitationPageManager {
       }
 
       callingMachine?.stateIdle.enter();
+
+      ZegoLoggerService.logInfo(
+        'done',
+        tag: 'call-invitation',
+        subTag: 'page manager, restore to idle',
+      );
     }
   }
 

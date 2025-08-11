@@ -389,12 +389,23 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     Future<bool> callback(
       ZegoSignalingPluginResponseInvitationResult result,
     ) async {
-      _pageManager?.onLocalRefuseInvitation(
+      _pageManager
+          ?.onLocalRefuseInvitation(
         result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
         needHideInvitationTopSheet: needHideInvitationTopSheet,
-      );
+      )
+          .then((_) {
+        ZegoLoggerService.logInfo(
+          'callerID:$callerID, '
+          'customData:$customData, '
+          'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
+          'onLocalRefuseInvitation done',
+          tag: 'call-invitation',
+          subTag: 'service.p, reject call invitation',
+        );
+      });
 
       return result.error?.code.isEmpty ?? true;
     }
