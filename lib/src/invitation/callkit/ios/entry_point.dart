@@ -1,21 +1,15 @@
-// Dart imports:
-import 'dart:convert';
-
 // Package imports:
-import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'handler.dart';
 
-UUID? iOSIncomingPushUUID;
+String? iOSIncomingPushUUID;
 
 /// @nodoc
 ///
 /// [iOS] VoIP event callback
-void onIncomingPushReceived(Map<dynamic, dynamic> extras, UUID uuid) async {
+void onIncomingPushReceived(Map<dynamic, dynamic> extras, String uuid) async {
   ///   extras:{
   ///     aps: {
   ///        alert: {title: user_870125, body: im message}

@@ -7,9 +7,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 
 // Package imports:
-import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
