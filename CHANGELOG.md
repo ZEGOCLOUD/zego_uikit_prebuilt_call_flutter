@@ -1,3 +1,8 @@
+## 4.17.12
+
+- Bugs
+  - Update dependency
+
 ## 4.17.11
 
 - Bugs
