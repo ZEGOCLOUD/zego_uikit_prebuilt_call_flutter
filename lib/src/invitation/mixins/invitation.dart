@@ -140,7 +140,7 @@ class ZegoCallInvitationServiceAPIImpl
     bool needHideInvitationTopSheet = true,
   }) async {
     ZegoLoggerService.logInfo(
-      'reject call invitation, '
+      'refuse call invitation, '
       'customData:$customData, '
       'needHideInvitationTopSheet:$needHideInvitationTopSheet, ',
       tag: 'call-invitation',

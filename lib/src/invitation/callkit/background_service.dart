@@ -89,29 +89,35 @@ class ZegoCallKitBackgroundService {
 
   Future<void> refuseInvitationInBackground({
     bool needClearCallKit = true,
+    bool needCheckHasCallkitIncoming = true,
   }) async {
-    if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
-      ZegoLoggerService.logInfo(
-        'refuse invitation, but has not callkit incoming cause by app in background',
-        tag: 'call-invitation',
-        subTag: 'call invitation service',
-      );
+    ZegoLoggerService.logInfo(
+      'refuse invitation(${_pageManager?.invitationData}) by callkit, '
+      'isAdvanceInvitationMode:${_pageManager?.isAdvanceInvitationMode}, '
+      'needClearCallKit:$needClearCallKit, '
+      'needCheckHasCallkitIncoming:$needCheckHasCallkitIncoming, ',
+      tag: 'call-invitation',
+      subTag: 'call invitation service',
+    );
 
-      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingRejected =
-          true;
+    if (needCheckHasCallkitIncoming) {
+      if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
+        /// 这里返回了
+        ZegoLoggerService.logInfo(
+          'refuse invitation, but has not callkit incoming cause by app in background',
+          tag: 'call-invitation',
+          subTag: 'call invitation service',
+        );
 
-      return;
+        _pageManager
+            ?.waitingCallInvitationReceivedAfterCallKitIncomingRejected = true;
+
+        return;
+      }
     }
 
     /// hasCallkitIncomingCauseAppInBackground is true
     _pageManager?.hasCallkitIncomingCauseAppInBackground = false;
-
-    ZegoLoggerService.logInfo(
-      'refuse invitation(${_pageManager?.invitationData}) by callkit, '
-      'isAdvanceInvitationMode:${_pageManager?.isAdvanceInvitationMode}, ',
-      tag: 'call-invitation',
-      subTag: 'call invitation service',
-    );
 
     if (_pageManager?.isAdvanceInvitationMode ?? true) {
       await ZegoUIKit()

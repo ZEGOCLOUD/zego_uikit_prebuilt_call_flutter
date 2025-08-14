@@ -85,6 +85,27 @@ class ZegoCallInvitationServicePrivateImpl
       _pageManager?.localInvitationParameter ??
       ZegoCallInvitationLocalParameter.empty();
 
+  void updateInvitationData(
+    ZegoCallInvitationSendRequestProtocol sendRequestProtocol,
+    String invitationID,
+    ZegoUIKitUser inviter,
+    ZegoCallInvitationType type,
+  ) {
+    ZegoLoggerService.logInfo(
+      'updateInvitationData, '
+      'page manager is null:${null == _pageManager}',
+      tag: 'call-invitation',
+      subTag: 'service private(${identityHashCode(this)})',
+    );
+
+    _pageManager?.updateInvitationData(
+      sendRequestProtocol,
+      invitationID,
+      inviter,
+      type,
+    );
+  }
+
   bool get isAdvanceInvitationMode =>
       (callInvitationConfig?.inCalling.canInvitingInCalling ?? false) ||
       (callInvitationConfig?.missedCall.enableDialBack ?? false);
