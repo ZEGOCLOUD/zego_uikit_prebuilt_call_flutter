@@ -286,6 +286,10 @@ class ZegoCallInvitationInviterUIConfig {
     this.spacingBetweenAvatarAndName,
     this.spacingBetweenNameAndCallingText,
     ZegoCallButtonUIConfig? cancelButton,
+    this.cameraButton,
+    this.cameraSwitchButton,
+    this.microphoneButton,
+    this.speakerButton,
   }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig();
 
   /// The foreground of the calling.
@@ -299,6 +303,18 @@ class ZegoCallInvitationInviterUIConfig {
 
   /// cancel button
   ZegoCallButtonUIConfig cancelButton;
+
+  /// microphone button
+  ZegoCallButtonUIConfig? microphoneButton;
+
+  /// camera button
+  ZegoCallButtonUIConfig? cameraButton;
+
+  /// camera switch button
+  ZegoCallButtonUIConfig? cameraSwitchButton;
+
+  /// speaker button
+  ZegoCallButtonUIConfig? speakerButton;
 
   bool showAvatar;
   bool showCentralName;
@@ -326,6 +342,10 @@ class ZegoCallInvitationInviterUIConfig {
         'pageBuilder:$pageBuilder, '
         'backgroundBuilder:$backgroundBuilder, '
         'cancelButton:$cancelButton, '
+        'cameraButton:$cameraButton, '
+        'cameraSwitchButton:$cameraSwitchButton, '
+        'microphoneButton:$microphoneButton, '
+        'speakerButton:$speakerButton, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         '}';
@@ -342,6 +362,9 @@ class ZegoCallInvitationInviteeUIConfig {
     this.showCallingText = true,
     this.spacingBetweenAvatarAndName,
     this.spacingBetweenNameAndCallingText,
+    this.cameraButton,
+    this.cameraSwitchButton,
+    this.microphoneButton,
     ZegoCallButtonUIConfig? declineButton,
     ZegoCallButtonUIConfig? acceptButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
@@ -367,6 +390,15 @@ class ZegoCallInvitationInviteeUIConfig {
   /// accept button
   ZegoCallButtonUIConfig acceptButton;
 
+  /// microphone button
+  ZegoCallButtonUIConfig? microphoneButton;
+
+  /// camera button
+  ZegoCallButtonUIConfig? cameraButton;
+
+  /// camera switch button
+  ZegoCallButtonUIConfig? cameraSwitchButton;
+
   bool showAvatar;
   bool showCentralName;
   bool showCallingText;
@@ -389,6 +421,9 @@ class ZegoCallInvitationInviteeUIConfig {
         'popUp:$popUp, '
         'acceptButton:$acceptButton, '
         'declineButton:$declineButton, '
+        'cameraButton:$cameraButton, '
+        'cameraSwitchButton:$cameraSwitchButton, '
+        'microphoneButton:$microphoneButton, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         '}';
