@@ -1068,18 +1068,22 @@ class ZegoCallInvitationPageManager {
       },
     );
 
-    if (ZegoUIKitPrebuiltCallInvitationService()
+    final currentInvitationIDSameAsRecived =
+        invitationID == _invitationData.invitationID;
+    final hasInvitationAlready = ZegoUIKitPrebuiltCallInvitationService()
             .private
             .localInvitingUsersNotifier
             .value
             .isNotEmpty ||
         _invitationData.callID.isNotEmpty ||
         CallingState.kIdle !=
-            (callingMachine?.getPageState() ?? CallingState.kIdle)) {
+            (callingMachine?.getPageState() ?? CallingState.kIdle);
+    if (hasInvitationAlready && !currentInvitationIDSameAsRecived) {
       ZegoLoggerService.logInfo(
         'auto refuse data: '
         'localInvitingUsers:${ZegoUIKitPrebuiltCallInvitationService().private.localInvitingUsersNotifier.value}, '
         'invitationData.callID:${_invitationData.callID}, '
+        'invitationData.invitationID:${_invitationData.invitationID}, '
         'page state:${callingMachine?.getPageState()}',
         tag: 'call-invitation',
         subTag: 'page manager',
@@ -1097,20 +1101,11 @@ class ZegoCallInvitationPageManager {
     final sendRequestProtocol =
         ZegoCallInvitationSendRequestProtocol.fromJson(data);
 
-    _invitationData
-      ..customData = sendRequestProtocol.customData
-      ..callID = sendRequestProtocol.callID
-      ..invitationID = invitationID
-      ..invitees = List.from(sendRequestProtocol.invitees)
-      ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
-      ..type = ZegoCallTypeExtension.mapValue[type] ??
-          ZegoCallInvitationType.voiceCall;
-
-    ZegoLoggerService.logInfo(
-      'on invitation received, '
-      'save invitation data:$_invitationData',
-      tag: 'call-invitation',
-      subTag: 'page manager',
+    updateInvitationData(
+      sendRequestProtocol,
+      invitationID,
+      inviter,
+      ZegoCallTypeExtension.mapValue[type] ?? ZegoCallInvitationType.voiceCall,
     );
 
     _remoteReceivedTimeoutGuard?.cancel();
@@ -1280,6 +1275,27 @@ class ZegoCallInvitationPageManager {
         }
       }
     }
+  }
+
+  void updateInvitationData(
+    ZegoCallInvitationSendRequestProtocol sendRequestProtocol,
+    String invitationID,
+    ZegoUIKitUser inviter,
+    ZegoCallInvitationType type,
+  ) {
+    _invitationData
+      ..customData = sendRequestProtocol.customData
+      ..callID = sendRequestProtocol.callID
+      ..invitationID = invitationID
+      ..invitees = List.from(sendRequestProtocol.invitees)
+      ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
+      ..type = type;
+
+    ZegoLoggerService.logInfo(
+      'update invitation data:$_invitationData',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
   }
 
   void refuseInCallingOnInvitationReceived({

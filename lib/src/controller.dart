@@ -79,7 +79,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
-  String get version => "4.17.12";
+  String get version => "4.17.13";
 
   /// This function is used to end the current call.
   ///
