@@ -318,6 +318,12 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
         invitees: minimizeData.inviting!.invitees,
         isInviter: minimizeData.inviting!.isInviter,
         customData: minimizeData.inviting!.customData,
+        pageManager: minimizeData.inviting!.pageManager,
+        callInvitationData: minimizeData.inviting!.callInvitationData,
+        inviterUIConfig:
+            minimizeData.inviting!.callInvitationData.uiConfig.inviter,
+        inviteeUIConfig:
+            minimizeData.inviting!.callInvitationData.uiConfig.invitee,
       ),
     );
   }
