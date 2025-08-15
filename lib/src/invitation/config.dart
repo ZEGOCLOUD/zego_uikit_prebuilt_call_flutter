@@ -283,14 +283,23 @@ class ZegoCallInvitationInviterUIConfig {
     this.showCentralName = true,
     this.showCallingText = true,
     this.useVideoViewAspectFill = false,
+    this.defaultCameraOn = true,
+    this.defaultMicrophoneOn = true,
+    this.defaultSpeakerOn = false,
+    this.showMainButtonsText = false,
+    this.showSubButtonsText = true,
     this.spacingBetweenAvatarAndName,
     this.spacingBetweenNameAndCallingText,
     ZegoCallButtonUIConfig? cancelButton,
-    this.cameraButton,
-    this.cameraSwitchButton,
-    this.microphoneButton,
-    this.speakerButton,
-  }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig();
+    ZegoCallButtonUIConfig? cameraButton,
+    ZegoCallButtonUIConfig? cameraSwitchButton,
+    ZegoCallButtonUIConfig? microphoneButton,
+    ZegoCallButtonUIConfig? speakerButton,
+  })  : cancelButton = cancelButton ?? ZegoCallButtonUIConfig(),
+        cameraButton = cancelButton ?? ZegoCallButtonUIConfig(),
+        cameraSwitchButton = cancelButton ?? ZegoCallButtonUIConfig(),
+        microphoneButton = cancelButton ?? ZegoCallButtonUIConfig(),
+        speakerButton = cancelButton ?? ZegoCallButtonUIConfig();
 
   /// The foreground of the calling.
   ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -307,8 +316,16 @@ class ZegoCallInvitationInviterUIConfig {
   /// microphone button
   ZegoCallButtonUIConfig? microphoneButton;
 
+  /// Whether to open the microphone when on calling
+  /// default value is true
+  bool defaultMicrophoneOn;
+
   /// camera button
   ZegoCallButtonUIConfig? cameraButton;
+
+  /// Whether to open the camera when on calling
+  /// default value is true
+  bool defaultCameraOn;
 
   /// camera switch button
   ZegoCallButtonUIConfig? cameraSwitchButton;
@@ -316,8 +333,20 @@ class ZegoCallInvitationInviterUIConfig {
   /// speaker button
   ZegoCallButtonUIConfig? speakerButton;
 
+  /// Whether to open the speaker when on calling
+  /// default value is false
+  bool defaultSpeakerOn;
+
+  /// show avatar or not
+  /// default value is true
   bool showAvatar;
+
+  /// show central name or not
+  /// default value is true
   bool showCentralName;
+
+  /// show calling text or not
+  /// default value is true
   bool showCallingText;
 
   /// spacing between avatar and name
@@ -327,9 +356,23 @@ class ZegoCallInvitationInviterUIConfig {
   double? spacingBetweenNameAndCallingText;
 
   /// Video view mode.
+  /// default value is false
+  ///
   /// Set it to true if you want the video view to scale proportionally to fill the entire view, potentially resulting in partial cropping.
   /// Set it to false if you want the video view to scale proportionally, potentially resulting in black borders.
   bool useVideoViewAspectFill;
+
+  /// show main buttons text or not
+  /// default value is false
+  ///
+  /// main buttons: cancel
+  bool showMainButtonsText;
+
+  /// show sub buttons text or not
+  /// default value is true
+  ///
+  /// sub buttons: camera/microphone/camera switch/speaker
+  bool showSubButtonsText;
 
   @override
   String toString() {
@@ -360,16 +403,25 @@ class ZegoCallInvitationInviteeUIConfig {
     this.showAvatar = true,
     this.showCentralName = true,
     this.showCallingText = true,
+    this.useVideoViewAspectFill = false,
+    this.showVideoOnCalling = true,
+    this.defaultMicrophoneOn = true,
+    this.defaultCameraOn = true,
+    this.showMainButtonsText = false,
+    this.showSubButtonsText = true,
     this.spacingBetweenAvatarAndName,
     this.spacingBetweenNameAndCallingText,
-    this.cameraButton,
-    this.cameraSwitchButton,
-    this.microphoneButton,
     ZegoCallButtonUIConfig? declineButton,
     ZegoCallButtonUIConfig? acceptButton,
+    ZegoCallButtonUIConfig? cameraButton,
+    ZegoCallButtonUIConfig? cameraSwitchButton,
+    ZegoCallButtonUIConfig? microphoneButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
   })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
         acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
+        cameraButton = acceptButton ?? ZegoCallButtonUIConfig(),
+        cameraSwitchButton = acceptButton ?? ZegoCallButtonUIConfig(),
+        microphoneButton = acceptButton ?? ZegoCallButtonUIConfig(),
         popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig();
 
   /// config of call invitation pop-up dialog
@@ -393,14 +445,30 @@ class ZegoCallInvitationInviteeUIConfig {
   /// microphone button
   ZegoCallButtonUIConfig? microphoneButton;
 
+  /// Whether to open the microphone when on be called
+  /// default value is true
+  bool defaultMicrophoneOn;
+
   /// camera button
   ZegoCallButtonUIConfig? cameraButton;
+
+  /// Whether to open the camera when on be called
+  /// default value is true
+  bool defaultCameraOn;
 
   /// camera switch button
   ZegoCallButtonUIConfig? cameraSwitchButton;
 
+  /// show avatar or not
+  /// default value is true
   bool showAvatar;
+
+  /// show central name or not
+  /// default value is true
   bool showCentralName;
+
+  /// show calling text or not
+  /// default value is true
   bool showCallingText;
 
   /// spacing between avatar and name
@@ -408,6 +476,29 @@ class ZegoCallInvitationInviteeUIConfig {
 
   /// spacing between name and calling text
   double? spacingBetweenNameAndCallingText;
+
+  /// Video view mode.
+  /// default value is false
+  ///
+  /// Set it to true if you want the video view to scale proportionally to fill the entire view, potentially resulting in partial cropping.
+  /// Set it to false if you want the video view to scale proportionally, potentially resulting in black borders.
+  bool useVideoViewAspectFill;
+
+  /// show video or not on a video calling;
+  /// default value is true
+  bool showVideoOnCalling;
+
+  /// show main buttons text or not
+  /// default value is false
+  ///
+  /// main buttons: accept/decline
+  bool showMainButtonsText;
+
+  /// show sub buttons text or not
+  /// default value is true
+  ///
+  /// sub buttons: camera/microphone/camera switch
+  bool showSubButtonsText;
 
   @override
   String toString() {
@@ -424,6 +515,7 @@ class ZegoCallInvitationInviteeUIConfig {
         'cameraButton:$cameraButton, '
         'cameraSwitchButton:$cameraSwitchButton, '
         'microphoneButton:$microphoneButton, '
+        'showVideoOnCalling:$showVideoOnCalling, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         '}';

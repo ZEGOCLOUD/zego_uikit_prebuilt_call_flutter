@@ -137,14 +137,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   invitationType: widget.pageManager.invitationData.type,
                   customData: widget.pageManager.invitationData.customData,
                   avatarBuilder: prebuiltCallConfig.avatarBuilder,
-                  foregroundBuilder: widget
-                      .callInvitationData.uiConfig.invitee.foregroundBuilder,
-                  backgroundBuilder: widget
-                      .callInvitationData.uiConfig.invitee.backgroundBuilder,
-                  acceptButtonConfig:
-                      widget.callInvitationData.uiConfig.invitee.acceptButton,
-                  declineButtonConfig:
-                      widget.callInvitationData.uiConfig.invitee.declineButton,
+                  uiConfig: widget.callInvitationData.uiConfig.invitee,
                 ));
         view = widget.callInvitationData.uiConfig.withSafeArea
             ? SafeArea(
@@ -184,6 +177,9 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     var callConfig = widget.callInvitationData.requireConfig(
       widget.pageManager.invitationData,
     );
+
+    /// Update the configuration of widget modifications during calling
+    widget.pageManager.callingConfig.sync(callConfig);
 
     if (Platform.isIOS) {
       if (callConfig.pip.iOS.support !=

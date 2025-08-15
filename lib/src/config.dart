@@ -63,6 +63,11 @@ class ZegoUIKitPrebuiltCallConfig {
   /// The default value is `true`.
   bool turnOnCameraWhenJoining;
 
+  /// Whether to use the front camera when joining the call.
+  ///
+  /// The default value is `true`.
+  bool useFrontCameraWhenJoining;
+
   /// Whether to open the microphone when joining the call.
   ///
   /// If you want to join the call with your microphone closed, set this value to false;
@@ -199,6 +204,7 @@ class ZegoUIKitPrebuiltCallConfig {
 
   ZegoUIKitPrebuiltCallConfig({
     this.turnOnCameraWhenJoining = true,
+    this.useFrontCameraWhenJoining = true,
     this.turnOnMicrophoneWhenJoining = true,
     this.useSpeakerWhenJoining = false,
     this.rootNavigator = false,
@@ -253,6 +259,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'pip:$pip, '
         'screenSharing:$screenSharing, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
+        'useFrontCameraWhenJoining:$useFrontCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
         'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
         'rootNavigator:$rootNavigator, '

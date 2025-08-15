@@ -12,7 +12,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/common.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/inviter_bottom_toolbar.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/inviter_top_toolbar.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/top_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 /// @nodoc
@@ -65,9 +65,26 @@ class ZegoCallingInviterView extends StatelessWidget {
 
   Widget backgroundView(BuildContext context) {
     if (ZegoCallInvitationType.videoCall == invitationType) {
-      return ZegoAudioVideoView(user: inviter);
+      return ZegoAudioVideoView(
+        user: inviter,
+        backgroundBuilder: (
+          BuildContext context,
+          Size size,
+          ZegoUIKitUser? user,
+
+          /// {ZegoViewBuilderMapExtraInfoKey:value}
+          /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
+          Map<String, dynamic> extraInfo,
+        ) {
+          return defaultBackground();
+        },
+      );
     }
 
+    return defaultBackground();
+  }
+
+  Widget defaultBackground() {
     return LayoutBuilder(builder: (context, constraints) {
       return backgroundBuilder?.call(
             context,
@@ -94,7 +111,11 @@ class ZegoCallingInviterView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (isVideo) const ZegoInviterCallingVideoTopToolBar() else Container(),
+        ZegoInviterCallingTopToolBar(
+          pageManager: pageManager,
+          switchButtonConfig: config.cameraSwitchButton,
+          invitationType: invitationType,
+        ),
         if (isVideo) SizedBox(height: 140.zH) else SizedBox(height: 228.zH),
         SizedBox(
           width: 200.zR,
@@ -142,6 +163,7 @@ class ZegoCallingInviterView extends StatelessWidget {
           networkLoadingConfig: callInvitationData.config.networkLoading,
           uiConfig: config,
           invitees: invitees,
+          invitationType: invitationType,
         ),
         SizedBox(height: 105.zR),
       ],

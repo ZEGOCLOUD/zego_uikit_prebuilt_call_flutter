@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/common.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/invitee_bottom_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/top_toolbar.dart';
 
 class ZegoCallingInviteeView extends StatelessWidget {
   const ZegoCallingInviteeView({
@@ -22,10 +23,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
     required this.invitees,
     required this.invitationType,
     required this.customData,
-    required this.declineButtonConfig,
-    required this.acceptButtonConfig,
-    this.foregroundBuilder,
-    this.backgroundBuilder,
+    required this.uiConfig,
     this.avatarBuilder,
     Key? key,
   }) : super(key: key);
@@ -39,13 +37,11 @@ class ZegoCallingInviteeView extends StatelessWidget {
   final String customData;
   final ZegoAvatarBuilder? avatarBuilder;
 
-  final ZegoCallingForegroundBuilder? foregroundBuilder;
-  final ZegoCallingBackgroundBuilder? backgroundBuilder;
-  final ZegoCallButtonUIConfig declineButtonConfig;
-  final ZegoCallButtonUIConfig acceptButtonConfig;
+  final ZegoCallInvitationInviteeUIConfig uiConfig;
 
   ZegoCallInvitationInviteeUIConfig get config =>
       callInvitationData.uiConfig.invitee;
+
   ZegoCallInvitationInnerText get innerText => callInvitationData.innerText;
 
   @override
@@ -57,25 +53,50 @@ class ZegoCallingInviteeView extends StatelessWidget {
       builder: (context, child) {
         return Stack(
           children: [
-            LayoutBuilder(builder: (context, constraints) {
-              return backgroundBuilder?.call(
-                    context,
-                    Size(constraints.maxWidth, constraints.maxHeight),
-                    ZegoCallingBuilderInfo(
-                      inviter: inviter,
-                      invitees: invitees,
-                      callType: invitationType,
-                      customData: customData,
-                    ),
-                  ) ??
-                  backgroundImage();
-            }),
+            backgroundView(context),
             surface(context),
             foreground(context),
           ],
         );
       },
     );
+  }
+
+  Widget backgroundView(BuildContext context) {
+    if (ZegoCallInvitationType.videoCall == invitationType) {
+      return ZegoAudioVideoView(
+        user: ZegoUIKit().getLocalUser(),
+        backgroundBuilder: (
+          BuildContext context,
+          Size size,
+          ZegoUIKitUser? user,
+
+          /// {ZegoViewBuilderMapExtraInfoKey:value}
+          /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
+          Map<String, dynamic> extraInfo,
+        ) {
+          return defaultBackground();
+        },
+      );
+    }
+
+    return defaultBackground();
+  }
+
+  Widget defaultBackground() {
+    return LayoutBuilder(builder: (context, constraints) {
+      return uiConfig.backgroundBuilder?.call(
+            context,
+            Size(constraints.maxWidth, constraints.maxHeight),
+            ZegoCallingBuilderInfo(
+              inviter: inviter,
+              invitees: invitees,
+              callType: invitationType,
+              customData: customData,
+            ),
+          ) ??
+          backgroundImage();
+    });
   }
 
   Widget surface(BuildContext context) {
@@ -85,6 +106,11 @@ class ZegoCallingInviteeView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        ZegoInviterCallingTopToolBar(
+          pageManager: pageManager,
+          switchButtonConfig: config.cameraSwitchButton,
+          invitationType: invitationType,
+        ),
         SizedBox(height: 280.zR),
         SizedBox(
           width: 200.zR,
@@ -135,8 +161,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
           callInvitationData: callInvitationData,
           inviter: inviter,
           invitationType: invitationType,
-          declineButtonConfig: declineButtonConfig,
-          acceptButtonConfig: acceptButtonConfig,
+          uiConfig: uiConfig,
           networkLoadingConfig: callInvitationData.config.networkLoading,
         ),
         SizedBox(height: 105.zR),
@@ -146,7 +171,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
 
   Widget foreground(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return foregroundBuilder?.call(
+      return uiConfig.foregroundBuilder?.call(
             context,
             Size(constraints.maxWidth, constraints.maxHeight),
             ZegoCallingBuilderInfo(
