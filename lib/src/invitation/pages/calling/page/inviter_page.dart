@@ -67,6 +67,9 @@ class ZegoCallingInviterView extends StatelessWidget {
     if (ZegoCallInvitationType.videoCall == invitationType) {
       return ZegoAudioVideoView(
         user: inviter,
+        avatarConfig: const ZegoAvatarConfig(
+          showInAudioMode: false,
+        ),
         backgroundBuilder: (
           BuildContext context,
           Size size,
