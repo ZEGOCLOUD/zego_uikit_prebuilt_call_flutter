@@ -1,4 +1,9 @@
 
+## 4.18.0
+
+- Features
+  - Add some device buttons to control on the calling interface, including camera/microphone/speaker switch/camera switch
+
 ## 4.17.13
 
 - Bugs

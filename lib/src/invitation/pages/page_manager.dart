@@ -1388,11 +1388,17 @@ class ZegoCallInvitationPageManager {
     showInvitationTopSheet();
   }
 
+  /// Handles the event when an invitation is accepted by the invitee
+  /// This method is called when the remote user accepts the call invitation
+  /// 
+  /// [params] Contains the invitation acceptance data including:
+  ///   - 'invitee': The user who accepted the invitation
+  ///   - 'data': Extended data from the invitation
   void onInvitationAccepted(Map<String, dynamic> params) {
     final ZegoUIKitUser invitee = params['invitee']!;
 
-    /// todo get invitee's name form data
-    final String data = params['data']!; // extended field
+    /// TODO: Get invitee's name from data
+    final String data = params['data']!; // Extended field containing custom data
 
     ZegoLoggerService.logInfo(
       'invitee:$invitee, '
@@ -1402,6 +1408,7 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager, on invitation accepted',
     );
 
+    // Find the invitee in the local inviting list to get their name
     final inviteeIndex = _invitingInvitees
         .indexWhere((invitingInvitee) => invitingInvitee.id == invitee.id);
     if (-1 == inviteeIndex) {
@@ -1414,21 +1421,53 @@ class ZegoCallInvitationPageManager {
       );
       return;
     } else {
+      // Update invitee name from local data
       invitee.name = _invitingInvitees[inviteeIndex].name;
     }
 
+    // Notify the invitation events that the call was accepted
     callInvitationData.invitationEvents?.onOutgoingCallAccepted?.call(
       _invitationData.callID,
       ZegoCallUser(invitee.id, invitee.name),
     );
 
+    // Remove the accepted invitee from the inviting list
     _invitingInvitees.removeAt(inviteeIndex);
 
+    // Stop the ringtone since the call was accepted
     _callerRingtone.stopRing();
 
-    //  if inputting right now
+    // Unfocus any input field if user was typing
     FocusManager.instance.primaryFocus?.unfocus();
 
+    // CRITICAL FIX: If the invitation interface is currently minimized,
+    // immediately convert the overlay state to ensure the call page can initialize correctly
+    // This prevents the issue where the call page sees a non-idle overlay state
+    // and fails to initialize the context, resulting in no audio/video connection
+    if (ZegoCallMiniOverlayPageState.invitingMinimized ==
+        ZegoUIKitPrebuiltCallController().minimize.state) {
+      ZegoLoggerService.logInfo(
+        'invitation accepted while minimized, immediately converting overlay state',
+        tag: 'call-invitation',
+        subTag: 'page manager, on invitation accepted',
+      );
+
+      // Immediately hide the overlay window to set state to idle
+      ZegoCallMiniOverlayMachine()
+          .changeState(ZegoCallMiniOverlayPageState.idle);
+
+      // Clear the minimization data to prevent the call page from detecting
+      // a non-idle overlay state during initialization
+      ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
+
+      ZegoLoggerService.logInfo(
+        'overlay state converted to idle, call page should initialize correctly',
+        tag: 'call-invitation',
+        subTag: 'page manager, on invitation accepted',
+      );
+    }
+
+    // If we're currently in a calling state, transition to online audio/video state
     if (isInCalling) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
@@ -1871,9 +1910,9 @@ class ZegoCallInvitationPageManager {
     await _calleeRingtone.stopRing();
 
     if (ZegoCallMiniOverlayPageState.inCallMinimized !=
-        ZegoUIKitPrebuiltCallController().minimize.state &&
+            ZegoUIKitPrebuiltCallController().minimize.state &&
         ZegoCallMiniOverlayPageState.invitingMinimized !=
-        ZegoUIKitPrebuiltCallController().minimize.state) {
+            ZegoUIKitPrebuiltCallController().minimize.state) {
       await _callerRingtone.stopRing();
       await _calleeRingtone.stopRing();
 
@@ -1912,10 +1951,27 @@ class ZegoCallInvitationPageManager {
       );
     }
 
-    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
-        ZegoUIKitPrebuiltCallController().minimize.state &&
-        ZegoCallMiniOverlayPageState.invitingMinimized !=
+    // 如果当前处于邀请中最小化状态，需要先隐藏悬浮窗口
+    if (ZegoCallMiniOverlayPageState.invitingMinimized ==
         ZegoUIKitPrebuiltCallController().minimize.state) {
+      ZegoLoggerService.logInfo(
+        'current state is invitingMinimized, hiding overlay first',
+        tag: 'call-invitation',
+        subTag: 'page manager, restore to idle',
+      );
+
+      // 隐藏悬浮窗口
+      ZegoCallMiniOverlayMachine()
+          .changeState(ZegoCallMiniOverlayPageState.idle);
+
+      // 清除最小化数据
+      ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
+    }
+
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state) {
       _invitationData = ZegoCallInvitationData.empty();
     }
 
@@ -1939,12 +1995,22 @@ class ZegoCallInvitationPageManager {
         inCallPage = false;
 
         try {
-          ZegoLoggerService.logInfo(
-            'push from restore to idle, ',
-            tag: 'call',
-            subTag: 'page manager, restore to idle, Navigator',
-          );
-          Navigator.of(callInvitationData.contextQuery!.call()).pop();
+          // 检查当前页面是否还存在，避免重复pop
+          final currentContext = callInvitationData.contextQuery!.call();
+          if (Navigator.canPop(currentContext)) {
+            ZegoLoggerService.logInfo(
+              'pop from restore to idle, ',
+              tag: 'call',
+              subTag: 'page manager, restore to idle, Navigator',
+            );
+            Navigator.of(currentContext).pop();
+          } else {
+            ZegoLoggerService.logInfo(
+              'cannot pop, page stack is empty or already popped',
+              tag: 'call',
+              subTag: 'page manager, restore to idle, Navigator',
+            );
+          }
         } catch (e) {
           ZegoLoggerService.logError(
             'Navigator pop exception:$e, '

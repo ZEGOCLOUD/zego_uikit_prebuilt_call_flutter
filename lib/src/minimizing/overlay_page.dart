@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/inviting_minimized.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/mini_call_page.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/mini_calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
@@ -157,8 +157,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   void initState() {
     super.initState();
 
-    // 调整初始位置，使悬浮窗口更容易看到
-    topLeft = Offset(50, 100); // 从(100, 100)改为(50, 100)
+    // Adjust initial position to make overlay more visible
+    topLeft = Offset(50, 100); // Changed from (100, 100) to (50, 100)
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ZegoCallMiniOverlayMachine()
@@ -230,16 +230,16 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     }
 
     final size = MediaQuery.of(context).size;
-    // 调整尺寸，使悬浮窗口更容易看到
-    final width = size.width / 3.0; // 从1/4改为1/3
+    // Adjust size to make overlay more visible
+    final width = size.width / 3.0; // Changed from 1/4 to 1/3
     final height = 16.0 / 9.0 * width;
     return Size(width, height);
   }
 
   Widget overlayItem() {
-    // 添加调试日志
+    // Add debug log
     print('ZegoCallMiniOverlayPage: overlayItem - currentState: $currentState');
-    
+
     switch (currentState) {
       case ZegoCallMiniOverlayPageState.idle:
         return Container();
@@ -292,11 +292,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Widget _buildInvitingMinimizedWidget() {
     final minimizeData =
         ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
-    
-    // 添加调试日志
+
+    // Add debug log
     print(
         'ZegoCallMiniOverlayPage: _buildInvitingMinimizedWidget - minimizeData: $minimizeData, inviting: ${minimizeData?.inviting}');
-    
+
     if (minimizeData?.inviting == null) {
       print(
           'ZegoCallMiniOverlayPage: _buildInvitingMinimizedWidget - inviting data is null, returning Container');
@@ -311,7 +311,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
               withSafeArea: widget.navigatorWithSafeArea,
             );
       },
-      child: ZegoInvitingMinimizedWidget(
+      child: ZegoMinimizingCallingPage(
         size: itemSize,
         invitationType: minimizeData!.inviting!.invitationType,
         inviter: minimizeData.inviting!.inviter,
@@ -324,22 +324,23 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
   void syncState() {
     final newState = ZegoCallMiniOverlayMachine().state();
-    final newVisibility = newState == ZegoCallMiniOverlayPageState.inCallMinimized ||
-        newState == ZegoCallMiniOverlayPageState.invitingMinimized;
-    
-    // 添加调试日志
+    final newVisibility =
+        newState == ZegoCallMiniOverlayPageState.inCallMinimized ||
+            newState == ZegoCallMiniOverlayPageState.invitingMinimized;
+
+    // Add debug log
     print(
         'ZegoCallMiniOverlayPage: syncState - currentState: $currentState -> $newState, visibility: $visibility -> $newVisibility');
-    
+
     setState(() {
       currentState = newState;
-      // 修复：邀请中最小化状态也应该显示悬浮窗口
+      // Fix: inviting minimized state should also show overlay
       visibility = newVisibility;
     });
   }
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
-    // 添加调试日志
+    // Add debug log
     print(
         'ZegoCallMiniOverlayPage: onMiniOverlayMachineStateChanged - state: $state');
 

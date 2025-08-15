@@ -11,14 +11,14 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
-/// 最小化类型
+/// Minimization type
 enum ZegoMinimizeType {
-  none,    // 未最小化
-  inCall,  // 通话中最小化
-  inviting, // 邀请中最小化
+  none, // Not minimized
+  inCall, // In-call minimized
+  inviting, // Inviting minimized
 }
 
-/// 通话中最小化数据
+/// In-call minimized data
 class ZegoInCallMinimizeData {
   const ZegoInCallMinimizeData({
     required this.config,
@@ -35,7 +35,7 @@ class ZegoInCallMinimizeData {
   final DateTime durationStartTime;
 }
 
-/// 邀请中最小化数据
+/// Inviting minimized data
 class ZegoInvitingMinimizeData {
   const ZegoInvitingMinimizeData({
     required this.invitationType,
@@ -56,7 +56,7 @@ class ZegoInvitingMinimizeData {
   final String? customData;
 }
 
-/// 最小化数据 - 使用联合类型
+/// Minimized data - using union type pattern
 class ZegoCallMinimizeData {
   const ZegoCallMinimizeData.inCall({
     required this.appID,
@@ -88,26 +88,26 @@ class ZegoCallMinimizeData {
   final String callID;
   final VoidCallback? onDispose;
 
-  // 联合类型数据 - 只能有一个不为null
+  // Union type data - only one can be non-null
   final ZegoInCallMinimizeData? inCallData;
   final ZegoInvitingMinimizeData? invitingData;
 
-  /// 获取最小化类型
+  /// Get minimization type
   ZegoMinimizeType get type {
     if (inCallData != null) return ZegoMinimizeType.inCall;
     if (invitingData != null) return ZegoMinimizeType.inviting;
     return ZegoMinimizeType.none;
   }
 
-  /// 检查是否为通话中最小化
+  /// Check if it's in-call minimized
   bool get isInCall => type == ZegoMinimizeType.inCall;
 
-  /// 检查是否为邀请中最小化
+  /// Check if it's inviting minimized
   bool get isInviting => type == ZegoMinimizeType.inviting;
 
-  /// 获取通话中数据
+  /// Get in-call data
   ZegoInCallMinimizeData? get inCall => inCallData;
 
-  /// 获取邀请中数据
+  /// Get inviting data
   ZegoInvitingMinimizeData? get inviting => invitingData;
 }

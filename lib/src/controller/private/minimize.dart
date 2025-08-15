@@ -20,12 +20,12 @@ class ZegoCallControllerMinimizePrivateImpl {
 
   final isMinimizingNotifier = ValueNotifier<bool>(false);
 
-  /// 更新最小化数据
+  /// Update minimized data
   void updateMinimizeData(ZegoCallMinimizeData minimizeData) {
     _minimizeData = minimizeData;
   }
 
-  /// 清除最小化数据
+  /// Clear minimized data
   void clearMinimizeData() {
     _minimizeData = null;
   }

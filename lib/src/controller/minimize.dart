@@ -16,7 +16,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   bool get isMinimizing => isMinimizingNotifier.value;
   ValueNotifier<bool> get isMinimizingNotifier => _private.isMinimizingNotifier;
 
-  /// 恢复通话中界面
+  /// Restore the in-call interface
   bool restore(
     BuildContext context, {
     bool rootNavigator = true,
@@ -135,7 +135,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     return true;
   }
 
-  /// 最小化邀请中界面
+  /// Minimize the inviting interface
   bool minimizeInviting(
     BuildContext context, {
     bool rootNavigator = true,
@@ -158,7 +158,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       return false;
     }
 
-    // 创建邀请中最小化数据
+    // Create inviting minimized data
     final minimizeData = ZegoCallMinimizeData.inviting(
       appID: callInvitationData.appID,
       appSign: callInvitationData.appSign,
@@ -178,13 +178,13 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ),
     );
 
-    // 保存最小化数据
+    // Save minimized data
     private.updateMinimizeData(minimizeData);
 
-    // 开始监听邀请状态变化
+    // Start listening for invitation state changes
     _listenInvitationStateChanged(pageManager);
 
-    // 改变状态为邀请中最小化
+    // Change state to inviting minimized
     ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.invitingMinimized,
     );
@@ -214,7 +214,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     return true;
   }
 
-  /// 恢复邀请中界面
+  /// Restore the inviting interface
   bool restoreInviting(
     BuildContext context, {
     bool rootNavigator = true,
@@ -254,7 +254,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       subTag: 'controller.minimize',
     );
 
-    // 重新创建邀请中页面
+    // Recreate the inviting page
     try {
       Navigator.of(context, rootNavigator: rootNavigator).push(
         MaterialPageRoute(builder: (context) {
@@ -270,7 +270,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
                 subTag: 'controller.minimize',
               );
               invitingData.pageManager.callingMachine?.isPagePushed = true;
-              // 当邀请界面被恢复后，将悬浮窗口状态设置为idle
+              // When the inviting interface is restored, set the overlay state to idle
               ZegoCallMiniOverlayMachine()
                   .changeState(ZegoCallMiniOverlayPageState.idle);
             },
@@ -311,10 +311,13 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     );
   }
 
-  /// 监听邀请状态变化
+  /// Listens for changes in the invitation state machine
+  /// This method sets up callbacks to handle state transitions during the invitation process
+  ///
+  /// [pageManager] The invitation page manager that contains the calling state machine
   void _listenInvitationStateChanged(
       ZegoCallInvitationPageManager pageManager) {
-    // 监听邀请状态机变化
+    // Listen for state changes in the calling state machine
     pageManager.callingMachine?.onStateChanged = (CallingState state) {
       ZegoLoggerService.logInfo(
         'invitation state changed: $state, current overlay state: ${ZegoCallMiniOverlayMachine().state()}',
@@ -323,7 +326,8 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       );
 
       if (state == CallingState.kOnlineAudioVideo) {
-        // 如果从邀请中跳转到通话中，自动转换最小化状态
+        // When transitioning from inviting to online audio/video, auto-convert minimization state
+        // This handles the case where the invitation was accepted while minimized
         final currentState = ZegoCallMiniOverlayMachine().state();
         if (currentState == ZegoCallMiniOverlayPageState.invitingMinimized) {
           ZegoLoggerService.logInfo(
@@ -332,13 +336,13 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
             subTag: 'controller.minimize',
           );
 
-          // 自动转换为通话中最小化状态
+          // Immediately convert the state to ensure the call page can initialize correctly
           _autoConvertToInCallMinimized();
         }
       } else if (state == CallingState.kCallingWithVideo ||
           state == CallingState.kCallingWithVoice) {
-        // 当状态变为邀请中时，不要转换悬浮窗口状态
-        // 这只是邀请发送成功，不是通话开始
+        // When the state changes to calling, don't convert the overlay state yet
+        // This is just the invitation being sent successfully, not the call starting
         ZegoLoggerService.logInfo(
           'invitation state changed to calling, but not converting overlay state yet',
           tag: 'call-minimize',
@@ -347,13 +351,13 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       }
     };
 
-    // 监听邀请事件，处理邀请结束的情况
+    // Listen for invitation events to handle invitation termination scenarios
     _listenInvitationEvents(pageManager);
   }
 
-  /// 监听邀请事件
+  /// Listen for invitation events
   void _listenInvitationEvents(ZegoCallInvitationPageManager pageManager) {
-    // 监听邀请被拒绝
+    // Listen for invitation being declined
     pageManager.callInvitationData.invitationEvents
         ?.onIncomingCallDeclineButtonPressed = () {
       ZegoLoggerService.logInfo(
@@ -361,10 +365,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请被取消
+    // Listen for invitation being canceled
     pageManager.callInvitationData.invitationEvents
         ?.onOutgoingCallCancelButtonPressed = () {
       ZegoLoggerService.logInfo(
@@ -372,10 +375,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请超时
+    // Listen for invitation timeout
     pageManager.callInvitationData.invitationEvents?.onIncomingCallTimeout =
         (String callID, ZegoCallUser inviter) {
       ZegoLoggerService.logInfo(
@@ -383,10 +385,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请响应超时
+    // Listen for invitation response timeout
     pageManager.callInvitationData.invitationEvents?.onOutgoingCallTimeout =
         (String callID, List<ZegoCallUser> invitees, bool isVideoCall) {
       ZegoLoggerService.logInfo(
@@ -394,10 +395,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请被拒绝（忙碌）
+    // Listen for invitation being rejected (busy)
     pageManager.callInvitationData.invitationEvents
             ?.onOutgoingCallRejectedCauseBusy =
         (String callID, ZegoCallUser invitee, String customData) {
@@ -406,10 +406,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请被拒绝（主动拒绝）
+    // Listen for invitation being declined (actively declined)
     pageManager.callInvitationData.invitationEvents?.onOutgoingCallDeclined =
         (String callID, ZegoCallUser invitee, String customData) {
       ZegoLoggerService.logInfo(
@@ -417,10 +416,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
 
-    // 监听邀请被取消（来电方）
+    // Listen for incoming call being canceled
     pageManager.callInvitationData.invitationEvents?.onIncomingCallCanceled =
         (String callID, ZegoCallUser caller, String customData) {
       ZegoLoggerService.logInfo(
@@ -428,36 +426,22 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         tag: 'call-minimize',
         subTag: 'controller.minimize',
       );
-      _hideOverlayIfInvitingMinimized();
     };
   }
 
-  /// 如果当前是邀请中最小化状态，则隐藏悬浮窗口
-  void _hideOverlayIfInvitingMinimized() {
-    final currentState = ZegoCallMiniOverlayMachine().state();
-    if (currentState == ZegoCallMiniOverlayPageState.invitingMinimized) {
-      ZegoLoggerService.logInfo(
-        'hiding overlay for invitation ended',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-
-      // 清除最小化数据
-      private.clearMinimizeData();
-
-      // 改变状态为空闲
-      ZegoCallMiniOverlayMachine()
-          .changeState(ZegoCallMiniOverlayPageState.idle);
-    }
-  }
-
-  /// 自动转换为通话中最小化
+  /// Automatically convert to in-call minimized state
   void _autoConvertToInCallMinimized() {
     final minimizeData = private.minimizeData;
     final invitingData = minimizeData?.inviting;
 
     if (invitingData != null) {
-      // 创建通话中最小化数据
+      ZegoLoggerService.logInfo(
+        'auto converting to in-call minimized, immediately hiding overlay',
+        tag: 'call-minimize',
+        subTag: 'controller.minimize',
+      );
+
+      // Create in-call minimized data
       final inCallData = ZegoInCallMinimizeData(
         config: _convertCallingConfigToPrebuiltConfig(
             invitingData.pageManager.callingConfig),
@@ -468,7 +452,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         durationStartTime: DateTime.now(),
       );
 
-      // 创建新的最小化数据
+      // Create new minimized data
       final newMinimizeData = ZegoCallMinimizeData.inCall(
         appID: minimizeData!.appID,
         appSign: minimizeData.appSign,
@@ -480,21 +464,30 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         inCallData: inCallData,
       );
 
-      // 更新最小化数据
+      // Update minimized data
       private.updateMinimizeData(newMinimizeData);
 
-      // 改变状态
+      // Immediately hide overlay to ensure call page initializes with idle state
       ZegoCallMiniOverlayMachine()
-          .changeState(ZegoCallMiniOverlayPageState.inCallMinimized);
+          .changeState(ZegoCallMiniOverlayPageState.idle);
+
+      // Clear minimized data to prevent call page from detecting non-idle state during initialization
+      private.clearMinimizeData();
+
+      ZegoLoggerService.logInfo(
+        'overlay hidden and data cleared, call page should initialize correctly',
+        tag: 'call-minimize',
+        subTag: 'controller.minimize',
+      );
     }
   }
 
-  /// 转换邀请配置为通话配置
+  /// Convert calling config to prebuilt call config
   ZegoUIKitPrebuiltCallConfig _convertCallingConfigToPrebuiltConfig(
     ZegoUIKitPrebuiltCallingConfig callingConfig,
   ) {
-    // 这里需要根据callingConfig创建对应的prebuiltConfig
-    // 暂时返回一个默认配置，实际使用时需要根据业务逻辑完善
+    // Here we need to create corresponding prebuiltConfig based on callingConfig
+    // Temporarily return a default config, actual usage needs to be perfected based on business logic
     return ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
   }
 }

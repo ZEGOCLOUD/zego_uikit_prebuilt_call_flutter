@@ -22,16 +22,16 @@ class ZegoCallMiniOverlayMachine {
 
   sm.Machine<ZegoCallMiniOverlayPageState> get machine => _machine;
 
-  /// 检查是否处于最小化状态
+  /// Check if currently in minimized state
   bool get isMinimizing =>
       ZegoCallMiniOverlayPageState.inCallMinimized == state() ||
       ZegoCallMiniOverlayPageState.invitingMinimized == state();
 
-  /// 检查是否为通话中最小化
+  /// Check if it's in-call minimized
   bool get isInCallMinimized =>
       ZegoCallMiniOverlayPageState.inCallMinimized == state();
 
-  /// 检查是否为邀请中最小化
+  /// Check if it's inviting minimized
   bool get isInvitingMinimized =>
       ZegoCallMiniOverlayPageState.invitingMinimized == state();
 
@@ -88,10 +88,12 @@ class ZegoCallMiniOverlayMachine {
     });
 
     _stateIdle = _machine.newState(ZegoCallMiniOverlayPageState.idle);
-    _stateInCallMinimized = _machine.newState(ZegoCallMiniOverlayPageState.inCallMinimized);
-    _stateInvitingMinimized = _machine.newState(ZegoCallMiniOverlayPageState.invitingMinimized);
+    _stateInCallMinimized =
+        _machine.newState(ZegoCallMiniOverlayPageState.inCallMinimized);
+    _stateInvitingMinimized =
+        _machine.newState(ZegoCallMiniOverlayPageState.invitingMinimized);
 
-    // 设置默认状态
+    // Set default state
     _machine.current = _stateIdle;
   }
 

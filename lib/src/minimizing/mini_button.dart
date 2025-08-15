@@ -20,7 +20,7 @@ class ZegoCallMinimizingButton extends StatefulWidget {
     this.iconSize,
     this.buttonSize,
     this.rootNavigator = false,
-    // 新增参数：邀请中最小化相关
+    // New parameters: related to inviting minimization
     this.invitationType,
     this.inviter,
     this.invitees,
@@ -43,7 +43,7 @@ class ZegoCallMinimizingButton extends StatefulWidget {
   /// the size of button
   final Size? buttonSize;
 
-  // 新增参数：邀请中最小化相关
+  // New parameters: related to inviting minimization
   final ZegoCallInvitationType? invitationType;
   final ZegoUIKitUser? inviter;
   final List<ZegoUIKitUser>? invitees;

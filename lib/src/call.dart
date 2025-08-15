@@ -16,9 +16,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
