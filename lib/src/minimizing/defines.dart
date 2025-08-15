@@ -1,10 +1,6 @@
-/// The current state of the minimized interface can be described as follows:
-///
-/// [idle]: in a blank state, not yet minimized, or has been restored to the original Widget.
-/// [calling]: in the process of being restored from the minimized state.
-/// [minimizing]: in the minimized state.
+/// 悬浮窗口状态
 enum ZegoCallMiniOverlayPageState {
-  idle,
-  calling,
-  minimizing,
+  idle,               // 空闲状态
+  inCallMinimized,    // 通话中最小化
+  invitingMinimized,  // 邀请中最小化
 }

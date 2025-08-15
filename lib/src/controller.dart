@@ -22,6 +22,12 @@ import 'package:zego_uikit_prebuilt_call/src/events.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/calling_page.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/data.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
@@ -207,7 +213,7 @@ class ZegoUIKitPrebuiltCallController
       callID: ZegoUIKit().getRoom().id,
       reason: reason,
       isFromMinimizing:
-          ZegoCallMiniOverlayPageState.minimizing == minimize.state,
+          ZegoCallMiniOverlayPageState.inCallMinimized == minimize.state,
       invitationData: ZegoUIKitPrebuiltCallInvitationService()
           .private
           .currentCallInvitationData,

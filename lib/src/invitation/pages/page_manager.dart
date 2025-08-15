@@ -1752,12 +1752,9 @@ class ZegoCallInvitationPageManager {
 
       restoreToIdle();
 
-      if (ZegoCallMiniOverlayPageState.minimizing ==
-          ZegoCallMiniOverlayMachine().state()) {
-        _callerRingtone.stopRing();
-        _calleeRingtone.stopRing();
-
-        ZegoUIKitPrebuiltCallController().minimize.hide();
+      if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+          ZegoUIKitPrebuiltCallController().minimize.state) {
+        _invitingInvitees.clear();
       }
     }
   }
@@ -1843,8 +1840,8 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager',
     );
 
-    if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state) {
       _invitingInvitees.clear();
     }
 
@@ -1873,8 +1870,10 @@ class ZegoCallInvitationPageManager {
     await _callerRingtone.stopRing();
     await _calleeRingtone.stopRing();
 
-    if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state) {
       await _callerRingtone.stopRing();
       await _calleeRingtone.stopRing();
 
@@ -1913,8 +1912,10 @@ class ZegoCallInvitationPageManager {
       );
     }
 
-    if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state) {
       _invitationData = ZegoCallInvitationData.empty();
     }
 
@@ -2177,7 +2178,7 @@ class ZegoCallInvitationPageManager {
   }
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
-    if (ZegoCallMiniOverlayPageState.calling == state) {
+    if (ZegoCallMiniOverlayPageState.inCallMinimized == state) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
   }

@@ -22,7 +22,18 @@ class ZegoCallMiniOverlayMachine {
 
   sm.Machine<ZegoCallMiniOverlayPageState> get machine => _machine;
 
-  bool get isMinimizing => ZegoCallMiniOverlayPageState.minimizing == state();
+  /// 检查是否处于最小化状态
+  bool get isMinimizing =>
+      ZegoCallMiniOverlayPageState.inCallMinimized == state() ||
+      ZegoCallMiniOverlayPageState.invitingMinimized == state();
+
+  /// 检查是否为通话中最小化
+  bool get isInCallMinimized =>
+      ZegoCallMiniOverlayPageState.inCallMinimized == state();
+
+  /// 检查是否为邀请中最小化
+  bool get isInvitingMinimized =>
+      ZegoCallMiniOverlayPageState.invitingMinimized == state();
 
   ZegoCallMiniOverlayPageState state() {
     return _machine.current?.identifier ?? ZegoCallMiniOverlayPageState.idle;
@@ -76,11 +87,12 @@ class ZegoCallMiniOverlayMachine {
       }
     });
 
-    _stateIdle =
-        _machine.newState(ZegoCallMiniOverlayPageState.idle); //  default state;
-    _stateCalling = _machine.newState(ZegoCallMiniOverlayPageState.calling);
-    _stateMinimizing =
-        _machine.newState(ZegoCallMiniOverlayPageState.minimizing);
+    _stateIdle = _machine.newState(ZegoCallMiniOverlayPageState.idle);
+    _stateInCallMinimized = _machine.newState(ZegoCallMiniOverlayPageState.inCallMinimized);
+    _stateInvitingMinimized = _machine.newState(ZegoCallMiniOverlayPageState.invitingMinimized);
+
+    // 设置默认状态
+    _machine.current = _stateIdle;
   }
 
   void changeState(ZegoCallMiniOverlayPageState state) {
@@ -93,30 +105,28 @@ class ZegoCallMiniOverlayMachine {
     switch (state) {
       case ZegoCallMiniOverlayPageState.idle:
         _stateIdle.enter();
-
         stopDurationTimer();
         break;
-      case ZegoCallMiniOverlayPageState.calling:
-        _stateCalling.enter();
-        break;
-      case ZegoCallMiniOverlayPageState.minimizing:
-        _stateMinimizing.enter();
-
+      case ZegoCallMiniOverlayPageState.inCallMinimized:
+        _stateInCallMinimized.enter();
         startDurationTimer();
+        break;
+      case ZegoCallMiniOverlayPageState.invitingMinimized:
+        _stateInvitingMinimized.enter();
         break;
     }
   }
 
   void startDurationTimer() {
     final durationConfig = ZegoUIKitPrebuiltCallController
-        .instance.minimize.private.minimizeData?.config.duration;
+        .instance.minimize.private.minimizeData?.inCall?.config.duration;
     final isVisible = durationConfig?.isVisible ?? true;
     if (!isVisible) {
       return;
     }
 
-    _durationStartTime = ZegoUIKitPrebuiltCallController
-            .instance.minimize.private.minimizeData?.durationStartTime ??
+    _durationStartTime = ZegoUIKitPrebuiltCallController.instance.minimize
+            .private.minimizeData?.inCall?.durationStartTime ??
         DateTime.now();
     _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
 
@@ -128,7 +138,6 @@ class ZegoCallMiniOverlayMachine {
 
   void stopDurationTimer() {
     _durationTimer?.cancel();
-
     _durationTimer = null;
   }
 
@@ -146,8 +155,8 @@ class ZegoCallMiniOverlayMachine {
       [];
 
   late sm.State<ZegoCallMiniOverlayPageState> _stateIdle;
-  late sm.State<ZegoCallMiniOverlayPageState> _stateCalling;
-  late sm.State<ZegoCallMiniOverlayPageState> _stateMinimizing;
+  late sm.State<ZegoCallMiniOverlayPageState> _stateInCallMinimized;
+  late sm.State<ZegoCallMiniOverlayPageState> _stateInvitingMinimized;
 
   DateTime? _durationStartTime;
   Timer? _durationTimer;

@@ -88,10 +88,10 @@ class ZegoCallingMachine {
   }
 
   void onCallingEntry() {
-    if (ZegoCallMiniOverlayPageState.calling ==
+    if (ZegoCallMiniOverlayPageState.invitingMinimized ==
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
-        'entry is from calling by mini machine',
+        'entry is from inviting minimized by mini machine',
         tag: 'call-invitation',
         subTag: 'machine',
       );
@@ -129,9 +129,21 @@ class ZegoCallingMachine {
             inviter: pageManager.invitationData.inviter!,
             invitees: pageManager.invitationData.invitees,
             onInitState: () {
+              ZegoLoggerService.logInfo(
+                'push from onCallingEntry, onInitState',
+                tag: 'call',
+                subTag: 'machine, Navigator',
+              );
+
               isPagePushed = true;
             },
             onDispose: () {
+              ZegoLoggerService.logInfo(
+                'push from onCallingEntry, onDispose',
+                tag: 'call',
+                subTag: 'machine, Navigator',
+              );
+
               isPagePushed = false;
             },
           ),
