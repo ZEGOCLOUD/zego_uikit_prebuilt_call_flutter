@@ -25,6 +25,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/invitation_notify.
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../notification/defines.dart';
+import 'calling/config.dart';
 
 /// @nodoc
 class ZegoCallInvitationPageManager {
@@ -41,6 +42,7 @@ class ZegoCallInvitationPageManager {
   final _calleeRingtone = ZegoRingtone();
 
   bool _init = false;
+  var callingConfig = ZegoUIKitPrebuiltCallingConfig();
   ZegoCallingMachine? callingMachine;
   bool _invitationTopSheetVisibility = false;
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
@@ -1100,12 +1102,14 @@ class ZegoCallInvitationPageManager {
     /// call protocol
     final sendRequestProtocol =
         ZegoCallInvitationSendRequestProtocol.fromJson(data);
+    final callInvitationType = ZegoCallTypeExtension.mapValue[type] ??
+        ZegoCallInvitationType.voiceCall;
 
     updateInvitationData(
       sendRequestProtocol,
       invitationID,
       inviter,
-      ZegoCallTypeExtension.mapValue[type] ?? ZegoCallInvitationType.voiceCall,
+      callInvitationType,
     );
 
     _remoteReceivedTimeoutGuard?.cancel();
@@ -1143,6 +1147,18 @@ class ZegoCallInvitationPageManager {
       tag: 'call-invitation',
       subTag: 'page manager',
     );
+
+    if (ZegoCallInvitationType.videoCall == callInvitationType &&
+        callInvitationData.uiConfig.invitee.showVideoOnCalling) {
+      if (callInvitationData
+          .requireConfig(_invitationData)
+          .turnOnCameraWhenJoining) {
+        ZegoUIKit().updateVideoViewMode(
+          callInvitationData.uiConfig.invitee.useVideoViewAspectFill,
+        );
+        ZegoUIKit().turnCameraOn(true);
+      }
+    }
 
     if (Platform.isAndroid) {
       /// android
@@ -1849,6 +1865,8 @@ class ZegoCallInvitationPageManager {
     );
 
     isCurrentInvitationFromAcceptedAndroidOffline = false;
+
+    callingConfig.reset();
 
     _localSendTimeoutGuard?.cancel();
     _remoteReceivedTimeoutGuard?.cancel();

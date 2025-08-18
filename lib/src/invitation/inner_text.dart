@@ -176,6 +176,42 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is *"OK"*.
   String permissionConfirmDialogOKButton;
 
+  /// The text below the microphone button in the calling toolbar,
+  /// The **default value** is *"Microphone"*.
+  String callingToolbarMicrophoneButtonText;
+
+  /// The text below the microphone button when it's ON in the calling toolbar,
+  /// The **default value** is *"Microphone ON"*.
+  String callingToolbarMicrophoneOnButtonText;
+
+  /// The text below the microphone button when it's OFF in the calling toolbar,
+  /// The **default value** is *"Microphone OFF"*.
+  String callingToolbarMicrophoneOffButtonText;
+
+  /// The text below the speaker button in the calling toolbar,
+  /// The **default value** is *"Speaker"*.
+  String callingToolbarSpeakerButtonText;
+
+  /// The text below the speaker button when it's ON in the calling toolbar,
+  /// The **default value** is *"Speaker ON"*.
+  String callingToolbarSpeakerOnButtonText;
+
+  /// The text below the speaker button when it's OFF in the calling toolbar,
+  /// The **default value** is *"Speaker OFF"*.
+  String callingToolbarSpeakerOffButtonText;
+
+  /// The text below the camera button in the calling toolbar,
+  /// The **default value** is *"Camera"*.
+  String callingToolbarCameraButtonText;
+
+  /// The text below the camera button when it's ON in the calling toolbar,
+  /// The **default value** is *"Camera ON"*.
+  String callingToolbarCameraOnButtonText;
+
+  /// The text below the camera button when it's OFF in the calling toolbar,
+  /// The **default value** is *"Camera OFF"*.
+  String callingToolbarCameraOffButtonText;
+
   ZegoCallInvitationInnerText({
     String? incomingVideoCallDialogTitle,
     String? incomingVideoCallDialogMessage,
@@ -217,6 +253,15 @@ class ZegoCallInvitationInnerText {
     String? permissionConfirmDialogDenyButton,
     String? permissionConfirmDialogCancelButton,
     String? permissionConfirmDialogOKButton,
+    String? callingToolbarMicrophoneButtonText,
+    String? callingToolbarMicrophoneOnButtonText,
+    String? callingToolbarMicrophoneOffButtonText,
+    String? callingToolbarSpeakerButtonText,
+    String? callingToolbarSpeakerOnButtonText,
+    String? callingToolbarSpeakerOffButtonText,
+    String? callingToolbarCameraButtonText,
+    String? callingToolbarCameraOnButtonText,
+    String? callingToolbarCameraOffButtonText,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
@@ -298,7 +343,25 @@ class ZegoCallInvitationInnerText {
         permissionConfirmDialogCancelButton =
             permissionConfirmDialogCancelButton ?? 'Cancel',
         permissionConfirmDialogOKButton =
-            permissionConfirmDialogOKButton ?? 'OK';
+            permissionConfirmDialogOKButton ?? 'OK',
+        callingToolbarMicrophoneButtonText =
+            callingToolbarMicrophoneButtonText ?? 'Microphone',
+        callingToolbarMicrophoneOnButtonText =
+            callingToolbarMicrophoneOnButtonText ?? 'Microphone ON',
+        callingToolbarMicrophoneOffButtonText =
+            callingToolbarMicrophoneOffButtonText ?? 'Microphone OFF',
+        callingToolbarSpeakerButtonText =
+            callingToolbarSpeakerButtonText ?? 'Speaker',
+        callingToolbarSpeakerOnButtonText =
+            callingToolbarSpeakerOnButtonText ?? 'Speaker ON',
+        callingToolbarSpeakerOffButtonText =
+            callingToolbarSpeakerOffButtonText ?? 'Speaker OFF',
+        callingToolbarCameraButtonText =
+            callingToolbarCameraButtonText ?? 'Camera',
+        callingToolbarCameraOnButtonText =
+            callingToolbarCameraOnButtonText ?? 'Camera ON',
+        callingToolbarCameraOffButtonText =
+            callingToolbarCameraOffButtonText ?? 'Camera OFF';
 
   /// if add a new text, need check [ZegoCallInvitationInnerTextForCallInvitationServicePrivate]
 }
