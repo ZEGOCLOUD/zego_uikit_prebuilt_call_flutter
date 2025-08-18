@@ -163,7 +163,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
 
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
@@ -179,7 +179,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     ZegoCallPluginPlatform.instance.activeAudioByCallKit();
 
-    event.action.fulfill();
+    event.fulfill?.call();
 
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
@@ -193,7 +193,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
 
     onAnswerCallPerform() {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
@@ -311,7 +311,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       );
 
       /// Delayed until zim interaction is completed
-      event.action.fulfill();
+      event.fulfill?.call();
     }
   }
 
@@ -324,11 +324,11 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
   }
 
   void _onCallkitPerformSetMutedCallActionEvent(
-    ZegoSignalingPluginCallKitSetMutedCallActionEvent event,
+    ZegoSignalingPluginCallKitActionEvent event,
   ) {
     ZegoLoggerService.logInfo(
       'on callkit perform set muted call action',
@@ -336,9 +336,12 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
 
-    ZegoUIKit().turnMicrophoneOn(!event.action.muted);
+    // 从 actionData 中获取 muted 状态
+    final actionData =
+        event.actionData as ZegoSignalingPluginCallKitSetMutedActionData;
+    ZegoUIKit().turnMicrophoneOn(!actionData.muted);
   }
 
   void _onCallkitPerformSetGroupCallActionEvent(
@@ -350,7 +353,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
   }
 
   void _onCallkitPerformPlayDTMFCallActionEvent(
@@ -362,7 +365,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    event.action.fulfill();
+    event.fulfill?.call();
   }
 
   /// Waits until the specified condition is met.

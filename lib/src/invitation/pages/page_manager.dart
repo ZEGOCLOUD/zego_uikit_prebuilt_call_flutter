@@ -6,7 +6,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -1890,7 +1889,7 @@ class ZegoCallInvitationPageManager {
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
-            CXCallEndedReason.CXCallEndedReasonRemoteEnded,
+            ZegoSignalingPluginCXCallEndedReason.CXCallEndedReasonRemoteEnded,
             iOSIncomingPushUUID!,
           );
       iOSIncomingPushUUID = null;
