@@ -14,6 +14,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 
 /// @nodoc
 class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
@@ -22,8 +23,8 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
 
   final ZegoCallInvitationType invitationType;
   final ZegoUIKitUser inviter;
-  final ZegoCallButtonUIConfig declineButtonConfig;
-  final ZegoCallButtonUIConfig acceptButtonConfig;
+
+  final ZegoCallInvitationInviteeUIConfig uiConfig;
 
   final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
@@ -33,8 +34,7 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
     required this.callInvitationData,
     required this.inviter,
     required this.invitationType,
-    required this.declineButtonConfig,
-    required this.acceptButtonConfig,
+    required this.uiConfig,
     this.networkLoadingConfig,
   }) : super(key: key);
 
@@ -47,6 +47,11 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
 /// @nodoc
 class ZegoInviteeCallingBottomToolBarState
     extends State<ZegoInviteeCallingBottomToolBar> {
+  double get buttonSize => 120.zR;
+
+  bool get canDisplayFirstRowButtons =>
+      widget.invitationType == ZegoCallInvitationType.videoCall;
+
   TextStyle get buttonTextStyle => TextStyle(
         color: Colors.white,
         fontSize: 25.0.zR,
@@ -54,46 +59,111 @@ class ZegoInviteeCallingBottomToolBarState
         decoration: TextDecoration.none,
       );
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  TextStyle get subButtonTextStyle => TextStyle(
+        color: Colors.white,
+        fontSize: 20.0.zR,
+        fontWeight: FontWeight.w400,
+        decoration: TextDecoration.none,
+      );
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 170.zR,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ...widget.declineButtonConfig.visible
-                ? [
-                    ZegoNetworkLoading(
-                      config: widget.networkLoadingConfig ??
-                          ZegoNetworkLoadingConfig(
-                            enabled: true,
-                            progressColor: Colors.white,
+    return Padding(
+      padding: EdgeInsets.all(buttonSize / 2.0),
+      child: Column(
+        children: [
+          ...(canDisplayFirstRowButtons
+              ? [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: ZegoUIKit().getLocalUser().camera,
+                        builder: (context, isMicrophoneOn, _) {
+                          return buttonWrapper(
+                            child: microphoneButton(),
+                            textStyle: subButtonTextStyle,
+                            label: widget.uiConfig.showSubButtonsText
+                                ? isMicrophoneOn
+                                    ? widget
+                                        .pageManager
+                                        .callInvitationData
+                                        .innerText
+                                        .callingToolbarMicrophoneOnButtonText
+                                    : widget
+                                        .pageManager
+                                        .callInvitationData
+                                        .innerText
+                                        .callingToolbarMicrophoneOffButtonText
+                                : null,
+                          );
+                        },
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: ZegoUIKit().getLocalUser().camera,
+                        builder: (context, isCameraOn, _) {
+                          return buttonWrapper(
+                            child: cameraButton(),
+                            textStyle: subButtonTextStyle,
+                            label: widget.uiConfig.showSubButtonsText
+                                ? isCameraOn
+                                    ? widget
+                                        .pageManager
+                                        .callInvitationData
+                                        .innerText
+                                        .callingToolbarCameraOnButtonText
+                                    : widget
+                                        .pageManager
+                                        .callInvitationData
+                                        .innerText
+                                        .callingToolbarCameraOffButtonText
+                                : null,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: buttonSize / 2.0,
+                  )
+                ]
+              : []),
+          SizedBox(
+            height: 170.zR,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ...widget.uiConfig.declineButton.visible
+                      ? [
+                          ZegoNetworkLoading(
+                            config: widget.networkLoadingConfig ??
+                                ZegoNetworkLoadingConfig(
+                                  enabled: true,
+                                  progressColor: Colors.white,
+                                ),
+                            child: declineButton(),
                           ),
-                      child: declineButton(),
-                    ),
-                    SizedBox(width: 230.zR),
-                  ]
-                : [],
-            ...widget.acceptButtonConfig.visible
-                ? [
-                    ZegoNetworkLoading(
-                      config: widget.networkLoadingConfig ??
-                          ZegoNetworkLoadingConfig(
-                            enabled: true,
-                            progressColor: Colors.white,
+                          SizedBox(width: 230.zR),
+                        ]
+                      : [],
+                  ...widget.uiConfig.acceptButton.visible
+                      ? [
+                          ZegoNetworkLoading(
+                            config: widget.networkLoadingConfig ??
+                                ZegoNetworkLoadingConfig(
+                                  enabled: true,
+                                  progressColor: Colors.white,
+                                ),
+                            child: acceptButton(),
                           ),
-                      child: acceptButton(),
-                    ),
-                  ]
-                : [],
-          ],
-        ),
+                        ]
+                      : [],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -111,10 +181,12 @@ class ZegoInviteeCallingBottomToolBarState
         ZegoCallInvitationProtocolKey.reason:
             ZegoCallInvitationProtocolKey.refuseByDecline,
       }),
-      text: widget.callInvitationData.innerText.incomingCallPageDeclineButton,
-      textStyle: widget.declineButtonConfig.textStyle ?? buttonTextStyle,
+      text: widget.uiConfig.showMainButtonsText
+          ? widget.callInvitationData.innerText.incomingCallPageDeclineButton
+          : null,
+      textStyle: widget.uiConfig.declineButton.textStyle ?? buttonTextStyle,
       icon: ButtonIcon(
-        icon: widget.declineButtonConfig.icon ??
+        icon: widget.uiConfig.declineButton.icon ??
             Image(
               image: ZegoCallImage.asset(
                       InvitationStyleIconUrls.toolbarBottomDecline)
@@ -122,9 +194,9 @@ class ZegoInviteeCallingBottomToolBarState
               fit: BoxFit.fill,
             ),
       ),
-      buttonSize:
-          widget.declineButtonConfig.size ?? Size(120.zR, 120.zR + 50.zR),
-      iconSize: widget.declineButtonConfig.iconSize ?? Size(108.zR, 108.zR),
+      buttonSize: widget.uiConfig.declineButton.size ??
+          Size(buttonSize, buttonSize + 50.zR),
+      iconSize: widget.uiConfig.declineButton.iconSize ?? Size(108.zR, 108.zR),
       onPressed: (ZegoRefuseInvitationButtonResult result) {
         widget.pageManager.onLocalRefuseInvitation(
           invitationID,
@@ -145,7 +217,7 @@ class ZegoInviteeCallingBottomToolBarState
       targetInvitationID: invitationID,
       customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
       icon: ButtonIcon(
-        icon: widget.acceptButtonConfig.icon ??
+        icon: widget.uiConfig.acceptButton.icon ??
             Image(
               image: ZegoCallImage.asset(
                       imageURLByInvitationType(widget.invitationType))
@@ -153,11 +225,13 @@ class ZegoInviteeCallingBottomToolBarState
               fit: BoxFit.fill,
             ),
       ),
-      text: widget.callInvitationData.innerText.incomingCallPageAcceptButton,
-      textStyle: widget.acceptButtonConfig.textStyle ?? buttonTextStyle,
-      buttonSize:
-          widget.acceptButtonConfig.size ?? Size(120.zR, 120.zR + 50.zR),
-      iconSize: widget.acceptButtonConfig.iconSize ?? Size(108.zR, 108.zR),
+      text: widget.uiConfig.showMainButtonsText
+          ? widget.callInvitationData.innerText.incomingCallPageAcceptButton
+          : null,
+      textStyle: widget.uiConfig.acceptButton.textStyle ?? buttonTextStyle,
+      buttonSize: widget.uiConfig.acceptButton.size ??
+          Size(buttonSize, buttonSize + 50.zR),
+      iconSize: widget.uiConfig.acceptButton.iconSize ?? Size(108.zR, 108.zR),
       onPressed: (ZegoAcceptInvitationButtonResult result) {
         widget.pageManager.onLocalAcceptInvitation(
           invitationID,
@@ -175,5 +249,63 @@ class ZegoInviteeCallingBottomToolBarState
       case ZegoCallInvitationType.videoCall:
         return InvitationStyleIconUrls.toolbarBottomVideo;
     }
+  }
+
+  Widget buttonWrapper({
+    required Widget child,
+    String? label,
+    TextStyle? textStyle,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: buttonSize,
+          height: buttonSize,
+          child: child,
+        ),
+        if (label != null) ...[
+          SizedBox(height: 8.zR),
+          Text(
+            label,
+            style: textStyle,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget microphoneButton() {
+    return (widget.uiConfig.microphoneButton?.visible ?? false)
+        ? ZegoToggleMicrophoneButton(
+            buttonSize: Size(buttonSize, buttonSize),
+            iconSize: Size(buttonSize, buttonSize),
+            defaultOn: widget.uiConfig.defaultMicrophoneOn,
+            onPressed: (bool isON) {
+              widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining =
+                  isON;
+            },
+          )
+        : Container();
+  }
+
+  Widget cameraButton() {
+    if (widget.invitationType == ZegoCallInvitationType.voiceCall) {
+      return Container();
+    }
+
+    return (widget.uiConfig.cameraButton?.visible ?? false)
+        ? ZegoToggleCameraButton(
+            buttonSize: Size(buttonSize, buttonSize),
+            iconSize: Size(buttonSize, buttonSize),
+            defaultOn: widget.uiConfig.showVideoOnCalling
+                ? widget.uiConfig.defaultCameraOn
+                : false,
+            onPressed: (bool isON) {
+              widget.pageManager.callingConfig.turnOnCameraWhenJoining = isON;
+            },
+          )
+        : Container();
   }
 }

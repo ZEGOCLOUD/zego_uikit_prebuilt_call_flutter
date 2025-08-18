@@ -599,7 +599,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
         ZegoUIKit()
           ..useFrontFacingCamera(
-            true,
+            config.useFrontCameraWhenJoining,
             ignoreCameraStatus: true,
           )
           ..updateVideoViewMode(

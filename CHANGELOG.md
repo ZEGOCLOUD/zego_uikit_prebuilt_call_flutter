@@ -1,3 +1,20 @@
+
+## 4.17.13
+
+- Bugs
+  - Fixed the issue where iOS offline calls would automatically be rejected after being declined before.
+
+
+## 4.17.12
+
+- Bugs
+  - Update dependency
+
+## 4.17.11
+
+- Bugs
+  - Fixed the issue where iOS offline calls would automatically be rejected after being declined before.
+
 ## 4.17.10
 
 - Bugs

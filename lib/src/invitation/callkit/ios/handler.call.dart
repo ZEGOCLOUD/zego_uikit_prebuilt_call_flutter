@@ -3,6 +3,8 @@ import 'dart:async';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
@@ -21,6 +23,7 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       tag: 'call-invitation',
       subTag: 'offline',
     );
+
     String payloadCustomData = '';
     if (isAdvanceMode) {
       final sendProtocol = ZegoUIKitAdvanceInvitationSendProtocol.fromJson(
@@ -56,6 +59,14 @@ class ZegoCallIOSCallBackgroundMessageHandler {
     final invitationInternalData =
         ZegoCallInvitationSendRequestProtocol.fromJson(payloadCustomData);
 
+    /// ZIMEventHandler.onCallInvitationReceived sometimes will lately
+    saveToPageManager(
+      invitationInternalData,
+      message.invitationID,
+      message.inviter,
+      message.callType,
+    );
+
     /// cache callkit param,
     /// and wait for the onInvitationReceive callback of page manger
     await ZegoUIKitCallCache()
@@ -70,5 +81,19 @@ class ZegoCallIOSCallBackgroundMessageHandler {
         subTag: 'offline',
       );
     });
+  }
+
+  void saveToPageManager(
+    ZegoCallInvitationSendRequestProtocol sendRequestProtocol,
+    String invitationID,
+    ZegoUIKitUser inviter,
+    ZegoCallInvitationType type,
+  ) {
+    ZegoUIKitPrebuiltCallInvitationService().private.updateInvitationData(
+          sendRequestProtocol,
+          invitationID,
+          inviter,
+          type,
+        );
   }
 }

@@ -292,6 +292,9 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
         /// refuse call request
         await ZegoCallKitBackgroundService().refuseInvitationInBackground(
           needClearCallKit: false,
+
+          /// not need check in callkit func
+          needCheckHasCallkitIncoming: false,
         );
 
         ZegoLoggerService.logInfo(
