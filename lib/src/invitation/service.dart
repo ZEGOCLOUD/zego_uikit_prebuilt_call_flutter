@@ -425,36 +425,6 @@ class ZegoUIKitPrebuiltCallInvitationService
       events: events,
     );
 
-    await private.callkit
-        ._initCallKit(
-      pageManager: private._pageManager!,
-      androidNotificationConfig:
-          private._data!.notificationConfig.androidNotificationConfig,
-    )
-        .then((_) {
-      ZegoLoggerService.logInfo(
-        'initCallKit done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), init',
-      );
-    });
-
-    await private
-        ._initPlugins(
-      appID: appID,
-      appSign: appSign,
-      token: token,
-      userID: userID,
-      userName: userName,
-    )
-        .then((_) {
-      ZegoLoggerService.logInfo(
-        'initPlugins done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), init',
-      );
-    });
-
     try {
       await private._initContext(config: config).then((_) async {
         ZegoLoggerService.logInfo(
@@ -489,6 +459,36 @@ class ZegoUIKitPrebuiltCallInvitationService
         subTag: 'service(${identityHashCode(this)}), init',
       );
     }
+
+    await private.callkit
+        ._initCallKit(
+      pageManager: private._pageManager!,
+      androidNotificationConfig:
+          private._data!.notificationConfig.androidNotificationConfig,
+    )
+        .then((_) {
+      ZegoLoggerService.logInfo(
+        'initCallKit done',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), init',
+      );
+    });
+
+    await private
+        ._initPlugins(
+      appID: appID,
+      appSign: appSign,
+      token: token,
+      userID: userID,
+      userName: userName,
+    )
+        .then((_) {
+      ZegoLoggerService.logInfo(
+        'initPlugins done',
+        tag: 'call-invitation',
+        subTag: 'service(${identityHashCode(this)}), init',
+      );
+    });
 
     await ZegoUIKitCallCache()
         .missedCall

@@ -92,7 +92,8 @@ class ZegoCallKitBackgroundService {
     bool needCheckHasCallkitIncoming = true,
   }) async {
     ZegoLoggerService.logInfo(
-      'refuse invitation(${_pageManager?.invitationData}) by callkit, '
+      'refuse invitation by callkit, '
+      'invitationData:${_pageManager?.invitationData}'
       'isAdvanceInvitationMode:${_pageManager?.isAdvanceInvitationMode}, '
       'needClearCallKit:$needClearCallKit, '
       'needCheckHasCallkitIncoming:$needCheckHasCallkitIncoming, ',
@@ -173,26 +174,33 @@ class ZegoCallKitBackgroundService {
   }
 
   Future<void> acceptCallKitIncomingCauseInBackground(
-    String? callKitCallID,
-  ) async {
-    if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
-      ZegoLoggerService.logInfo(
-        'accept invitation, but has not callkit incoming cause by app in background',
-        tag: 'call-invitation',
-        subTag: 'call invitation service',
-      );
-
-      _pageManager?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
-          true;
-
-      return;
-    }
-
+    String? callKitCallID, {
+    bool needCheckHasCallkitIncoming = true,
+  }) async {
     ZegoLoggerService.logInfo(
-      'accept invitation, callkit call id: $callKitCallID',
+      'accept invitation by callkit, '
+      'callKitCallID:$callKitCallID, '
+      'invitationData:${_pageManager?.invitationData}'
+      'isAdvanceInvitationMode:${_pageManager?.isAdvanceInvitationMode}, '
+      'needCheckHasCallkitIncoming:$needCheckHasCallkitIncoming, ',
       tag: 'call-invitation',
       subTag: 'call invitation service',
     );
+
+    if (needCheckHasCallkitIncoming) {
+      if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
+        ZegoLoggerService.logInfo(
+          'accept callkit invitation, but has not callkit incoming cause by app in background',
+          tag: 'call-invitation',
+          subTag: 'call invitation service',
+        );
+
+        _pageManager
+            ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted = true;
+
+        return;
+      }
+    }
 
     if (callKitCallID != null &&
         callKitCallID == _pageManager?.invitationData.callID) {
