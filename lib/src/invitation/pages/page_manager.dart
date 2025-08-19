@@ -1761,7 +1761,7 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onInvitationCanceled(Map<String, dynamic> params) {
+  Future<void> onInvitationCanceled(Map<String, dynamic> params) async {
     final ZegoUIKitUser inviter = params['inviter']!;
     final String eventInvitationID = params['invitation_id'] ?? '';
     final String data = params['data']!; // extended field
@@ -1813,7 +1813,7 @@ class ZegoCallInvitationPageManager {
       cancelRequestData.customData,
     );
 
-    restoreToIdle();
+    await restoreToIdle();
   }
 
   void onInvitationEnded(Map<String, dynamic> params) {
@@ -1874,9 +1874,6 @@ class ZegoCallInvitationPageManager {
 
     if (ZegoCallMiniOverlayPageState.minimizing !=
         ZegoCallMiniOverlayMachine().state()) {
-      await _callerRingtone.stopRing();
-      await _calleeRingtone.stopRing();
-
       ZegoUIKit.instance.turnCameraOn(false);
     }
 

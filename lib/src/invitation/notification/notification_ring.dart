@@ -13,14 +13,36 @@ import 'package:zego_uikit/zego_uikit.dart';
 /// @nodoc
 class ZegoRingtone {
   double audioPlayerVolume = 1.0;
-  bool isRingTimerRunning = false;
-  bool isRingtoneRunning = false;
+  bool _isRingTimerRunning = false;
+  bool _isRingtoneRunning = false;
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
   String prefix = '';
   String cachePrefix = '';
   String sourcePath = '';
+
+  bool get isRingTimerRunning => _isRingTimerRunning;
+  set isRingTimerRunning(bool value) {
+    _isRingTimerRunning = value;
+
+    ZegoLoggerService.logInfo(
+      'set _isRingTimerRunning to $_isRingTimerRunning',
+      tag: 'call-invitation',
+      subTag: 'ringtone',
+    );
+  }
+
+  bool get isRingtoneRunning => _isRingtoneRunning;
+  set isRingtoneRunning(bool value) {
+    _isRingtoneRunning = value;
+
+    ZegoLoggerService.logInfo(
+      'set _isRingtoneRunning to $_isRingTimerRunning',
+      tag: 'call-invitation',
+      subTag: 'ringtone',
+    );
+  }
 
   ZegoRingtone();
 
@@ -87,6 +109,7 @@ class ZegoRingtone {
     isRingTimerRunning = true;
 
     ZegoLoggerService.logInfo(
+      '(${identityHashCode(this)}) '
       'start ring, '
       'prefix:$prefix, '
       'source path:$sourcePath, '
@@ -155,7 +178,7 @@ class ZegoRingtone {
           /// Turn off the sound first, otherwise it may still ring
           audioPlayer.setVolume(0);
 
-          audioPlayer.stop().then((value) {
+          await audioPlayer.stop().then((value) {
             ZegoLoggerService.logInfo(
               'audioPlayer stop done',
               tag: 'call-invitation',
@@ -191,16 +214,23 @@ class ZegoRingtone {
 
   Future<void> stopRing() async {
     ZegoLoggerService.logInfo(
-      'stop ring',
+      '(${identityHashCode(this)}) '
+      'stop ring, '
+      'prefix:$prefix, '
+      'source path:$sourcePath, ',
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
-    if (isRingTimerRunning) {
-      AudioCache.instance.prefix = cachePrefix;
+    // 如果没有启动铃声或铃声播放器，直接返回
+    if (!isRingTimerRunning && !isRingtoneRunning) {
+      ZegoLoggerService.logInfo(
+        'no ring is running, skip stop',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+      return;
     }
-
-    isRingTimerRunning = false;
 
     if (isRingtoneRunning) {
       isRingtoneRunning = false;
@@ -223,6 +253,12 @@ class ZegoRingtone {
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
+    } finally {
+      if (isRingTimerRunning) {
+        AudioCache.instance.prefix = cachePrefix;
+      }
+
+      isRingTimerRunning = false;
     }
   }
 }
