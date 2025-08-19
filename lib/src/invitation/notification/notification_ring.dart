@@ -172,6 +172,8 @@ class ZegoRingtone {
           subTag: 'ringtone',
         );
 
+        timer.cancel();
+
         try {
           audioPlayerVolume = audioPlayer.volume;
 
@@ -192,8 +194,6 @@ class ZegoRingtone {
             subTag: 'ringtone',
           );
         }
-
-        timer.cancel();
       } else {
         if (isVibrate) {
           Vibration.hasVibrator().then((hasVibrator) {
