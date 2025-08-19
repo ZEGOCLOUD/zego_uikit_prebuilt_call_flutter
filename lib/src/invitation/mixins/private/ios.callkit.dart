@@ -168,9 +168,9 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
 
-  void _onCallkitPerformStartCallActionEvent(
+  Future<void> _onCallkitPerformStartCallActionEvent(
     ZegoSignalingPluginCallKitActionEvent event,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'on callkit perform start call action',
       tag: 'call-invitation',
@@ -184,9 +184,10 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
 
-  void _onCallkitPerformAnswerCallActionEvent(
+//
+  Future<void> _onCallkitPerformAnswerCallActionEvent(
     ZegoSignalingPluginCallKitActionEvent event,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'on callkit perform answer call action',
       tag: 'call-invitation',
@@ -195,16 +196,47 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     event.fulfill?.call();
 
-    onAnswerCallPerform() {
+    Future<void> onAnswerCallPerform() async {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
-      ZegoUIKitCallCache().offlineCallKit.getCallID().then((callKitCallID) {
-        ZegoCallKitBackgroundService()
-            .acceptCallKitIncomingCauseInBackground(callKitCallID);
-        ZegoUIKitCallCache().offlineCallKit.clearCallID();
-      });
+      await ZegoCallPluginPlatform.instance.activeAudioByCallKit();
 
-      ZegoCallPluginPlatform.instance.activeAudioByCallKit();
+      await ZegoUIKitCallCache()
+          .offlineCallKit
+          .getCallID()
+          .then((callKitCallID) async {
+        /// waiting express engine created
+        if (!ZegoUIKit().engineCreatedNotifier.value) {
+          ZegoLoggerService.logInfo(
+            'engine not created yet, waiting...',
+            tag: 'call-invitation',
+            subTag: 'ios callkit, on callkit perform answer call action',
+          );
+
+          await _waitUntil(
+            () => ZegoUIKit().engineCreatedNotifier.value,
+            maxIterations: 50,
+
+            /// 5 seconds timeout
+            step: const Duration(milliseconds: 100),
+          );
+
+          ZegoLoggerService.logInfo(
+            'engine created, proceeding with accept call',
+            tag: 'call-invitation',
+            subTag: 'ios callkit, on callkit perform answer call action',
+          );
+        }
+
+        await ZegoCallKitBackgroundService()
+            .acceptCallKitIncomingCauseInBackground(
+          callKitCallID,
+
+          /// not need check in callkit func
+          needCheckHasCallkitIncoming: false,
+        );
+        await ZegoUIKitCallCache().offlineCallKit.clearCallID();
+      });
     }
 
     final currentCallInvitationData = ZegoUIKitPrebuiltCallInvitationService()
@@ -238,7 +270,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
         },
         maxIterations: checkMaxIterations,
         step: const Duration(milliseconds: 200),
-      ).then((count) {
+      ).then((count) async {
         if (count >= checkMaxIterations) {
           ZegoLoggerService.logInfo(
             'currentCallInvitationData:$currentCallInvitationData, now is failed, ',
@@ -248,7 +280,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
           ZegoCallKitBackgroundService()
               .setIOSCallKitCallingDisplayState(false);
-          clearAllCallKitCalls();
+          await clearAllCallKitCalls();
         } else {
           ZegoLoggerService.logInfo(
             'currentCallInvitationData:$currentCallInvitationData, now is fine, '
@@ -257,11 +289,11 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
             subTag: 'ios callkit, on callkit perform answer call action',
           );
 
-          onAnswerCallPerform.call();
+          await onAnswerCallPerform();
         }
       });
     } else {
-      onAnswerCallPerform.call();
+      await onAnswerCallPerform();
     }
   }
 
