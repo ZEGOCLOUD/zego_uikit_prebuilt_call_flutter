@@ -112,7 +112,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   Widget build(BuildContext context) {
     return ValueNotifierSliderVisibility(
       visibilityNotifier: widget.visibilityNotifier,
-      endOffset: const Offset(0.0, -2.0),
+      endOffset: const Offset(0.0, -3.5),
       child: Container(
         margin: widget.config.topMenuBar.margin,
         padding: widget.config.topMenuBar.padding,

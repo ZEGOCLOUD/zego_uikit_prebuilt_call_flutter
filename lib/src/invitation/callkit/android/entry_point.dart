@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/handler.dart';
@@ -20,7 +19,9 @@ StreamSubscription<CallEvent?>? flutterCallkitIncomingStreamSubscription;
 ///
 /// Note: @pragma('vm:entry-point') must be placed on a function to indicate that it can be parsed, allocated, or called directly from native or VM code in AOT mode.
 @pragma('vm:entry-point')
-Future<void> onBackgroundMessageReceived(ZPNsMessage message) async {
+Future<void> onBackgroundMessageReceived(
+  ZegoSignalingPluginMessage message,
+) async {
   /// ==========web===========
   /// title:Call invitation,
   /// content:,

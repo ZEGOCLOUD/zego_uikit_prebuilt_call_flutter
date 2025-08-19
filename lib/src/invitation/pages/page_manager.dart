@@ -6,7 +6,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -1798,7 +1797,7 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onInvitationCanceled(Map<String, dynamic> params) {
+  Future<void> onInvitationCanceled(Map<String, dynamic> params) async {
     final ZegoUIKitUser inviter = params['inviter']!;
     final String eventInvitationID = params['invitation_id'] ?? '';
     final String data = params['data']!; // extended field
@@ -1850,7 +1849,7 @@ class ZegoCallInvitationPageManager {
       cancelRequestData.customData,
     );
 
-    restoreToIdle();
+    await restoreToIdle();
   }
 
   void onInvitationEnded(Map<String, dynamic> params) {
@@ -1913,9 +1912,6 @@ class ZegoCallInvitationPageManager {
             ZegoUIKitPrebuiltCallController().minimize.state &&
         ZegoCallMiniOverlayPageState.invitingMinimized !=
             ZegoUIKitPrebuiltCallController().minimize.state) {
-      await _callerRingtone.stopRing();
-      await _calleeRingtone.stopRing();
-
       ZegoUIKit.instance.turnCameraOn(false);
     }
 
@@ -1928,7 +1924,7 @@ class ZegoCallInvitationPageManager {
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
-            CXCallEndedReason.CXCallEndedReasonRemoteEnded,
+            ZegoSignalingPluginCXCallEndedReason.CXCallEndedReasonRemoteEnded,
             iOSIncomingPushUUID!,
           );
       iOSIncomingPushUUID = null;

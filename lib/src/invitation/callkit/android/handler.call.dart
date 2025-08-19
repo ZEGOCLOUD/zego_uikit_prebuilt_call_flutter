@@ -13,7 +13,6 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
-import 'package:zego_zpns/zego_zpns.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/channel/defines.dart';
@@ -28,6 +27,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart'
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
+
+/// TODO: Unpack to solve the strong dependency issue of signalin
 
 class ZegoCallAndroidCallBackgroundMessageHandler {
   ReceivePort? backgroundPort;
@@ -659,7 +660,18 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       tag: 'call-invitation',
       subTag: 'call handler, install signaling plugin',
     );
+
+    /// TODO: Unpack to solve the strong dependency issue of signaling
     ZegoUIKit().installPlugins([ZegoUIKitSignalingPlugin()]);
+    // ZegoUIKit().installPlugins(
+    //   /// This is incorrect because ZegoUIKitPrebuiltCallInvitationService will not be initialized when offline
+    //   ///, so the ZegoUIKitSignalingPlugin() object was not correctly included, resulting in the signaling plugin not being successfully installed
+    //   ZegoUIKitPrebuiltCallInvitationService()
+    //       .private
+    //       .plugins
+    //       .where((e) => e.getPluginType() == ZegoUIKitPluginType.signaling)
+    //       .toList(),
+    // );
 
     ZegoLoggerService.logInfo(
       'try init',
@@ -718,12 +730,18 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     /// Otherwise, sdk will keep receiving online calls even in offline status.
     await ZegoUIKit().getSignalingPlugin().uninit(forceDestroy: true);
 
+    /// TODO: Unpack to solve the strong dependency issue of signaling
     ZegoUIKit().uninstallPlugins([ZegoUIKitSignalingPlugin()]);
+    // ZegoUIKit().uninstallPlugins(
+    //   ZegoUIKitPrebuiltCallInvitationService()
+    //       .private
+    //       .plugins
+    //       .where((e) => e.getPluginType() == ZegoUIKitPluginType.signaling)
+    //       .toList(),
+    // );
   }
 
-  void _onThroughMessage(
-    ZPNsMessage message,
-  ) {
+  void _onThroughMessage(ZegoSignalingPluginMessage message) {
     ZegoLoggerService.logInfo(
       'on through message: '
       'title:${message.title}, '

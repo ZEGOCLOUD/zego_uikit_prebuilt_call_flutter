@@ -2,11 +2,9 @@
 import 'dart:async';
 
 // Package imports:
-import 'package:zego_callkit/zego_callkit.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
@@ -21,10 +19,13 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       message.payloadMap,
     );
     ZegoLoggerService.logInfo(
-      'isAdvanceMode:$isAdvanceMode',
+      'isAdvanceMode:$isAdvanceMode, '
+      'message:$message, ',
       tag: 'call-invitation',
       subTag: 'offline',
     );
+
+    ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
 
     String payloadCustomData = '';
     if (isAdvanceMode) {
@@ -39,6 +40,9 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       );
 
       payloadCustomData = sendProtocol.customData;
+      callType = ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
+          ZegoCallInvitationType.voiceCall;
+      ;
     } else {
       final sendProtocol = ZegoUIKitInvitationSendProtocol.fromJson(
         message.payloadMap,
@@ -51,6 +55,8 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       );
 
       payloadCustomData = sendProtocol.customData;
+      callType = ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
+          ZegoCallInvitationType.voiceCall;
     }
     ZegoLoggerService.logInfo(
       'payload custom data:$payloadCustomData',
@@ -66,7 +72,7 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       invitationInternalData,
       message.invitationID,
       message.inviter,
-      message.callType,
+      callType,
     );
 
     /// cache callkit param,

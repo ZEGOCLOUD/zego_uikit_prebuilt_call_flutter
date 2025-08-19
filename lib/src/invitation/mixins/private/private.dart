@@ -17,6 +17,8 @@ class ZegoCallInvitationServicePrivateImpl
   bool get isHidingInvitationTopSheetDuringSheetEmptyClicked =>
       _pageManager?.isHidingInvitationTopSheetDuringSheetEmptyClicked ?? false;
 
+  List<IZegoUIKitPlugin> get plugins => _data?.plugins ?? [];
+
   bool isCurrentInvitationFromAcceptedAndroidOffline({
     bool selfDestructing = true,
   }) {
