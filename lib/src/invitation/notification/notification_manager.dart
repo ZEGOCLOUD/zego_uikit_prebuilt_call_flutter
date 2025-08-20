@@ -83,12 +83,27 @@ class ZegoCallInvitationNotificationManager {
       subTag: 'notification manager',
     );
 
-    await requestPermissions();
+    await createChannels();
+
+    await requestNotificationPermission();
+    await requestSystemAlertWindowPermission();
+    if (callInvitationData.config.permissions
+        .contains(ZegoCallInvitationPermission.manuallyByUser)) {
+      await ZegoUIKitPrebuiltCallInvitationService()
+          .private
+          .requestPermissionsNeedManuallyByUser();
+    }
 
     await cancelInvitationNotification();
   }
 
-  Future<void> requestPermissions() async {
+  Future<void> requestNotificationPermission() async {
+    ZegoLoggerService.logInfo(
+      'start request notification permission',
+      tag: 'call-invitation',
+      subTag: 'notification manager',
+    );
+
     await requestPermission(Permission.notification).then((value) {
       ZegoLoggerService.logInfo(
         'request notification permission result:$value',
@@ -102,20 +117,40 @@ class ZegoCallInvitationNotificationManager {
         subTag: 'notification manager',
       );
     });
+  }
+
+  Future<bool> requestSystemAlertWindowPermission() async {
+    ZegoLoggerService.logInfo(
+      'start request system alert window permission',
+      tag: 'call-invitation',
+      subTag: 'notification manager',
+    );
 
     if (callInvitationData.config.permissions
         .contains(ZegoCallInvitationPermission.systemAlertWindow)) {
-      await ZegoUIKitPrebuiltCallInvitationService()
+      return await ZegoUIKitPrebuiltCallInvitationService()
           .private
           .requestSystemAlertWindowPermission();
     }
 
-    if (callInvitationData.config.permissions
-        .contains(ZegoCallInvitationPermission.manuallyByUser)) {
-      await ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .requestPermissionsNeedManuallyByUser();
+    return true;
+  }
+
+  Future<bool> hasSystemAlertWindowPermission() async {
+    if (!Platform.isAndroid) {
+      return false;
     }
+
+    PermissionStatus status = await Permission.systemAlertWindow.status;
+    return status == PermissionStatus.granted;
+  }
+
+  Future<void> createChannels() async {
+    ZegoLoggerService.logInfo(
+      'start create channels',
+      tag: 'call-invitation',
+      subTag: 'notification manager',
+    );
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
@@ -222,12 +257,12 @@ class ZegoCallInvitationNotificationManager {
     cancelInvitationNotification();
   }
 
-  void addMissedCallNotification(
+  Future<void> addMissedCallNotification(
     ZegoCallInvitationData invitationData,
     Future<void> Function(
       ZegoCallInvitationData invitationData,
     ) clickedCallback,
-  ) {
+  ) async {
     if (!isInit) {
       ZegoLoggerService.logError(
         'not init',
@@ -242,7 +277,7 @@ class ZegoCallInvitationNotificationManager {
       subTag: 'notification manager, missed call notification',
     );
 
-    requestPermissions().then((_) {
+    await requestNotificationPermission().then((_) {
       ZegoLoggerService.logInfo(
         'add notification, check permission done',
         tag: 'call-invitation',
@@ -346,34 +381,53 @@ class ZegoCallInvitationNotificationManager {
     });
   }
 
-  void showInvitationNotification(ZegoCallInvitationData invitationData) {
+  Future<bool> showInvitationNotification(
+    ZegoCallInvitationData invitationData,
+  ) async {
     if (!isInit) {
       ZegoLoggerService.logWarn(
         'not init',
         tag: 'call-invitation',
         subTag: 'notification manager',
       );
+
+      return false;
     }
+
+    await cancelInvitationNotification();
 
     ZegoLoggerService.logInfo(
       'show invitation notification, check permission...',
       tag: 'call-invitation',
       subTag: 'notification manager',
     );
+    return await hasSystemAlertWindowPermission()
+        .then((bool hasPermission) async {
+      if (!hasPermission) {
+        ZegoLoggerService.logWarn(
+          'show invitation notification, '
+          'check permission done, '
+          'but has not system alert window permission, '
+          'data: $invitationData',
+          tag: 'call-invitation',
+          subTag: 'notification manager',
+        );
 
-    requestPermissions().then((_) {
+        return false;
+      }
+
       ZegoLoggerService.logInfo(
-        'show invitation notification, check permission done, '
+        'show invitation notification, '
+        'check permission done, '
+        'has permission, '
         'show, data: $invitationData',
         tag: 'call-invitation',
         subTag: 'notification manager',
       );
 
-      cancelInvitationNotification();
-
       ZegoCallInvitationNotificationManager.hasInvitation = true;
 
-      showCallkitIncoming(
+      await showCallkitIncoming(
         caller: invitationData.inviter,
         callType: invitationData.type,
         callID: invitationData.callID,
@@ -386,6 +440,8 @@ class ZegoCallInvitationNotificationManager {
         iOSIconName: callInvitationData
             .notificationConfig.iOSNotificationConfig?.systemCallingIconName,
       );
+
+      return true;
     });
   }
 
