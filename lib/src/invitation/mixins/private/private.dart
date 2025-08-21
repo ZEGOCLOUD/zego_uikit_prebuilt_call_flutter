@@ -977,9 +977,9 @@ class ZegoCallInvitationServicePrivateImpl
     });
   }
 
-  Future<void> requestSystemAlertWindowPermission() async {
+  Future<bool> requestSystemAlertWindowPermission() async {
     if (!Platform.isAndroid) {
-      return;
+      return false;
     }
 
     if (!_isInit) {
@@ -990,57 +990,56 @@ class ZegoCallInvitationServicePrivateImpl
             'service(${identityHashCode(this)}), requestSystemAlertWindowPermission',
       );
 
-      return;
+      return false;
     }
 
     PermissionStatus status = await Permission.systemAlertWindow.status;
-    if (status != PermissionStatus.granted) {
-      if (null == _data?.config.systemWindowConfirmDialog) {
-        await requestSystemAlertWindowPermissionImpl();
-      } else {
-        await PackageInfo.fromPlatform().then((info) async {
-          await showSystemConfirmationDialog(
-            _data?.contextQuery?.call(),
-            dialogConfig: _data!.config.systemWindowConfirmDialog!,
-            dialogInfo: ZegoCallSystemConfirmDialogInfo(
-              title:
-                  '${_data!.innerText.permissionConfirmDialogTitle.replaceFirst(param_1, info.packageName.isEmpty ? 'App' : info.appName)} ${_data!.innerText.systemAlertWindowConfirmDialogSubTitle}',
-              cancelButtonName:
-                  _data!.innerText.permissionConfirmDialogDenyButton,
-              confirmButtonName:
-                  _data!.innerText.permissionConfirmDialogAllowButton,
-            ),
-          ).then((isAllow) async {
-            if (!isAllow) {
-              ZegoLoggerService.logInfo(
-                'requestPermission of systemAlertWindow, not allow',
-                tag: 'call-invitation',
-                subTag: 'service(${identityHashCode(this)})',
-              );
+    if (status == PermissionStatus.granted) {
+      return true;
+    }
 
-              return;
-            }
-            await requestSystemAlertWindowPermissionImpl();
-          });
+    if (null == _data?.config.systemWindowConfirmDialog) {
+      return await requestSystemAlertWindowPermissionImpl();
+    } else {
+      return await PackageInfo.fromPlatform().then((info) async {
+        return await showSystemConfirmationDialog(
+          _data?.contextQuery?.call(),
+          dialogConfig: _data!.config.systemWindowConfirmDialog!,
+          dialogInfo: ZegoCallSystemConfirmDialogInfo(
+            title:
+                '${_data!.innerText.permissionConfirmDialogTitle.replaceFirst(param_1, info.packageName.isEmpty ? 'App' : info.appName)} ${_data!.innerText.systemAlertWindowConfirmDialogSubTitle}',
+            cancelButtonName:
+                _data!.innerText.permissionConfirmDialogDenyButton,
+            confirmButtonName:
+                _data!.innerText.permissionConfirmDialogAllowButton,
+          ),
+        ).then((isAllow) async {
+          if (!isAllow) {
+            ZegoLoggerService.logInfo(
+              'requestPermission of systemAlertWindow, not allow',
+              tag: 'call-invitation',
+              subTag: 'service(${identityHashCode(this)})',
+            );
+
+            return false;
+          }
+          return await requestSystemAlertWindowPermissionImpl();
         });
-      }
+      });
     }
   }
 
-  Future<void> requestSystemAlertWindowPermissionImpl() async {
+  Future<bool> requestSystemAlertWindowPermissionImpl() async {
     /// for bring app to foreground from background in Android 10
-    await requestPermission(Permission.systemAlertWindow).then((value) {
+    return await requestPermission(Permission.systemAlertWindow)
+        .then((bool hasPermission) {
       ZegoLoggerService.logInfo(
-        'request system alert window permission result:$value',
+        'request system alert window permission result:$hasPermission',
         tag: 'call-invitation',
         subTag: 'service(${identityHashCode(this)})',
       );
-    }).then((_) {
-      ZegoLoggerService.logInfo(
-        'requestPermission of systemAlertWindow done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)})',
-      );
+
+      return hasPermission;
     });
   }
 }

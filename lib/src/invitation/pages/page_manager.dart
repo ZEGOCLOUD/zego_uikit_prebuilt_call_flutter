@@ -1163,13 +1163,31 @@ class ZegoCallInvitationPageManager {
       /// android
       if (_appInBackground) {
         ZegoLoggerService.logInfo(
-          'app in background, app in background:$_appInBackground, create notification',
+          'app in background, create notification',
           tag: 'call-invitation',
           subTag: 'page manager',
         );
 
         hasCallkitIncomingCauseAppInBackground = true;
-        _notificationManager?.showInvitationNotification(invitationData);
+        _notificationManager
+            ?.showInvitationNotification(invitationData)
+            .then((bool hadShow) {
+          if (!hadShow) {
+            ZegoLoggerService.logWarn(
+              'app in background, '
+              'but has not system alert window permission, '
+              'so can not display callkit window',
+              tag: 'call-invitation',
+              subTag: 'page manager',
+            );
+
+            ///  not system aler window permission
+            ///  acitvie app in foregorund and show top sheet
+            ZegoUIKit().activeAppToForeground().then((_) {
+              showNotificationOnInvitationReceived();
+            });
+          }
+        });
       } else {
         ///  in foregorund
         showNotificationOnInvitationReceived();
@@ -1387,11 +1405,17 @@ class ZegoCallInvitationPageManager {
     showInvitationTopSheet();
   }
 
+  /// Handles the event when an invitation is accepted by the invitee
+  /// This method is called when the remote user accepts the call invitation
+  ///
+  /// [params] Contains the invitation acceptance data including:
+  ///   - 'invitee': The user who accepted the invitation
+  ///   - 'data': Extended data from the invitation
   void onInvitationAccepted(Map<String, dynamic> params) {
     final ZegoUIKitUser invitee = params['invitee']!;
 
-    /// todo get invitee's name form data
-    final String data = params['data']!; // extended field
+    /// TODO: Get invitee's name from data
+    final String data = params['data']!; // Extended field containing custom data
 
     ZegoLoggerService.logInfo(
       'invitee:$invitee, '
@@ -1433,7 +1457,7 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onInvitationTimeout(Map<String, dynamic> params) {
+  Future<void> onInvitationTimeout(Map<String, dynamic> params) async {
     final ZegoUIKitUser inviter = params['inviter']!;
     final String data = params['data']!; // extended field
 
@@ -1460,8 +1484,13 @@ class ZegoCallInvitationPageManager {
       ZegoCallUser(inviter.id, inviter.name),
     );
 
+    _invitingInvitees.clear();
+
+    await restoreToIdle();
+
     if (callInvitationData.config.missedCall.enabled) {
-      _notificationManager?.addMissedCallNotification(
+      /// 这里会卡主，如果没开启system alert window
+      await _notificationManager?.addMissedCallNotification(
         _invitationData,
         onMissedCallNotificationClicked,
       );
@@ -1472,10 +1501,6 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager, missed call notification click',
       );
     }
-
-    _invitingInvitees.clear();
-
-    restoreToIdle();
   }
 
   Future<void> onMissedCallNotificationClicked(
@@ -1497,7 +1522,7 @@ class ZegoCallInvitationPageManager {
       tag: 'call-invitation',
       subTag: 'page manager, missed call notification click',
     );
-
+//
     if (invitationData.invitees.length > 1) {
       /// group call, join in invitation directly
       await ZegoUIKitPrebuiltCallInvitationService()
