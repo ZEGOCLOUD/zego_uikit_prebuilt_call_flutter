@@ -42,7 +42,6 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       payloadCustomData = sendProtocol.customData;
       callType = ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
           ZegoCallInvitationType.voiceCall;
-      ;
     } else {
       final sendProtocol = ZegoUIKitInvitationSendProtocol.fromJson(
         message.payloadMap,

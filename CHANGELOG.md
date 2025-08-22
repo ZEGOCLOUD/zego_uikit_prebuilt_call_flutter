@@ -2,6 +2,36 @@
 
 - Features
   - Added buttons on the call interface, allowing users to customize whether to turn on the camera/microphone/speaker and switch between the front and rear cameras
+    ``` dart
+    await ZegoUIKitPrebuiltCallInvitationService().init(
+      ...
+      uiConfig: ZegoCallInvitationUIConfig(
+        withSafeArea: CallCache().invitation.safeArea,
+        inviter: ZegoCallInvitationInviterUIConfig(
+          useVideoViewAspectFill: true,
+          showAvatar: true,
+          showCentralName: true,
+          showCallingText: true,
+          defaultMicrophoneOn: true,
+          defaultCameraOn: true,
+          showMainButtonsText: true,
+          showSubButtonsText: true,
+        ),
+        invitee: ZegoCallInvitationInviteeUIConfig(
+          showAvatar: true,
+          showCentralName: true,
+          showCallingText: true,
+          useVideoViewAspectFill: true,
+          showVideoOnCalling: true,
+          defaultMicrophoneOn: true,
+          defaultCameraOn: true,
+          showMainButtonsText: true,
+          showSubButtonsText: true,
+        ),
+      ),
+    );
+    ```
+    
   - The location for generating iOS logs has been changed to the same directory as the Zego SDK, and the folder name has been changed to ZegoUIKits
 - Bugs
   - Fixed the issue where iOS offline calls occasionally failed to enter the call after being accepted
