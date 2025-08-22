@@ -1,5 +1,6 @@
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 
 /// During a calling, configuration items that may change for the caller/callee
 /// need to be refresh the [ZegoUIKitPrebuiltCallConfig] when entering [ZegoUIKitPrebuiltCall],
@@ -30,14 +31,25 @@ class ZegoUIKitPrebuiltCallingConfig {
   /// If this value is set to `false`, the system's default playback device, such as the earpiece or Bluetooth headset, will be used for audio playback.
   bool? useSpeakerWhenJoining;
 
-  void sync(ZegoUIKitPrebuiltCallConfig config) {
-    config.turnOnCameraWhenJoining =
-        turnOnCameraWhenJoining ?? config.turnOnCameraWhenJoining;
+  void sync(
+    ZegoUIKitPrebuiltCallConfig config,
+    ZegoCallInvitationInviterUIConfig? inviter,
+    ZegoCallInvitationInviteeUIConfig? invitee, {
+    required bool localUserIsInviter,
+  }) {
+    config.turnOnCameraWhenJoining = turnOnCameraWhenJoining ??
+        (localUserIsInviter
+            ? inviter?.defaultCameraOn
+            : invitee?.defaultCameraOn) ??
+        config.turnOnCameraWhenJoining;
     config.useFrontCameraWhenJoining =
         useFrontCameraWhenJoining ?? config.useFrontCameraWhenJoining;
 
-    config.turnOnMicrophoneWhenJoining =
-        turnOnMicrophoneWhenJoining ?? config.turnOnMicrophoneWhenJoining;
+    config.turnOnMicrophoneWhenJoining = turnOnMicrophoneWhenJoining ??
+        (localUserIsInviter
+            ? inviter?.defaultMicrophoneOn
+            : invitee?.defaultMicrophoneOn) ??
+        config.turnOnMicrophoneWhenJoining;
 
     config.useSpeakerWhenJoining =
         useSpeakerWhenJoining ?? config.useSpeakerWhenJoining;

@@ -1,4 +1,16 @@
+## 4.18.0
 
+- Features
+  - Added buttons on the call interface, allowing users to customize whether to turn on the camera/microphone/speaker and switch between the front and rear cameras
+  - The location for generating iOS logs has been changed to the same directory as the Zego SDK, and the folder name has been changed to ZegoUIKits
+- Bugs
+  - Fixed the issue where iOS offline calls occasionally failed to enter the call after being accepted
+  - Fixed the issue where the pop-up window on the invited end did not collapse after the invitation was canceled when the unauthorized system alert window permission was in effect.
+  - Fixed the issue where the invitationEvents.onIncomingCallReceived event had no callback
+  - Fixed the issue where the top/bottom toolbar remained partially visible after being hidden
+  - Fixed the issue where the invitation ringtone occasionally had no sound
+  - Fixed the issue of black screen in Android's first direct call (without invitation) video
+    
 ## 4.17.13
 
 - Bugs

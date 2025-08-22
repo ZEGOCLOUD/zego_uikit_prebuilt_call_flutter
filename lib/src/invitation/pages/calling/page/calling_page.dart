@@ -85,6 +85,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
   @override
   Widget build(BuildContext context) {
     final localUserInfo = ZegoUIKit().getLocalUser();
+    final localUserIsInviter = localUserInfo.id == widget.inviter.id;
 
     late Widget view;
     switch (currentState) {
@@ -96,7 +97,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         final prebuiltCallConfig = widget.callInvitationData.requireConfig(
           widget.pageManager.invitationData,
         );
-        final localUserIsInviter = localUserInfo.id == widget.inviter.id;
         final invitationView = localUserIsInviter
             ? (widget.callInvitationData.uiConfig.inviter.pageBuilder?.call(
                   context,
@@ -146,7 +146,9 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
             : invitationView;
         break;
       case CallingState.kOnlineAudioVideo:
-        view = prebuiltCallPage();
+        view = prebuiltCallPage(
+          localUserIsInviter: localUserIsInviter,
+        );
         break;
     }
 
@@ -161,7 +163,9 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     );
   }
 
-  Widget prebuiltCallPage() {
+  Widget prebuiltCallPage({
+    required bool localUserIsInviter,
+  }) {
     ZegoLoggerService.logInfo(
       'create prebuilt call page, '
       'is group call:${widget.pageManager.isGroupCall}, '
@@ -179,7 +183,12 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     );
 
     /// Update the configuration of widget modifications during calling
-    widget.pageManager.callingConfig.sync(callConfig);
+    widget.pageManager.callingConfig.sync(
+      callConfig,
+      widget.callInvitationData.uiConfig.inviter,
+      widget.callInvitationData.uiConfig.invitee,
+      localUserIsInviter: localUserIsInviter,
+    );
 
     if (Platform.isIOS) {
       if (callConfig.pip.iOS.support !=
