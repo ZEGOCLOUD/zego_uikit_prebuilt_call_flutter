@@ -1,3 +1,12 @@
+## 4.18.0
+
+- Features
+  - Added buttons to the call interface, allowing customization of camera, switching between front and rear cameras, microphone, and speaker buttons 
+  - Remove zpns dependency 
+  - The location for generating iOS logs has been changed to the same directory as the Zego SDK, and the folder name has been changed to ZegoUIKits 
+- Bugs
+  - Fixed the issue where iOS offline calls did not enter the call after acceptance 
+  - Fixed the issue where the call recipient's pop-up window did not collapse after receiving an invitation cancellation during an online call
 
 ## 4.18.0
 

@@ -557,8 +557,6 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     assert(widget.appID > 0);
     assert(widget.appSign.isNotEmpty || widget.token.isNotEmpty);
 
-    await initAdvanceEffectsPlugins();
-
     final config = widget.config;
     await initPermissions().then((value) async {
       ZegoUIKit().login(widget.userID, widget.userName);
@@ -577,7 +575,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
 
-      ZegoUIKit()
+      await ZegoUIKit()
           .init(
         appID: widget.appID,
         appSign: widget.appSign,
@@ -588,6 +586,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         withoutCreateEngine: isFromAcceptedAndroidOfflineInvitation,
       )
           .then((_) async {
+        await initAdvanceEffectsPlugins();
+
         /// second set after create express
         await ZegoUIKit().setAdvanceConfigs(widget.config.advanceConfigs);
 

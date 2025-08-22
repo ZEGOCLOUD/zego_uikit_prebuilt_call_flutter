@@ -1168,6 +1168,8 @@ class ZegoCallInvitationPageManager {
           subTag: 'page manager',
         );
 
+        callInvitationEventsOnIncomingCallReceived();
+
         hasCallkitIncomingCauseAppInBackground = true;
         _notificationManager
             ?.showInvitationNotification(invitationData)
@@ -1277,6 +1279,8 @@ class ZegoCallInvitationPageManager {
             );
 
             if (offlineCallID != _invitationData.callID) {
+              callInvitationEventsOnIncomingCallReceived();
+
               ZegoUIKitCallCache()
                   .offlineCallKit
                   .setCallID(_invitationData.callID);
@@ -1389,6 +1393,12 @@ class ZegoCallInvitationPageManager {
 
     _calleeRingtone.startRing(testPlayRingtone: false);
 
+    callInvitationEventsOnIncomingCallReceived();
+
+    showInvitationTopSheet();
+  }
+
+  void callInvitationEventsOnIncomingCallReceived() {
     callInvitationData.invitationEvents?.onIncomingCallReceived?.call(
       _invitationData.callID,
       ZegoCallUser(
@@ -1401,8 +1411,6 @@ class ZegoCallInvitationPageManager {
           .toList(),
       _invitationData.customData,
     );
-
-    showInvitationTopSheet();
   }
 
   /// Handles the event when an invitation is accepted by the invitee

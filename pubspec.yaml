@@ -17,9 +17,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  zego_uikit: ^2.28.23
-  zego_plugin_adapter: ^2.13.9
-  zego_uikit_signaling_plugin: ^2.8.15
+  zego_uikit: ^2.28.24
+  zego_plugin_adapter: ^2.13.10
+  zego_uikit_signaling_plugin: ^2.8.16
 
 
   vibration: ^3.1.3
