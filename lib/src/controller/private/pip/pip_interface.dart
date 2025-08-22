@@ -11,7 +11,7 @@ abstract class ZegoCallControllerPIPInterface {
 
   bool get isRestoredFromPIP;
 
-  /// sourceRectHint: Rectangle<int>(0, 0, width, height)
+  /// sourceRectHint: Rectangle of int(0, 0, width, height)
   Future<ZegoPiPStatus> enable({
     int aspectWidth = 9,
     int aspectHeight = 16,

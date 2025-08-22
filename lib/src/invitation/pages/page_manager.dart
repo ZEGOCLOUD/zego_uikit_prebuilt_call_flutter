@@ -121,7 +121,7 @@ class ZegoCallInvitationPageManager {
   /// still ring mean nobody accept this invitation
   bool get isNobodyAccepted => _callerRingtone.isRingTimerRunning;
 
-  set invitationTopSheetVisibility(value) {
+  set invitationTopSheetVisibility(bool value) {
     ZegoLoggerService.logInfo(
       'set invitationTopSheetVisibility:$value',
       tag: 'call-invitation',
@@ -134,7 +134,7 @@ class ZegoCallInvitationPageManager {
   bool get hasCallkitIncomingCauseAppInBackground =>
       _hasCallkitIncomingCauseAppInBackground;
 
-  set hasCallkitIncomingCauseAppInBackground(value) {
+  set hasCallkitIncomingCauseAppInBackground(bool value) {
     ZegoLoggerService.logInfo(
       'set hasCallkitIncomingCauseAppInBackground:$value',
       tag: 'call-invitation',
@@ -147,7 +147,7 @@ class ZegoCallInvitationPageManager {
   bool get waitingCallInvitationReceivedAfterCallKitIncomingAccepted =>
       _waitingCallInvitationReceivedAfterCallKitIncomingAccepted;
 
-  set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(value) {
+  set waitingCallInvitationReceivedAfterCallKitIncomingAccepted(bool value) {
     ZegoLoggerService.logInfo(
       'set waitingCallInvitationReceivedAfterCallKitIncomingAccepted:$value',
       tag: 'call-invitation',
@@ -160,7 +160,7 @@ class ZegoCallInvitationPageManager {
   bool get waitingCallInvitationReceivedAfterCallKitIncomingRejected =>
       _waitingCallInvitationReceivedAfterCallKitIncomingRejected;
 
-  set waitingCallInvitationReceivedAfterCallKitIncomingRejected(value) {
+  set waitingCallInvitationReceivedAfterCallKitIncomingRejected(bool value) {
     ZegoLoggerService.logInfo(
       'set waitingCallInvitationReceivedAfterCallKitIncomingRejected:$value',
       tag: 'call-invitation',
@@ -1920,7 +1920,7 @@ class ZegoCallInvitationPageManager {
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
-            ZegoSignalingPluginCXCallEndedReason.CXCallEndedReasonRemoteEnded,
+            ZegoSignalingPluginCXCallEndedReason.callEndedReasonRemoteEnded,
             iOSIncomingPushUUID!,
           );
       iOSIncomingPushUUID = null;

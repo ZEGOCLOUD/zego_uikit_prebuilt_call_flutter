@@ -3,13 +3,13 @@ import 'dart:async';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/defines.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 class ZegoCallIOSCallBackgroundMessageHandler {
   Future<void> handle(
