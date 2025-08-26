@@ -12,8 +12,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/common.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/invitee_bottom_toolbar.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/top_toolbar.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 class ZegoCallingInviteeView extends StatelessWidget {
   const ZegoCallingInviteeView({

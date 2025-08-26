@@ -105,7 +105,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
   Widget build(BuildContext context) {
     return ValueNotifierSliderVisibility(
       visibilityNotifier: widget.visibilityNotifier,
-      endOffset: Offset(0.0, 3.0),
+      endOffset: const Offset(0.0, 3.0),
       child: Container(
         margin: widget.config.bottomMenuBar.margin,
         padding: widget.config.bottomMenuBar.padding,

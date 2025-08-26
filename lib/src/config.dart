@@ -556,14 +556,14 @@ enum ZegoCallMenuBarStyle {
 /// ZegoCallMemberListConfig(
 ///   showMicrophoneState: true,
 ///   showCameraState: false,
-///   itemBuilder: (BuildContext context, Size size, ZegoUIKitUser user, Map<String, dynamic> extraInfo) {
+///   itemBuilder: (BuildContext context, Size size, ZegoUIKitUser user, Map of String to dynamic extraInfo) {
 ///     return CustomMemberListItem(user: user);
 ///   },
 /// );
 ///
-/// In this example, we set `showMicrophoneState` to true, so the microphone state will be displayed in the member list item.
-/// `showCameraState` is set to false, so the camera state will not be displayed.
-/// Finally, we pass the builder function of the custom view, `CustomMemberListItem`, to the `itemBuilder` property so that the member list item will be rendered using the custom component.
+/// In this example, we set showMicrophoneState to true, so the microphone state will be displayed in the member list item.
+/// showCameraState is set to false, so the camera state will not be displayed.
+/// Finally, we pass the builder function of the custom view, CustomMemberListItem, to the itemBuilder property so that the member list item will be rendered using the custom component.
 class ZegoCallMemberListConfig {
   /// Whether to show the microphone state of the member. Defaults to true, which means it will be shown.
   bool showMicrophoneState;
@@ -965,11 +965,11 @@ class ZegoCallPIPConfig {
 
   /// android: only available on SDK higher than 31(>=31), Android 12
   ///
-  /// Add android:supportsPictureInPicture="true" line to the <activity> tag in android/src/main/AndroidManifest.xml:
+  /// Add android:supportsPictureInPicture="true" line to the activity tag in android/src/main/AndroidManifest.xml:
   ///
-  /// <manifest>
-  ///    <application>
-  ///         <activity
+  /// manifest
+  ///    application
+  ///         activity
   ///             android:name=".MainActivity"
   ///             android:supportsPictureInPicture="true"
   ///             ...
