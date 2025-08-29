@@ -1,3 +1,7 @@
+## 4.18.2
+
+- Update dependency
+
 ## 4.18.1
 
 - Bugs
