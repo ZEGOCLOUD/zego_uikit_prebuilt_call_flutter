@@ -1,3 +1,12 @@
+## 4.18.2
+
+- Update dependency
+
+## 4.18.1
+
+- Bugs
+  - Fixed the issue where the camera is opened during an audio call
+
 ## 4.18.0
 
 - Features

@@ -184,6 +184,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
 
     /// Update the configuration of widget modifications during calling
     widget.pageManager.callingConfig.sync(
+      widget.pageManager.invitationData.type,
       callConfig,
       widget.callInvitationData.uiConfig.inviter,
       widget.callInvitationData.uiConfig.invitee,
