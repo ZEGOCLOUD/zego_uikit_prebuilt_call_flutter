@@ -2,6 +2,7 @@
 import 'package:zego_uikit_prebuilt_call/src/call.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 /// During a calling, configuration items that may change for the caller/callee
 /// need to be refresh the [ZegoUIKitPrebuiltCallConfig] when entering [ZegoUIKitPrebuiltCall],
@@ -33,16 +34,22 @@ class ZegoUIKitPrebuiltCallingConfig {
   bool? useSpeakerWhenJoining;
 
   void sync(
+    ZegoCallInvitationType type,
     ZegoUIKitPrebuiltCallConfig config,
     ZegoCallInvitationInviterUIConfig? inviter,
     ZegoCallInvitationInviteeUIConfig? invitee, {
     required bool localUserIsInviter,
   }) {
-    config.turnOnCameraWhenJoining = turnOnCameraWhenJoining ??
-        (localUserIsInviter
-            ? inviter?.defaultCameraOn
-            : invitee?.defaultCameraOn) ??
-        config.turnOnCameraWhenJoining;
+    if (ZegoCallInvitationType.videoCall == type) {
+      config.turnOnCameraWhenJoining = turnOnCameraWhenJoining ??
+          (localUserIsInviter
+              ? inviter?.defaultCameraOn
+              : invitee?.defaultCameraOn) ??
+          config.turnOnCameraWhenJoining;
+    } else {
+      config.turnOnCameraWhenJoining = false;
+    }
+
     config.useFrontCameraWhenJoining =
         useFrontCameraWhenJoining ?? config.useFrontCameraWhenJoining;
 
