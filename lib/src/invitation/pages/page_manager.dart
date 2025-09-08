@@ -1920,7 +1920,7 @@ class ZegoCallInvitationPageManager {
 
     if (null != iOSIncomingPushUUID) {
       ZegoUIKit().getSignalingPlugin().reportCallEnded(
-            ZegoSignalingPluginCXCallEndedReason.CXCallEndedReasonRemoteEnded,
+            ZegoSignalingPluginCXCallEndedReason.callEndedReasonRemoteEnded,
             iOSIncomingPushUUID!,
           );
       iOSIncomingPushUUID = null;
