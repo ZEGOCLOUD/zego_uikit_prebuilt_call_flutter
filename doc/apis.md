@@ -344,6 +344,8 @@
 >
 > By using the `showConfirmation` parameter, you can control whether to display a confirmation dialog to confirm ending the call.
 >
+> The `reason` parameter specifies the reason for ending the call, which will be passed to the `onCallEnd` event callback.
+>
 > This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the `onHangUpConfirmation` and `onHangUp` settings in the config.
 >
 > - function prototype:
@@ -352,7 +354,47 @@
 >  Future<bool> hangUp(
 >    BuildContext context, {
 >    bool showConfirmation = false,
+>    ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
 >  }) async
+> ```
+>
+> - parameters:
+>
+>   - `BuildContext context`: The context for any necessary pop-ups or page transitions.
+>   - `bool showConfirmation`: Whether to display a confirmation dialog to confirm ending the call. Default is `false`.
+>   - `ZegoCallEndReason reason`: The reason for ending the call. Default is `ZegoCallEndReason.localHangUp`.
+>
+> - ZegoCallEndReason enum values:
+>
+>   ```dart
+>   enum ZegoCallEndReason {
+>     /// the call ended due to a local hang-up
+>     localHangUp,
+>     
+>     /// the call ended when the remote user hung up, leaving only one local user in the call
+>     remoteHangUp,
+>     
+>     /// the call ended due to being kicked out
+>     kickOut,
+>     
+>     /// Due to some reasons, the call is automatically hung up by local
+>     /// such as [ZegoCallParticipantConfig.requiredParticipants] is not in call
+>     abandoned,
+>   }
+>   ```
+>
+> - example:
+>
+> ```dart
+> // Hang up with confirmation dialog
+> await ZegoUIKitPrebuiltCallController().hangUp(
+>   context,
+>   showConfirmation: true,
+>   reason: ZegoCallEndReason.localHangUp,
+> );
+> 
+> // Direct hang up without confirmation
+> await ZegoUIKitPrebuiltCallController().hangUp(context);
 > ```
 
 ## screenSharing
@@ -708,6 +750,52 @@ enum ZegoUIKitAudioRoute {
 >
 > ```dart
 > void switchToSpeaker(bool isSpeaker)
+> ```
+
+## room
+
+### renewToken
+
+> When receives [ZegoCallRoomEvents.onTokenExpired], you need use this API to update the token.
+>
+> This method updates the room token for both the room and signaling plugin.
+>
+> - function prototype:
+>
+> ```dart
+> Future<void> renewToken(String token) async
+> ```
+>
+> - parameters:
+>
+>   - `String token`: The new token string obtained from your server.
+>
+> - example:
+>
+> ```dart
+> // Update token when it's about to expire
+> await ZegoUIKitPrebuiltCallController().room.renewToken(newToken);
+> ```
+>
+> - example with onTokenExpired event:
+>
+> ```dart
+> ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       room: ZegoCallRoomEvents(
+>           onTokenExpired: (remainSeconds) async {
+>               // Request new token from your server
+>               final newToken = await requestNewTokenFromServer();
+>               
+>               // Update the token
+>               await ZegoUIKitPrebuiltCallController().room.renewToken(newToken);
+>               
+>               return newToken;
+>           },
+>       ),
+>   ),
+> );
 > ```
   
 ## user

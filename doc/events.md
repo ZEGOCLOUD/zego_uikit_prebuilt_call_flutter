@@ -7,6 +7,7 @@
     - [onLeave](#onleave)
   - [room(ZegoCallRoomEvents)](#roomzegocallroomevents)
     - [onStateChanged](#onstatechanged)
+    - [onTokenExpired](#ontokenexpired)
   - [audioVideo(ZegoCallAudioVideoEvents)](#audiovideozegocallaudiovideoevents)
     - [onCameraStateChanged](#oncamerastatechanged)
     - [onFrontFacingCameraStateChanged](#onfrontfacingcamerastatechanged)
@@ -32,6 +33,7 @@
   - [onOutgoingCallRejectedCauseBusy](#onoutgoingcallrejectedcausebusy)
   - [onOutgoingCallDeclined](#onoutgoingcalldeclined)
   - [onOutgoingCallTimeout](#onoutgoingcalltimeout)
+  - [onHangUp](#onhangup)
 
 ---
 
@@ -362,6 +364,70 @@
 >       ),
 >   ),
 > );
+> ```
+
+### onTokenExpired
+
+> The room Token authentication is about to expire, it will be sent 30 seconds before the Token expires.
+>
+> After receiving this callback, the Token can be updated through [ZegoUIKitPrebuiltCallController.room.renewToken].
+> If there is no update, it will affect the user's next login and publish streaming operation, and will not affect the current operation.
+>
+> - function prototype:
+>
+> ```dart
+> String? Function(int remainSeconds)? onTokenExpired;
+> ```
+>
+> - parameters:
+>
+>   - `int remainSeconds`: The remaining seconds before the Token expires.
+>
+> - return value:
+>
+>   - `String?`: The new Token string. Return `null` if you don't want to update the Token at this time.
+>
+> - example in service:
+>
+> ```dart
+> ZegoUIKitPrebuiltCallInvitationService().init(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       room: ZegoCallRoomEvents(
+>           onTokenExpired: (remainSeconds) {
+>               debugPrint('Token will expire in $remainSeconds seconds');
+>               
+>               // Request new token from your server
+>               return requestNewTokenFromServer();
+>           },
+>       ),
+>   ),
+> );
+> ```
+>
+> - example in prebuilt:
+>
+> ```dart
+> ZegoUIKitPrebuiltCall(
+>   ...
+>   events: ZegoUIKitPrebuiltCallEvents(
+>       room: ZegoCallRoomEvents(
+>           onTokenExpired: (remainSeconds) {
+>               debugPrint('Token will expire in $remainSeconds seconds');
+>               
+>               // Request new token from your server
+>               return requestNewTokenFromServer();
+>           },
+>       ),
+>   ),
+> );
+> ```
+>
+> - example of renewing token:
+>
+> ```dart
+> // When you get a new token from your server, call this method to update it
+> await ZegoUIKitPrebuiltCallController().room.renewToken(newToken);
 > ```
 
 ## audioVideo(ZegoCallAudioVideoEvents)
