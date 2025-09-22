@@ -556,7 +556,7 @@ enum ZegoCallMenuBarStyle {
 /// ZegoCallMemberListConfig(
 ///   showMicrophoneState: true,
 ///   showCameraState: false,
-///   itemBuilder: (BuildContext context, Size size, ZegoUIKitUser user, Map of String to dynamic extraInfo) {
+///   itemBuilder: (BuildContext context, Size size, ZegoUIKitUser user, Map\<String, dynamic\> extraInfo) {
 ///     return CustomMemberListItem(user: user);
 ///   },
 /// );
@@ -965,7 +965,7 @@ class ZegoCallPIPConfig {
 
   /// android: only available on SDK higher than 31(>=31), Android 12
   ///
-  /// Add android:supportsPictureInPicture="true" line to the activity tag in android/src/main/AndroidManifest.xml:
+  /// Add android:supportsPictureInPicture="true" line to the \<activity\> tag in android/src/main/AndroidManifest.xml:
   ///
   /// manifest
   ///    application

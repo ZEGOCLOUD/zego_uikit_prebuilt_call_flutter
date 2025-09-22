@@ -26,6 +26,7 @@
     - [avatarBuilder](#avatarbuilder)
     - [Map\<String, String\> `advanceConfigs`](#mapstring-string-advanceconfigs)
     - [bool `turnOnCameraWhenJoining`](#bool-turnoncamerawhenjoining)
+    - [bool `useFrontCameraWhenJoining`](#bool-usefrontcamerawhenjoining)
     - [bool `turnOnMicrophoneWhenJoining`](#bool-turnonmicrophonewhenjoining)
     - [bool `useSpeakerWhenJoining`](#bool-usespeakerwhenjoining)
     - [Widget? `foreground`](#widget-foreground)
@@ -207,7 +208,7 @@
 
 > [ZegoCallInvitationUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
 
-- bool `prebuiltWithSafeArea`: does [ZegoUIKitPrebuiltCall] display with SafeArea or not
+- bool `withSafeArea`: does invitation widget display with SafeArea or not
   
 - [ZegoCallInvitationInviterUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviterUIConfig-class.html) `inviter`:
 
@@ -223,9 +224,53 @@
   
   - [ZegoCallingForegroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingForegroundBuilder.html)? `foregroundBuilder`: foreground builder
   
+    > You can customize the foreground of the calling interface, which refers to the widget positioned on top of the view.
+    >
+    > You can return any widget, and we will place it at the top of the calling interface.
+    >
+    > ```dart
+    > /// type of calling foreground builder
+    > typedef ZegoCallingForegroundBuilder = Widget Function(
+    >  BuildContext context,
+    >  Size size,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
+  
   - [ZegoCallingPageBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingPageBuilder.html)? `pageBuilder`: It will replace the inviter/invitee's call view
   
+    > You can completely replace the default calling interface with your own custom page.
+    >
+    > ```dart
+    > /// type of calling page builder
+    > typedef ZegoCallingPageBuilder = Widget Function(
+    >  BuildContext context,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
+  
   - [ZegoCallingBackgroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingBackgroundBuilder.html)? `backgroundBuilder`: background builder, default is a image
+  
+    > Background for the calling interface.
+    >
+    > You can use any widget as the background for the calling interface. This can be a video, a GIF animation, an image, a web page, or any other widget.
+    >
+    > If you need to dynamically change the background content, you should implement the logic for dynamic modification within the widget you return.
+    >
+    > ```dart
+    > /// type of calling background builder
+    > typedef ZegoCallingBackgroundBuilder = Widget Function(
+    >  BuildContext context,
+    >  Size size,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
   
   - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html) `cancelButton`: cancel button
 
@@ -238,6 +283,66 @@
     - Size? `iconSize`
   
     - TextStyle? `textStyle`
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `microphoneButton`: microphone button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `defaultMicrophoneOn`: Whether to open the microphone when on calling, default value is true
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `cameraButton`: camera button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `defaultCameraOn`: Whether to open the camera when on calling, default value is true
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `cameraSwitchButton`: camera switch button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `speakerButton`: speaker button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `defaultSpeakerOn`: Whether to open the speaker when on calling, default value is false
+
+  - bool `useVideoViewAspectFill`: Video view mode, default value is false
+
+  - bool `showMainButtonsText`: show main buttons text or not, default value is false (main buttons: cancel)
+
+  - bool `showSubButtonsText`: show sub buttons text or not, default value is true (sub buttons: camera/microphone/camera switch/speaker)
   
 - [ZegoCallInvitationInviteeUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationInviteeUIConfig-class.html) `invitee`:
 
@@ -330,12 +435,104 @@
     - Size? `iconSize`
   
     - TextStyle? `textStyle`
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `microphoneButton`: microphone button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `defaultMicrophoneOn`: Whether to open the microphone when on be called, default value is true
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `cameraButton`: camera button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `defaultCameraOn`: Whether to open the camera when on be called, default value is true
+
+  - [ZegoCallButtonUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallButtonUIConfig-class.html)? `cameraSwitchButton`: camera switch button
+
+    - Size? `size`
+  
+    - bool `visible`
+  
+    - Widget? `icon`
+  
+    - Size? `iconSize`
+  
+    - TextStyle? `textStyle`
+
+  - bool `useVideoViewAspectFill`: Video view mode, default value is false
+
+  - bool `showVideoOnCalling`: show video or not on a video calling, default value is true
+
+  - bool `showMainButtonsText`: show main buttons text or not, default value is false (main buttons: accept/decline)
+
+  - bool `showSubButtonsText`: show sub buttons text or not, default value is true (sub buttons: camera/microphone/camera switch)
   
   - [ZegoCallingForegroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingForegroundBuilder.html)? `foregroundBuilder`: foreground builder
   
+    > You can customize the foreground of the calling interface, which refers to the widget positioned on top of the view.
+    >
+    > You can return any widget, and we will place it at the top of the calling interface.
+    >
+    > ```dart
+    > /// type of calling foreground builder
+    > typedef ZegoCallingForegroundBuilder = Widget Function(
+    >  BuildContext context,
+    >  Size size,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
+  
   - [ZegoCallingPageBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingPageBuilder.html)? `pageBuilder`: It will replace the inviter/invitee's call view
   
+    > You can completely replace the default calling interface with your own custom page.
+    >
+    > ```dart
+    > /// type of calling page builder
+    > typedef ZegoCallingPageBuilder = Widget Function(
+    >  BuildContext context,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
+  
   - [ZegoCallingBackgroundBuilder](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallingBackgroundBuilder.html)? `backgroundBuilder`: background builder, default is a image
+  
+    > Background for the calling interface.
+    >
+    > You can use any widget as the background for the calling interface. This can be a video, a GIF animation, an image, a web page, or any other widget.
+    >
+    > If you need to dynamically change the background content, you should implement the logic for dynamic modification within the widget you return.
+    >
+    > ```dart
+    > /// type of calling background builder
+    > typedef ZegoCallingBackgroundBuilder = Widget Function(
+    >  BuildContext context,
+    >  Size size,
+    >  ZegoUIKitUser? user,
+    >  Map<String, dynamic> extraInfo,
+    > );
+    > ```
+    >
 
 ## ZegoCallInvitationNotificationConfig
 
@@ -921,6 +1118,34 @@
 > if you want to join the call with your camera open, set this value to true.
 >
 > The default value is `true`.
+
+### bool `useFrontCameraWhenJoining`
+
+> Whether to use the front camera when joining the call.
+>
+> If you want to join the call with the front camera, set this value to true;
+>
+> if you want to join the call with the back camera, set this value to false.
+>
+> The default value is `true`.
+>
+> - example:
+>
+> ```dart
+> ZegoUIKitPrebuiltCallConfig(
+>   turnOnCameraWhenJoining: true,
+>   useFrontCameraWhenJoining: true, // Use front camera
+>   // ... other configs
+> );
+> ```
+>
+> ```dart
+> ZegoUIKitPrebuiltCallConfig(
+>   turnOnCameraWhenJoining: true,
+>   useFrontCameraWhenJoining: false, // Use back camera
+>   // ... other configs
+> );
+> ```
 
 ### bool `turnOnMicrophoneWhenJoining`
 

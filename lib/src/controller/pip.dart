@@ -12,7 +12,7 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
 
   Future<bool> get available async => await private.pipImpl().available;
 
-  /// sourceRectHint: Rectangle of int(0, 0, width, height)
+  /// sourceRectHint: Rectangle\<int\>(0, 0, width, height)
   Future<ZegoPiPStatus> enable({
     int aspectWidth = 9,
     int aspectHeight = 16,

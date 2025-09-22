@@ -1,3 +1,12 @@
+## 4.18.4
+
+- Bugs
+  - Fixed the issue where some parameter settings in ZegoCallInvitationInviterUIConfig/ZegoCallInvitationInviteeUIConfig were ineffective
+
+## 4.18.3
+
+- Update dependency
+
 ## 4.18.2
 
 - Update dependency
