@@ -296,10 +296,10 @@ class ZegoCallInvitationInviterUIConfig {
     ZegoCallButtonUIConfig? microphoneButton,
     ZegoCallButtonUIConfig? speakerButton,
   })  : cancelButton = cancelButton ?? ZegoCallButtonUIConfig(),
-        cameraButton = cancelButton ?? ZegoCallButtonUIConfig(),
-        cameraSwitchButton = cancelButton ?? ZegoCallButtonUIConfig(),
-        microphoneButton = cancelButton ?? ZegoCallButtonUIConfig(),
-        speakerButton = cancelButton ?? ZegoCallButtonUIConfig();
+        cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
+        cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
+        microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
+        speakerButton = speakerButton ?? ZegoCallButtonUIConfig();
 
   /// The foreground of the calling.
   ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -419,9 +419,9 @@ class ZegoCallInvitationInviteeUIConfig {
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
   })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
         acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
-        cameraButton = acceptButton ?? ZegoCallButtonUIConfig(),
-        cameraSwitchButton = acceptButton ?? ZegoCallButtonUIConfig(),
-        microphoneButton = acceptButton ?? ZegoCallButtonUIConfig(),
+        cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
+        cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
+        microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
         popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig();
 
   /// config of call invitation pop-up dialog
