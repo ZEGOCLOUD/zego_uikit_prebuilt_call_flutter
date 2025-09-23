@@ -3,6 +3,7 @@ import 'dart:async';
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:vibration/vibration.dart';
@@ -15,6 +16,18 @@ enum AudioContextType {
   speaker,
   earpiece,
   unknown,
+}
+
+/// Custom exception for audio context switching errors
+class AudioContextSwitchException implements Exception {
+  final String message;
+  final dynamic originalException;
+
+  AudioContextSwitchException(this.message, this.originalException);
+
+  @override
+  String toString() =>
+      'AudioContextSwitchException: $message (Original: $originalException)';
 }
 
 /// @nodoc
@@ -108,7 +121,9 @@ class ZegoRingtone {
     // Listen to player state changes
     _playerStateSubscription = audioPlayer.onPlayerStateChanged.listen((state) {
       ZegoLoggerService.logInfo(
-        'AudioPlayer state changed to: $state',
+        'AudioPlayer state changed to: $state, '
+        'isRingTimerRunning:$isRingTimerRunning, '
+        'isRingtoneRunning:$isRingtoneRunning, ',
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
@@ -119,7 +134,9 @@ class ZegoRingtone {
     // Listen to player complete events
     _playerCompleteSubscription = audioPlayer.onPlayerComplete.listen((_) {
       ZegoLoggerService.logInfo(
-        'AudioPlayer playback completed',
+        'AudioPlayer playback completed, '
+        'isRingTimerRunning:$isRingTimerRunning, '
+        'isRingtoneRunning:$isRingtoneRunning, ',
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
@@ -144,6 +161,19 @@ class ZegoRingtone {
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
+
+    if (isRingTimerRunning) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        ZegoLoggerService.logInfo(
+          'isRingTimerRunning is running, '
+          're-play cause complete by unknown reason',
+          tag: 'call-invitation',
+          subTag: 'ringtone',
+        );
+
+        await _playWithRetry(maxRetries: 2);
+      });
+    }
   }
 
   void dispose() {
@@ -152,31 +182,174 @@ class ZegoRingtone {
     audioPlayer.dispose();
   }
 
-  /// Set audio player's audio context and record state
+  /// Set audio player's audio context and record state with retry mechanism
   Future<void> _setAudioPlayerContext(
       AudioContext context, AudioContextType type) async {
+    await _setAudioPlayerContextWithRetry(context, type, maxRetries: 3);
+  }
+
+  /// Internal method to set audio context with retry logic
+  Future<void> _setAudioPlayerContextWithRetry(
+      AudioContext context, AudioContextType type,
+      {required int maxRetries}) async {
+    for (int attempt = 0; attempt <= maxRetries; attempt++) {
+      ZegoLoggerService.logInfo(
+        'Setting audio context to ${type.name} on player instance (attempt ${attempt + 1}/${maxRetries + 1})',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
+      try {
+        await audioPlayer.setAudioContext(context);
+        _currentAudioContextType = type;
+
+        ZegoLoggerService.logInfo(
+          'Audio context successfully set to ${type.name} on attempt ${attempt + 1}',
+          tag: 'call-invitation',
+          subTag: 'ringtone',
+        );
+        return; // Success, exit retry loop
+      } catch (error) {
+        final isMediaError = error.toString().contains('MEDIA_ERROR_UNKNOWN');
+        final isLastAttempt = attempt == maxRetries;
+
+        if (isMediaError) {
+          ZegoLoggerService.logWarn(
+            'MediaPlayer MEDIA_ERROR_UNKNOWN during context switch to ${type.name} '
+            '(attempt ${attempt + 1}/${maxRetries + 1}): $error',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+
+          if (isLastAttempt) {
+            // Update context type even on final failure
+            _currentAudioContextType = type;
+
+            ZegoLoggerService.logError(
+              'All ${maxRetries + 1} attempts failed for context switch to ${type.name}',
+              tag: 'call-invitation',
+              subTag: 'ringtone',
+            );
+
+            throw AudioContextSwitchException(
+                'MediaPlayer error during context switch after ${maxRetries + 1} attempts',
+                error);
+          } else {
+            // Calculate exponential backoff delay: 50ms, 100ms, 200ms
+            final delayMs = 50 * (1 << attempt);
+            ZegoLoggerService.logInfo(
+              'Retrying context switch in ${delayMs}ms...',
+              tag: 'call-invitation',
+              subTag: 'ringtone',
+            );
+            await Future.delayed(Duration(milliseconds: delayMs));
+          }
+        } else {
+          // Non-MediaPlayer errors should not be retried
+          ZegoLoggerService.logError(
+            'Non-MediaPlayer error during context switch to ${type.name}: $error',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+          rethrow;
+        }
+      }
+    }
+  }
+
+  /// Wait for AudioPlayer to be ready after setAudioContext
+  Future<void> _waitForPlayerReady(
+      {Duration timeout = const Duration(seconds: 3)}) async {
     ZegoLoggerService.logInfo(
-      'Setting audio context to ${type.name} on player instance',
+      'Waiting for AudioPlayer to be ready after context change...',
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
 
     try {
-      await audioPlayer.setAudioContext(context);
-      _currentAudioContextType = type;
+      // Wait for the next duration change event which indicates the player is ready
+      await audioPlayer.onDurationChanged.first.timeout(timeout);
 
       ZegoLoggerService.logInfo(
-        'Audio context successfully set to ${type.name}',
+        'AudioPlayer is ready (duration event received)',
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
-    } catch (error) {
-      ZegoLoggerService.logError(
-        'Failed to set audio context to ${type.name}: $error',
+    } catch (timeoutError) {
+      ZegoLoggerService.logWarn(
+        'Timeout waiting for AudioPlayer ready, proceeding anyway: $timeoutError',
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
-      rethrow;
+    }
+  }
+
+  /// Play audio with retry mechanism for MEDIA_ERROR_UNKNOWN during playback
+  Future<void> _playWithRetry(
+      {required int maxRetries, bool waitForReady = false}) async {
+    // Wait for player to be ready if requested (after setAudioContext)
+    if (waitForReady) {
+      await _waitForPlayerReady();
+    }
+    for (int attempt = 0; attempt <= maxRetries; attempt++) {
+      ZegoLoggerService.logInfo(
+        'Attempting to play audio (attempt ${attempt + 1}/${maxRetries + 1})',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
+      try {
+        await audioPlayer.play(AssetSource(sourcePath));
+
+        ZegoLoggerService.logInfo(
+          'Audio playback started successfully on attempt ${attempt + 1}',
+          tag: 'call-invitation',
+          subTag: 'ringtone',
+        );
+        return; // Success, exit retry loop
+      } catch (error) {
+        final isMediaError = error.toString().contains('MEDIA_ERROR_UNKNOWN');
+        final isLastAttempt = attempt == maxRetries;
+
+        if (isMediaError) {
+          ZegoLoggerService.logWarn(
+            'MediaPlayer MEDIA_ERROR_UNKNOWN during playback '
+            '(attempt ${attempt + 1}/${maxRetries + 1}): $error',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+
+          if (isLastAttempt) {
+            ZegoLoggerService.logError(
+              'All ${maxRetries + 1} play attempts failed, starting recovery',
+              tag: 'call-invitation',
+              subTag: 'ringtone',
+            );
+
+            // If all play attempts fail, try recovery
+            await _recoverFromPlaybackError();
+            return;
+          } else {
+            // Wait before retry - very short delays since we already have stabilization delays
+            final delayMs = 20 * (1 << attempt); // 20ms, 40ms, 80ms
+            ZegoLoggerService.logInfo(
+              'Retrying play in ${delayMs}ms...',
+              tag: 'call-invitation',
+              subTag: 'ringtone',
+            );
+            await Future.delayed(Duration(milliseconds: delayMs));
+          }
+        } else {
+          // Non-MediaPlayer errors should trigger immediate recovery
+          ZegoLoggerService.logError(
+            'Non-MediaPlayer error during playback: $error',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+          await _recoverFromPlaybackError();
+          return;
+        }
+      }
     }
   }
 
@@ -295,16 +468,15 @@ class ZegoRingtone {
       ZegoUIKit().getLocalUser().audioRoute.addListener(onAudioRouteChanged);
 
       try {
-        await audioPlayer.play(AssetSource(sourcePath)).then((value) {
-          ZegoLoggerService.logInfo(
-            'audioPlayer play done',
-            tag: 'call-invitation',
-            subTag: 'ringtone',
-          );
-        });
-      } catch (e) {
+        await _playWithRetry(maxRetries: 3);
         ZegoLoggerService.logInfo(
-          'audioPlayer play error:$e',
+          'audioPlayer initial play completed',
+          tag: 'call-invitation',
+          subTag: 'ringtone',
+        );
+      } catch (e) {
+        ZegoLoggerService.logError(
+          'audioPlayer initial play failed after retries: $e',
           tag: 'call-invitation',
           subTag: 'ringtone',
         );
@@ -461,16 +633,114 @@ class ZegoRingtone {
     if (isRingTimerRunning && !isRingtoneRunning) {
       try {
         await _setAudioPlayerContext(targetContext, targetType);
-        await audioPlayer.play(AssetSource(sourcePath));
+
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          ZegoLoggerService.logInfo(
+            're-play after update context',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+
+          ZegoLoggerService.logInfo(
+            'Starting playback after context switch (waiting for player ready)',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+
+          await _playWithRetry(maxRetries: 3, waitForReady: true);
+        });
       } catch (error) {
-        ZegoLoggerService.logError(
-          'Failed to switch audio context during playback: $error',
-          tag: 'call-invitation',
-          subTag: 'ringtone',
-        );
+        if (error is AudioContextSwitchException) {
+          ZegoLoggerService.logWarn(
+            'Audio context switch failed with MediaPlayer error after retries, attempting recovery',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+
+          // Attempt recovery after a longer delay since retries already failed
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await Future.delayed(const Duration(milliseconds: 250));
+            await _recoverFromPlaybackError();
+          });
+        } else {
+          ZegoLoggerService.logError(
+            'Failed to switch audio context during playback: $error',
+            tag: 'call-invitation',
+            subTag: 'ringtone',
+          );
+        }
       }
     } else {
       await _setGlobalAudioContext(targetContext, targetType);
+    }
+  }
+
+  /// Recover from playback errors by restarting the ring
+  Future<void> _recoverFromPlaybackError() async {
+    if (!isRingTimerRunning || isRingtoneRunning) {
+      ZegoLoggerService.logInfo(
+        'Skipping recovery: isRingTimerRunning=$isRingTimerRunning, isRingtoneRunning=$isRingtoneRunning',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'Attempting to recover from playback error by restarting ring',
+      tag: 'call-invitation',
+      subTag: 'ringtone',
+    );
+
+    try {
+      // Stop current playback
+      await audioPlayer.stop();
+
+      // Reset player state
+      await audioPlayer.setReleaseMode(ReleaseMode.loop);
+      await audioPlayer.setVolume(audioPlayerVolume);
+
+      // Set correct audio context based on current route with retry mechanism
+      final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
+      final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
+      final targetContext =
+          isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
+      final targetType =
+          isSpeaker ? AudioContextType.speaker : AudioContextType.earpiece;
+
+      // Use retry mechanism for recovery as well, but with fewer retries
+      await _setAudioPlayerContextWithRetry(targetContext, targetType,
+          maxRetries: 2);
+
+      ZegoLoggerService.logInfo(
+        'Restarting playback after recovery (waiting for player ready)',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
+      // Restart playback with retry mechanism and wait for ready
+      await _playWithRetry(maxRetries: 2, waitForReady: true);
+
+      ZegoLoggerService.logInfo(
+        'Successfully recovered from playback error',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+    } catch (recoveryError) {
+      ZegoLoggerService.logError(
+        'Failed to recover from playback error: $recoveryError',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
+      // If recovery fails, stop the ring to avoid indefinite error state
+      ZegoLoggerService.logWarn(
+        'Recovery failed, stopping ring to avoid error loop',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
+      isRingTimerRunning = false;
     }
   }
 }
