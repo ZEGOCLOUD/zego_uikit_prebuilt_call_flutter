@@ -1531,7 +1531,7 @@ class ZegoCallInvitationPageManager {
     await restoreToIdle();
 
     if (callInvitationData.config.missedCall.enabled) {
-      /// 这里会卡主，如果没开启system alert window
+      /// This will block if system alert window is not enabled
       await _notificationManager?.addMissedCallNotification(
         _invitationData,
         onMissedCallNotificationClicked,
@@ -1816,7 +1816,12 @@ class ZegoCallInvitationPageManager {
         [],
       );
 
-      restoreToIdle();
+      final isInvitingMinimized =
+          ZegoCallMiniOverlayPageState.invitingMinimized ==
+              ZegoUIKitPrebuiltCallController().minimize.state;
+      // if current state is invitingMinimized, not need to pop the page
+      // because the invitation page has been popped before minimizing
+      restoreToIdle(needPop: !isInvitingMinimized);
 
       if (ZegoCallMiniOverlayPageState.inCallMinimized !=
           ZegoUIKitPrebuiltCallController().minimize.state) {
@@ -1975,20 +1980,22 @@ class ZegoCallInvitationPageManager {
       );
     }
 
-    // 如果当前处于邀请中最小化状态，需要先隐藏悬浮窗口
-    if (ZegoCallMiniOverlayPageState.invitingMinimized ==
-        ZegoUIKitPrebuiltCallController().minimize.state) {
+    // if current state is invitingMinimized, hiding overlay first
+    final isInvitingMinimized =
+        ZegoCallMiniOverlayPageState.invitingMinimized ==
+            ZegoUIKitPrebuiltCallController().minimize.state;
+    if (isInvitingMinimized) {
       ZegoLoggerService.logInfo(
         'current state is invitingMinimized, hiding overlay first',
         tag: 'call-invitation',
         subTag: 'page manager, restore to idle',
       );
 
-      // 隐藏悬浮窗口
+      //  hiding overlay first
       ZegoCallMiniOverlayMachine()
           .changeState(ZegoCallMiniOverlayPageState.idle);
 
-      // 清除最小化数据
+      // clear minimize data
       ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
     }
 
@@ -2019,7 +2026,7 @@ class ZegoCallInvitationPageManager {
         inCallPage = false;
 
         try {
-          // 检查当前页面是否还存在，避免重复pop
+          // Check if current page still exists to avoid duplicate pop
           final currentContext = callInvitationData.contextQuery!.call();
           if (Navigator.canPop(currentContext)) {
             ZegoLoggerService.logInfo(
