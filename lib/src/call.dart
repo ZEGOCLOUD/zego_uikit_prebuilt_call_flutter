@@ -192,6 +192,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'version: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion, \n'
+        'appID:${widget.appID}, \n'
+        'callID:${widget.callID}, \n'
+        'userID:${widget.userID}, \n'
+        'userName:${widget.userName}, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',

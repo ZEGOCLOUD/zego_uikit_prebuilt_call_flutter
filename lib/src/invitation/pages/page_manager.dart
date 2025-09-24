@@ -603,6 +603,15 @@ class ZegoCallInvitationPageManager {
     ///  if inputting right now
     FocusManager.instance.primaryFocus?.unfocus();
 
+    final isInvitingMinimized =
+        ZegoCallMiniOverlayPageState.invitingMinimized ==
+            ZegoUIKitPrebuiltCallController().minimize.state;
+    if (isInvitingMinimized) {
+      ZegoCallMiniOverlayMachine().changeState(
+        ZegoCallMiniOverlayPageState.idle,
+      );
+    }
+
     if (code.isNotEmpty) {
       ZegoLoggerService.logInfo(
         'local accept invitation is failed, ignore',
