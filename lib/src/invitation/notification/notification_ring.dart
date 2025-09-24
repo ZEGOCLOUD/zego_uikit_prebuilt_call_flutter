@@ -83,12 +83,12 @@ class ZegoRingtone {
 
   AudioContext get earpieceAudioContextConfig => AudioContextConfig(
         route: AudioContextConfigRoute.earpiece,
-        respectSilence: false,
+        respectSilence: true,
       ).build();
 
   AudioContext get speakerAudioContextConfig => AudioContextConfig(
         route: AudioContextConfigRoute.speaker,
-        respectSilence: false,
+        respectSilence: true,
       ).build();
 
   bool get isRingTimerRunning => _isRingTimerRunning;
@@ -184,14 +184,18 @@ class ZegoRingtone {
 
   /// Set audio player's audio context and record state with retry mechanism
   Future<void> _setAudioPlayerContext(
-      AudioContext context, AudioContextType type) async {
+    AudioContext context,
+    AudioContextType type,
+  ) async {
     await _setAudioPlayerContextWithRetry(context, type, maxRetries: 3);
   }
 
   /// Internal method to set audio context with retry logic
   Future<void> _setAudioPlayerContextWithRetry(
-      AudioContext context, AudioContextType type,
-      {required int maxRetries}) async {
+    AudioContext context,
+    AudioContextType type, {
+    required int maxRetries,
+  }) async {
     for (int attempt = 0; attempt <= maxRetries; attempt++) {
       ZegoLoggerService.logInfo(
         'Setting audio context to ${type.name} on player instance (attempt ${attempt + 1}/${maxRetries + 1})',
@@ -258,8 +262,9 @@ class ZegoRingtone {
   }
 
   /// Wait for AudioPlayer to be ready after setAudioContext
-  Future<void> _waitForPlayerReady(
-      {Duration timeout = const Duration(seconds: 3)}) async {
+  Future<void> _waitForPlayerReady({
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
     ZegoLoggerService.logInfo(
       'Waiting for AudioPlayer to be ready after context change...',
       tag: 'call-invitation',
@@ -285,8 +290,10 @@ class ZegoRingtone {
   }
 
   /// Play audio with retry mechanism for MEDIA_ERROR_UNKNOWN during playback
-  Future<void> _playWithRetry(
-      {required int maxRetries, bool waitForReady = false}) async {
+  Future<void> _playWithRetry({
+    required int maxRetries,
+    bool waitForReady = false,
+  }) async {
     // Wait for player to be ready if requested (after setAudioContext)
     if (waitForReady) {
       await _waitForPlayerReady();
@@ -709,8 +716,11 @@ class ZegoRingtone {
           isSpeaker ? AudioContextType.speaker : AudioContextType.earpiece;
 
       // Use retry mechanism for recovery as well, but with fewer retries
-      await _setAudioPlayerContextWithRetry(targetContext, targetType,
-          maxRetries: 2);
+      await _setAudioPlayerContextWithRetry(
+        targetContext,
+        targetType,
+        maxRetries: 2,
+      );
 
       ZegoLoggerService.logInfo(
         'Restarting playback after recovery (waiting for player ready)',
