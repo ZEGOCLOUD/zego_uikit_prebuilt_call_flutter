@@ -83,6 +83,7 @@ class ZegoCallMiniOverlayMachine {
     });
 
     _stateIdle = _machine.newState(ZegoCallMiniOverlayPageState.idle);
+    _stateInCall = _machine.newState(ZegoCallMiniOverlayPageState.inCall);
     _stateInCallMinimized =
         _machine.newState(ZegoCallMiniOverlayPageState.inCallMinimized);
     _stateInvitingMinimized =
@@ -103,6 +104,9 @@ class ZegoCallMiniOverlayMachine {
       case ZegoCallMiniOverlayPageState.idle:
         _stateIdle.enter();
         stopDurationTimer();
+        break;
+      case ZegoCallMiniOverlayPageState.inCall:
+        _stateInCall.enter();
         break;
       case ZegoCallMiniOverlayPageState.inCallMinimized:
         _stateInCallMinimized.enter();
@@ -152,6 +156,7 @@ class ZegoCallMiniOverlayMachine {
       [];
 
   late sm.State<ZegoCallMiniOverlayPageState> _stateIdle;
+  late sm.State<ZegoCallMiniOverlayPageState> _stateInCall;
   late sm.State<ZegoCallMiniOverlayPageState> _stateInCallMinimized;
   late sm.State<ZegoCallMiniOverlayPageState> _stateInvitingMinimized;
 

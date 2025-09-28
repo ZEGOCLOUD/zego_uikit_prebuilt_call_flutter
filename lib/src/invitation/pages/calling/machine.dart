@@ -88,6 +88,17 @@ class ZegoCallingMachine {
   }
 
   void onCallingEntry() {
+    if (ZegoCallMiniOverlayPageState.inCall ==
+        ZegoCallMiniOverlayMachine().state()) {
+      ZegoLoggerService.logInfo(
+        'entry is from calling by mini machine',
+        tag: 'call-invitation',
+        subTag: 'machine',
+      );
+
+      return;
+    }
+
     // 如果页面已经推送，直接返回
     if (isPagePushed) {
       ZegoLoggerService.logInfo(

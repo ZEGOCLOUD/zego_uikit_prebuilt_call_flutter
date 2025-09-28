@@ -45,7 +45,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
     /// ready for re-enter prebuilt call
     ZegoCallMiniOverlayMachine().changeState(
-      ZegoCallMiniOverlayPageState.idle,
+      ZegoCallMiniOverlayPageState.inCall,
     );
 
     try {

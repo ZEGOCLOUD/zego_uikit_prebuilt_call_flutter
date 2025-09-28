@@ -239,6 +239,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Widget overlayItem() {
     switch (currentState) {
       case ZegoCallMiniOverlayPageState.idle:
+      case ZegoCallMiniOverlayPageState.inCall:
         return Container();
       case ZegoCallMiniOverlayPageState.inCallMinimized:
         return _buildInCallMinimizedWidget();

@@ -1,6 +1,7 @@
 /// Overlay window state
 enum ZegoCallMiniOverlayPageState {
-  idle,               // Idle state
-  inCallMinimized,    // In-call minimized
-  invitingMinimized,  // Inviting minimized
+  idle, // Idle state
+  inCall, // in prebuilt call page
+  inCallMinimized, // In-call minimized
+  invitingMinimized, // Inviting minimized
 }
