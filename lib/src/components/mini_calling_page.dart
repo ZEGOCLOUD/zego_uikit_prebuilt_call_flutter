@@ -19,7 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 
 /// Widget for minimized invitation interface
-class ZegoMinimizingCallingPage extends StatelessWidget {
+class ZegoMinimizingCallingPage extends StatefulWidget {
   const ZegoMinimizingCallingPage({
     Key? key,
     required this.size,
@@ -32,8 +32,10 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
     this.callInvitationData,
     this.inviterUIConfig,
     this.inviteeUIConfig,
-    this.avatarBuilder,
+    this.foreground,
+    this.foregroundBuilder,
     this.backgroundBuilder,
+    this.avatarBuilder,
   }) : super(key: key);
 
   final Size size;
@@ -46,14 +48,24 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
   final ZegoUIKitPrebuiltCallInvitationData? callInvitationData;
   final ZegoCallInvitationInviterUIConfig? inviterUIConfig;
   final ZegoCallInvitationInviteeUIConfig? inviteeUIConfig;
-  final ZegoAvatarBuilder? avatarBuilder;
-  final ZegoCallingBackgroundBuilder? backgroundBuilder;
 
+  final Widget? foreground;
+  final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
+  final ZegoAudioVideoViewForegroundBuilder? backgroundBuilder;
+  final ZegoAvatarBuilder? avatarBuilder;
+
+  @override
+  State<ZegoMinimizingCallingPage> createState() =>
+      _ZegoMinimizingCallingPageState();
+}
+
+/// @nodoc
+class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size.width,
-      height: size.height,
+      width: widget.size.width,
+      height: widget.size.height,
       decoration: BoxDecoration(
         color: Colors.black87,
         borderRadius: BorderRadius.circular(12),
@@ -61,69 +73,55 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background video view for video calls
-          if (invitationType == ZegoCallInvitationType.videoCall)
-            _buildBackgroundVideo(),
+          audioVideoContainer(),
 
-          // Main content overlay - only buttons
+          // Main content overlay - buttons and tips
           Padding(
             padding: EdgeInsets.all(20.zR),
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: _buildActionButtons(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buttons(),
+                  if (shouldShowTips()) ...[
+                    SizedBox(height: 10.zR),
+                    tipsText(),
+                  ],
+                ],
+              ),
             ),
           ),
+          widget.foreground ?? Container(),
         ],
       ),
     );
   }
 
   /// Build background video view for video calls
-  Widget _buildBackgroundVideo() {
-    if (invitationType != ZegoCallInvitationType.videoCall) {
+  Widget audioVideoContainer() {
+    if (widget.invitationType != ZegoCallInvitationType.videoCall) {
       return Container();
     }
 
-    final user = isInviter ? inviter : ZegoUIKit().getLocalUser();
+    final user = widget.isInviter ? widget.inviter : ZegoUIKit().getLocalUser();
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: ZegoAudioVideoView(
         user: user,
-        avatarConfig: const ZegoAvatarConfig(
+        avatarConfig: ZegoAvatarConfig(
           showInAudioMode: false,
+          builder: widget.avatarBuilder,
         ),
-        backgroundBuilder: (
-          BuildContext context,
-          Size size,
-          ZegoUIKitUser? user,
-          Map<String, dynamic> extraInfo,
-        ) {
-          return defaultBackground();
-        },
+        foregroundBuilder: widget.foregroundBuilder,
+        backgroundBuilder: widget.backgroundBuilder,
       ),
     );
   }
 
-  /// Default background for the minimized interface
-  Widget defaultBackground() {
-    return LayoutBuilder(builder: (context, constraints) {
-      return backgroundBuilder?.call(
-            context,
-            Size(constraints.maxWidth, constraints.maxHeight),
-            ZegoCallingBuilderInfo(
-              inviter: inviter,
-              invitees: invitees,
-              callType: invitationType,
-              customData: customData ?? '',
-            ),
-          ) ??
-          backgroundImage();
-    });
-  }
-
-  Widget _buildActionButtons() {
-    if (isInviter) {
+  Widget buttons() {
+    if (widget.isInviter) {
       // Caller side: show cancel button
       return _buildCancelButton();
     } else {
@@ -132,7 +130,7 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildDeclineButton(),
-          SizedBox(width: size.width * 0.05),
+          SizedBox(width: widget.size.width * 0.05),
           _buildAcceptButton(),
         ],
       );
@@ -141,140 +139,167 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
 
   /// Build cancel button for inviter (caller side)
   Widget _buildCancelButton() {
-    if (pageManager == null) {
+    if (widget.pageManager == null) {
       return Container();
     }
 
-    final invitationID = pageManager!.invitationData.invitationID;
-    final inviterConfig = inviterUIConfig;
+    final invitationID = widget.pageManager!.invitationData.invitationID;
 
-    return ZegoCancelInvitationButton(
-      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .isAdvanceInvitationMode,
-      invitees: invitees.map((e) => e.id).toList(),
-      targetInvitationID: invitationID,
-      data: ZegoCallInvitationCancelRequestProtocol(
-        callID: pageManager!.currentCallID,
-      ).toJson(),
-      text: inviterConfig?.showMainButtonsText == true
-          ? pageManager!
-              .callInvitationData.innerText.outgoingCallPageACancelButton
-          : null,
-      textStyle: inviterConfig?.cancelButton.textStyle,
-      icon: ButtonIcon(
-        icon: inviterConfig?.cancelButton.icon ??
-            Image(
-              image: ZegoCallImage.asset(
-                InvitationStyleIconUrls.toolbarBottomCancel,
-              ).image,
-              fit: BoxFit.fill,
+    return (widget.inviterUIConfig?.minimized?.cancelButton.visible ?? true)
+        ? ZegoCancelInvitationButton(
+            isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .isAdvanceInvitationMode,
+            invitees: widget.invitees.map((e) => e.id).toList(),
+            targetInvitationID: invitationID,
+            data: ZegoCallInvitationCancelRequestProtocol(
+              callID: widget.pageManager!.currentCallID,
+            ).toJson(),
+            text: widget.inviterUIConfig?.showMainButtonsText == true
+                ? widget.pageManager!.callInvitationData.innerText
+                    .outgoingCallPageACancelButton
+                : null,
+            textStyle:
+                widget.inviterUIConfig?.minimized?.cancelButton.textStyle,
+            icon: ButtonIcon(
+              icon: widget.inviterUIConfig?.minimized?.cancelButton.icon ??
+                  Image(
+                    image: ZegoCallImage.asset(
+                      InvitationStyleIconUrls.toolbarBottomCancel,
+                    ).image,
+                    fit: BoxFit.fill,
+                  ),
             ),
-      ),
-      buttonSize: inviterConfig?.cancelButton.size ??
-          Size(size.width * 0.25, size.width * 0.25),
-      iconSize: inviterConfig?.cancelButton.iconSize ??
-          Size(size.width * 0.25, size.width * 0.25),
-      onPressed: (ZegoCancelInvitationButtonResult result) {
-        pageManager!.onLocalCancelInvitation(
-          invitationID,
-          result.code,
-          result.message,
-          result.errorInvitees,
-        );
-      },
-    );
+            buttonSize: widget.inviterUIConfig?.minimized?.cancelButton.size ??
+                Size(
+                  widget.size.width * 0.25,
+                  widget.size.width * 0.25,
+                ),
+            iconSize:
+                widget.inviterUIConfig?.minimized?.cancelButton.iconSize ??
+                    Size(
+                      widget.size.width * 0.25,
+                      widget.size.width * 0.25,
+                    ),
+            onPressed: (ZegoCancelInvitationButtonResult result) {
+              widget.pageManager!.onLocalCancelInvitation(
+                invitationID,
+                result.code,
+                result.message,
+                result.errorInvitees,
+              );
+            },
+          )
+        : Container();
   }
 
   /// Build decline button for invitee (callee side)
   Widget _buildDeclineButton() {
-    if (pageManager == null) {
+    if (widget.pageManager == null) {
       return Container();
     }
 
-    final invitationID = pageManager!.invitationData.invitationID;
-    final inviteeConfig = inviteeUIConfig;
+    final invitationID = widget.pageManager!.invitationData.invitationID;
 
-    return ZegoRefuseInvitationButton(
-      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .isAdvanceInvitationMode,
-      inviterID: inviter.id,
-      targetInvitationID: invitationID,
-      data: const JsonEncoder().convert({
-        ZegoCallInvitationProtocolKey.reason:
-            ZegoCallInvitationProtocolKey.refuseByDecline,
-      }),
-      text: inviteeConfig?.showMainButtonsText == true
-          ? pageManager!
-              .callInvitationData.innerText.incomingCallPageDeclineButton
-          : null,
-      textStyle: inviteeConfig?.declineButton.textStyle,
-      icon: ButtonIcon(
-        icon: inviteeConfig?.declineButton.icon ??
-            Image(
-              image: ZegoCallImage.asset(
-                      InvitationStyleIconUrls.toolbarBottomDecline)
-                  .image,
-              fit: BoxFit.fill,
+    return (widget.inviteeUIConfig?.minimized?.declineButton.visible ?? true)
+        ? ZegoRefuseInvitationButton(
+            isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .isAdvanceInvitationMode,
+            inviterID: widget.inviter.id,
+            targetInvitationID: invitationID,
+            data: const JsonEncoder().convert({
+              ZegoCallInvitationProtocolKey.reason:
+                  ZegoCallInvitationProtocolKey.refuseByDecline,
+            }),
+            text: widget.inviteeUIConfig?.showMainButtonsText == true
+                ? widget.pageManager!.callInvitationData.innerText
+                    .incomingCallPageDeclineButton
+                : null,
+            textStyle:
+                widget.inviteeUIConfig?.minimized?.declineButton.textStyle,
+            icon: ButtonIcon(
+              icon: widget.inviteeUIConfig?.minimized?.declineButton.icon ??
+                  Image(
+                    image: ZegoCallImage.asset(
+                            InvitationStyleIconUrls.toolbarBottomDecline)
+                        .image,
+                    fit: BoxFit.fill,
+                  ),
             ),
-      ),
-      buttonSize: inviteeConfig?.declineButton.size ??
-          Size(size.width * 0.25, size.width * 0.25),
-      iconSize: inviteeConfig?.declineButton.iconSize ??
-          Size(size.width * 0.25, size.width * 0.25),
-      onPressed: (ZegoRefuseInvitationButtonResult result) {
-        pageManager!.onLocalRefuseInvitation(
-          invitationID,
-          result.code,
-          result.message,
-        );
-      },
-    );
+            buttonSize: widget.inviteeUIConfig?.minimized?.declineButton.size ??
+                Size(
+                  widget.size.width * 0.25,
+                  widget.size.width * 0.25,
+                ),
+            iconSize:
+                widget.inviteeUIConfig?.minimized?.declineButton.iconSize ??
+                    Size(
+                      widget.size.width * 0.25,
+                      widget.size.width * 0.25,
+                    ),
+            onPressed: (ZegoRefuseInvitationButtonResult result) {
+              widget.pageManager!.onLocalRefuseInvitation(
+                invitationID,
+                result.code,
+                result.message,
+              );
+            },
+          )
+        : Container();
   }
 
   /// Build accept button for invitee (callee side)
   Widget _buildAcceptButton() {
-    if (pageManager == null) {
+    if (widget.pageManager == null) {
       return Container();
     }
 
-    final invitationID = pageManager!.invitationData.invitationID;
-    final inviteeConfig = inviteeUIConfig;
+    final invitationID = widget.pageManager!.invitationData.invitationID;
 
-    return ZegoAcceptInvitationButton(
-      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .isAdvanceInvitationMode,
-      inviterID: inviter.id,
-      targetInvitationID: invitationID,
-      customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
-      text: inviteeConfig?.showMainButtonsText == true
-          ? pageManager!
-              .callInvitationData.innerText.incomingCallPageAcceptButton
-          : null,
-      textStyle: inviteeConfig?.acceptButton.textStyle,
-      icon: ButtonIcon(
-        icon: inviteeConfig?.acceptButton.icon ??
-            Image(
-              image:
-                  ZegoCallImage.asset(imageURLByInvitationType(invitationType))
-                      .image,
-              fit: BoxFit.fill,
+    return (widget.inviteeUIConfig?.minimized?.acceptButton.visible ?? true)
+        ? ZegoAcceptInvitationButton(
+            isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .isAdvanceInvitationMode,
+            inviterID: widget.inviter.id,
+            targetInvitationID: invitationID,
+            customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
+            text: widget.inviteeUIConfig?.showMainButtonsText == true
+                ? widget.pageManager!.callInvitationData.innerText
+                    .incomingCallPageAcceptButton
+                : null,
+            textStyle:
+                widget.inviteeUIConfig?.minimized?.acceptButton.textStyle,
+            icon: ButtonIcon(
+              icon: widget.inviteeUIConfig?.minimized?.acceptButton.icon ??
+                  Image(
+                    image: ZegoCallImage.asset(
+                            imageURLByInvitationType(widget.invitationType))
+                        .image,
+                    fit: BoxFit.fill,
+                  ),
             ),
-      ),
-      buttonSize: inviteeConfig?.acceptButton.size ??
-          Size(size.width * 0.25, size.width * 0.25),
-      iconSize: inviteeConfig?.acceptButton.iconSize ??
-          Size(size.width * 0.25, size.width * 0.25),
-      onPressed: (ZegoAcceptInvitationButtonResult result) {
-        pageManager!.onLocalAcceptInvitation(
-          invitationID,
-          result.code,
-          result.message,
-        );
-      },
-    );
+            buttonSize: widget.inviteeUIConfig?.minimized?.acceptButton.size ??
+                Size(
+                  widget.size.width * 0.25,
+                  widget.size.width * 0.25,
+                ),
+            iconSize:
+                widget.inviteeUIConfig?.minimized?.acceptButton.iconSize ??
+                    Size(
+                      widget.size.width * 0.25,
+                      widget.size.width * 0.25,
+                    ),
+            onPressed: (ZegoAcceptInvitationButtonResult result) {
+              widget.pageManager!.onLocalAcceptInvitation(
+                invitationID,
+                result.code,
+                result.message,
+              );
+            },
+          )
+        : Container();
   }
 
   /// Get image URL based on invitation type (for accept button)
@@ -285,5 +310,34 @@ class ZegoMinimizingCallingPage extends StatelessWidget {
       case ZegoCallInvitationType.videoCall:
         return InvitationStyleIconUrls.toolbarBottomVideo;
     }
+  }
+
+  /// Check if tips should be shown
+  bool shouldShowTips() {
+    if (widget.isInviter) {
+      return widget.inviterUIConfig?.minimized?.showTips ?? true;
+    } else {
+      return widget.inviteeUIConfig?.minimized?.showTips ?? true;
+    }
+  }
+
+  /// Build tips text widget
+  Widget tipsText() {
+    if (widget.pageManager == null) {
+      return Container();
+    }
+
+    final text = widget.pageManager!.callInvitationData.innerText
+        .minimizedCallingPageWaitingText;
+
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: 14.zR,
+        decoration: TextDecoration.none,
+      ),
+      textAlign: TextAlign.center,
+    );
   }
 }

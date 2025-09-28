@@ -102,7 +102,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showLocalUserView = true,
     this.leaveButtonIcon,
     this.foreground,
-    this.builder,
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
@@ -122,7 +121,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final Widget? leaveButtonIcon;
 
   final Widget? foreground;
-  final Widget Function(ZegoUIKitUser? activeUser)? builder;
 
   final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
   final ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
@@ -278,7 +276,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
         showLocalUserView: widget.showLocalUserView,
         leaveButtonIcon: widget.leaveButtonIcon,
         foreground: widget.foreground,
-        builder: widget.builder,
         foregroundBuilder: widget.foregroundBuilder,
         backgroundBuilder: widget.backgroundBuilder,
         avatarBuilder:
@@ -315,6 +312,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             minimizeData.inviting!.callInvitationData.uiConfig.inviter,
         inviteeUIConfig:
             minimizeData.inviting!.callInvitationData.uiConfig.invitee,
+        foreground: widget.foreground,
+        foregroundBuilder: widget.foregroundBuilder,
+        backgroundBuilder: widget.backgroundBuilder,
+        avatarBuilder:
+            widget.avatarBuilder ?? minimizeData.inCall?.config.avatarBuilder,
       ),
     );
   }

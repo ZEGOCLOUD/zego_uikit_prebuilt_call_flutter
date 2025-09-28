@@ -295,11 +295,13 @@ class ZegoCallInvitationInviterUIConfig {
     ZegoCallButtonUIConfig? cameraSwitchButton,
     ZegoCallButtonUIConfig? microphoneButton,
     ZegoCallButtonUIConfig? speakerButton,
+    ZegoCallInvitationInviterMinimizedUIConfig? minimized,
   })  : cancelButton = cancelButton ?? ZegoCallButtonUIConfig(),
         cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
         cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
         microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
-        speakerButton = speakerButton ?? ZegoCallButtonUIConfig();
+        speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
+        minimized = minimized ?? ZegoCallInvitationInviterMinimizedUIConfig();
 
   /// The foreground of the calling.
   ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -374,6 +376,9 @@ class ZegoCallInvitationInviterUIConfig {
   /// sub buttons: camera/microphone/camera switch/speaker
   bool showSubButtonsText;
 
+  /// minimized UI config
+  ZegoCallInvitationInviterMinimizedUIConfig? minimized;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInviterUIConfig:{'
@@ -391,6 +396,7 @@ class ZegoCallInvitationInviterUIConfig {
         'speakerButton:$speakerButton, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
+        'minimized:$minimized, '
         '}';
   }
 }
@@ -417,12 +423,14 @@ class ZegoCallInvitationInviteeUIConfig {
     ZegoCallButtonUIConfig? cameraSwitchButton,
     ZegoCallButtonUIConfig? microphoneButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
+    ZegoCallInvitationInviteeMinimizedUIConfig? minimized,
   })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
         acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
         cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
         cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
         microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
-        popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig();
+        popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
+        minimized = minimized ?? ZegoCallInvitationInviteeMinimizedUIConfig();
 
   /// config of call invitation pop-up dialog
   ZegoCallInvitationNotifyPopUpUIConfig popUp;
@@ -500,6 +508,9 @@ class ZegoCallInvitationInviteeUIConfig {
   /// sub buttons: camera/microphone/camera switch
   bool showSubButtonsText;
 
+  /// minimized UI config
+  ZegoCallInvitationInviteeMinimizedUIConfig? minimized;
+
   @override
   String toString() {
     return 'ZegoCallInvitationInviteeUIConfig:{'
@@ -518,6 +529,55 @@ class ZegoCallInvitationInviteeUIConfig {
         'showVideoOnCalling:$showVideoOnCalling, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
+        'minimized:$minimized, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationInviterMinimizedUIConfig {
+  ZegoCallInvitationInviterMinimizedUIConfig({
+    this.showTips = true,
+    ZegoCallButtonUIConfig? cancelButton,
+  }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig();
+
+  /// cancel button
+  ZegoCallButtonUIConfig cancelButton;
+
+  /// show tip or not
+  bool showTips;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationInviterMinimizedUIConfig:{'
+        'acceptButton:$cancelButton, '
+        'showTips:$showTips, '
+        '}';
+  }
+}
+
+class ZegoCallInvitationInviteeMinimizedUIConfig {
+  ZegoCallInvitationInviteeMinimizedUIConfig({
+    this.showTips = true,
+    ZegoCallButtonUIConfig? declineButton,
+    ZegoCallButtonUIConfig? acceptButton,
+  })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
+        acceptButton = acceptButton ?? ZegoCallButtonUIConfig();
+
+  /// accept button
+  ZegoCallButtonUIConfig acceptButton;
+
+  /// decline button
+  ZegoCallButtonUIConfig declineButton;
+
+  /// show tip or not
+  bool showTips;
+
+  @override
+  String toString() {
+    return 'ZegoCallInvitationInviteeMinimizedUIConfig:{'
+        'acceptButton:$acceptButton, '
+        'declineButton:$declineButton, '
+        'showTips:$showTips, '
         '}';
   }
 }
