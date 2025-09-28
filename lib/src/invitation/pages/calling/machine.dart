@@ -98,6 +98,7 @@ class ZegoCallingMachine {
       return;
     }
 
+    //
     // 如果当前是最小化状态，记录日志但不阻止进入通话界面
     if (ZegoCallMiniOverlayPageState.invitingMinimized ==
         ZegoCallMiniOverlayMachine().state()) {

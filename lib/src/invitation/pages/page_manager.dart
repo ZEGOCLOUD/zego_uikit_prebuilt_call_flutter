@@ -224,10 +224,6 @@ class ZegoCallInvitationPageManager {
 
     initRing(ringtoneConfig);
 
-    ZegoCallMiniOverlayMachine().listenStateChanged(
-      onMiniOverlayMachineStateChanged,
-    );
-
     ZegoLoggerService.logInfo(
       'init, appID:${callInvitationData.appID}, '
       // 'appSign:${callInvitationConfig.appSign},'
@@ -269,9 +265,6 @@ class ZegoCallInvitationPageManager {
     _invitationData = ZegoCallInvitationData.empty();
     _invitingInvitees.clear();
     _localInvitationParameter = ZegoCallInvitationLocalParameter.empty();
-
-    ZegoCallMiniOverlayMachine()
-        .removeListenStateChanged(onMiniOverlayMachineStateChanged);
 
     removeStreamListener();
   }
@@ -2279,12 +2272,6 @@ class ZegoCallInvitationPageManager {
       );
       userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
 
-      callingMachine?.stateOnlineAudioVideo.enter();
-    }
-  }
-
-  void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
-    if (ZegoCallMiniOverlayPageState.inCallMinimized == state) {
       callingMachine?.stateOnlineAudioVideo.enter();
     }
   }

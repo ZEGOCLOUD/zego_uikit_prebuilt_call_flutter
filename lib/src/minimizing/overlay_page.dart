@@ -237,9 +237,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   Widget overlayItem() {
-    // Add debug log
-    print('ZegoCallMiniOverlayPage: overlayItem - currentState: $currentState');
-
     switch (currentState) {
       case ZegoCallMiniOverlayPageState.idle:
         return Container();
@@ -292,14 +289,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Widget _buildInvitingMinimizedWidget() {
     final minimizeData =
         ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
-
-    // Add debug log
-    print(
-        'ZegoCallMiniOverlayPage: _buildInvitingMinimizedWidget - minimizeData: $minimizeData, inviting: ${minimizeData?.inviting}');
-
     if (minimizeData?.inviting == null) {
-      print(
-          'ZegoCallMiniOverlayPage: _buildInvitingMinimizedWidget - inviting data is null, returning Container');
       return Container();
     }
 

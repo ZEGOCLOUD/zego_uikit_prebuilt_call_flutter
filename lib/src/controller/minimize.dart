@@ -16,7 +16,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   bool get isMinimizing => isMinimizingNotifier.value;
   ValueNotifier<bool> get isMinimizingNotifier => _private.isMinimizingNotifier;
 
-  /// Restore the in-call interface
+  /// restore the ZegoUIKitPrebuiltCall from minimize
   bool restore(
     BuildContext context, {
     bool rootNavigator = true,
@@ -43,7 +43,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       return false;
     }
 
-    /// re-enter prebuilt call
+    /// ready for re-enter prebuilt call
     ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.idle,
     );

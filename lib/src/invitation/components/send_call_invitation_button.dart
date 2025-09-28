@@ -305,9 +305,11 @@ class _ZegoSendCallInvitationButtonState
       return false;
     }
 
-    if (ZegoCallMiniOverlayMachine().isMinimizing) {
+    if (ZegoCallMiniOverlayMachine().isInvitingMinimized ||
+        ZegoCallMiniOverlayMachine().isInCallMinimized) {
       ZegoLoggerService.logError(
-        'is in minimizing now',
+        'is in minimizing now, '
+        'state:${ZegoCallMiniOverlayMachine().state()}',
         tag: 'call-invitation',
         subTag: 'components, send call button',
       );

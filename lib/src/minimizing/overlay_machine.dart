@@ -22,11 +22,6 @@ class ZegoCallMiniOverlayMachine {
 
   sm.Machine<ZegoCallMiniOverlayPageState> get machine => _machine;
 
-  /// Check if currently in minimized state
-  bool get isMinimizing =>
-      ZegoCallMiniOverlayPageState.inCallMinimized == state() ||
-      ZegoCallMiniOverlayPageState.invitingMinimized == state();
-
   /// Check if it's in-call minimized
   bool get isInCallMinimized =>
       ZegoCallMiniOverlayPageState.inCallMinimized == state();

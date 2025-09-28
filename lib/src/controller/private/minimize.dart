@@ -48,7 +48,7 @@ class ZegoCallControllerMinimizePrivateImpl {
 
     activeUser.setConfig(config: config);
 
-    isMinimizingNotifier.value = ZegoCallMiniOverlayMachine().isMinimizing;
+    isMinimizingNotifier.value = ZegoCallMiniOverlayMachine().isInCallMinimized;
     ZegoCallMiniOverlayMachine()
         .listenStateChanged(onMiniOverlayMachineStateChanged);
   }
@@ -72,8 +72,7 @@ class ZegoCallControllerMinimizePrivateImpl {
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
     isMinimizingNotifier.value =
-        ZegoCallMiniOverlayPageState.inCallMinimized == state ||
-        ZegoCallMiniOverlayPageState.invitingMinimized == state;
+        ZegoCallMiniOverlayPageState.inCallMinimized == state;
   }
 }
 
