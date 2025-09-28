@@ -876,7 +876,11 @@ class ZegoCallInvitationPageManager {
     );
     _invitingInvitees.clear();
 
-    restoreToIdle();
+    restoreToIdle(
+      needHideInvitationTopSheet:
+          ZegoCallMiniOverlayPageState.inCallMinimized ==
+              ZegoUIKitPrebuiltCallController().minimize.state,
+    );
   }
 
   void onInvitationUserStateChanged(
