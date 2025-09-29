@@ -16,9 +16,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/components.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/duration_time_board.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller/private/pip/pip_android.dart';
@@ -195,6 +192,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'version: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion, \n'
+        'appID:${widget.appID}, \n'
+        'callID:${widget.callID}, \n'
+        'userID:${widget.userID}, \n'
+        'userName:${widget.userName}, \n'
         'config:${widget.config}, \n'
         'events:${widget.events}, \n',
         tag: 'call',
@@ -221,19 +222,21 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     correctConfigValue();
     onLocalInvitingUsersUpdated();
 
-    minimizeData = ZegoCallMinimizeData(
+    minimizeData = ZegoCallMinimizeData.inCall(
       appID: widget.appID,
       appSign: widget.appSign,
       token: widget.token,
-      callID: widget.callID,
       userID: widget.userID,
       userName: widget.userName,
-      config: widget.config,
-      events: events,
-      plugins: widget.plugins,
+      callID: widget.callID,
       onDispose: widget.onDispose,
-      isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
-      durationStartTime: durationStartTime,
+      inCallData: ZegoInCallMinimizeData(
+        config: widget.config,
+        events: events,
+        isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
+        plugins: widget.plugins,
+        durationStartTime: durationStartTime ?? DateTime.now(),
+      ),
     );
 
     if (isPrebuiltFromMinimizing) {
@@ -325,8 +328,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     durationTimer?.cancel();
 
     controller.pip.cancelBackground();
-    if (ZegoCallMiniOverlayPageState.minimizing !=
-        ZegoCallMiniOverlayMachine().state()) {
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+        ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
 
       controller.private.uninitByPrebuilt();
@@ -788,7 +791,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               e.state == AdvanceInvitationState.waiting ||
               e.state == AdvanceInvitationState.accepted)
           .toList()
-          .isNotEmpty;
+          .isNotEmpty; //
 
       ZegoLoggerService.logInfo(
         'no wait inviting users now, '
@@ -812,7 +815,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         final callEndEvent = ZegoCallEndEvent(
           callID: widget.callID,
           reason: ZegoCallEndReason.abandoned,
-          isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
+          isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
               ZegoUIKitPrebuiltCallController().minimize.state,
           invitationData: ZegoUIKitPrebuiltCallInvitationService()
               .private
@@ -846,7 +849,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     final callEndEvent = ZegoCallEndEvent(
       callID: widget.callID,
       reason: ZegoCallEndReason.remoteHangUp,
-      isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
+      isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
           ZegoUIKitPrebuiltCallController().minimize.state,
       invitationData: ZegoUIKitPrebuiltCallInvitationService()
           .private
@@ -1247,8 +1250,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       callID: widget.callID,
       kickerUserID: fromUserID,
       reason: ZegoCallEndReason.kickOut,
-      isFromMinimizing:
-          ZegoCallMiniOverlayPageState.minimizing == controller.minimize.state,
+      isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
+          controller.minimize.state,
       invitationData: ZegoUIKitPrebuiltCallInvitationService()
           .private
           .currentCallInvitationData,

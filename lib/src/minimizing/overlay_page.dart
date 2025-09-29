@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/components/mini_call.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/mini_call_page.dart';
+import 'package:zego_uikit_prebuilt_call/src/components/mini_calling_page.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
@@ -101,7 +102,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.showLocalUserView = true,
     this.leaveButtonIcon,
     this.foreground,
-    this.builder,
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
@@ -121,7 +121,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   final Widget? leaveButtonIcon;
 
   final Widget? foreground;
-  final Widget Function(ZegoUIKitUser? activeUser)? builder;
 
   final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
   final ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
@@ -156,7 +155,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   void initState() {
     super.initState();
 
-    topLeft = widget.topLeft;
+    // Adjust initial position to make overlay more visible
+    topLeft = Offset(50, 100); // Changed from (100, 100) to (50, 100)
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ZegoCallMiniOverlayMachine()
@@ -228,7 +228,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     }
 
     final size = MediaQuery.of(context).size;
-    final width = size.width / 4.0;
+    // Adjust size to make overlay more visible
+    final width = size.width / 3.0; // Changed from 1/4 to 1/3
     final height = 16.0 / 9.0 * width;
     return Size(width, height);
   }
@@ -236,52 +237,112 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   Widget overlayItem() {
     switch (currentState) {
       case ZegoCallMiniOverlayPageState.idle:
-      case ZegoCallMiniOverlayPageState.calling:
+      case ZegoCallMiniOverlayPageState.inCall:
         return Container();
-      case ZegoCallMiniOverlayPageState.minimizing:
-        return GestureDetector(
-          onTap: () {
-            ZegoUIKitPrebuiltCallController().minimize.restore(
-                  widget.contextQuery(),
-                  rootNavigator: widget.rootNavigator,
-                  withSafeArea: widget.navigatorWithSafeArea,
-                );
-          },
-          child: ZegoMinimizingCallPage(
-            size: itemSize,
-            durationNotifier: ZegoCallMiniOverlayMachine().durationNotifier(),
-            showCameraButton: minimizeData?.config.bottomMenuBar.buttons
-                    .contains(ZegoCallMenuBarButtonName.toggleCameraButton) ??
-                true,
-            showMicrophoneButton: minimizeData?.config.bottomMenuBar.buttons
-                    .contains(
-                        ZegoCallMenuBarButtonName.toggleMicrophoneButton) ??
-                true,
-            durationVisible: minimizeData?.config.duration.isVisible ?? true,
-            showDevices: widget.showDevices,
-            showUserName: widget.showUserName,
-            showLeaveButton: widget.showLeaveButton,
-            showLocalUserView: widget.showLocalUserView,
-            leaveButtonIcon: widget.leaveButtonIcon,
-            foreground: widget.foreground,
-            builder: widget.builder,
-            foregroundBuilder: widget.foregroundBuilder,
-            backgroundBuilder: widget.backgroundBuilder,
-            avatarBuilder:
-                widget.avatarBuilder ?? minimizeData?.config.avatarBuilder,
-          ),
-        );
+      case ZegoCallMiniOverlayPageState.inCallMinimized:
+        return _buildInCallMinimizedWidget();
+      case ZegoCallMiniOverlayPageState.invitingMinimized:
+        return _buildInvitingMinimizedWidget();
     }
   }
 
+  Widget _buildInCallMinimizedWidget() {
+    final minimizeData =
+        ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
+    if (minimizeData?.inCall == null) return Container();
+
+    return GestureDetector(
+      onTap: () {
+        ZegoUIKitPrebuiltCallController().minimize.restore(
+              widget.contextQuery(),
+              rootNavigator: widget.rootNavigator,
+              withSafeArea: widget.navigatorWithSafeArea,
+            );
+      },
+      child: ZegoMinimizingCallPage(
+        size: itemSize,
+        durationNotifier: ZegoCallMiniOverlayMachine().durationNotifier(),
+        showCameraButton: minimizeData?.inCall?.config.bottomMenuBar.buttons
+                .contains(ZegoCallMenuBarButtonName.toggleCameraButton) ??
+            true,
+        showMicrophoneButton: minimizeData?.inCall?.config.bottomMenuBar.buttons
+                .contains(ZegoCallMenuBarButtonName.toggleMicrophoneButton) ??
+            true,
+        durationVisible:
+            minimizeData?.inCall?.config.duration.isVisible ?? true,
+        showDevices: widget.showDevices,
+        showUserName: widget.showUserName,
+        showLeaveButton: widget.showLeaveButton,
+        showLocalUserView: widget.showLocalUserView,
+        leaveButtonIcon: widget.leaveButtonIcon,
+        foreground: widget.foreground,
+        foregroundBuilder: widget.foregroundBuilder,
+        backgroundBuilder: widget.backgroundBuilder,
+        avatarBuilder:
+            widget.avatarBuilder ?? minimizeData?.inCall?.config.avatarBuilder,
+      ),
+    );
+  }
+
+  Widget _buildInvitingMinimizedWidget() {
+    final minimizeData =
+        ZegoUIKitPrebuiltCallController().minimize.private.minimizeData;
+    if (minimizeData?.inviting == null) {
+      return Container();
+    }
+
+    return GestureDetector(
+      onTap: () {
+        ZegoUIKitPrebuiltCallController().minimize.restoreInviting(
+              widget.contextQuery(),
+              rootNavigator: widget.rootNavigator,
+              withSafeArea: widget.navigatorWithSafeArea,
+            );
+      },
+      child: ZegoMinimizingCallingPage(
+        size: itemSize,
+        invitationType: minimizeData!.inviting!.invitationType,
+        inviter: minimizeData.inviting!.inviter,
+        invitees: minimizeData.inviting!.invitees,
+        isInviter: minimizeData.inviting!.isInviter,
+        customData: minimizeData.inviting!.customData,
+        pageManager: minimizeData.inviting!.pageManager,
+        callInvitationData: minimizeData.inviting!.callInvitationData,
+        inviterUIConfig:
+            minimizeData.inviting!.callInvitationData.uiConfig.inviter,
+        inviteeUIConfig:
+            minimizeData.inviting!.callInvitationData.uiConfig.invitee,
+        foreground: widget.foreground,
+        foregroundBuilder: widget.foregroundBuilder,
+        backgroundBuilder: widget.backgroundBuilder,
+        avatarBuilder:
+            widget.avatarBuilder ?? minimizeData.inCall?.config.avatarBuilder,
+      ),
+    );
+  }
+
   void syncState() {
+    final newState = ZegoCallMiniOverlayMachine().state();
+    final newVisibility =
+        newState == ZegoCallMiniOverlayPageState.inCallMinimized ||
+            newState == ZegoCallMiniOverlayPageState.invitingMinimized;
+
+    // Add debug log
+    print(
+        'ZegoCallMiniOverlayPage: syncState - currentState: $currentState -> $newState, visibility: $visibility -> $newVisibility');
+
     setState(() {
-      currentState = ZegoCallMiniOverlayMachine().state();
-      visibility = currentState == ZegoCallMiniOverlayPageState.minimizing;
+      currentState = newState;
+      // Fix: inviting minimized state should also show overlay
+      visibility = newVisibility;
     });
   }
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
+    // Add debug log
+    print(
+        'ZegoCallMiniOverlayPage: onMiniOverlayMachineStateChanged - state: $state');
+
     /// Overlay and setState may be in different contexts, causing the framework to be unable to update.
     ///
     /// The purpose of Future.delayed(Duration.zero, callback) is to execute the callback function in the next frame,
@@ -297,7 +358,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return;
     }
 
-    if (ZegoCallMiniOverlayPageState.minimizing !=
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
         ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoLoggerService.logInfo(
         'onUserLeave, not in minimizing',
@@ -351,8 +412,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       });
     }
 
-    if (minimizeData?.events.onCallEnd != null) {
-      minimizeData?.events.onCallEnd?.call(callEndEvent, defaultAction);
+    if (minimizeData?.inCall?.events.onCallEnd != null) {
+      minimizeData?.inCall?.events.onCallEnd?.call(callEndEvent, defaultAction);
     } else {
       defaultAction.call();
     }

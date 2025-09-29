@@ -9,6 +9,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
+import '../../../../minimizing/mini_button.dart';
 
 /// @nodoc
 class ZegoCallingTopToolBarButton extends StatelessWidget {
@@ -72,6 +73,18 @@ class _ZegoInviterCallingTopToolBarState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            ZegoCallMinimizingButton(
+              invitationType: widget.invitationType,
+              inviter: widget.pageManager.invitationData.inviter ??
+                  ZegoUIKitUser.empty(),
+              invitees: widget.pageManager.invitationData.invitees,
+              isInviter: widget.pageManager.invitationData.inviter?.id ==
+                  ZegoUIKit().getLocalUser().id,
+              pageManager: widget.pageManager,
+              callInvitationData: widget.pageManager.callInvitationData,
+              customData: widget.pageManager.invitationData.customData,
+              rootNavigator: false,
+            ),
             const Expanded(child: SizedBox()),
             cameraSwitchButton(),
           ],

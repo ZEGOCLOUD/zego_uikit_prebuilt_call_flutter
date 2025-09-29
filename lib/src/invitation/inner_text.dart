@@ -212,6 +212,10 @@ class ZegoCallInvitationInnerText {
   /// The **default value** is *"Camera OFF"*.
   String callingToolbarCameraOffButtonText;
 
+  /// The text shown in minimized calling page when waiting for answer,
+  /// The **default value** is *"Waiting for answer"*.
+  String minimizedCallingPageWaitingText;
+
   ZegoCallInvitationInnerText({
     String? incomingVideoCallDialogTitle,
     String? incomingVideoCallDialogMessage,
@@ -262,6 +266,7 @@ class ZegoCallInvitationInnerText {
     String? callingToolbarCameraButtonText,
     String? callingToolbarCameraOnButtonText,
     String? callingToolbarCameraOffButtonText,
+    String? minimizedCallingPageWaitingText,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
             incomingVideoCallDialogMessage ?? 'Incoming video call...',
@@ -361,7 +366,9 @@ class ZegoCallInvitationInnerText {
         callingToolbarCameraOnButtonText =
             callingToolbarCameraOnButtonText ?? 'Camera ON',
         callingToolbarCameraOffButtonText =
-            callingToolbarCameraOffButtonText ?? 'Camera OFF';
+            callingToolbarCameraOffButtonText ?? 'Camera OFF',
+        minimizedCallingPageWaitingText =
+            minimizedCallingPageWaitingText ?? 'Waiting for answer';
 
   /// if add a new text, need check [ZegoCallInvitationInnerTextForCallInvitationServicePrivate]
 }

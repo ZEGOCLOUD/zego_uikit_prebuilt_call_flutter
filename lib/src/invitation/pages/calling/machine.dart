@@ -88,7 +88,7 @@ class ZegoCallingMachine {
   }
 
   void onCallingEntry() {
-    if (ZegoCallMiniOverlayPageState.calling ==
+    if (ZegoCallMiniOverlayPageState.inCall ==
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
         'entry is from calling by mini machine',
@@ -99,6 +99,7 @@ class ZegoCallingMachine {
       return;
     }
 
+    // 如果页面已经推送，直接返回
     if (isPagePushed) {
       ZegoLoggerService.logInfo(
         'page had pushed',
@@ -106,6 +107,18 @@ class ZegoCallingMachine {
         subTag: 'machine',
       );
       return;
+    }
+
+    //
+    // 如果当前是最小化状态，记录日志但不阻止进入通话界面
+    if (ZegoCallMiniOverlayPageState.invitingMinimized ==
+        ZegoCallMiniOverlayMachine().state()) {
+      ZegoLoggerService.logInfo(
+        'entry is from inviting minimized by mini machine, but allow to enter call',
+        tag: 'call-invitation',
+        subTag: 'machine',
+      );
+      // 不返回，继续执行进入通话界面的逻辑
     }
 
     ZegoLoggerService.logInfo(
@@ -129,9 +142,21 @@ class ZegoCallingMachine {
             inviter: pageManager.invitationData.inviter!,
             invitees: pageManager.invitationData.invitees,
             onInitState: () {
+              ZegoLoggerService.logInfo(
+                'push from onCallingEntry, onInitState',
+                tag: 'call',
+                subTag: 'machine, Navigator',
+              );
+
               isPagePushed = true;
             },
             onDispose: () {
+              ZegoLoggerService.logInfo(
+                'push from onCallingEntry, onDispose',
+                tag: 'call',
+                subTag: 'machine, Navigator',
+              );
+
               isPagePushed = false;
             },
           ),

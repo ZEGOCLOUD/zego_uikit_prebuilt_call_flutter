@@ -20,6 +20,16 @@ class ZegoCallControllerMinimizePrivateImpl {
 
   final isMinimizingNotifier = ValueNotifier<bool>(false);
 
+  /// Update minimized data
+  void updateMinimizeData(ZegoCallMinimizeData minimizeData) {
+    _minimizeData = minimizeData;
+  }
+
+  /// Clear minimized data
+  void clearMinimizeData() {
+    _minimizeData = null;
+  }
+
   /// Please do not call this interface. It is the internal logic of Prebuilt.
   void initByPrebuilt({
     required ZegoCallMinimizeData minimizeData,
@@ -38,7 +48,7 @@ class ZegoCallControllerMinimizePrivateImpl {
 
     activeUser.setConfig(config: config);
 
-    isMinimizingNotifier.value = ZegoCallMiniOverlayMachine().isMinimizing;
+    isMinimizingNotifier.value = ZegoCallMiniOverlayMachine().isInCallMinimized;
     ZegoCallMiniOverlayMachine()
         .listenStateChanged(onMiniOverlayMachineStateChanged);
   }
@@ -60,11 +70,9 @@ class ZegoCallControllerMinimizePrivateImpl {
         .removeListenStateChanged(onMiniOverlayMachineStateChanged);
   }
 
-  void onMiniOverlayMachineStateChanged(
-    ZegoCallMiniOverlayPageState state,
-  ) {
+  void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
     isMinimizingNotifier.value =
-        ZegoCallMiniOverlayPageState.minimizing == state;
+        ZegoCallMiniOverlayPageState.inCallMinimized == state;
   }
 }
 

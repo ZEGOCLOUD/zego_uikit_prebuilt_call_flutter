@@ -34,7 +34,6 @@ class ZegoMinimizingCallPage extends StatefulWidget {
     this.leaveButtonIcon,
     this.foreground,
     this.background,
-    this.builder,
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
@@ -57,7 +56,6 @@ class ZegoMinimizingCallPage extends StatefulWidget {
   final Color soundWaveColor;
   final Widget? foreground;
   final Widget? background;
-  final Widget Function(ZegoUIKitUser? activeUser)? builder;
 
   final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
   final ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
@@ -186,12 +184,14 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
                   }
 
                   final isActiveUser = activeUserID == user?.id;
-                  return Stack(
-                    children: [
-                      if (isActiveUser) devices(user),
-                      userName(user, alignCenter: !isActiveUser),
-                    ],
-                  );
+                  return widget.foregroundBuilder
+                          ?.call(context, size, user, extraInfo) ??
+                      Stack(
+                        children: [
+                          if (isActiveUser) devices(user),
+                          userName(user, alignCenter: !isActiveUser),
+                        ],
+                      );
                 },
                 backgroundBuilder: widget.backgroundBuilder,
                 onUserListUpdated: (List<ZegoUIKitUser> userList) {
@@ -229,35 +229,6 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         child: child,
       ),
     );
-  }
-
-  Widget minimizingUserWidget(ZegoUIKitUser? targetUser) {
-    return widget.builder?.call(targetUser) ??
-        Stack(
-          children: [
-            widget.background ?? Container(),
-            ZegoAudioVideoView(
-              user: targetUser,
-              foregroundBuilder: widget.foregroundBuilder,
-              backgroundBuilder: widget.backgroundBuilder,
-              avatarConfig: ZegoAvatarConfig(
-                builder: widget.avatarBuilder,
-                soundWaveColor: widget.soundWaveColor,
-              ),
-            ),
-            devices(targetUser),
-            userName(targetUser),
-            durationTimeBoard(),
-            widget.foreground ?? Container(),
-            widget.showLeaveButton
-                ? Positioned(
-                    top: 10.zR,
-                    right: 10.zR,
-                    child: leaveButton(),
-                  )
-                : Container(),
-          ],
-        );
   }
 
   Widget leaveButton() {

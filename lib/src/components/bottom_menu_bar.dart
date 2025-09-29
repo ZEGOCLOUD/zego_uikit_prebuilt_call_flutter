@@ -135,7 +135,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
 
   List<Widget> getDisplayButtons(BuildContext context) {
     final needRestoreDeviceState =
-        widget.minimizeData.isPrebuiltFromMinimizing ||
+        widget.minimizeData.inCall?.isPrebuiltFromMinimizing == true ||
             ZegoUIKitPrebuiltCallController()
                 .pip
                 .private
@@ -351,7 +351,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
-              isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
+              isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
               invitationData: ZegoUIKitPrebuiltCallInvitationService()
                   .private

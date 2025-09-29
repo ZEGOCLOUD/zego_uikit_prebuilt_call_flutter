@@ -1,3 +1,29 @@
+## 4.19.0
+
+- Update environment
+- Features
+ - Supports minimizing during an invitation, and can support customizing the UI configuration using `ZegoCallInvitationInviterMinimizedUIConfig` as follows 
+    ``` dart
+    await ZegoUIKitPrebuiltCallInvitationService().init(
+      ...
+      uiConfig: ZegoCallInvitationUIConfig(
+        inviter: ZegoCallInvitationInviteeUIConfig(
+          minimized: ZegoCallInvitationInviterMinimizedUIConfig(
+            cancelButton: ZegoCallButtonUIConfig(visible: true),
+            showTips: true,
+          ),
+        ),
+        invitee: ZegoCallInvitationInviteeUIConfig(
+          minimized: ZegoCallInvitationInviteeMinimizedUIConfig(
+            acceptButton: ZegoCallButtonUIConfig(visible: true),
+            declineButton: ZegoCallButtonUIConfig(visible: true),
+            showTips: true,
+          ),
+        ),
+      ),
+    );
+    ```
+
 ## 4.18.4
 
 - Bugs
@@ -24,7 +50,6 @@
     await ZegoUIKitPrebuiltCallInvitationService().init(
       ...
       uiConfig: ZegoCallInvitationUIConfig(
-        withSafeArea: CallCache().invitation.safeArea,
         inviter: ZegoCallInvitationInviterUIConfig(
           useVideoViewAspectFill: true,
           showAvatar: true,
