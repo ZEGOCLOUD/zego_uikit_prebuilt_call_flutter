@@ -187,6 +187,11 @@ class ZegoCallInvitationPageManager {
   }
 
   bool get isInCall {
+    if (Platform.isIOS && _appInBackground && inCallingByIOSBackgroundLock) {
+      /// ios lock in call
+      return true;
+    }
+
     final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
 
     ZegoLoggerService.logInfo(
@@ -1983,6 +1988,7 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager, restore to idle',
       );
 
+      inCallingByIOSBackgroundLock = false;
       await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       await clearAllCallKitCalls();
 

@@ -130,8 +130,6 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
-
-    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
   }
 
   void _onCallkitActivateAudioEvent(
@@ -177,8 +175,6 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       subTag: 'ios callkit',
     );
 
-    ZegoCallPluginPlatform.instance.activeAudioByCallKit();
-
     event.fulfill?.call();
 
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
@@ -199,7 +195,10 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     Future<void> onAnswerCallPerform() async {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
-      await ZegoCallPluginPlatform.instance.activeAudioByCallKit();
+      /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
+      await ZegoUIKit().setAdvanceConfigs({
+        "support_apple_callkit": "true",
+      });
 
       await ZegoUIKitCallCache()
           .offlineCallKit
@@ -305,6 +304,11 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
+
+    /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
+    await ZegoUIKit().setAdvanceConfigs({
+      "support_apple_callkit": "false",
+    });
 
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
