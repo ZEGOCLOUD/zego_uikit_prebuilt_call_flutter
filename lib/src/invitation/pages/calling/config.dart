@@ -59,8 +59,9 @@ class ZegoUIKitPrebuiltCallingConfig {
             : invitee?.defaultMicrophoneOn) ??
         config.turnOnMicrophoneWhenJoining;
 
-    config.useSpeakerWhenJoining =
-        useSpeakerWhenJoining ?? config.useSpeakerWhenJoining;
+    config.useSpeakerWhenJoining = useSpeakerWhenJoining ??
+        (localUserIsInviter ? inviter?.defaultSpeakerOn : null) ??
+        config.useSpeakerWhenJoining;
   }
 
   void reset() {
