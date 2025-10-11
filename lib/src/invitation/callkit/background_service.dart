@@ -263,8 +263,9 @@ class ZegoCallKitBackgroundService {
       subTag: 'call invitation service',
     );
 
-    if(Platform.isIOS) {
-      if ((_pageManager?.appInBackground ?? false) && (_pageManager?.inCallingByIOSBackgroundLock ?? false)) {
+    if (Platform.isIOS) {
+      if ((_pageManager?.appInBackground ?? false) &&
+          (_pageManager?.inCallingByIOSBackgroundLock ?? false)) {
         /// ios lock in call
       } else {
         /// If the call is ended by the end button of iOS CallKit,
