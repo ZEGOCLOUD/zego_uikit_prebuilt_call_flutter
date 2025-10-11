@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:async';
+import 'dart:io' show Platform;
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
@@ -86,10 +87,19 @@ class ZegoRingtone {
         respectSilence: true,
       ).build();
 
-  AudioContext get speakerAudioContextConfig => AudioContextConfig(
+  AudioContext get speakerAudioContextConfig {
+    if (Platform.isAndroid) {
+      return AudioContextConfig(
         route: AudioContextConfigRoute.speaker,
         respectSilence: true,
       ).build();
+    }
+
+    return AudioContextConfig(
+      route: AudioContextConfigRoute.speaker,
+      respectSilence: false,
+    ).build();
+  }
 
   bool get isRingTimerRunning => _isRingTimerRunning;
   set isRingTimerRunning(bool value) {
@@ -472,6 +482,7 @@ class ZegoRingtone {
       await audioPlayer.setReleaseMode(ReleaseMode.loop);
       await audioPlayer.setVolume(audioPlayerVolume);
 
+      onAudioRouteChanged();
       ZegoUIKit().getLocalUser().audioRoute.addListener(onAudioRouteChanged);
 
       try {
