@@ -255,13 +255,13 @@ class ZegoRingtone {
 
     ZegoLoggerService.logInfo(
       '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
-      '🔊 Android 音频路由变化\n'
+      '🔊 Android Audio Route Changed\n'
       '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
-      '事件: $event\n'
-      '扬声器: ${isSpeakerphoneOn ? '✅ 开启' : '❌ 关闭'}\n'
-      '蓝牙: ${isBluetoothScoOn ? '✅ 开启' : '❌ 关闭'}\n'
-      '有线耳机: ${isWiredHeadsetOn ? '✅ 连接' : '❌ 未连接'}\n'
-      '模式: ${_getAndroidAudioModeName(mode)}\n'
+      'Event: $event\n'
+      'Speakerphone: ${isSpeakerphoneOn ? '✅ ON' : '❌ OFF'}\n'
+      'Bluetooth: ${isBluetoothScoOn ? '✅ ON' : '❌ OFF'}\n'
+      'Wired Headset: ${isWiredHeadsetOn ? '✅ Connected' : '❌ Disconnected'}\n'
+      'Mode: ${_getAndroidAudioModeName(mode)}\n'
       '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
       tag: 'call-invitation',
       subTag: 'ringtone-android-route',
@@ -269,7 +269,8 @@ class ZegoRingtone {
 
     if (info.containsKey('devices')) {
       final devices = info['devices'] as List;
-      final deviceInfo = StringBuffer('可用设备 (${devices.length}个):\n');
+      final deviceInfo =
+          StringBuffer('Available Devices (${devices.length}):\n');
       for (var device in devices) {
         deviceInfo.write('  📱 ${device['type']} (ID: ${device['id']})\n');
       }
@@ -285,13 +286,13 @@ class ZegoRingtone {
   String _getAndroidAudioModeName(int mode) {
     switch (mode) {
       case 0:
-        return 'NORMAL (正常)';
+        return 'NORMAL';
       case 1:
-        return 'RINGTONE (铃声)';
+        return 'RINGTONE';
       case 2:
-        return 'IN_CALL (通话中)';
+        return 'IN_CALL';
       case 3:
-        return 'IN_COMMUNICATION (通信)';
+        return 'IN_COMMUNICATION';
       default:
         return 'UNKNOWN ($mode)';
     }
@@ -307,7 +308,7 @@ class ZegoRingtone {
       await ZegoCallPluginPlatform.instance.startMonitoringAudioRoute();
       _isAudioRouteMonitoringEnabled = true;
       ZegoLoggerService.logInfo(
-        '✅ Android 音频路由监听已启动',
+        '✅ Android audio route monitoring started',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
@@ -315,13 +316,13 @@ class ZegoRingtone {
       // Get initial audio route info
       final info = await ZegoCallPluginPlatform.instance.getAudioRouteInfo();
       ZegoLoggerService.logInfo(
-        '📊 初始音频路由状态: $info',
+        '📊 Initial audio route state: $info',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
     } catch (e) {
       ZegoLoggerService.logError(
-        '❌ 启动 Android 音频路由监听失败: $e',
+        '❌ Failed to start Android audio route monitoring: $e',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
@@ -338,13 +339,13 @@ class ZegoRingtone {
       await ZegoCallPluginPlatform.instance.stopMonitoringAudioRoute();
       _isAudioRouteMonitoringEnabled = false;
       ZegoLoggerService.logInfo(
-        '⏹️ Android 音频路由监听已停止',
+        '⏹️ Android audio route monitoring stopped',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
     } catch (e) {
       ZegoLoggerService.logError(
-        '❌ 停止 Android 音频路由监听失败: $e',
+        '❌ Failed to stop Android audio route monitoring: $e',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
@@ -360,13 +361,13 @@ class ZegoRingtone {
     try {
       final info = await ZegoCallPluginPlatform.instance.getAudioRouteInfo();
       ZegoLoggerService.logInfo(
-        '📊 [$context] 当前音频路由: $info',
+        '📊 [$context] Current audio route: $info',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
     } catch (e) {
       ZegoLoggerService.logError(
-        '❌ 获取音频路由信息失败: $e',
+        '❌ Failed to get audio route info: $e',
         tag: 'call-invitation',
         subTag: 'ringtone-android-route',
       );
