@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -41,6 +42,9 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
     private ActivityPluginBinding activityBinding;
     private PluginNotification notification;
     private LocalBroadcastManager broadcastManager;
+    private AudioManager audioManager;
+    private BroadcastReceiver audioRouteReceiver;
+    private boolean isMonitoringAudioRoute = false;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -52,6 +56,7 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
         notification = new PluginNotification();
         context = flutterPluginBinding.getApplicationContext();
         broadcastManager = LocalBroadcastManager.getInstance(context);
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         registerBroadcastReceiver();
 
@@ -107,6 +112,15 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
                     break;
                 case Defines.FLUTTER_API_FUNC_DISMISS_ALL_NOTIFICATIONS:
                     handleDismissAllNotifications(result);
+                    break;
+                case "startMonitoringAudioRoute":
+                    handleStartMonitoringAudioRoute(result);
+                    break;
+                case "stopMonitoringAudioRoute":
+                    handleStopMonitoringAudioRoute(result);
+                    break;
+                case "getAudioRouteInfo":
+                    handleGetAudioRouteInfo(result);
                     break;
                 default:
                     result.notImplemented();
@@ -300,6 +314,90 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             methodChannel.invokeMethod(Defines.ACTION_NORMAL_NOTIFICATION_CLICK_CB_FUNC, arguments);
         } else {
             Log.e(TAG, "methodChannel is null");
+        }
+    }
+
+    // Audio Route Monitoring Methods (using BroadcastReceiver for compatibility)
+    private void handleStartMonitoringAudioRoute(Result result) {
+        try {
+            if (!isMonitoringAudioRoute) {
+                audioRouteReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String action = intent.getAction();
+                        Log.d(TAG, "Audio route broadcast received: " + action);
+                        
+                        // Send audio route info whenever there's a change
+                        sendAudioRouteInfo(action != null ? action : "unknown");
+                    }
+                };
+                
+                IntentFilter filter = new IntentFilter();
+                // Listen for various audio-related broadcasts
+                filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+                filter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
+                filter.addAction(AudioManager.ACTION_HEADSET_PLUG);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    filter.addAction(AudioManager.ACTION_SPEAKERPHONE_STATE_CHANGED);
+                }
+                
+                context.registerReceiver(audioRouteReceiver, filter);
+                isMonitoringAudioRoute = true;
+                Log.d(TAG, "Audio route monitoring started (BroadcastReceiver)");
+            }
+            result.success(null);
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting audio route monitoring: " + e.getMessage());
+            result.error("ERROR", e.getMessage(), null);
+        }
+    }
+
+    private void handleStopMonitoringAudioRoute(Result result) {
+        try {
+            if (isMonitoringAudioRoute && audioRouteReceiver != null) {
+                context.unregisterReceiver(audioRouteReceiver);
+                audioRouteReceiver = null;
+                isMonitoringAudioRoute = false;
+                Log.d(TAG, "Audio route monitoring stopped");
+            }
+            result.success(null);
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping audio route monitoring: " + e.getMessage());
+            result.error("ERROR", e.getMessage(), null);
+        }
+    }
+
+    private void handleGetAudioRouteInfo(Result result) {
+        Map<String, Object> info = getAudioRouteInfo();
+        result.success(info);
+    }
+
+    private Map<String, Object> getAudioRouteInfo() {
+        Map<String, Object> info = new HashMap<>();
+        
+        // Get basic audio manager info (available on all API levels)
+        info.put("isSpeakerphoneOn", audioManager.isSpeakerphoneOn());
+        info.put("isBluetoothScoOn", audioManager.isBluetoothScoOn());
+        info.put("isWiredHeadsetOn", audioManager.isWiredHeadsetOn());
+        info.put("mode", audioManager.getMode());
+        
+        return info;
+    }
+
+    private void sendAudioRouteInfo(String event) {
+        if (methodChannel != null) {
+            Map<String, Object> info = getAudioRouteInfo();
+            info.put("event", event);
+            methodChannel.invokeMethod("onAudioRouteChanged", info);
+            
+            Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Log.d(TAG, "🔊 Audio route changed");
+            Log.d(TAG, "Event: " + event);
+            Log.d(TAG, "Speakerphone: " + info.get("isSpeakerphoneOn"));
+            Log.d(TAG, "BluetoothSco: " + info.get("isBluetoothScoOn"));
+            Log.d(TAG, "WiredHeadset: " + info.get("isWiredHeadsetOn"));
+            Log.d(TAG, "Mode: " + info.get("mode"));
+            Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }
     }
 }

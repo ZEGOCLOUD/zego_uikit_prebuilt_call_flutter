@@ -28,6 +28,68 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   static const String kNormalNotificationClicked =
       "onNormalNotificationClicked";
 
+  /// audio route callback name (Android only)
+  static const String kAudioRouteChanged = "onAudioRouteChanged";
+
+  /// audio route changed callback
+  Function(Map<dynamic, dynamic> info)? _audioRouteChangedCallback;
+
+  /// call notification config (for callback)
+  ZegoCallCallNotificationConfig? _callNotificationConfig;
+
+  /// normal notification config (for callback)
+  ZegoCallNormalNotificationConfig? _normalNotificationConfig;
+
+  /// Constructor
+  MethodChannelZegoCallPlugin() {
+    _setupMethodCallHandler();
+  }
+
+  /// Setup unified method call handler to handle all callbacks
+  void _setupMethodCallHandler() {
+    methodChannel.setMethodCallHandler((call) async {
+      ZegoLoggerService.logInfo(
+        'MethodCallHandler, method:${call.method}, arguments:${call.arguments}.',
+        tag: 'call-channel',
+        subTag: 'handler',
+      );
+
+      switch (call.method) {
+        case kCallNotificationAccepted:
+          _callNotificationConfig?.acceptCallback?.call();
+          _callNotificationConfig = null;
+          break;
+        case kCallNotificationRejected:
+          _callNotificationConfig?.rejectCallback?.call();
+          _callNotificationConfig = null;
+          break;
+        case kCallNotificationCancelled:
+          _callNotificationConfig?.cancelCallback?.call();
+          _callNotificationConfig = null;
+          break;
+        case kCallNotificationClicked:
+          _callNotificationConfig?.clickCallback?.call();
+          _callNotificationConfig = null;
+          break;
+        case kNormalNotificationClicked:
+          final notificationID = call.arguments['notification_id'] ?? -1;
+          _normalNotificationConfig?.clickCallback?.call(notificationID);
+          _normalNotificationConfig = null;
+          break;
+        case kAudioRouteChanged:
+          final info = call.arguments as Map<dynamic, dynamic>;
+          _audioRouteChangedCallback?.call(info);
+          break;
+        default:
+          ZegoLoggerService.logWarn(
+            'Unknown method: ${call.method}',
+            tag: 'call-channel',
+            subTag: 'handler',
+          );
+      }
+    });
+  }
+
   /// active audio by callkit
   /// only support ios
   @override
@@ -81,6 +143,9 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     );
 
     try {
+      // Store config for callback handling
+      _callNotificationConfig = config;
+
       await methodChannel.invokeMethod('showCallNotification', {
         'id': config.id.toString(),
         'sound_source': config.soundSource ?? '',
@@ -92,29 +157,6 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
         'reject_text': config.rejectButtonText,
         'vibrate': config.vibrate,
         'is_video': config.isVideo,
-      });
-
-      /// set buttons callback
-      methodChannel.setMethodCallHandler((call) async {
-        ZegoLoggerService.logInfo(
-          'MethodCallHandler, method:${call.method}, arguments:${call.arguments}.',
-          tag: 'call-channel',
-          subTag: 'showCallNotification',
-        );
-
-        switch (call.method) {
-          case kCallNotificationAccepted:
-            config.acceptCallback?.call();
-            break;
-          case kCallNotificationRejected:
-            config.rejectCallback?.call();
-            break;
-          case kCallNotificationCancelled:
-            config.cancelCallback?.call();
-            break;
-          case kCallNotificationClicked:
-            config.clickCallback?.call();
-        }
       });
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
@@ -137,6 +179,9 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     );
 
     try {
+      // Store config for callback handling
+      _normalNotificationConfig = config;
+
       Map<String, dynamic> parameters = {
         'id': config.id.toString(),
         'title': config.title,
@@ -153,22 +198,6 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
       }
 
       await methodChannel.invokeMethod('showNormalNotification', parameters);
-
-      /// set buttons callback
-      methodChannel.setMethodCallHandler((call) async {
-        ZegoLoggerService.logInfo(
-          'MethodCallHandler, method:${call.method}, arguments:${call.arguments}.',
-          tag: 'call-channel',
-          subTag: 'showNormalNotification',
-        );
-
-        switch (call.method) {
-          case kNormalNotificationClicked:
-            final notificationID = call.arguments['notification_id'] ?? -1;
-            config.clickCallback?.call(notificationID);
-            break;
-        }
-      });
     } on PlatformException catch (e) {
       ZegoLoggerService.logError(
         'Failed to add local IM notification: $e.',
@@ -277,5 +306,125 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
         subTag: 'dismissAllNotifications',
       );
     }
+  }
+
+  /// start monitoring audio route
+  /// only support android
+  @override
+  Future<void> startMonitoringAudioRoute() async {
+    if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'startMonitoringAudioRoute',
+      );
+
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'startMonitoringAudioRoute',
+      tag: 'call-channel',
+      subTag: 'startMonitoringAudioRoute',
+    );
+
+    try {
+      await methodChannel.invokeMethod('startMonitoringAudioRoute');
+    } on PlatformException catch (e) {
+      ZegoLoggerService.logError(
+        'Failed to start monitoring audio route: $e.',
+        tag: 'call-channel',
+        subTag: 'startMonitoringAudioRoute',
+      );
+    }
+  }
+
+  /// stop monitoring audio route
+  /// only support android
+  @override
+  Future<void> stopMonitoringAudioRoute() async {
+    if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'stopMonitoringAudioRoute',
+      );
+
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'stopMonitoringAudioRoute',
+      tag: 'call-channel',
+      subTag: 'stopMonitoringAudioRoute',
+    );
+
+    try {
+      await methodChannel.invokeMethod('stopMonitoringAudioRoute');
+      _audioRouteChangedCallback = null;
+    } on PlatformException catch (e) {
+      ZegoLoggerService.logError(
+        'Failed to stop monitoring audio route: $e.',
+        tag: 'call-channel',
+        subTag: 'stopMonitoringAudioRoute',
+      );
+    }
+  }
+
+  /// get audio route info
+  /// only support android
+  @override
+  Future<Map<dynamic, dynamic>> getAudioRouteInfo() async {
+    if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'getAudioRouteInfo',
+      );
+
+      return {};
+    }
+
+    ZegoLoggerService.logInfo(
+      'getAudioRouteInfo',
+      tag: 'call-channel',
+      subTag: 'getAudioRouteInfo',
+    );
+
+    try {
+      final result = await methodChannel.invokeMethod('getAudioRouteInfo');
+      return result as Map<dynamic, dynamic>;
+    } on PlatformException catch (e) {
+      ZegoLoggerService.logError(
+        'Failed to get audio route info: $e.',
+        tag: 'call-channel',
+        subTag: 'getAudioRouteInfo',
+      );
+      return {};
+    }
+  }
+
+  /// set audio route changed callback
+  /// only support android
+  @override
+  void setAudioRouteChangedCallback(
+      Function(Map<dynamic, dynamic> info)? callback) {
+    if (Platform.isIOS) {
+      ZegoLoggerService.logInfo(
+        'not support in iOS',
+        tag: 'call-channel',
+        subTag: 'setAudioRouteChangedCallback',
+      );
+
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'setAudioRouteChangedCallback, callback: ${callback != null}',
+      tag: 'call-channel',
+      subTag: 'setAudioRouteChangedCallback',
+    );
+
+    _audioRouteChangedCallback = callback;
   }
 }

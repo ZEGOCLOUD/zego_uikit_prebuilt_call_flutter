@@ -7,13 +7,13 @@ import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:vibration/vibration.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
-// Flutter imports:
+// Project imports:
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 
 /// Audio context type enumeration
 enum AudioContextType {
@@ -51,6 +51,9 @@ class ZegoRingtone {
   /// Current audio context type used by the audio player
   AudioContextType _currentAudioContextType = AudioContextType.unknown;
 
+  /// Flag to track if audio route monitoring is enabled
+  bool _isAudioRouteMonitoringEnabled = false;
+
   /// Get the current audio context type used by the audio player
   AudioContextType get currentAudioContextType => _currentAudioContextType;
 
@@ -79,37 +82,49 @@ class ZegoRingtone {
         android: const AudioContextAndroid(
           isSpeakerphoneOn: true,
           stayAwake: true,
-          contentType: AndroidContentType.unknown,
-          usageType: AndroidUsageType.notificationRingtone,
+
+          /// Use speech content type and voiceCommunication usage to prevent
+          /// Android AudioPolicyManager from automatically switching audio route
+          /// from earpiece to speaker during ringtone playback loop.
+          /// This ensures the audio stays on the selected output device (speaker/earpiece).
+          contentType: AndroidContentType.speech,
+          usageType: AndroidUsageType.voiceCommunication,
           audioFocus: AndroidAudioFocus.gain,
+
+          /// Use inCommunication mode to match voice call scenario,
+          /// which properly supports both speaker and earpiece routing
+          audioMode: AndroidAudioMode.inCommunication,
         ),
       );
 
   AudioContext get earpieceAudioContextConfig {
-    if (Platform.isIOS) {
-      // For iOS, explicitly use playAndRecord category to support earpiece routing
-      // This prevents audioplayers from using Ambient category which only supports speaker
-      return AudioContext(
-        iOS: AudioContextIOS(
-          category: AVAudioSessionCategory.playAndRecord,
-          options: const {
-            AVAudioSessionOptions.mixWithOthers,
-          },
-        ),
-        android: const AudioContextAndroid(
-          isSpeakerphoneOn: false,
-          stayAwake: true,
-          contentType: AndroidContentType.unknown,
-          usageType: AndroidUsageType.notificationRingtone,
-          audioFocus: AndroidAudioFocus.gain,
-        ),
-      );
-    }
+    /// For iOS, explicitly use playAndRecord category to support earpiece routing
+    /// This prevents audioplayers from using Ambient category which only supports speaker
+    /// For Android, use speech + voiceCommunication to prevent AudioPolicyManager
+    /// from auto-switching back to speaker during ringtone loop playback
+    return AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playAndRecord,
+        options: const {
+          AVAudioSessionOptions.mixWithOthers,
+        },
+      ),
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: false,
+        stayAwake: true,
 
-    return AudioContextConfig(
-      route: AudioContextConfigRoute.earpiece,
-      respectSilence: true,
-    ).build();
+        /// CRITICAL: Use speech + voiceCommunication to keep audio on earpiece
+        /// Without this, Android AudioPolicyManager will automatically switch
+        /// audio route from earpiece to speaker after ~10 seconds during loop playback
+        contentType: AndroidContentType.speech,
+        usageType: AndroidUsageType.voiceCommunication,
+        audioFocus: AndroidAudioFocus.gain,
+
+        /// Use inCommunication mode to match voice call scenario,
+        /// which properly supports both speaker and earpiece routing
+        audioMode: AndroidAudioMode.inCommunication,
+      ),
+    );
   }
 
   AudioContext get speakerAudioContextConfig {
@@ -150,6 +165,7 @@ class ZegoRingtone {
 
   ZegoRingtone() {
     _initAudioPlayerListeners();
+    _initAudioRouteMonitoring();
   }
 
   void _initAudioPlayerListeners() {
@@ -215,6 +231,146 @@ class ZegoRingtone {
     _playerStateSubscription?.cancel();
     _playerCompleteSubscription?.cancel();
     audioPlayer.dispose();
+    _disableAudioRouteMonitoring();
+  }
+
+  /// Initialize audio route monitoring (Android only)
+  void _initAudioRouteMonitoring() {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    ZegoCallPluginPlatform.instance.setAudioRouteChangedCallback((info) {
+      _handleAudioRouteChanged(info);
+    });
+  }
+
+  /// Handle audio route changed event from native Android
+  void _handleAudioRouteChanged(Map<dynamic, dynamic> info) {
+    final event = info['event'] ?? 'unknown';
+    final isSpeakerphoneOn = info['isSpeakerphoneOn'] ?? false;
+    final isBluetoothScoOn = info['isBluetoothScoOn'] ?? false;
+    final isWiredHeadsetOn = info['isWiredHeadsetOn'] ?? false;
+    final mode = info['mode'] ?? -1;
+
+    ZegoLoggerService.logInfo(
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+      '🔊 Android 音频路由变化\n'
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+      '事件: $event\n'
+      '扬声器: ${isSpeakerphoneOn ? '✅ 开启' : '❌ 关闭'}\n'
+      '蓝牙: ${isBluetoothScoOn ? '✅ 开启' : '❌ 关闭'}\n'
+      '有线耳机: ${isWiredHeadsetOn ? '✅ 连接' : '❌ 未连接'}\n'
+      '模式: ${_getAndroidAudioModeName(mode)}\n'
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      tag: 'call-invitation',
+      subTag: 'ringtone-android-route',
+    );
+
+    if (info.containsKey('devices')) {
+      final devices = info['devices'] as List;
+      final deviceInfo = StringBuffer('可用设备 (${devices.length}个):\n');
+      for (var device in devices) {
+        deviceInfo.write('  📱 ${device['type']} (ID: ${device['id']})\n');
+      }
+      ZegoLoggerService.logInfo(
+        deviceInfo.toString(),
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    }
+  }
+
+  /// Get Android audio mode name for debugging
+  String _getAndroidAudioModeName(int mode) {
+    switch (mode) {
+      case 0:
+        return 'NORMAL (正常)';
+      case 1:
+        return 'RINGTONE (铃声)';
+      case 2:
+        return 'IN_CALL (通话中)';
+      case 3:
+        return 'IN_COMMUNICATION (通信)';
+      default:
+        return 'UNKNOWN ($mode)';
+    }
+  }
+
+  /// Enable audio route monitoring (Android only)
+  Future<void> _enableAudioRouteMonitoring() async {
+    if (!Platform.isAndroid || _isAudioRouteMonitoringEnabled) {
+      return;
+    }
+
+    try {
+      await ZegoCallPluginPlatform.instance.startMonitoringAudioRoute();
+      _isAudioRouteMonitoringEnabled = true;
+      ZegoLoggerService.logInfo(
+        '✅ Android 音频路由监听已启动',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+
+      // Get initial audio route info
+      final info = await ZegoCallPluginPlatform.instance.getAudioRouteInfo();
+      ZegoLoggerService.logInfo(
+        '📊 初始音频路由状态: $info',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    } catch (e) {
+      ZegoLoggerService.logError(
+        '❌ 启动 Android 音频路由监听失败: $e',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    }
+  }
+
+  /// Disable audio route monitoring (Android only)
+  Future<void> _disableAudioRouteMonitoring() async {
+    if (!Platform.isAndroid || !_isAudioRouteMonitoringEnabled) {
+      return;
+    }
+
+    try {
+      await ZegoCallPluginPlatform.instance.stopMonitoringAudioRoute();
+      _isAudioRouteMonitoringEnabled = false;
+      ZegoLoggerService.logInfo(
+        '⏹️ Android 音频路由监听已停止',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    } catch (e) {
+      ZegoLoggerService.logError(
+        '❌ 停止 Android 音频路由监听失败: $e',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    }
+  }
+
+  /// Get current audio route info (Android only, for debugging)
+  Future<void> _logCurrentAudioRouteInfo(String context) async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    try {
+      final info = await ZegoCallPluginPlatform.instance.getAudioRouteInfo();
+      ZegoLoggerService.logInfo(
+        '📊 [$context] 当前音频路由: $info',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    } catch (e) {
+      ZegoLoggerService.logError(
+        '❌ 获取音频路由信息失败: $e',
+        tag: 'call-invitation',
+        subTag: 'ringtone-android-route',
+      );
+    }
   }
 
   /// Set audio player's audio context and record state with retry mechanism
@@ -472,6 +628,9 @@ class ZegoRingtone {
 
     isRingTimerRunning = true;
 
+    // Enable audio route monitoring for Android
+    await _enableAudioRouteMonitoring();
+
     ZegoLoggerService.logInfo(
       '(${identityHashCode(this)}) '
       'start ring, '
@@ -589,6 +748,9 @@ class ZegoRingtone {
   }
 
   Future<void> stopRing() async {
+    // Log current audio route info before stopping (Android only)
+    await _logCurrentAudioRouteInfo('stopRing');
+
     ZegoLoggerService.logInfo(
       '(${identityHashCode(this)}) '
       'stop ring, '
@@ -597,6 +759,9 @@ class ZegoRingtone {
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
+
+    // Disable audio route monitoring for Android
+    await _disableAudioRouteMonitoring();
 
     // Return directly if no ringtone or ringtone player is started
     if (!isRingTimerRunning && !isRingtoneRunning) {
@@ -652,6 +817,9 @@ class ZegoRingtone {
   }
 
   Future<void> switchTo({bool isSpeaker = true}) async {
+    // Log current audio route info before switching (Android only)
+    await _logCurrentAudioRouteInfo('switchTo - BEFORE');
+
     ZegoLoggerService.logInfo(
       'switch to ${isSpeaker ? 'speaker' : 'earpiece'}, update context',
       tag: 'call-invitation',
@@ -691,6 +859,9 @@ class ZegoRingtone {
           );
 
           await _playWithRetry(maxRetries: 3, waitForReady: true);
+
+          // Log audio route info after switching (Android only)
+          await _logCurrentAudioRouteInfo('switchTo - AFTER');
         });
       } catch (error) {
         if (error is AudioContextSwitchException) {
@@ -716,6 +887,9 @@ class ZegoRingtone {
     } else {
       await _setGlobalAudioContext(targetContext, targetType);
     }
+
+    // Log audio route info after switching (Android only)
+    await _logCurrentAudioRouteInfo('switchTo - AFTER (final)');
   }
 
   /// Recover from playback errors by restarting the ring
