@@ -71,7 +71,7 @@ class ZegoRingtone {
   AudioContext get defaultAudioContext => AudioContext(
         iOS: AudioContextIOS(
           /// not silenced
-          category: AVAudioSessionCategory.playback,
+          category: AVAudioSessionCategory.playAndRecord,
           options: const {
             AVAudioSessionOptions.mixWithOthers,
           },
@@ -85,10 +85,32 @@ class ZegoRingtone {
         ),
       );
 
-  AudioContext get earpieceAudioContextConfig => AudioContextConfig(
-        route: AudioContextConfigRoute.earpiece,
-        respectSilence: true,
-      ).build();
+  AudioContext get earpieceAudioContextConfig {
+    if (Platform.isIOS) {
+      // For iOS, explicitly use playAndRecord category to support earpiece routing
+      // This prevents audioplayers from using Ambient category which only supports speaker
+      return AudioContext(
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playAndRecord,
+          options: const {
+            AVAudioSessionOptions.mixWithOthers,
+          },
+        ),
+        android: const AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          stayAwake: true,
+          contentType: AndroidContentType.unknown,
+          usageType: AndroidUsageType.notificationRingtone,
+          audioFocus: AndroidAudioFocus.gain,
+        ),
+      );
+    }
+
+    return AudioContextConfig(
+      route: AudioContextConfigRoute.earpiece,
+      respectSilence: true,
+    ).build();
+  }
 
   AudioContext get speakerAudioContextConfig {
     if (Platform.isAndroid) {
