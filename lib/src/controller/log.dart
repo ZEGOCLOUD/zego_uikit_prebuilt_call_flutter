@@ -1,0 +1,46 @@
+part of 'package:zego_uikit_prebuilt_call/src/controller.dart';
+
+mixin ZegoCallControllerLog {
+  final _logImpl = ZegoCallControllerLogImpl();
+
+  ZegoCallControllerLogImpl get log => _logImpl;
+}
+
+/// Here are the APIs related to user
+class ZegoCallControllerLogImpl {
+  /// export logs
+  ///
+  /// [title] export title, defaults to current timestamp
+  /// [content] export content description
+  /// [fileName] Zip file name (without extension), defaults to current timestamp
+  /// [fileTypes] List of file types to collect, defaults to [ZegoLogExporterFileType.txt, ZegoLogExporterFileType.log, ZegoLogExporterFileType.zip]
+  /// [directories] List of directory types to collect, defaults to 5 log directories
+  /// [onProgress] Optional progress callback, returns number of processed files
+  Future<bool> exportLogs({
+    String? title,
+    String? content,
+    String? fileName,
+    List<ZegoLogExporterFileType> fileTypes = const [
+      ZegoLogExporterFileType.txt,
+      ZegoLogExporterFileType.log,
+      ZegoLogExporterFileType.zip
+    ],
+    List<ZegoLogExporterDirectoryType> directories = const [
+      ZegoLogExporterDirectoryType.zegoUIKits,
+      ZegoLogExporterDirectoryType.zimAudioLog,
+      ZegoLogExporterDirectoryType.zimLogs,
+      ZegoLogExporterDirectoryType.zefLogs,
+      ZegoLogExporterDirectoryType.zegoLogs,
+    ],
+    void Function(int processedFiles)? onProgress,
+  }) async {
+    return ZegoUIKit().exportLogs(
+      title: title,
+      content: content,
+      fileName: fileName,
+      fileTypes: fileTypes,
+      directories: directories,
+      onProgress: onProgress,
+    );
+  }
+}
