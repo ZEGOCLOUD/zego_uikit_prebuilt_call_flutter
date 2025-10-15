@@ -49,7 +49,9 @@ class ZegoInviteeCallingBottomToolBarState
   double get buttonSize => 120.zR;
 
   bool get canDisplayFirstRowButtons =>
-      widget.invitationType == ZegoCallInvitationType.videoCall;
+      (widget.uiConfig.microphoneButton?.visible ?? false) ||
+      (widget.uiConfig.cameraButton?.visible ?? false) ||
+      (widget.uiConfig.speakerButton?.visible ?? false);
 
   TextStyle get buttonTextStyle => TextStyle(
         color: Colors.white,
@@ -98,28 +100,58 @@ class ZegoInviteeCallingBottomToolBarState
                           );
                         },
                       ),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: ZegoUIKit().getLocalUser().camera,
-                        builder: (context, isCameraOn, _) {
+                      ValueListenableBuilder<ZegoUIKitAudioRoute>(
+                        /// listen local audio output route changes
+                        valueListenable: ZegoUIKit()
+                            .getAudioOutputDeviceNotifier(
+                                ZegoUIKit().getLocalUser().id),
+                        builder: (context, audioRoute, _) {
+                          final isSpeakerOn =
+                              audioRoute == ZegoUIKitAudioRoute.speaker;
+
                           return buttonWrapper(
-                            child: cameraButton(),
+                            child: speakerButton(),
                             textStyle: subButtonTextStyle,
                             label: widget.uiConfig.showSubButtonsText
-                                ? isCameraOn
+                                ? isSpeakerOn
                                     ? widget
                                         .pageManager
                                         .callInvitationData
                                         .innerText
-                                        .callingToolbarCameraOnButtonText
+                                        .callingToolbarSpeakerOnButtonText
                                     : widget
                                         .pageManager
                                         .callInvitationData
                                         .innerText
-                                        .callingToolbarCameraOffButtonText
+                                        .callingToolbarSpeakerOffButtonText
                                 : null,
                           );
                         },
                       ),
+                      if (widget.invitationType ==
+                          ZegoCallInvitationType.videoCall)
+                        ValueListenableBuilder<bool>(
+                          valueListenable: ZegoUIKit().getLocalUser().camera,
+                          builder: (context, isCameraOn, _) {
+                            return buttonWrapper(
+                              child: cameraButton(),
+                              textStyle: subButtonTextStyle,
+                              label: widget.uiConfig.showSubButtonsText
+                                  ? isCameraOn
+                                      ? widget
+                                          .pageManager
+                                          .callInvitationData
+                                          .innerText
+                                          .callingToolbarCameraOnButtonText
+                                      : widget
+                                          .pageManager
+                                          .callInvitationData
+                                          .innerText
+                                          .callingToolbarCameraOffButtonText
+                                  : null,
+                            );
+                          },
+                        ),
                     ],
                   ),
                   SizedBox(
@@ -280,10 +312,27 @@ class ZegoInviteeCallingBottomToolBarState
         ? ZegoToggleMicrophoneButton(
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
-            defaultOn: widget.uiConfig.defaultMicrophoneOn,
+            defaultOn:
+                widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining ??
+                    widget.uiConfig.defaultMicrophoneOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining =
                   isON;
+            },
+          )
+        : Container();
+  }
+
+  Widget speakerButton() {
+    return (widget.uiConfig.speakerButton?.visible ?? false)
+        ? ZegoSwitchAudioOutputButton(
+            buttonSize: Size(buttonSize, buttonSize),
+            iconSize: Size(buttonSize, buttonSize),
+            defaultUseSpeaker:
+                widget.pageManager.callingConfig.useSpeakerWhenJoining ??
+                    widget.uiConfig.defaultSpeakerOn,
+            onPressed: (bool isON) {
+              widget.pageManager.callingConfig.useSpeakerWhenJoining = isON;
             },
           )
         : Container();
@@ -299,7 +348,8 @@ class ZegoInviteeCallingBottomToolBarState
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultOn: widget.uiConfig.showVideoOnCalling
-                ? widget.uiConfig.defaultCameraOn
+                ? (widget.pageManager.callingConfig.turnOnCameraWhenJoining ??
+                    widget.uiConfig.defaultCameraOn)
                 : false,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnCameraWhenJoining = isON;
