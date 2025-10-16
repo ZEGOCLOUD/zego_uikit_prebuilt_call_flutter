@@ -1,4 +1,9 @@
 
+## 4.19.2
+
+- Bugs
+  - Fixed the issue where the ringtone would sound once after the call was ended while minimized
+
 ## 4.19.1
 
 - Features
