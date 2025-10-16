@@ -2047,6 +2047,14 @@ class ZegoCallInvitationPageManager {
         try {
           // Check if current page still exists to avoid duplicate pop
           final currentContext = callInvitationData.contextQuery!.call();
+          if (!currentContext.mounted) {
+            ZegoLoggerService.logInfo(
+              'context is not mounted, skip pop',
+              tag: 'call',
+              subTag: 'page manager, restore to idle, Navigator',
+            );
+            return;
+          }
           if (Navigator.canPop(currentContext)) {
             ZegoLoggerService.logInfo(
               'pop from restore to idle, ',

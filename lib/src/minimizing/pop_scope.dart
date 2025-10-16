@@ -10,11 +10,11 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 /// When minimizing, it is not allowed to directly return to the previous page, otherwise the page will be destroyed
 class ZegoUIKitPrebuiltCallMiniPopScope extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniPopScope({
-    Key? key,
+    super.key,
     required this.child,
     this.canPop = false,
     this.onPopInvoked,
-  }) : super(key: key);
+  });
 
   /// The widget below this widget in the tree.
   final Widget child;

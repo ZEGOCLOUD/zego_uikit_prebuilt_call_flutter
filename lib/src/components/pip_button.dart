@@ -11,14 +11,14 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 /// @nodoc
 class ZegoCallPIPButton extends StatefulWidget {
   const ZegoCallPIPButton({
-    Key? key,
+    super.key,
     this.afterClicked,
     this.icon,
     this.iconSize,
     this.buttonSize,
     this.aspectWidth = 9,
     this.aspectHeight = 16,
-  }) : super(key: key);
+  });
 
   final ButtonIcon? icon;
 

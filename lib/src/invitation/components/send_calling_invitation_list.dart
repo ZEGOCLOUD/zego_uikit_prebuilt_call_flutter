@@ -97,7 +97,7 @@ void showCallingInvitationListSheet(
 
 class ZegoSendCallingInvitationList extends StatefulWidget {
   const ZegoSendCallingInvitationList({
-    Key? key,
+    super.key,
     required this.waitingSelectUsers,
     required this.onPressed,
     this.selectedUsers = const [],
@@ -112,7 +112,7 @@ class ZegoSendCallingInvitationList extends StatefulWidget {
     this.popUpBackIcon,
     this.inviteButtonIcon,
     this.defaultChecked = true,
-  }) : super(key: key);
+  });
 
   final void Function(List<ZegoCallUser> selectedUsers) onPressed;
 

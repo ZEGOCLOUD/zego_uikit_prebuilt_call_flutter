@@ -49,7 +49,7 @@ class ZegoCallBottomMenuBar extends StatefulWidget {
   final ZegoCallPopUpManager popUpManager;
 
   const ZegoCallBottomMenuBar({
-    Key? key,
+    super.key,
     required this.config,
     required this.events,
     required this.defaultEndAction,
@@ -65,7 +65,7 @@ class ZegoCallBottomMenuBar extends StatefulWidget {
     this.height,
     this.borderRadius,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoCallBottomMenuBar> createState() => _ZegoCallBottomMenuBarState();

@@ -29,14 +29,14 @@ class ZegoCallingPage extends StatefulWidget {
   final VoidCallback onDispose;
 
   const ZegoCallingPage({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.callInvitationData,
     required this.inviter,
     required this.invitees,
     required this.onInitState,
     required this.onDispose,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoCallingPage> createState() => _ZegoCallingPageState();

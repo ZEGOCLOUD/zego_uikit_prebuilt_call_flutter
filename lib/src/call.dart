@@ -47,7 +47,7 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// {@category Migration_v4.x}
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
-    Key? key,
+    super.key,
     required this.appID,
     required this.callID,
     required this.userID,
@@ -58,7 +58,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     this.events,
     this.onDispose,
     this.plugins,
-  }) : super(key: key);
+  });
 
   /// You can create a project and obtain an appID from the [ZEGOCLOUD Admin Console](https://console.zegocloud.com).
   final int appID;

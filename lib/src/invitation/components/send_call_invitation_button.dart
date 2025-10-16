@@ -30,7 +30,7 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// If the call times out, the call will automatically hang up after the specified timeout period [timeoutSeconds] (in seconds).
 class ZegoSendCallInvitationButton extends StatefulWidget {
   const ZegoSendCallInvitationButton({
-    Key? key,
+    super.key,
     required this.invitees,
     required this.isVideoCall,
     this.callID,
@@ -57,7 +57,7 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.clickableBackgroundColor = Colors.transparent,
     this.unclickableBackgroundColor = Colors.transparent,
     this.networkLoadingConfig,
-  }) : super(key: key);
+  });
 
   /// The list of invitees to send the call invitation to.
   final List<ZegoUIKitUser> invitees;

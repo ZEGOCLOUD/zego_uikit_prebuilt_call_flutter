@@ -7,10 +7,10 @@ class ZegoCallDurationTimeBoard extends StatefulWidget {
   final double fontSize;
 
   const ZegoCallDurationTimeBoard({
-    Key? key,
+    super.key,
     required this.durationNotifier,
     this.fontSize = 15,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _ZegoCallDurationTimeBoardState();

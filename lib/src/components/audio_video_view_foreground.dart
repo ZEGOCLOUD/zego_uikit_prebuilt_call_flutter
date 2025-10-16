@@ -17,13 +17,13 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
   final bool showUserNameOnView;
 
   const ZegoCallAudioVideoForeground({
-    Key? key,
+    super.key,
     this.user,
     required this.size,
     this.showMicrophoneStateOnView = true,
     this.showCameraStateOnView = true,
     this.showUserNameOnView = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,13 +109,13 @@ class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
   final ZegoCallInvitationInnerText invitationInnerText;
 
   const ZegoWaitingCallAcceptAudioVideoForeground({
-    Key? key,
+    super.key,
     this.cancelData,
     this.user,
     required this.invitationID,
     required this.size,
     required this.invitationInnerText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

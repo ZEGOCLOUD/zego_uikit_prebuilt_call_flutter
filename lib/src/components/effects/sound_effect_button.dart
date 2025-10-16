@@ -26,7 +26,7 @@ class ZegoCallSoundEffectButton extends StatefulWidget {
   final ZegoCallAudioEffectConfig effectConfig;
 
   const ZegoCallSoundEffectButton({
-    Key? key,
+    super.key,
     required this.translationText,
     required this.rootNavigator,
     required this.voiceChangeEffect,
@@ -36,7 +36,7 @@ class ZegoCallSoundEffectButton extends StatefulWidget {
     this.iconSize,
     this.buttonSize,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoCallSoundEffectButton> createState() =>

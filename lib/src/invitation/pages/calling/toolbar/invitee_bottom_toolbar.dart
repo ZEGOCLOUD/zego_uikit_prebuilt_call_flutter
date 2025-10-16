@@ -28,14 +28,14 @@ class ZegoInviteeCallingBottomToolBar extends StatefulWidget {
   final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
   const ZegoInviteeCallingBottomToolBar({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.callInvitationData,
     required this.inviter,
     required this.invitationType,
     required this.uiConfig,
     this.networkLoadingConfig,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoInviteeCallingBottomToolBar> createState() {

@@ -16,7 +16,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 /// switch cameras
 class ZegoCallInRoomMessageButton extends StatefulWidget {
   const ZegoCallInRoomMessageButton({
-    Key? key,
+    super.key,
     required this.popUpManager,
     required this.viewVisibleNotifier,
     this.afterClicked,
@@ -26,7 +26,7 @@ class ZegoCallInRoomMessageButton extends StatefulWidget {
     this.avatarBuilder,
     this.itemBuilder,
     this.rootNavigator = false,
-  }) : super(key: key);
+  });
 
   final ButtonIcon? icon;
 

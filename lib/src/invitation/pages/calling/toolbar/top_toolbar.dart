@@ -19,12 +19,12 @@ class ZegoCallingTopToolBarButton extends StatelessWidget {
   final double? size;
 
   const ZegoCallingTopToolBarButton({
+    super.key,
     required this.iconURL,
     this.onTap,
     this.icon,
     this.size,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +41,11 @@ class ZegoCallingTopToolBarButton extends StatelessWidget {
 /// @nodoc
 class ZegoInviterCallingTopToolBar extends StatefulWidget {
   const ZegoInviterCallingTopToolBar({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.switchButtonConfig,
     required this.invitationType,
-  }) : super(key: key);
+  });
 
   final ZegoCallInvitationPageManager pageManager;
   final ZegoCallButtonUIConfig? switchButtonConfig;

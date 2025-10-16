@@ -10,13 +10,13 @@ import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 /// @nodoc
 class ZegoCallMemberListSheet extends StatefulWidget {
   const ZegoCallMemberListSheet({
-    Key? key,
+    super.key,
     this.showMicrophoneState = true,
     this.showCameraState = true,
     this.itemBuilder,
     this.avatarBuilder,
     this.rootNavigator = false,
-  }) : super(key: key);
+  });
 
   final bool showMicrophoneState;
   final bool showCameraState;

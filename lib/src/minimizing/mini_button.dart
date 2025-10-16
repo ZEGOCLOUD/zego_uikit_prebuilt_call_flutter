@@ -14,7 +14,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 /// @nodoc
 class ZegoCallMinimizingButton extends StatefulWidget {
   const ZegoCallMinimizingButton({
-    Key? key,
+    super.key,
     this.afterClicked,
     this.icon,
     this.iconSize,
@@ -28,7 +28,7 @@ class ZegoCallMinimizingButton extends StatefulWidget {
     this.pageManager,
     this.callInvitationData,
     this.customData,
-  }) : super(key: key);
+  });
 
   final bool rootNavigator;
 

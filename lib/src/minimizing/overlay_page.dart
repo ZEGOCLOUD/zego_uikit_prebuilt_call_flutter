@@ -86,7 +86,7 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// ```
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
-    Key? key,
+    super.key,
     required this.contextQuery,
     this.rootNavigator = true,
     this.navigatorWithSafeArea = true,
@@ -105,7 +105,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
-  }) : super(key: key);
+  });
 
   final Size? size;
   final double padding;
@@ -327,10 +327,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
         newState == ZegoCallMiniOverlayPageState.inCallMinimized ||
             newState == ZegoCallMiniOverlayPageState.invitingMinimized;
 
-    // Add debug log
-    print(
-        'ZegoCallMiniOverlayPage: syncState - currentState: $currentState -> $newState, visibility: $visibility -> $newVisibility');
-
     setState(() {
       currentState = newState;
       // Fix: inviting minimized state should also show overlay
@@ -339,10 +335,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
-    // Add debug log
-    print(
-        'ZegoCallMiniOverlayPage: onMiniOverlayMachineStateChanged - state: $state');
-
     /// Overlay and setState may be in different contexts, causing the framework to be unable to update.
     ///
     /// The purpose of Future.delayed(Duration.zero, callback) is to execute the callback function in the next frame,

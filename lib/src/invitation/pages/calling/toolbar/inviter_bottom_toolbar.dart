@@ -22,13 +22,13 @@ class ZegoInviterCallingBottomToolBar extends StatefulWidget {
   final List<ZegoUIKitUser> invitees;
 
   const ZegoInviterCallingBottomToolBar({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.uiConfig,
     required this.invitationType,
     required this.invitees,
     this.networkLoadingConfig,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoInviterCallingBottomToolBar> createState() =>
