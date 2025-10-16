@@ -392,8 +392,11 @@ class ZegoCallInvitationInviterUIConfig {
         'cancelButton:$cancelButton, '
         'cameraButton:$cameraButton, '
         'cameraSwitchButton:$cameraSwitchButton, '
+        'defaultCameraOn:$defaultCameraOn, '
         'microphoneButton:$microphoneButton, '
+        'defaultMicrophoneOn:$defaultMicrophoneOn, '
         'speakerButton:$speakerButton, '
+        'defaultSpeakerOn:$defaultSpeakerOn, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
         'minimized:$minimized, '
@@ -413,6 +416,7 @@ class ZegoCallInvitationInviteeUIConfig {
     this.showVideoOnCalling = true,
     this.defaultMicrophoneOn = true,
     this.defaultCameraOn = true,
+    this.defaultSpeakerOn = false,
     this.showMainButtonsText = false,
     this.showSubButtonsText = true,
     this.spacingBetweenAvatarAndName,
@@ -422,6 +426,7 @@ class ZegoCallInvitationInviteeUIConfig {
     ZegoCallButtonUIConfig? cameraButton,
     ZegoCallButtonUIConfig? cameraSwitchButton,
     ZegoCallButtonUIConfig? microphoneButton,
+    ZegoCallButtonUIConfig? speakerButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
     ZegoCallInvitationInviteeMinimizedUIConfig? minimized,
   })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
@@ -429,6 +434,7 @@ class ZegoCallInvitationInviteeUIConfig {
         cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
         cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
         microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
+        speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
         popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
         minimized = minimized ?? ZegoCallInvitationInviteeMinimizedUIConfig();
 
@@ -466,6 +472,13 @@ class ZegoCallInvitationInviteeUIConfig {
 
   /// camera switch button
   ZegoCallButtonUIConfig? cameraSwitchButton;
+
+  /// speaker button
+  ZegoCallButtonUIConfig? speakerButton;
+
+  /// Whether to open the speaker when on calling
+  /// default value is false
+  bool defaultSpeakerOn;
 
   /// show avatar or not
   /// default value is true
@@ -525,7 +538,11 @@ class ZegoCallInvitationInviteeUIConfig {
         'declineButton:$declineButton, '
         'cameraButton:$cameraButton, '
         'cameraSwitchButton:$cameraSwitchButton, '
+        'defaultCameraOn:$defaultCameraOn, '
         'microphoneButton:$microphoneButton, '
+        'defaultMicrophoneOn:$defaultMicrophoneOn, '
+        'speakerButton:$speakerButton, '
+        'defaultSpeakerOn:$defaultSpeakerOn, '
         'showVideoOnCalling:$showVideoOnCalling, '
         'spacingBetweenAvatarAndName:$spacingBetweenAvatarAndName, '
         'spacingBetweenNameAndCallingText:$spacingBetweenNameAndCallingText, '
