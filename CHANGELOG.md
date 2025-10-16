@@ -1,3 +1,9 @@
+
+## 4.19.1
+
+- Features
+  - Support export log by `ZegoUIKitPrebuiltLiveStreamingController().log.export()`
+
 ## 4.19.0
 
 - Update environment
