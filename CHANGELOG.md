@@ -1,38 +1,43 @@
 
+## 4.19.2
+
+- Bugs
+  - Fixed the issue where the ringtone would sound once after the call was ended while minimized
+
 ## 4.19.1
 
 - Features
   - Support export log by `ZegoUIKitPrebuiltLiveStreamingController().log.export()`
   
 - Bugs
- - Fixed the button synchronization issue on the call invitation interface and the failure issue of earpiece/speaker switching
+  - Fixed the button synchronization issue on the call invitation interface and the failure issue of earpiece/speaker switching
 
 ## 4.19.0
 
 - Update environment
 
 - Features
- - Supports minimizing during an invitation, and can support customizing the UI configuration using `ZegoCallInvitationInviterMinimizedUIConfig` as follows 
-    ``` dart
-    await ZegoUIKitPrebuiltCallInvitationService().init(
-      ...
-      uiConfig: ZegoCallInvitationUIConfig(
-        inviter: ZegoCallInvitationInviteeUIConfig(
-          minimized: ZegoCallInvitationInviterMinimizedUIConfig(
-            cancelButton: ZegoCallButtonUIConfig(visible: true),
-            showTips: true,
-          ),
-        ),
-        invitee: ZegoCallInvitationInviteeUIConfig(
-          minimized: ZegoCallInvitationInviteeMinimizedUIConfig(
-            acceptButton: ZegoCallButtonUIConfig(visible: true),
-            declineButton: ZegoCallButtonUIConfig(visible: true),
-            showTips: true,
-          ),
-        ),
-      ),
-    );
-    ```
+  - Supports minimizing during an invitation, and can support customizing the UI configuration using `ZegoCallInvitationInviterMinimizedUIConfig` as follows 
+     ``` dart
+     await ZegoUIKitPrebuiltCallInvitationService().init(
+       ...
+       uiConfig: ZegoCallInvitationUIConfig(
+         inviter: ZegoCallInvitationInviteeUIConfig(
+           minimized: ZegoCallInvitationInviterMinimizedUIConfig(
+             cancelButton: ZegoCallButtonUIConfig(visible: true),
+             showTips: true,
+           ),
+         ),
+         invitee: ZegoCallInvitationInviteeUIConfig(
+           minimized: ZegoCallInvitationInviteeMinimizedUIConfig(
+             acceptButton: ZegoCallButtonUIConfig(visible: true),
+             declineButton: ZegoCallButtonUIConfig(visible: true),
+             showTips: true,
+           ),
+         ),
+       ),
+     );
+     ```
 
 ## 4.18.4
 

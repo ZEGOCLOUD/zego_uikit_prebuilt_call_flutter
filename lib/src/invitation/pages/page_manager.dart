@@ -1952,6 +1952,13 @@ class ZegoCallInvitationPageManager {
 
     isCurrentInvitationFromAcceptedAndroidOffline = false;
 
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state) {
+      _invitationData = ZegoCallInvitationData.empty();
+    }
+
     callingConfig.reset();
 
     _localSendTimeoutGuard?.cancel();
@@ -2016,13 +2023,6 @@ class ZegoCallInvitationPageManager {
 
       // clear minimize data
       ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
-    }
-
-    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state &&
-        ZegoCallMiniOverlayPageState.invitingMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state) {
-      _invitationData = ZegoCallInvitationData.empty();
     }
 
     if (needHideInvitationTopSheet) {
