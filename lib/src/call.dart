@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:floating/floating.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:proximity_sensor/proximity_sensor.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -135,6 +137,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   var durationNotifier = ValueNotifier<Duration>(Duration.zero);
 
   final popUpManager = ZegoCallPopUpManager();
+
+  // Proximity sensor related variables
+  bool _isProximitySensorEnabled = false;
+  StreamSubscription? _proximitySubscription;
+  double _originalBrightness = 1.0;
+  var _isScreenBlockedNotifier = ValueNotifier<bool>(false);
 
   Map<String, bool> requiredUsersEnteredStatus = {};
 
@@ -304,12 +312,21 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         .localInvitingUsersNotifier
         .addListener(onLocalInvitingUsersUpdated);
 
+    /// listen audio route changed
+    onAudioRouteChanged();
+    ZegoUIKit().getLocalUser().audioRoute.addListener(onAudioRouteChanged);
+
     checkRequiredParticipant();
   }
 
   @override
   void dispose() {
     super.dispose();
+
+    // Clean up proximity sensor resources
+    _enableProximitySensor(false);
+    _proximitySubscription?.cancel();
+    _isScreenBlockedNotifier.dispose();
 
     _eventListener?.uninit();
 
@@ -324,6 +341,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         .private
         .localInvitingUsersNotifier
         .removeListener(onLocalInvitingUsersUpdated);
+
+    /// listen audio route changed
+    ZegoUIKit().getLocalUser().audioRoute.removeListener(onAudioRouteChanged);
 
     durationTimer?.cancel();
 
@@ -489,6 +509,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                         else
                           Container(),
                         foreground(context, constraints.maxHeight),
+                        // Screen blocking overlay
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _isScreenBlockedNotifier,
+                          builder: (context, isBlocked, child) {
+                            return isBlocked
+                                ? _buildScreenBlockOverlay()
+                                : Container();
+                          },
+                        ),
                       ],
                     ),
                   );
@@ -834,6 +863,102 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
   }
 
+  void onAudioRouteChanged() {
+    ZegoLoggerService.logInfo(
+      'onAudioRouteChanged',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
+    final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
+    final isEarpiece = currentAudioRoute == ZegoUIKitAudioRoute.receiver;
+
+    ZegoLoggerService.logInfo(
+      'audio route changed: speaker=$isSpeaker, earpiece=$isEarpiece',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    // 根据音频路由控制接近传感器
+    if (isEarpiece && widget.config.enableAccidentalTouchPrevention) {
+      _enableProximitySensor(true); // 听筒模式，启用接近传感器
+    } else {
+      _enableProximitySensor(false); // 非听筒模式或功能被禁用，禁用接近传感器
+    }
+  }
+
+  /// 启用或禁用接近传感器
+  void _enableProximitySensor(bool enable) {
+    if (enable && !_isProximitySensorEnabled) {
+      ZegoLoggerService.logInfo(
+        'enabling proximity sensor for earpiece mode',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      // 保存当前屏幕亮度
+      ScreenBrightness().current.then((brightness) {
+        _originalBrightness = brightness;
+      });
+
+      // 启用接近传感器
+      _proximitySubscription = ProximitySensor.events.listen((int event) {
+        if (event > 0) {
+          // 物体靠近，关闭屏幕并屏蔽触摸
+          ZegoLoggerService.logInfo(
+            'proximity detected, turning off screen and blocking touch',
+            tag: 'call',
+            subTag: 'prebuilt',
+          );
+          _blockScreenInteraction();
+        } else {
+          // 物体远离，恢复屏幕亮度和触摸
+          ZegoLoggerService.logInfo(
+            'proximity cleared, restoring screen brightness and touch',
+            tag: 'call',
+            subTag: 'prebuilt',
+          );
+          _restoreScreenInteraction();
+        }
+      });
+      _isProximitySensorEnabled = true;
+    } else if (!enable && _isProximitySensorEnabled) {
+      ZegoLoggerService.logInfo(
+        'disabling proximity sensor',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
+      // 禁用接近传感器
+      _proximitySubscription?.cancel();
+      _proximitySubscription = null;
+      _isProximitySensorEnabled = false;
+
+      // 恢复屏幕亮度
+      ScreenBrightness().setScreenBrightness(_originalBrightness);
+      _restoreScreenInteraction();
+    }
+  }
+
+  /// Block screen interaction (black screen + disable touch)
+  void _blockScreenInteraction() {
+    if (!_isScreenBlockedNotifier.value) {
+      _isScreenBlockedNotifier.value = true;
+      // Turn off screen brightness
+      ScreenBrightness().setScreenBrightness(0.0);
+    }
+  }
+
+  /// Restore screen interaction (restore brightness + enable touch)
+  void _restoreScreenInteraction() {
+    if (_isScreenBlockedNotifier.value) {
+      _isScreenBlockedNotifier.value = false;
+      // Restore screen brightness
+      ScreenBrightness().setScreenBrightness(_originalBrightness);
+    }
+  }
+
   void onUserLeave(List<ZegoUIKitUser> users) {
     if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
       return;
@@ -871,6 +996,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
+        // If screen is blocked, don't respond to any touch
+        if (_isScreenBlockedNotifier.value) {
+          ZegoLoggerService.logInfo(
+            'touch blocked due to proximity sensor',
+            tag: 'call',
+            subTag: 'prebuilt',
+          );
+          return;
+        }
+
         /// listen only click event in empty space
         if (widget.config.bottomMenuBar.hideByClick) {
           barVisibilityNotifier.value = !barVisibilityNotifier.value;
@@ -880,11 +1015,22 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ///  listen for all click events in current view, include the click
         ///  receivers(such as button...), but only listen
         onPointerDown: (e) {
+          // If screen is blocked, don't respond to any touch
+          if (_isScreenBlockedNotifier.value) {
+            ZegoLoggerService.logInfo(
+              'pointer down blocked due to proximity sensor',
+              tag: 'call',
+              subTag: 'prebuilt',
+            );
+            return;
+          }
+
           barRestartHideTimerNotifier.value =
               DateTime.now().millisecondsSinceEpoch;
         },
         child: AbsorbPointer(
-          absorbing: false,
+          absorbing: _isScreenBlockedNotifier
+              .value, // Decide whether to absorb touch based on screen blocking state
           child: child,
         ),
       ),
@@ -1234,6 +1380,44 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   Widget foreground(BuildContext context, double height) {
     return widget.config.foreground ?? Container();
+  }
+
+  /// Build screen blocking overlay
+  Widget _buildScreenBlockOverlay() {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.phone_in_talk,
+                size: 64.zR,
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+              SizedBox(height: 16.zR),
+              Text(
+                widget.config.translationText.screenBlockedTitle,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 18.zR,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 8.zR),
+              Text(
+                widget.config.translationText.screenBlockedSubtitle,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontSize: 14.zR,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void onMeRemovedFromRoom(String fromUserID) {
