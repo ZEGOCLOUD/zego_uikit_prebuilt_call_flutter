@@ -96,6 +96,12 @@ class ZegoUIKitPrebuiltCallInnerText {
   ///When screen sharing, stop sharing button on the sharing side
   String stopScreenSharingButtonText;
 
+  /// Text shown when screen is blocked due to proximity sensor
+  String screenBlockedTitle;
+
+  /// Text shown when screen is blocked due to proximity sensor
+  String screenBlockedSubtitle;
+
   ZegoUIKitPrebuiltCallInnerText({
     String? audioEffectTitle,
     String? audioEffectReverbTitle,
@@ -127,6 +133,8 @@ class ZegoUIKitPrebuiltCallInnerText {
     String? reverbTypeGramophoneTitle,
     String? screenSharingTipText,
     String? stopScreenSharingButtonText,
+    String? screenBlockedTitle,
+    String? screenBlockedSubtitle,
   })  : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
         audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',
         audioEffectVoiceChangingTitle =
@@ -162,5 +170,8 @@ class ZegoUIKitPrebuiltCallInnerText {
         reverbTypePopularTitle = reverbTypePopularTitle ?? 'Pop',
         reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone',
         screenSharingTipText = 'You are sharing screen',
-        stopScreenSharingButtonText = 'Stop sharing';
+        stopScreenSharingButtonText = 'Stop sharing',
+        screenBlockedTitle = screenBlockedTitle ?? 'Call in progress...',
+        screenBlockedSubtitle = screenBlockedSubtitle ??
+            'Move phone away from ear to restore operation';
 }

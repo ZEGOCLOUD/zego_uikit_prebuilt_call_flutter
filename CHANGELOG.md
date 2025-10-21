@@ -1,4 +1,26 @@
 
+## 4.20.0
+
+- Features
+  - Added accidental touch prevention during earpiece calls with `enableAccidentalTouchPrevention` configuration option in `ZegoUIKitPrebuiltCallConfig` (default: true)
+  
+- Configuration Requirements
+  - **Android Permissions Required:**
+    ```xml
+    <!-- Add to android/app/src/main/AndroidManifest.xml -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+    ```
+  - **Android NDK Version:**
+    ```gradle
+    // Add to android/app/build.gradle
+    android {
+        ndkVersion = "27.0.12077973"  // For Flutter 3.22.0+
+        // or
+        ndkVersion = "26.1.10909125"   // For Flutter 3.16.0+
+    }
+    ```
+
 ## 4.19.2
 
 - Bugs

@@ -56,6 +56,11 @@ class ZegoUIKitPrebuiltCallConfig {
   /// config about users.
   ZegoCallUserConfig user;
 
+  /// Whether to enable accidental touch prevention during earpiece calls.
+  /// When enabled, the screen will automatically dim and block touch when the phone is near the ear.
+  /// The default value is `true`.
+  bool enableAccidentalTouchPrevention;
+
   /// Whether to open the camera when joining the call.
   ///
   /// If you want to join the call with your camera closed, set this value to false;
@@ -209,6 +214,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.useSpeakerWhenJoining = false,
     this.rootNavigator = false,
     this.advanceConfigs = const {},
+    this.enableAccidentalTouchPrevention = true,
     ZegoUIKitVideoConfig? videoConfig,
     ZegoCallAudioVideoViewConfig? audioVideoViewConfig,
     ZegoCallTopMenuBarConfig? topMenuBarConfig,
@@ -264,6 +270,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
         'rootNavigator:$rootNavigator, '
         'advanceConfigs:$advanceConfigs, '
+        'enableAccidentalTouchPrevention:$enableAccidentalTouchPrevention, '
         'foreground:$foreground, '
         'background:$background, '
         'hangUpConfirmDialog:$hangUpConfirmDialog, '
