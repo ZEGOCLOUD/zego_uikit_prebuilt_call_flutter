@@ -1,3 +1,8 @@
+## 4.20.1
+
+- Bugs
+  - Fixed the issue where the state of the speaker button would be reset when it appears in the More menu
+  - Fixed the issue where the earpiece/speaker could still be switched while using headphones
 
 ## 4.20.0
 
