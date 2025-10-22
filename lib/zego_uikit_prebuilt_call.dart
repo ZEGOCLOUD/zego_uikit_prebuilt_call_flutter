@@ -1,4 +1,4 @@
-library zego_uikit_prebuilt_call;
+// library zego_uikit_prebuilt_call;
 
 export 'src/invitation/service.dart';
 export 'src/invitation/components/components.dart';
