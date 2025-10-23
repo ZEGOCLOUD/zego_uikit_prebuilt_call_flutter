@@ -142,7 +142,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   bool _isProximitySensorEnabled = false;
   StreamSubscription? _proximitySubscription;
   double _originalBrightness = 1.0;
-  var _isScreenBlockedNotifier = ValueNotifier<bool>(false);
+  var isScreenBlockedNotifier = ValueNotifier<bool>(false);
 
   Map<String, bool> requiredUsersEnteredStatus = {};
 
@@ -327,7 +327,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     // Clean up proximity sensor resources
     _enableProximitySensor(false);
     _proximitySubscription?.cancel();
-    _isScreenBlockedNotifier.dispose();
+    isScreenBlockedNotifier.dispose();
 
     _eventListener?.uninit();
 
@@ -512,7 +512,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                         foreground(context, constraints.maxHeight),
                         // Screen blocking overlay
                         ValueListenableBuilder<bool>(
-                          valueListenable: _isScreenBlockedNotifier,
+                          valueListenable: isScreenBlockedNotifier,
                           builder: (context, isBlocked, child) {
                             return isBlocked
                                 ? _buildScreenBlockOverlay()
@@ -943,8 +943,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   /// Block screen interaction (black screen + disable touch)
   void _blockScreenInteraction() {
-    if (!_isScreenBlockedNotifier.value) {
-      _isScreenBlockedNotifier.value = true;
+    if (!isScreenBlockedNotifier.value) {
+      isScreenBlockedNotifier.value = true;
       // Turn off screen brightness
       ScreenBrightness().setScreenBrightness(0.0);
     }
@@ -952,8 +952,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   /// Restore screen interaction (restore brightness + enable touch)
   void _restoreScreenInteraction() {
-    if (_isScreenBlockedNotifier.value) {
-      _isScreenBlockedNotifier.value = false;
+    if (isScreenBlockedNotifier.value) {
+      isScreenBlockedNotifier.value = false;
       // Restore screen brightness
       ScreenBrightness().setScreenBrightness(_originalBrightness);
     }
@@ -997,7 +997,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       behavior: HitTestBehavior.translucent,
       onTap: () {
         // If screen is blocked, don't respond to any touch
-        if (_isScreenBlockedNotifier.value) {
+        if (isScreenBlockedNotifier.value) {
           ZegoLoggerService.logInfo(
             'touch blocked due to proximity sensor',
             tag: 'call',
@@ -1016,7 +1016,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ///  receivers(such as button...), but only listen
         onPointerDown: (e) {
           // If screen is blocked, don't respond to any touch
-          if (_isScreenBlockedNotifier.value) {
+          if (isScreenBlockedNotifier.value) {
             ZegoLoggerService.logInfo(
               'pointer down blocked due to proximity sensor',
               tag: 'call',
@@ -1029,7 +1029,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               DateTime.now().millisecondsSinceEpoch;
         },
         child: AbsorbPointer(
-          absorbing: _isScreenBlockedNotifier
+          absorbing: isScreenBlockedNotifier
               .value, // Decide whether to absorb touch based on screen blocking state
           child: child,
         ),
