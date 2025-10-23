@@ -271,6 +271,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     userID = userID.trim();
 
     await ZegoUIKit().reporter().create(
+      userID: userID,
       appID: appID,
       signOrToken: appSign.isNotEmpty ? appSign : token,
       params: {
