@@ -9,21 +9,16 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/page/common.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/invitee_bottom_toolbar.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/toolbar/inviter_bottom_toolbar.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 
 /// Widget for minimized invitation interface
 class ZegoMinimizingCallingPage extends StatefulWidget {
   const ZegoMinimizingCallingPage({
-    Key? key,
+    super.key,
     required this.size,
     required this.invitationType,
     required this.inviter,
@@ -38,7 +33,7 @@ class ZegoMinimizingCallingPage extends StatefulWidget {
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
-  }) : super(key: key);
+  });
 
   final Size size;
   final ZegoCallInvitationType invitationType;

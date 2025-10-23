@@ -25,7 +25,7 @@ class ZegoCallSoundEffectSheet extends StatefulWidget {
   final ZegoCallAudioEffectConfig config;
 
   const ZegoCallSoundEffectSheet({
-    Key? key,
+    super.key,
     required this.translationText,
     required this.rootNavigator,
     required this.voiceChangerEffect,
@@ -33,7 +33,7 @@ class ZegoCallSoundEffectSheet extends StatefulWidget {
     required this.reverbEffect,
     required this.reverbSelectedIDNotifier,
     required this.config,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoCallSoundEffectSheet> createState() =>

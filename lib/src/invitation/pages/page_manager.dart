@@ -187,6 +187,11 @@ class ZegoCallInvitationPageManager {
   }
 
   bool get isInCall {
+    if (Platform.isIOS && _appInBackground && inCallingByIOSBackgroundLock) {
+      /// ios lock in call
+      return true;
+    }
+
     final pageState = callingMachine?.getPageState() ?? CallingState.kIdle;
 
     ZegoLoggerService.logInfo(
@@ -1947,6 +1952,13 @@ class ZegoCallInvitationPageManager {
 
     isCurrentInvitationFromAcceptedAndroidOffline = false;
 
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state) {
+      _invitationData = ZegoCallInvitationData.empty();
+    }
+
     callingConfig.reset();
 
     _localSendTimeoutGuard?.cancel();
@@ -1983,6 +1995,7 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager, restore to idle',
       );
 
+      inCallingByIOSBackgroundLock = false;
       await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       await clearAllCallKitCalls();
 
@@ -2012,13 +2025,6 @@ class ZegoCallInvitationPageManager {
       ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
     }
 
-    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state &&
-        ZegoCallMiniOverlayPageState.invitingMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state) {
-      _invitationData = ZegoCallInvitationData.empty();
-    }
-
     if (needHideInvitationTopSheet) {
       hideInvitationTopSheet();
     }
@@ -2041,6 +2047,14 @@ class ZegoCallInvitationPageManager {
         try {
           // Check if current page still exists to avoid duplicate pop
           final currentContext = callInvitationData.contextQuery!.call();
+          if (!currentContext.mounted) {
+            ZegoLoggerService.logInfo(
+              'context is not mounted, skip pop',
+              tag: 'call',
+              subTag: 'page manager, restore to idle, Navigator',
+            );
+            return;
+          }
           if (Navigator.canPop(currentContext)) {
             ZegoLoggerService.logInfo(
               'pop from restore to idle, ',

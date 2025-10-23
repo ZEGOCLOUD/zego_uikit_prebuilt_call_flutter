@@ -41,7 +41,7 @@ class ZegoEffectGridModel {
 /// @nodoc
 class ZegoEffectGrid extends StatefulWidget {
   const ZegoEffectGrid({
-    Key? key,
+    super.key,
     required this.model,
     required this.isSpaceEvenly,
     this.buttonSize,
@@ -52,7 +52,7 @@ class ZegoEffectGrid extends StatefulWidget {
     this.normalIconBorderColor,
     this.selectedTextStyle,
     this.normalTextStyle,
-  }) : super(key: key);
+  });
 
   final ZegoEffectGridModel model;
   final bool withBorderColor;

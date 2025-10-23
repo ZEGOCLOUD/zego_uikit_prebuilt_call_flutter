@@ -22,13 +22,13 @@ class ZegoInviterCallingBottomToolBar extends StatefulWidget {
   final List<ZegoUIKitUser> invitees;
 
   const ZegoInviterCallingBottomToolBar({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.uiConfig,
     required this.invitationType,
     required this.invitees,
     this.networkLoadingConfig,
-  }) : super(key: key);
+  });
 
   @override
   State<ZegoInviterCallingBottomToolBar> createState() =>
@@ -48,8 +48,8 @@ class _ZegoInviterCallingBottomToolBarState
       );
 
   bool get canDisplayFirstRowButtons =>
+      (widget.uiConfig.microphoneButton?.visible ?? false) ||
       (widget.uiConfig.cameraButton?.visible ?? false) ||
-      (widget.uiConfig.cameraSwitchButton?.visible ?? false) ||
       (widget.uiConfig.speakerButton?.visible ?? false);
 
   @override
@@ -157,7 +157,9 @@ class _ZegoInviterCallingBottomToolBarState
         ? ZegoToggleMicrophoneButton(
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
-            defaultOn: widget.uiConfig.defaultMicrophoneOn,
+            defaultOn:
+                widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining ??
+                    widget.uiConfig.defaultMicrophoneOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining =
                   isON;
@@ -175,7 +177,9 @@ class _ZegoInviterCallingBottomToolBarState
         ? ZegoToggleCameraButton(
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
-            defaultOn: widget.uiConfig.defaultCameraOn,
+            defaultOn:
+                widget.pageManager.callingConfig.turnOnCameraWhenJoining ??
+                    widget.uiConfig.defaultCameraOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnCameraWhenJoining = isON;
             },
@@ -188,7 +192,9 @@ class _ZegoInviterCallingBottomToolBarState
         ? ZegoSwitchAudioOutputButton(
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
-            defaultUseSpeaker: widget.uiConfig.defaultSpeakerOn,
+            defaultUseSpeaker:
+                widget.pageManager.callingConfig.useSpeakerWhenJoining ??
+                    widget.uiConfig.defaultSpeakerOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.useSpeakerWhenJoining = isON;
             },

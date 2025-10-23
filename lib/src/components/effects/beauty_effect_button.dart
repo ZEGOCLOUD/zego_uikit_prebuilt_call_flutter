@@ -9,12 +9,12 @@ import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
 class ZegoCallBeautyEffectButton extends StatefulWidget {
   const ZegoCallBeautyEffectButton({
-    Key? key,
+    super.key,
     this.iconSize,
     this.buttonSize,
     this.icon,
     required this.rootNavigator,
-  }) : super(key: key);
+  });
 
   final Size? iconSize;
   final Size? buttonSize;

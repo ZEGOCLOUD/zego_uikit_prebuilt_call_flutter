@@ -18,7 +18,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 /// @nodoc
 class ZegoCallingInviterView extends StatelessWidget {
   const ZegoCallingInviterView({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.callInvitationData,
     required this.inviter,
@@ -28,7 +28,7 @@ class ZegoCallingInviterView extends StatelessWidget {
     this.avatarBuilder,
     this.foregroundBuilder,
     this.backgroundBuilder,
-  }) : super(key: key);
+  });
 
   final ZegoCallInvitationPageManager pageManager;
   final ZegoUIKitPrebuiltCallInvitationData callInvitationData;

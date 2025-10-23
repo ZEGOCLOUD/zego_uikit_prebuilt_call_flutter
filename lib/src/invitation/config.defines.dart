@@ -164,14 +164,9 @@ class ZegoCallInvitationPermissions {
 
 class ZegoCallSystemConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
   ZegoCallSystemConfirmDialogInfo({
-    required String title,
-    String message = '',
-    String cancelButtonName = 'Deny',
-    String confirmButtonName = 'Allow',
-  }) : super(
-          title: title,
-          message: message,
-          cancelButtonName: cancelButtonName,
-          confirmButtonName: confirmButtonName,
-        );
+    required super.title,
+    super.message = '',
+    super.cancelButtonName = 'Deny',
+    super.confirmButtonName = 'Allow',
+  });
 }

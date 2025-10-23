@@ -12,7 +12,7 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 /// @nodoc
 class ZegoCallMemberListButton extends StatefulWidget {
   const ZegoCallMemberListButton({
-    Key? key,
+    super.key,
     this.afterClicked,
     this.icon,
     this.iconSize,
@@ -20,7 +20,7 @@ class ZegoCallMemberListButton extends StatefulWidget {
     this.config,
     this.avatarBuilder,
     this.rootNavigator = false,
-  }) : super(key: key);
+  });
 
   final ZegoAvatarBuilder? avatarBuilder;
 

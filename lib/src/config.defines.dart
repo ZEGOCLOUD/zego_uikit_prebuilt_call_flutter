@@ -18,12 +18,9 @@ typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
 
 class ZegoCallHangUpConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
   ZegoCallHangUpConfirmDialogInfo({
-    String title = 'Hangup Confirmation',
-    String message = 'Do you want to hangup?',
-  }) : super(
-          title: title,
-          message: message,
-        );
+    super.title = 'Hangup Confirmation',
+    super.message = 'Do you want to hangup?',
+  });
 
   @override
   String toString() {

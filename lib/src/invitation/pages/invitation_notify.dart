@@ -19,7 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// top sheet, popup when invitee receive a invitation
 class ZegoCallInvitationNotifyDialog extends StatefulWidget {
   const ZegoCallInvitationNotifyDialog({
-    Key? key,
+    super.key,
     required this.pageManager,
     required this.callInvitationConfig,
     required this.invitationData,
@@ -27,7 +27,7 @@ class ZegoCallInvitationNotifyDialog extends StatefulWidget {
     required this.acceptButtonConfig,
     this.config,
     this.avatarBuilder,
-  }) : super(key: key);
+  });
 
   final ZegoCallInvitationPageManager pageManager;
   final ZegoUIKitPrebuiltCallInvitationData callInvitationConfig;

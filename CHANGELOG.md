@@ -1,28 +1,70 @@
+## 4.20.1
+
+- Bugs
+  - Fixed the issue where the state of the speaker button would be reset when it appears in the More menu
+  - Fixed the issue where the earpiece/speaker could still be switched while using headphones
+
+## 4.20.0
+
+- Features
+  - Added accidental touch prevention during earpiece calls with `enableAccidentalTouchPrevention` configuration option in `ZegoUIKitPrebuiltCallConfig` (default: true)
+  
+- Configuration Requirements
+  - **Android Permissions Required:**
+    ```xml
+    <!-- Add to android/app/src/main/AndroidManifest.xml -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+    ```
+  - **Android NDK Version:**
+    ```gradle
+    // Add to android/app/build.gradle
+    android {
+        ndkVersion = "27.0.12077973"  // For Flutter 3.22.0+
+        // or
+        ndkVersion = "26.1.10909125"   // For Flutter 3.16.0+
+    }
+    ```
+
+## 4.19.2
+
+- Bugs
+  - Fixed the issue where the ringtone would sound once after the call was ended while minimized
+
+## 4.19.1
+
+- Features
+  - Support export log by `ZegoUIKitPrebuiltLiveStreamingController().log.export()`
+  
+- Bugs
+  - Fixed the button synchronization issue on the call invitation interface and the failure issue of earpiece/speaker switching
+
 ## 4.19.0
 
 - Update environment
+
 - Features
- - Supports minimizing during an invitation, and can support customizing the UI configuration using `ZegoCallInvitationInviterMinimizedUIConfig` as follows 
-    ``` dart
-    await ZegoUIKitPrebuiltCallInvitationService().init(
-      ...
-      uiConfig: ZegoCallInvitationUIConfig(
-        inviter: ZegoCallInvitationInviteeUIConfig(
-          minimized: ZegoCallInvitationInviterMinimizedUIConfig(
-            cancelButton: ZegoCallButtonUIConfig(visible: true),
-            showTips: true,
-          ),
-        ),
-        invitee: ZegoCallInvitationInviteeUIConfig(
-          minimized: ZegoCallInvitationInviteeMinimizedUIConfig(
-            acceptButton: ZegoCallButtonUIConfig(visible: true),
-            declineButton: ZegoCallButtonUIConfig(visible: true),
-            showTips: true,
-          ),
-        ),
-      ),
-    );
-    ```
+  - Supports minimizing during an invitation, and can support customizing the UI configuration using `ZegoCallInvitationInviterMinimizedUIConfig` as follows 
+     ``` dart
+     await ZegoUIKitPrebuiltCallInvitationService().init(
+       ...
+       uiConfig: ZegoCallInvitationUIConfig(
+         inviter: ZegoCallInvitationInviteeUIConfig(
+           minimized: ZegoCallInvitationInviterMinimizedUIConfig(
+             cancelButton: ZegoCallButtonUIConfig(visible: true),
+             showTips: true,
+           ),
+         ),
+         invitee: ZegoCallInvitationInviteeUIConfig(
+           minimized: ZegoCallInvitationInviteeMinimizedUIConfig(
+             acceptButton: ZegoCallButtonUIConfig(visible: true),
+             declineButton: ZegoCallButtonUIConfig(visible: true),
+             showTips: true,
+           ),
+         ),
+       ),
+     );
+     ```
 
 ## 4.18.4
 

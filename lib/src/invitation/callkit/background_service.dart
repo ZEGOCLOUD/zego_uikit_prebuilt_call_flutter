@@ -263,16 +263,23 @@ class ZegoCallKitBackgroundService {
       subTag: 'call invitation service',
     );
 
-    /// If the call is ended by the end button of iOS CallKit,
-    /// the widget navigation of the CallPage will not be properly
-    /// execute dispose function.
-    ///
-    /// As a result, during the next offline call,
-    /// the dispose of the previous CallPage will cause confusion in the widget
-    /// navigation.
-    ///
-    /// Here, it is marked as requiring waiting for the dispose of the previous call page.
-    ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(true);
+    if (Platform.isIOS) {
+      if ((_pageManager?.appInBackground ?? false) &&
+          (_pageManager?.inCallingByIOSBackgroundLock ?? false)) {
+        /// ios lock in call
+      } else {
+        /// If the call is ended by the end button of iOS CallKit,
+        /// the widget navigation of the CallPage will not be properly
+        /// execute dispose function.
+        ///
+        /// As a result, during the next offline call,
+        /// the dispose of the previous CallPage will cause confusion in the widget
+        /// navigation.
+        ///
+        /// Here, it is marked as requiring waiting for the dispose of the previous call page.
+        ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(true);
+      }
+    }
 
     await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(

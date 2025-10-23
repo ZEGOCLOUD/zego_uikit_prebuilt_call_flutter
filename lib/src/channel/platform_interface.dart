@@ -66,4 +66,28 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
     throw UnimplementedError(
         'dismissAllNotifications has not been implemented.');
   }
+
+  /// startMonitoringAudioRoute (Android only)
+  Future<void> startMonitoringAudioRoute() {
+    throw UnimplementedError(
+        'startMonitoringAudioRoute has not been implemented.');
+  }
+
+  /// stopMonitoringAudioRoute (Android only)
+  Future<void> stopMonitoringAudioRoute() {
+    throw UnimplementedError(
+        'stopMonitoringAudioRoute has not been implemented.');
+  }
+
+  /// getAudioRouteInfo (Android only)
+  Future<Map<dynamic, dynamic>> getAudioRouteInfo() {
+    throw UnimplementedError('getAudioRouteInfo has not been implemented.');
+  }
+
+  /// setAudioRouteChangedCallback (Android only)
+  void setAudioRouteChangedCallback(
+      Function(Map<dynamic, dynamic> info)? callback) {
+    throw UnimplementedError(
+        'setAudioRouteChangedCallback has not been implemented.');
+  }
 }

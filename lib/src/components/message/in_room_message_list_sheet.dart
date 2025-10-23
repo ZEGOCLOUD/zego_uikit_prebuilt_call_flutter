@@ -11,12 +11,12 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 /// @nodoc
 class ZegoCallMessageListSheet extends StatefulWidget {
   const ZegoCallMessageListSheet({
-    Key? key,
+    super.key,
     this.avatarBuilder,
     this.itemBuilder,
     this.scrollController,
     this.rootNavigator = false,
-  }) : super(key: key);
+  });
 
   final bool rootNavigator;
   final ZegoAvatarBuilder? avatarBuilder;

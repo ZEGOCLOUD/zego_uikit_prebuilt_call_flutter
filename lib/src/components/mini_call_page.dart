@@ -16,7 +16,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
 /// @nodoc
 class ZegoMinimizingCallPage extends StatefulWidget {
   const ZegoMinimizingCallPage({
-    Key? key,
+    super.key,
     required this.size,
     required this.durationNotifier,
     this.borderRadius = 6.0,
@@ -37,7 +37,7 @@ class ZegoMinimizingCallPage extends StatefulWidget {
     this.foregroundBuilder,
     this.backgroundBuilder,
     this.avatarBuilder,
-  }) : super(key: key);
+  });
 
   final Size size;
   final double padding;

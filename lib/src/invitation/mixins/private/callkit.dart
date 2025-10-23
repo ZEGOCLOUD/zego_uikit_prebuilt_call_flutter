@@ -202,7 +202,11 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
             .offlineCallKit
             .getCallID()
             .then((callKitCallID) async {
-          await ZegoCallPluginPlatform.instance.activeAudioByCallKit();
+          /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
+          await ZegoUIKit().setAdvanceConfigs({
+            "support_apple_callkit": "true",
+          });
+
           await ZegoCallKitBackgroundService()
               .acceptCallKitIncomingCauseInBackground(callKitCallID);
         });
@@ -211,9 +215,14 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         await ZegoCallKitBackgroundService().refuseInvitationInBackground();
         break;
       case Event.actionCallIncoming:
-        ZegoCallPluginPlatform.instance.activeAudioByCallKit();
         break;
       case Event.actionCallEnded:
+
+        /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
+        await ZegoUIKit().setAdvanceConfigs({
+          "support_apple_callkit": "false",
+        });
+
         if (ZegoUIKitPrebuiltCallInvitationService().isInCall) {
           await ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
         } else {
