@@ -177,6 +177,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     super.initState();
 
     ZegoUIKit().reporter().create(
+      userID: widget.userID,
       appID: widget.appID,
       signOrToken: widget.appSign.isNotEmpty ? widget.appSign : widget.token,
       params: {
@@ -725,16 +726,15 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return;
     }
 
+    subscriptions.add(
+        ZegoUIKit().getBeautyPlugin().getErrorStream().listen(onBeautyError));
+
     ZegoUIKit()
         .getBeautyPlugin()
         .setConfig(widget.config.beauty ?? ZegoBeautyPluginConfig());
     await ZegoUIKit()
         .getBeautyPlugin()
-        .init(
-          widget.appID,
-          appSign: widget.appSign,
-          licence: widget.config.beauty?.license?.call() ?? '',
-        )
+        .init(widget.appID, widget.appSign)
         .then((value) {
       ZegoLoggerService.logInfo(
         'effects plugin init done',
@@ -1460,6 +1460,20 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
 
     events.onError?.call(error);
+  }
+
+  void onBeautyError(ZegoBeautyError error) {
+    ZegoLoggerService.logError(
+      'on beauty error:$error',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    events.onError?.call(ZegoUIKitError(
+      code: error.code,
+      message: error.message,
+      method: error.method,
+    ));
   }
 
   void onRoomTokenExpired(int remainSeconds) {
