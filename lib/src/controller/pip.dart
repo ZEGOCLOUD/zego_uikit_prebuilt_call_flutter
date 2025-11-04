@@ -6,7 +6,7 @@ mixin ZegoCallControllerPIP {
   ZegoCallControllerPIPImpl get pip => _pipImpl;
 }
 
-/// Here are the APIs related to audio video.
+/// Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality.
 class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
   Future<ZegoPiPStatus> get status async => await private.pipImpl().status;
 

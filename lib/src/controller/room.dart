@@ -6,8 +6,9 @@ mixin ZegoCallControllerRoom {
   ZegoCallControllerRoomImpl get room => _roomImpl;
 }
 
-/// Here are the APIs related to screen sharing.
+/// Room controller managing room-related operations such as token renewal.
 class ZegoCallControllerRoomImpl {
+  /// Renew the token. Call when receiving the onTokenExpired callback.
   /// when receives [ZegoCallRoomEvents.onTokenExpired], you need use this API to update the token
   Future<void> renewToken(String token) async {
     await ZegoUIKit().renewRoomToken(token);

@@ -7,10 +7,12 @@ mixin ZegoCallControllerScreenSharing {
   ZegoCallControllerScreenSharingImpl get screenSharing => _impl;
 }
 
+/// Screen sharing controller managing screen sharing display and fullscreen mode.
 class ZegoCallControllerScreenSharingImpl
     with ZegoCallControllerScreenImplPrivate {
   ZegoScreenSharingViewController get viewController => private.viewController;
 
+  /// Set fullscreen display mode for screen sharing
   /// This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
   ///
   /// You need to provide the user's ID [userID] to determine which user to perform the operation on.

@@ -7,8 +7,9 @@ mixin ZegoCallControllerMinimizing {
   ZegoCallControllerMinimizingImpl get minimize => _minimizing;
 }
 
+/// Minimization controller implementation providing call interface minimization and restoration functionality.
 class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
-  /// minimize state
+  /// Current minimization state
   ZegoCallMiniOverlayPageState get state =>
       ZegoCallMiniOverlayMachine().state();
 

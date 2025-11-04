@@ -6,9 +6,9 @@ mixin ZegoCallControllerLog {
   ZegoCallControllerLogImpl get log => _logImpl;
 }
 
-/// Here are the APIs related to user
+/// Log controller for exporting and collecting call-related logs.
 class ZegoCallControllerLogImpl {
-  /// export logs
+  /// Export log files
   ///
   /// [title] export title, defaults to current timestamp
   /// [content] export content description

@@ -8,6 +8,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/deprecated/deprecated.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 
+/// Call invitation configuration class for permissions, offline invitations, in-call invitations, etc.
 class ZegoCallInvitationConfig {
   ZegoCallInvitationConfig({
     this.endCallWhenInitiatorLeave = false,
@@ -250,6 +251,7 @@ class ZegoCallInvitationPIPIOSConfig {
   }
 }
 
+/// Call invitation UI configuration class for invitation interface styling and custom builders.
 class ZegoCallInvitationUIConfig {
   ZegoCallInvitationUIConfig({
     this.withSafeArea = true,
@@ -617,7 +619,7 @@ class ZegoCallInvitationNotificationConfig {
   }
 }
 
-/// online call ringtone config
+/// Ringtone configuration class for online calls (offline calls require configuration in the console).
 /// Note that it only works for online calls. If it is offline, please configure it in the zego console
 class ZegoCallRingtoneConfig {
   /// callee ringtone on local side, please note that the resource needs to be configured in your flutter project

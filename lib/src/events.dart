@@ -12,6 +12,7 @@ class ZegoUIKitPrebuiltCallEvents {
     this.user,
     this.room,
     this.audioVideo,
+    this.beauty,
   });
 
   /// error stream
@@ -76,6 +77,8 @@ class ZegoUIKitPrebuiltCallEvents {
   /// events about audio video
   ZegoCallAudioVideoEvents? audioVideo;
 
+  ZegoCallBeautyEvents? beauty;
+
   @override
   String toString() {
     return 'ZegoUIKitPrebuiltCallEvents:{'
@@ -85,6 +88,7 @@ class ZegoUIKitPrebuiltCallEvents {
         'user:$user, '
         'room:$room, '
         'audioVideo:$audioVideo, '
+        'beauty:$beauty, '
         '}';
   }
 }
@@ -189,4 +193,31 @@ class ZegoCallRoomEvents {
         'onTokenExpired:$onTokenExpired, '
         '}';
   }
+}
+
+class ZegoCallBeautyEvents {
+  ZegoCallBeautyEvents({
+    this.onError,
+    this.onFaceDetection,
+  });
+
+  /// error stream
+  ///
+  /// Example:
+  ///```dart
+  /// ..beauty.onError = (error) {
+  ///
+  /// }
+  /// ```
+  Function(ZegoBeautyError)? onError;
+
+  /// Face detection result callback
+  ///
+  /// Example:
+  ///```dart
+  /// ..beauty.onFaceDetection = (data) {
+  ///
+  /// }
+  /// ```
+  Function(ZegoBeautyPluginFaceDetectionData)? onFaceDetection;
 }
