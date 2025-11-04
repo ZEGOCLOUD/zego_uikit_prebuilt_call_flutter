@@ -21,6 +21,7 @@ class ZegoCallControllerAudioVideoImpl
       private._audioOutput;
 }
 
+/// 麦克风控制器 - 控制麦克风开关和状态查询
 class ZegoCallControllerAudioVideoMicrophoneImpl
     with ZegoCallControllerAudioVideoDeviceImplPrivate {
   /// microphone state of local user
@@ -64,6 +65,7 @@ class ZegoCallControllerAudioVideoMicrophoneImpl
   }
 }
 
+/// 摄像头控制器 - 控制摄像头开关、前后摄像头切换、镜像模式等
 class ZegoCallControllerAudioVideoCameraImpl
     with ZegoCallControllerAudioVideoDeviceImplPrivate {
   /// camera state of local user

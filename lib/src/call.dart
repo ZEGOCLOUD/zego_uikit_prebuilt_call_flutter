@@ -47,6 +47,8 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// {@category Configs}
 /// {@category Components}
 /// {@category Migration_v4.x}
+///
+/// Call interface component providing complete 1-on-1 and group audio/video call functionality with customizable UI and rich configuration options.
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
     super.key,
@@ -726,8 +728,16 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return;
     }
 
-    subscriptions.add(
-        ZegoUIKit().getBeautyPlugin().getErrorStream().listen(onBeautyError));
+    subscriptions
+      ..add(
+        ZegoUIKit().getBeautyPlugin().getErrorStream().listen(onBeautyError),
+      )
+      ..add(
+        ZegoUIKit()
+            .getBeautyPlugin()
+            .getFaceDetectionEventStream()
+            .listen(onFaceDetectionEvent),
+      );
 
     ZegoUIKit()
         .getBeautyPlugin()
@@ -1469,11 +1479,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       subTag: 'prebuilt',
     );
 
-    events.onError?.call(ZegoUIKitError(
-      code: error.code,
-      message: error.message,
-      method: error.method,
-    ));
+    events.beauty?.onError?.call(error);
+  }
+
+  void onFaceDetectionEvent(ZegoBeautyPluginFaceDetectionData data) {
+    events.beauty?.onFaceDetection?.call(data);
   }
 
   void onRoomTokenExpired(int remainSeconds) {

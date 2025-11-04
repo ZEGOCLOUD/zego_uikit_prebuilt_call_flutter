@@ -136,16 +136,24 @@ part 'mixins/private/invitation.dart';
 ///   ZegoUIKitPrebuiltCallInvitationService().uninit();
 /// }
 /// ```
+/// Call invitation service singleton class that manages core features including sending, receiving, accepting, and rejecting call invitations.
 class ZegoUIKitPrebuiltCallInvitationService
     with ZegoCallInvitationServicePrivate, ZegoCallInvitationServiceAPI {
+  /// Whether the service is initialized.
   bool get isInit => private._isInit;
 
+  /// Whether a call is in progress (invitation sent/received but not yet connected).
   bool get isInCalling => private._pageManager?.isInCalling ?? false;
+
+  /// Whether the call is connected.
   bool get isInCall => private._pageManager?.isInCall ?? false;
 
+  /// Get the call controller to manage call features (hang up, minimize, audio/video toggle, etc.).
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController.instance;
 
+  /// Enter an accepted offline call. Suitable for scenarios requiring navigation after data loading completes.
+  ///
   /// Due to some time-consuming and waiting operations, such as data loading
   /// or user login in the App.
   /// so in certain situations, it may not be appropriate to navigate to
@@ -197,6 +205,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     private._pageManager?.enterAcceptedOfflineCall();
   }
 
+  /// Set the navigation key for necessary configuration when navigating pages upon receiving invitations.
+  ///
   /// we need a context object, to push/pop page when receive invitation request
   /// so we need navigatorKey to get context
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
@@ -238,6 +248,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  /// Initialize the service. Call when the user logs in; after configuration completes, calls can be received and invitations can be sent.
+  ///
   /// you must call this method as soon as the user login(or re-login, auto-login) to your app.
   ///
   /// You must include [ZegoUIKitSignalingPlugin] in [plugins] to support the invitation feature.
@@ -574,6 +586,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  /// Deinitialize the service. Must be called when the user logs out.
+  ///
   ///   you must call this method as soon as the user logout from your app
   Future<void> uninit() async {
     if (!private._isInit) {
@@ -614,7 +628,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
   }
 
-  ///  enable offline system calling UI
+  /// Enable offline system calling UI to support receiving invitations in the background, answering on lock screen, etc. (Note the call order with ZIMKit).
   ///
   ///  [FBI WARING]
   ///
@@ -674,6 +688,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  /// Send a call invitation to specified users for an audio or video call.
+  ///
   /// This function is used to send call invitations to one or more specified users.
   ///
   /// You can provide a list of target users [invitees] and specify whether it is a video call [isVideoCall]. If it is not a video call, it defaults to an audio call.
@@ -706,6 +722,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
   }
 
+  /// Cancel a sent call invitation.
+  ///
   ///  To cancel the invitation for [callees] in a call, you can include your
   ///  cancellation reason using the [customData].
   Future<bool> cancel({
@@ -718,6 +736,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
   }
 
+  /// Reject the received call invitation.
+  ///
   /// To reject the current call invitation, you can use the [customData]
   /// parameter if you need to provide a reason for the rejection to the other party.
   ///
@@ -745,6 +765,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     });
   }
 
+  /// Accept the received call invitation and enter the call.
+  ///
   /// To accept the current call invitation, you can use the [customData]
   /// parameter if you need to provide a reason for the acceptance to the other party.
   ///

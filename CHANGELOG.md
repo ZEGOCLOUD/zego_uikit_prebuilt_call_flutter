@@ -1,3 +1,8 @@
+## 4.21.1
+
+- Features
+  - Support beauty plugin face detection and error event on `ZegoUIKitPrebuiltCallEvents.beauty`
+
 ## 4.21.0
 
 - Features
