@@ -32,8 +32,8 @@ enum CallKitInnerVariable {
   /// show call id or not
   callIDVisibility,
 
-  /// show fullscreen or not
-  showFullScreen,
+  /// show fullscreen or not on locked screen
+  showFullLockedScreen,
 }
 
 extension CallKitInnerVariableExtension on CallKitInnerVariable {
@@ -60,7 +60,7 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
         return 'zg_ck_t_rg_p';
       case CallKitInnerVariable.callIDVisibility:
         return 'zg_ck_call_id_v';
-      case CallKitInnerVariable.showFullScreen:
+      case CallKitInnerVariable.showFullLockedScreen:
         return 'zg_ck_s_f_c';
     }
   }
@@ -87,7 +87,7 @@ extension CallKitInnerVariableExtension on CallKitInnerVariable {
       case CallKitInnerVariable.ringtonePath:
         return 'system_ringtone_default';
       case CallKitInnerVariable.callIDVisibility:
-      case CallKitInnerVariable.showFullScreen:
+      case CallKitInnerVariable.showFullLockedScreen:
         return false;
     }
   }
