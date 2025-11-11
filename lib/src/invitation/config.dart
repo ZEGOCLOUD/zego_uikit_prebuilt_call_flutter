@@ -693,13 +693,18 @@ class ZegoCallAndroidNotificationConfig {
   /// specify the call id show or hide,
   bool callIDVisibility;
 
-  /// only for offline call, displayed in full screen or not when the screen is locked, default value is false.
+  /// only for offline call, displayed or not when the screen is locked, default value is true.
   ///
-  ///  and THE IMPORTANT IS, if set [showFullScreen] on true,
+  ///  and THE IMPORTANT IS, if set [showOnLockedScreen] on true,
   ///  you need set **android:launchMode="singleInstance"**
   ///  in `manifest/application/activity` node
   ///  of ${project_root}/android/app/src/main/AndroidManifest.xml
-  bool showFullScreen;
+  bool showOnLockedScreen;
+
+  /// only for offline call, whether to allow full-screen display in both locked and unlocked screen states, default value is true.
+  ///
+  /// Will Request USE_FULL_SCREEN_INTENT permission show notification for Android(14)+
+  bool showOnFullScreen;
 
   /// Corresponding certificate index configured by zego console
   ZegoSignalingPluginMultiCertificate certificateIndex;
@@ -722,7 +727,8 @@ class ZegoCallAndroidNotificationConfig {
 
   ZegoCallAndroidNotificationConfig({
     this.callIDVisibility = true,
-    this.showFullScreen = false,
+    this.showOnLockedScreen = true,
+    this.showOnFullScreen = true,
     this.certificateIndex =
         ZegoSignalingPluginMultiCertificate.firstCertificate,
     ZegoCallAndroidNotificationChannelConfig? missedCallChannel,
@@ -789,7 +795,7 @@ class ZegoCallAndroidNotificationConfig {
     return 'ZegoCallAndroidNotificationConfig:{'
         'callIDVisibility:$callIDVisibility, '
         'certificateIndex:$certificateIndex, '
-        'showFullScreen:$showFullScreen, '
+        'showFullScreen:$showOnLockedScreen, '
         'call channel config:$callChannel, '
         'missed call channel config:$missedCallChannel, '
         'message channel config:$messageChannel, '

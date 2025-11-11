@@ -444,22 +444,25 @@ class ZegoUIKitPrebuiltCallInvitationService
           subTag: 'service(${identityHashCode(this)}), init',
         );
 
-        if (Platform.isAndroid) {
-          final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
-          ZegoLoggerService.logInfo(
-            'mobile system version:$mobileSystemVersion',
-            tag: 'call-invitation',
-            subTag: 'service(${identityHashCode(this)}), init',
-          );
+        if (notificationConfig?.androidNotificationConfig?.showOnFullScreen ??
+            true) {
+          if (Platform.isAndroid) {
+            final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
+            ZegoLoggerService.logInfo(
+              'mobile system version:$mobileSystemVersion',
+              tag: 'call-invitation',
+              subTag: 'service(${identityHashCode(this)}), init',
+            );
 
-          if (mobileSystemVersion.major >= 14) {
-            FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
-              ZegoLoggerService.logInfo(
-                'requestFullIntentPermission done, res:$res',
-                tag: 'call-invitation',
-                subTag: 'callkit',
-              );
-            });
+            if (mobileSystemVersion.major >= 14) {
+              FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
+                ZegoLoggerService.logInfo(
+                  'requestFullIntentPermission done, res:$res',
+                  tag: 'call-invitation',
+                  subTag: 'callkit',
+                );
+              });
+            }
           }
         }
       });
