@@ -75,13 +75,25 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
         .addListener(onLocalMicrophoneExceptionOccurred);
 
     /// remote users
-    ZegoUIKit().getRemoteUsers().forEach((user) {
+    ZegoUIKit()
+        .getRemoteUsers(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+    )
+        .forEach((user) {
       user.cameraException.addListener(onLocalCameraExceptionOccurred);
       user.microphoneException.addListener(onLocalMicrophoneExceptionOccurred);
     });
     _subscriptions
-      ..add(ZegoUIKit().getUserJoinStream().listen(onUserJoin))
-      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+      ..add(ZegoUIKit()
+          .getUserJoinStream(
+            targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+          )
+          .listen(onUserJoin))
+      ..add(ZegoUIKit()
+          .getUserLeaveStream(
+            targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+          )
+          .listen(onUserLeave));
   }
 
   void stopListenDeviceExceptionOccurred() {
@@ -96,7 +108,11 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
         .removeListener(onLocalMicrophoneExceptionOccurred);
 
     /// remote users
-    ZegoUIKit().getRemoteUsers().forEach((user) {
+    ZegoUIKit()
+        .getRemoteUsers(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+    )
+        .forEach((user) {
       user.cameraException
           .removeListener(remoteCameraExceptionCallbacks[user.id] ?? () {});
       user.microphoneException

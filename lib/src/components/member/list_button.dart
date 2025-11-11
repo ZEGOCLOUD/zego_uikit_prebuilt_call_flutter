@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/config.dart';
 class ZegoCallMemberListButton extends StatefulWidget {
   const ZegoCallMemberListButton({
     super.key,
+    required this.roomID,
     this.afterClicked,
     this.icon,
     this.iconSize,
@@ -22,6 +23,7 @@ class ZegoCallMemberListButton extends StatefulWidget {
     this.rootNavigator = false,
   });
 
+  final String roomID;
   final ZegoAvatarBuilder? avatarBuilder;
 
   final bool rootNavigator;
@@ -55,6 +57,7 @@ class _ZegoCallMemberListButtonState extends State<ZegoCallMemberListButton> {
       onTap: () {
         showMemberListSheet(
           context,
+          roomID: widget.roomID,
           showCameraState: widget.config?.showCameraState ?? true,
           showMicrophoneState: widget.config?.showMicrophoneState ?? true,
           itemBuilder: widget.config?.itemBuilder,

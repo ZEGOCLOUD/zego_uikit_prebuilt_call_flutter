@@ -225,6 +225,7 @@ class ZegoCallInvitationServiceAPIImpl
     }
 
     return private._acceptInvitation(
+      callID: private._pageManager?.invitationData.callID ?? '',
       callerID: private._pageManager?.invitationData.inviter?.id ?? '',
       customData: customData,
     );

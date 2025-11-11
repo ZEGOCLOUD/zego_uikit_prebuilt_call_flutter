@@ -422,7 +422,7 @@ class ZegoCallInvitationServicePrivateImpl
 
           ZegoLoggerService.logInfo(
             'exist offline call, '
-            'room id:${ZegoUIKit().getRoom().id}, ',
+            'room id:${ZegoUIKit().getCurrentRoom().id}, ',
             tag: 'call-invitation',
             subTag: 'service private(${identityHashCode(this)}), init plugins',
           );
@@ -557,7 +557,7 @@ class ZegoCallInvitationServicePrivateImpl
 
     ZegoUIKit().enableCustomVideoProcessing(false);
 
-    ZegoUIKit.instance.turnCameraOn(false);
+    ZegoUIKit.instance.turnLocalCameraOnForPreview(false);
   }
 
   void _registerOfflineCallIsolateNameServer() {

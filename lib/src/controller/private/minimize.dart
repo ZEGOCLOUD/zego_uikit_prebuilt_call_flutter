@@ -158,10 +158,15 @@ class ZegoCallControllerMinimizePrivateActiveUser {
   }
 
   void listenAudioVideoList() {
-    audioVideoListSubscription =
-        ZegoUIKit().getAudioVideoListStream().listen(onAudioVideoListUpdated);
+    audioVideoListSubscription = ZegoUIKit()
+        .getAudioVideoListStream(
+          targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+        )
+        .listen(onAudioVideoListUpdated);
 
-    final audioVideoList = ZegoUIKit().getAudioVideoList();
+    final audioVideoList = ZegoUIKit().getAudioVideoList(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+    );
     if (ignoreLocalUser) {
       audioVideoList
           .removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
@@ -238,7 +243,9 @@ class ZegoCallControllerMinimizePrivateActiveUser {
       return activeUserIDNotifier.value;
     }
 
-    final audioVideoList = ZegoUIKit().getAudioVideoList();
+    final audioVideoList = ZegoUIKit().getAudioVideoList(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+    );
     for (int idx = 0; idx < audioVideoList.length; ++idx) {
       final audioVideoUser = audioVideoList[idx];
       if (ZegoUIKit().getLocalUser().id == audioVideoUser.id) {

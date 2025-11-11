@@ -6,12 +6,14 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 /// @nodoc
 class ZegoCallInRoomMessageInputBoard extends ModalRoute<String> {
+  final String roomID;
   final ValueNotifier<String>? valueNotifier;
   final ValueNotifier<bool>? focusNotifier;
   final String placeHolder;
   final bool rootNavigator;
 
   ZegoCallInRoomMessageInputBoard({
+    required this.roomID,
     this.placeHolder = 'Say something...',
     this.valueNotifier,
     this.focusNotifier,
@@ -64,6 +66,7 @@ class ZegoCallInRoomMessageInputBoard extends ModalRoute<String> {
             ),
           ),
           ZegoInRoomMessageInput(
+            roomID: roomID,
             placeHolder: placeHolder,
             valueNotifier: valueNotifier,
             focusNotifier: focusNotifier,

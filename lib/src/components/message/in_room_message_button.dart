@@ -17,6 +17,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 class ZegoCallInRoomMessageButton extends StatefulWidget {
   const ZegoCallInRoomMessageButton({
     super.key,
+    required this.roomID,
     required this.popUpManager,
     required this.viewVisibleNotifier,
     this.afterClicked,
@@ -28,6 +29,7 @@ class ZegoCallInRoomMessageButton extends StatefulWidget {
     this.rootNavigator = false,
   });
 
+  final String roomID;
   final ButtonIcon? icon;
 
   ///  You can do what you want after pressed.
@@ -68,6 +70,7 @@ class _ZegoCallInRoomMessageButtonState
       onTap: () {
         showMessageSheet(
           context,
+          roomID: widget.roomID,
           avatarBuilder: widget.avatarBuilder,
           itemBuilder: widget.itemBuilder,
           visibleNotifier: widget.viewVisibleNotifier,

@@ -26,6 +26,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 class ZegoSendCallingInvitationButton extends StatefulWidget {
   const ZegoSendCallingInvitationButton({
     super.key,
+    required this.callID,
     required this.waitingSelectUsers,
     required this.selectedUsers,
     this.userSort,
@@ -42,6 +43,8 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
     this.defaultChecked = true,
     this.networkLoadingConfig,
   });
+
+  final String callID;
 
   /// icon
   final ButtonIcon? buttonIcon;
@@ -228,6 +231,7 @@ class _ZegoSendCallingInvitationButtonState
     } else {
       showCallingInvitationListSheet(
         context,
+        callID: widget.callID,
         selectedUsers: widget.selectedUsers,
         waitingSelectUsers: widget.waitingSelectUsers,
         userSort: widget.userSort,

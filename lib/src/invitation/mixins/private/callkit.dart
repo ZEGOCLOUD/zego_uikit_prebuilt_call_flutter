@@ -231,9 +231,17 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         _myPageManager?.hasCallkitIncomingCauseAppInBackground = false;
         break;
       case Event.actionCallToggleMute:
-        final params = event?.body as Map<String, dynamic>? ?? {};
-        final isMute = params['isMuted'] as bool? ?? false;
-        ZegoUIKit().turnMicrophoneOn(!isMute);
+        ZegoUIKitCallCache()
+            .offlineCallKit
+            .getCallID()
+            .then((callKitCallID) async {
+          final params = event?.body as Map<String, dynamic>? ?? {};
+          final isMute = params['isMuted'] as bool? ?? false;
+          ZegoUIKit().turnMicrophoneOn(
+            targetRoomID: callKitCallID ?? '',
+            !isMute,
+          );
+        });
         break;
       default:
         break;

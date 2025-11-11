@@ -10,6 +10,12 @@ mixin ZegoCallControllerPrivate {
 
 /// @nodoc
 class ZegoCallControllerPrivateImpl {
+  String _roomID = '';
+
+  String get roomID {
+    return _roomID;
+  }
+
   /// Whether the call hang-up operation is in progress
   /// such as clicking the close button in the upper right corner or calling the `hangUp` function of the controller.
   /// If it is not handled completely, it is considered as in progress.
@@ -27,6 +33,7 @@ class ZegoCallControllerPrivateImpl {
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void initByPrebuilt({
+    required String roomID,
     required ZegoUIKitPrebuiltCallConfig prebuiltConfig,
     required ZegoCallPopUpManager popUpManager,
     required ZegoUIKitPrebuiltCallEvents? events,
@@ -36,6 +43,7 @@ class ZegoCallControllerPrivateImpl {
       tag: 'call',
       subTag: 'controller.p',
     );
+    _roomID = roomID;
 
     _prebuiltConfig = prebuiltConfig;
     _popUpManager = _popUpManager;
@@ -49,6 +57,8 @@ class ZegoCallControllerPrivateImpl {
       tag: 'call',
       subTag: 'controller.p',
     );
+
+    _roomID = '';
 
     isHangUpRequestingNotifier.value = false;
 

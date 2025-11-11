@@ -17,6 +17,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
 class ZegoMinimizingCallPage extends StatefulWidget {
   const ZegoMinimizingCallPage({
     super.key,
+    required this.roomID,
     required this.size,
     required this.durationNotifier,
     this.borderRadius = 6.0,
@@ -39,6 +40,7 @@ class ZegoMinimizingCallPage extends StatefulWidget {
     this.avatarBuilder,
   });
 
+  final String roomID;
   final Size size;
   final double padding;
   final double borderRadius;
@@ -123,7 +125,7 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
   }
 
   Widget audioVideoContainer(String activeUserID) {
-    final avList = ZegoUIKit().getAudioVideoList();
+    final avList = ZegoUIKit().getAudioVideoList(targetRoomID: widget.roomID);
     if (!widget.showLocalUserView) {
       avList.removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
     }
@@ -142,6 +144,7 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
             IgnorePointer(
               ignoring: true,
               child: ZegoAudioVideoContainer(
+                roomID: widget.roomID,
                 layout: ZegoLayout.pictureInPicture(
                   smallViewPosition: ZegoViewPosition.bottomLeft,
                   smallViewMargin: EdgeInsets.only(
@@ -332,13 +335,19 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     const toolbarCameraOff = 'assets/icons/s1_ctrl_bar_camera_off.png';
 
     return ValueListenableBuilder<bool>(
-      valueListenable: ZegoUIKit().getCameraStateNotifier(activeUser.id),
+      valueListenable: ZegoUIKit().getCameraStateNotifier(
+        targetRoomID: widget.roomID,
+        activeUser.id,
+      ),
       builder: (context, isCameraEnabled, _) {
         return GestureDetector(
           onTap: activeUser.id == ZegoUIKit().getLocalUser().id
               ? () {
-                  ZegoUIKit()
-                      .turnCameraOn(!isCameraEnabled, userID: activeUser.id);
+                  ZegoUIKit().turnCameraOn(
+                    targetRoomID: widget.roomID,
+                    !isCameraEnabled,
+                    userID: activeUser.id,
+                  );
                 }
               : null,
           child: Container(
@@ -371,13 +380,19 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     const toolbarMicOff = 'assets/icons/s1_ctrl_bar_mic_off.png';
 
     return ValueListenableBuilder<bool>(
-      valueListenable: ZegoUIKit().getMicrophoneStateNotifier(activeUser.id),
+      valueListenable: ZegoUIKit().getMicrophoneStateNotifier(
+        targetRoomID: widget.roomID,
+        activeUser.id,
+      ),
       builder: (context, isMicrophoneEnabled, _) {
         return GestureDetector(
           onTap: activeUser.id == ZegoUIKit().getLocalUser().id
               ? () {
-                  ZegoUIKit().turnMicrophoneOn(!isMicrophoneEnabled,
-                      userID: activeUser.id);
+                  ZegoUIKit().turnMicrophoneOn(
+                    targetRoomID: widget.roomID,
+                    !isMicrophoneEnabled,
+                    userID: activeUser.id,
+                  );
                 }
               : null,
           child: Container(

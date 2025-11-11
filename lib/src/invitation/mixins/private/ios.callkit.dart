@@ -374,10 +374,15 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     event.fulfill?.call();
 
-    // 从 actionData 中获取 muted 状态
-    final actionData =
-        event.actionData as ZegoSignalingPluginCallKitSetMutedActionData;
-    ZegoUIKit().turnMicrophoneOn(!actionData.muted);
+    ZegoUIKitCallCache().offlineCallKit.getCallID().then((callKitCallID) async {
+      // 从 actionData 中获取 muted 状态
+      final actionData =
+          event.actionData as ZegoSignalingPluginCallKitSetMutedActionData;
+      ZegoUIKit().turnMicrophoneOn(
+        targetRoomID: callKitCallID ?? '',
+        !actionData.muted,
+      );
+    });
   }
 
   void _onCallkitPerformSetGroupCallActionEvent(

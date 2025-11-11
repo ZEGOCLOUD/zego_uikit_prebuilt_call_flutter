@@ -89,6 +89,8 @@ class _ZegoInviterCallingBottomToolBarState
                         /// listen local audio output route changes
                         valueListenable: ZegoUIKit()
                             .getAudioOutputDeviceNotifier(
+                                targetRoomID:
+                                    widget.pageManager.invitationData.callID,
                                 ZegoUIKit().getLocalUser().id),
                         builder: (context, audioRoute, _) {
                           final isSpeakerOn =
@@ -155,6 +157,7 @@ class _ZegoInviterCallingBottomToolBarState
   Widget microphoneButton() {
     return (widget.uiConfig.microphoneButton?.visible ?? false)
         ? ZegoToggleMicrophoneButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultOn:
@@ -175,6 +178,7 @@ class _ZegoInviterCallingBottomToolBarState
 
     return (widget.uiConfig.cameraButton?.visible ?? false)
         ? ZegoToggleCameraButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultOn:
@@ -190,6 +194,7 @@ class _ZegoInviterCallingBottomToolBarState
   Widget speakerButton() {
     return (widget.uiConfig.speakerButton?.visible ?? false)
         ? ZegoSwitchAudioOutputButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultUseSpeaker:

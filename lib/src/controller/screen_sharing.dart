@@ -25,6 +25,10 @@ class ZegoCallControllerScreenSharingImpl
       subTag: 'controller.screenSharing',
     );
 
-    viewController.showScreenSharingViewInFullscreenMode(userID, isFullscreen);
+    viewController.showScreenSharingViewInFullscreenMode(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+      userID,
+      isFullscreen,
+    );
   }
 }

@@ -8,47 +8,83 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 class ZegoCallEventListener {
+  final String roomID;
   final ZegoUIKitPrebuiltCallEvents? events;
   final List<StreamSubscription<dynamic>?> _subscriptions = [];
 
-  ZegoCallEventListener(this.events);
+  ZegoCallEventListener(
+    this.events, {
+    required this.roomID,
+  });
 
   void init() {
     _subscriptions
-      ..add(ZegoUIKit().getUserJoinStream().listen(_onUserJoin))
-      ..add(ZegoUIKit().getUserLeaveStream().listen(_onUserLeave));
+      ..add(ZegoUIKit()
+          .getUserJoinStream(targetRoomID: roomID)
+          .listen(_onUserJoin))
+      ..add(ZegoUIKit()
+          .getUserLeaveStream(targetRoomID: roomID)
+          .listen(_onUserLeave));
 
     ZegoUIKit()
-        .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getCameraStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .addListener(_onCameraStateChanged);
     ZegoUIKit()
-        .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getMicrophoneStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .addListener(_onMicrophoneStateChanged);
     ZegoUIKit()
-        .getUseFrontFacingCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getUseFrontFacingCameraStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .addListener(_onFrontFacingCameraStateChanged);
     ZegoUIKit()
-        .getAudioOutputDeviceNotifier(ZegoUIKit().getLocalUser().id)
+        .getAudioOutputDeviceNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .addListener(_onAudioOutputChanged);
 
-    ZegoUIKit().getRoomStateStream().addListener(_onRoomStateChanged);
+    ZegoUIKit()
+        .getRoomStateStream(targetRoomID: roomID)
+        .addListener(_onRoomStateChanged);
   }
 
   void uninit() {
     ZegoUIKit()
-        .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getCameraStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .removeListener(_onCameraStateChanged);
     ZegoUIKit()
-        .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getMicrophoneStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .removeListener(_onMicrophoneStateChanged);
     ZegoUIKit()
-        .getUseFrontFacingCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+        .getUseFrontFacingCameraStateNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .removeListener(_onFrontFacingCameraStateChanged);
     ZegoUIKit()
-        .getAudioOutputDeviceNotifier(ZegoUIKit().getLocalUser().id)
+        .getAudioOutputDeviceNotifier(
+          targetRoomID: roomID,
+          ZegoUIKit().getLocalUser().id,
+        )
         .removeListener(_onAudioOutputChanged);
 
-    ZegoUIKit().getRoomStateStream().removeListener(_onRoomStateChanged);
+    ZegoUIKit()
+        .getRoomStateStream(targetRoomID: roomID)
+        .removeListener(_onRoomStateChanged);
 
     for (final subscription in _subscriptions) {
       subscription?.cancel();
@@ -68,19 +104,28 @@ class ZegoCallEventListener {
   }
 
   void _onRoomStateChanged() {
-    events?.room?.onStateChanged?.call(ZegoUIKit().getRoomStateStream().value);
+    events?.room?.onStateChanged
+        ?.call(ZegoUIKit().getRoomStateStream(targetRoomID: roomID).value);
   }
 
   void _onCameraStateChanged() {
     events?.audioVideo?.onCameraStateChanged?.call(
-      ZegoUIKit().getCameraStateNotifier(ZegoUIKit().getLocalUser().id).value,
+      ZegoUIKit()
+          .getCameraStateNotifier(
+            targetRoomID: roomID,
+            ZegoUIKit().getLocalUser().id,
+          )
+          .value,
     );
   }
 
   void _onMicrophoneStateChanged() {
     events?.audioVideo?.onMicrophoneStateChanged?.call(
       ZegoUIKit()
-          .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+          .getMicrophoneStateNotifier(
+            targetRoomID: roomID,
+            ZegoUIKit().getLocalUser().id,
+          )
           .value,
     );
   }
@@ -88,7 +133,10 @@ class ZegoCallEventListener {
   void _onFrontFacingCameraStateChanged() {
     events?.audioVideo?.onFrontFacingCameraStateChanged?.call(
       ZegoUIKit()
-          .getUseFrontFacingCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+          .getUseFrontFacingCameraStateNotifier(
+            targetRoomID: roomID,
+            ZegoUIKit().getLocalUser().id,
+          )
           .value,
     );
   }
@@ -96,7 +144,10 @@ class ZegoCallEventListener {
   void _onAudioOutputChanged() {
     events?.audioVideo?.onAudioOutputChanged?.call(
       ZegoUIKit()
-          .getAudioOutputDeviceNotifier(ZegoUIKit().getLocalUser().id)
+          .getAudioOutputDeviceNotifier(
+            targetRoomID: roomID,
+            ZegoUIKit().getLocalUser().id,
+          )
           .value,
     );
   }

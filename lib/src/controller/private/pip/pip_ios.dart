@@ -277,7 +277,12 @@ class ZegoCallControllerPIPImplPrivateIOS {
       /// new pip vc
       if (ZegoUIKit().getLocalUser().id != currentActiveUserID) {
         await ZegoUIKit().enableIOSPIP(
-          ZegoUIKit().getUser(currentActiveUserID).streamID,
+          ZegoUIKit()
+              .getUser(
+                targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+                currentActiveUserID,
+              )
+              .streamID,
           aspectWidth: config?.pip.aspectWidth ?? 9,
           aspectHeight: config?.pip.aspectHeight ?? 16,
         );

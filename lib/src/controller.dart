@@ -56,6 +56,8 @@ part 'controller/private/minimize.dart';
 
 part 'controller/private/pip.dart';
 
+part 'controller/private/room.dart';
+
 part 'controller/private/user.dart';
 
 part 'controller/private/permission.dart';
@@ -105,7 +107,8 @@ class ZegoUIKitPrebuiltCallController
     bool showConfirmation = false,
     ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
   }) async {
-    if (ZegoUIKit().getRoom().id.isEmpty) {
+    final targetRoomID = private.roomID;
+    if (ZegoUIKit().getRoom(targetRoomID: targetRoomID).isLogin) {
       ZegoLoggerService.logInfo(
         'hang up, not in call',
         tag: 'call',
@@ -187,15 +190,18 @@ class ZegoUIKitPrebuiltCallController
     minimize.hide();
 
     pip.cancelBackground();
-    private.uninitByPrebuilt();
+
+    room.private.uninitByPrebuilt();
     user.private.uninitByPrebuilt();
     audioVideo.private.uninitByPrebuilt();
     minimize.private.uninitByPrebuilt();
     permission.private.uninitByPrebuilt();
     pip.private.uninitByPrebuilt();
     screenSharing.private.uninitByPrebuilt();
+    private.uninitByPrebuilt();
 
-    final result = await ZegoUIKit().leaveRoom().then((result) {
+    final result =
+        await ZegoUIKit().leaveRoom(targetRoomID: targetRoomID).then((result) {
       ZegoLoggerService.logInfo(
         'hang up, leave room result, ${result.errorCode} ${result.extendedData}',
         tag: 'call',
@@ -213,7 +219,7 @@ class ZegoUIKitPrebuiltCallController
     await ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
 
     final endEvent = ZegoCallEndEvent(
-      callID: ZegoUIKit().getRoom().id,
+      callID: targetRoomID,
       reason: reason,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.inCallMinimized == minimize.state,

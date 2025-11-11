@@ -100,12 +100,15 @@ class _ZegoInviterCallingTopToolBarState
 
     return (widget.switchButtonConfig?.visible ?? false)
         ? ValueListenableBuilder<bool>(
-            valueListenable: ZegoUIKit()
-                .getCameraStateNotifier(ZegoUIKit().getLocalUser().id),
+            valueListenable: ZegoUIKit().getCameraStateNotifier(
+              targetRoomID: widget.pageManager.invitationData.callID,
+              ZegoUIKit().getLocalUser().id,
+            ),
             builder: (context, isCameraOn, _) {
               return ValueListenableBuilder<bool>(
                 valueListenable: ZegoUIKit()
                     .getUseFrontFacingCameraStateNotifier(
+                        targetRoomID: widget.pageManager.invitationData.callID,
                         ZegoUIKit().getLocalUser().id),
                 builder: (context, isFrontFacing, _) {
                   return ZegoCallingTopToolBarButton(

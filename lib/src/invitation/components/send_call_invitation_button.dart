@@ -149,8 +149,6 @@ class _ZegoSendCallInvitationButtonState
   bool requesting = false;
   ValueNotifier<String> callIDNotifier = ValueNotifier<String>('');
 
-  StreamSubscription<dynamic>? localUserJoinedSubscription;
-
   ZegoCallInvitationPageManager? get pageManager =>
       ZegoCallInvitationInternalInstance.instance.pageManager;
 
@@ -163,19 +161,15 @@ class _ZegoSendCallInvitationButtonState
   void initState() {
     super.initState();
 
-    if (ZegoUIKit().getLocalUser().id.isEmpty) {
-      localUserJoinedSubscription =
-          ZegoUIKit().getUserJoinStream().listen(onUserJoined);
-    } else {
-      updateCallID();
-    }
+    updateCallID();
+    ZegoUIKit().getLocalUserNotifier().addListener(onLocalUserUpdate);
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    localUserJoinedSubscription?.cancel();
+    ZegoUIKit().getLocalUserNotifier().removeListener(onLocalUserUpdate);
   }
 
   @override
@@ -186,20 +180,6 @@ class _ZegoSendCallInvitationButtonState
         return button();
       },
     );
-  }
-
-  void updateCallID() {
-    callIDNotifier.value = widget.callID ??
-        'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-
-    if ((widget.callID?.isNotEmpty ?? false) &&
-        callIDNotifier.value != widget.callID) {
-      ZegoLoggerService.logWarn(
-        'callID(${widget.callID}) is not valid, replace by ${callIDNotifier.value}',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
-      );
-    }
   }
 
   Widget button() {
@@ -404,21 +384,28 @@ class _ZegoSendCallInvitationButtonState
     );
   }
 
-  void onUserJoined(List<ZegoUIKitUser> users) {
-    final index = users.indexWhere((user) {
-      if (user.id.isEmpty) {
-        return false;
-      }
-
-      return user.id == ZegoUIKit().getLocalUser().id;
-    });
-
-    if (-1 == index) {
-      return;
-    }
-
-    /// local user joined
-    localUserJoinedSubscription?.cancel();
+  void onLocalUserUpdate() {
     updateCallID();
+  }
+
+  void updateCallID() {
+    final newCallID = widget.callID ??
+        'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
+
+    // 延迟更新 ValueNotifier，避免在构建期间触发 setState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        callIDNotifier.value = newCallID;
+
+        if ((widget.callID?.isNotEmpty ?? false) &&
+            callIDNotifier.value != widget.callID) {
+          ZegoLoggerService.logWarn(
+            'callID(${widget.callID}) is not valid, replace by ${callIDNotifier.value}',
+            tag: 'call-invitation',
+            subTag: 'components, send call button',
+          );
+        }
+      }
+    });
   }
 }

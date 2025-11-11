@@ -22,6 +22,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// In the [onPressed] callback, send a call invitation.
 void showCallingInvitationListSheet(
   BuildContext context, {
+  required String callID,
+
   /// Members waiting to be selected (not in a call, not invited)
   required List<ZegoCallUser> waitingSelectUsers,
 
@@ -73,6 +75,7 @@ void showCallingInvitationListSheet(
           duration: const Duration(milliseconds: 50),
           child: SafeArea(
             child: ZegoSendCallingInvitationList(
+              callID: callID,
               waitingSelectUsers: waitingSelectUsers,
               selectedUsers: selectedUsers,
               userSort: userSort,
@@ -98,6 +101,7 @@ void showCallingInvitationListSheet(
 class ZegoSendCallingInvitationList extends StatefulWidget {
   const ZegoSendCallingInvitationList({
     super.key,
+    required this.callID,
     required this.waitingSelectUsers,
     required this.onPressed,
     this.selectedUsers = const [],
@@ -114,6 +118,7 @@ class ZegoSendCallingInvitationList extends StatefulWidget {
     this.defaultChecked = true,
   });
 
+  final String callID;
   final void Function(List<ZegoCallUser> selectedUsers) onPressed;
 
   final List<ZegoCallUser> waitingSelectUsers;
@@ -424,7 +429,10 @@ class _ZegoSendCallingInvitationListState
   }) {
     final targetSize = size ?? Size(72.zR, 72.zR);
     return ValueListenableBuilder(
-      valueListenable: ZegoUIKitUserPropertiesNotifier(user),
+      valueListenable: ZegoUIKitUserPropertiesNotifier(
+        roomID: widget.callID,
+        user,
+      ),
       builder: (context, _, __) {
         return Container(
           width: targetSize.width,

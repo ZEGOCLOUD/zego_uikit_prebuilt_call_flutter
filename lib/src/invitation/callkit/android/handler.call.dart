@@ -73,13 +73,13 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         null == ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling),
       );
       ZegoLoggerService.logInfo(
-        'signaling plugin need installed:$signalingPluginNeedInstalled',
+        'signaling plugin need installed:$signalingPluginNeedInstalled, ',
         tag: 'call-invitation',
         subTag: 'offline, call handler',
       );
       if (signalingPluginNeedInstalled.value) {
         await _installSignalingPlugin(
-          handlerInfo: message.handlerInfo,
+          message: message,
           appSign: appSign,
         );
       }
@@ -261,7 +261,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       );
 
       await ZegoUIKit().joinRoom(callID, keepWakeScreen: false).then((_) {
-        ZegoUIKit().turnMicrophoneOn(true);
+        ZegoUIKit().turnMicrophoneOn(targetRoomID: callID, true);
       });
     });
   }
@@ -641,9 +641,10 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
   }
 
   Future<void> _installSignalingPlugin({
-    required HandlerPrivateInfo? handlerInfo,
+    required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
     required String appSign,
   }) async {
+    final handlerInfo = message.handlerInfo;
     if (null == handlerInfo) {
       removePreferenceValue(serializationKeyHandlerInfo);
 
@@ -655,8 +656,14 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       return;
     }
 
+    final payload = message.extras['payload'] as String? ?? '';
+    final payloadMap = jsonDecode(payload) as Map<String, dynamic>;
+    final callID =
+        payloadMap[ZegoCallInvitationProtocolKey.callID] as String? ?? '';
+
     ZegoLoggerService.logInfo(
-      'handler info:$handlerInfo',
+      'handler info:$handlerInfo, '
+      'callID:$callID, ',
       tag: 'call-invitation',
       subTag: 'call handler, install signaling plugin',
     );

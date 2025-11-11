@@ -167,14 +167,14 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       }
     });
 
-    userListStreamSubscription =
-        ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
+    ZegoUIKit().getRoomsStateStream().addListener(onRoomsStateChanged);
   }
 
   @override
   void dispose() {
     super.dispose();
 
+    ZegoUIKit().getRoomsStateStream().removeListener(onRoomsStateChanged);
     userListStreamSubscription?.cancel();
 
     ZegoCallMiniOverlayMachine()
@@ -260,6 +260,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             );
       },
       child: ZegoMinimizingCallPage(
+        roomID: minimizeData?.callID ??
+            ZegoUIKitPrebuiltCallController().private.roomID,
         size: itemSize,
         durationNotifier: ZegoCallMiniOverlayMachine().durationNotifier(),
         showCameraButton: minimizeData?.inCall?.config.bottomMenuBar.buttons
@@ -300,6 +302,8 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
             );
       },
       child: ZegoMinimizingCallingPage(
+        roomID: minimizeData?.callID ??
+            ZegoUIKitPrebuiltCallController().private.roomID,
         size: itemSize,
         invitationType: minimizeData!.inviting!.invitationType,
         inviter: minimizeData.inviting!.inviter,
@@ -334,6 +338,20 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     });
   }
 
+  void onRoomsStateChanged() {
+    if (minimizeData?.callID.isEmpty ?? true) {
+      return;
+    }
+
+    if (ZegoUIKit().getCurrentRoom().isLogin) {
+      userListStreamSubscription = ZegoUIKit()
+          .getUserLeaveStream(
+            targetRoomID: minimizeData!.callID,
+          )
+          .listen(onUserLeave);
+    }
+  }
+
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
     /// Overlay and setState may be in different contexts, causing the framework to be unable to update.
     ///
@@ -346,10 +364,6 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
   }
 
   void onUserLeave(List<ZegoUIKitUser> users) {
-    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
-      return;
-    }
-
     if (ZegoCallMiniOverlayPageState.inCallMinimized !=
         ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoLoggerService.logInfo(
@@ -361,6 +375,15 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       return;
     }
 
+    if (ZegoUIKit()
+        .getRemoteUsers(
+          targetRoomID: minimizeData?.callID ??
+              ZegoUIKitPrebuiltCallController().private.roomID,
+        )
+        .isNotEmpty) {
+      return;
+    }
+
     ZegoLoggerService.logInfo(
       'onUserLeave',
       tag: 'call-minimize',
@@ -369,9 +392,11 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
     ZegoUIKitPrebuiltCallController().pip.cancelBackground();
 
+    final targetRoomID = minimizeData?.callID ??
+        ZegoUIKitPrebuiltCallController().private.roomID;
     //  remote users is empty
     final callEndEvent = ZegoCallEndEvent(
-      callID: minimizeData?.callID ?? ZegoUIKit().getRoom().id,
+      callID: targetRoomID,
       reason: ZegoCallEndReason.remoteHangUp,
       isFromMinimizing: true,
       invitationData: ZegoUIKitPrebuiltCallInvitationService()
@@ -387,7 +412,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
       ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
 
-      ZegoUIKitPrebuiltCallController().private.uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().room.private.uninitByPrebuilt();
       ZegoUIKitPrebuiltCallController().user.private.uninitByPrebuilt();
       ZegoUIKitPrebuiltCallController().audioVideo.private.uninitByPrebuilt();
       ZegoUIKitPrebuiltCallController().minimize.private.uninitByPrebuilt();
@@ -397,8 +422,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
           .screenSharing
           .private
           .uninitByPrebuilt();
+      ZegoUIKitPrebuiltCallController().private.uninitByPrebuilt();
 
-      ZegoUIKit().leaveRoom().then((_) {
+      ZegoUIKit().leaveRoom(targetRoomID: targetRoomID).then((_) {
         /// only effect call after leave room
         ZegoUIKit().enableCustomVideoProcessing(false);
       });

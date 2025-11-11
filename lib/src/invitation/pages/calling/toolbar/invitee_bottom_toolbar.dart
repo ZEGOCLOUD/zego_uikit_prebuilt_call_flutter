@@ -102,9 +102,12 @@ class ZegoInviteeCallingBottomToolBarState
                       ),
                       ValueListenableBuilder<ZegoUIKitAudioRoute>(
                         /// listen local audio output route changes
-                        valueListenable: ZegoUIKit()
-                            .getAudioOutputDeviceNotifier(
-                                ZegoUIKit().getLocalUser().id),
+                        valueListenable:
+                            ZegoUIKit().getAudioOutputDeviceNotifier(
+                          targetRoomID:
+                              widget.pageManager.invitationData.callID,
+                          ZegoUIKit().getLocalUser().id,
+                        ),
                         builder: (context, audioRoute, _) {
                           final isSpeakerOn =
                               audioRoute == ZegoUIKitAudioRoute.Speaker;
@@ -265,6 +268,7 @@ class ZegoInviteeCallingBottomToolBarState
       iconSize: widget.uiConfig.acceptButton.iconSize ?? Size(108.zR, 108.zR),
       onPressed: (ZegoAcceptInvitationButtonResult result) {
         widget.pageManager.onLocalAcceptInvitation(
+          callID: widget.pageManager.invitationData.callID,
           invitationID,
           result.code,
           result.message,
@@ -310,6 +314,7 @@ class ZegoInviteeCallingBottomToolBarState
   Widget microphoneButton() {
     return (widget.uiConfig.microphoneButton?.visible ?? false)
         ? ZegoToggleMicrophoneButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultOn:
@@ -326,6 +331,7 @@ class ZegoInviteeCallingBottomToolBarState
   Widget speakerButton() {
     return (widget.uiConfig.speakerButton?.visible ?? false)
         ? ZegoSwitchAudioOutputButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultUseSpeaker:
@@ -345,6 +351,7 @@ class ZegoInviteeCallingBottomToolBarState
 
     return (widget.uiConfig.cameraButton?.visible ?? false)
         ? ZegoToggleCameraButton(
+            roomID: widget.pageManager.invitationData.callID,
             buttonSize: Size(buttonSize, buttonSize),
             iconSize: Size(buttonSize, buttonSize),
             defaultOn: widget.uiConfig.showVideoOnCalling

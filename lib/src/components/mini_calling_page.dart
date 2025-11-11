@@ -19,6 +19,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 class ZegoMinimizingCallingPage extends StatefulWidget {
   const ZegoMinimizingCallingPage({
     super.key,
+    required this.roomID,
     required this.size,
     required this.invitationType,
     required this.inviter,
@@ -35,6 +36,7 @@ class ZegoMinimizingCallingPage extends StatefulWidget {
     this.avatarBuilder,
   });
 
+  final String roomID;
   final Size size;
   final ZegoCallInvitationType invitationType;
   final ZegoUIKitUser inviter;
@@ -106,6 +108,7 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: ZegoAudioVideoView(
+        roomID: widget.roomID,
         user: user,
         avatarConfig: ZegoAvatarConfig(
           showInAudioMode: false,
@@ -290,6 +293,7 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
                     ),
             onPressed: (ZegoAcceptInvitationButtonResult result) {
               widget.pageManager!.onLocalAcceptInvitation(
+                callID: widget.pageManager!.invitationData.callID,
                 invitationID,
                 result.code,
                 result.message,

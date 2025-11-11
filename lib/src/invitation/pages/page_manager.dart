@@ -544,7 +544,7 @@ class ZegoCallInvitationPageManager {
             ZegoUIKit().updateVideoViewMode(
               callInvitationData.uiConfig.inviter.useVideoViewAspectFill,
             );
-            ZegoUIKit().turnCameraOn(true);
+            ZegoUIKit().turnCameraOn(targetRoomID: callID, true);
           }
 
           callingMachine?.stateCallingWithVideo.enter();
@@ -582,8 +582,9 @@ class ZegoCallInvitationPageManager {
   void onLocalAcceptInvitation(
     String invitationID,
     String code,
-    String message,
-  ) {
+    String message, {
+    required String callID,
+  }) {
     ZegoLoggerService.logInfo(
       'local accept invitation, code:$code, message:$message, '
       'app in background:$_appInBackground',
@@ -694,7 +695,7 @@ class ZegoCallInvitationPageManager {
         )
             .then((value) async {
           ZegoUIKit()
-            ..turnMicrophoneOn(true)
+            ..turnMicrophoneOn(targetRoomID: callID, true)
             ..setAudioOutputToSpeaker(true);
 
           await ZegoUIKit()
@@ -702,7 +703,7 @@ class ZegoCallInvitationPageManager {
               .then((result) async {
             userListStreamSubscriptionInCallingByIOSBackgroundLock?.cancel();
             userListStreamSubscriptionInCallingByIOSBackgroundLock = ZegoUIKit()
-                .getUserLeaveStream()
+                .getUserLeaveStream(targetRoomID: callID)
                 .listen(onUserLeaveInIOSBackgroundLockCalling);
 
             if (result.errorCode != 0) {
@@ -801,7 +802,9 @@ class ZegoCallInvitationPageManager {
   }
 
   void onUserLeaveInIOSBackgroundLockCalling(List<ZegoUIKitUser> users) {
-    if (ZegoUIKit().getRemoteUsers().isEmpty) {
+    if (ZegoUIKit()
+        .getRemoteUsers(targetRoomID: invitationData.callID)
+        .isEmpty) {
       ZegoLoggerService.logInfo(
         'on user leave in iOS background lock calling',
         tag: 'call-invitation',
@@ -915,7 +918,10 @@ class ZegoCallInvitationPageManager {
         case ZegoSignalingPluginInvitationUserState.accepted:
           if (userInfo.userID != ZegoUIKit().getLocalUser().id) {
             onInvitationAccepted({
-              'invitee': ZegoUIKitUser(id: userInfo.userID, name: ''),
+              'invitee': ZegoUIKitUser(
+                id: userInfo.userID,
+                name: '',
+              ),
               'data': userInfo.extendedData,
             });
           }
@@ -923,7 +929,10 @@ class ZegoCallInvitationPageManager {
         case ZegoSignalingPluginInvitationUserState.rejected:
           if (userInfo.userID != ZegoUIKit().getLocalUser().id) {
             onInvitationRefused({
-              'invitee': ZegoUIKitUser(id: userInfo.userID, name: ''),
+              'invitee': ZegoUIKitUser(
+                id: userInfo.userID,
+                name: '',
+              ),
               'data': userInfo.extendedData,
             });
           }
@@ -935,7 +944,10 @@ class ZegoCallInvitationPageManager {
             onInvitationResponseTimeout(
               {
                 'invitees': [
-                  ZegoUIKitUser(id: userInfo.userID, name: ''),
+                  ZegoUIKitUser(
+                    id: userInfo.userID,
+                    name: '',
+                  ),
                 ],
                 'data': userInfo.extendedData,
               },
@@ -1173,7 +1185,7 @@ class ZegoCallInvitationPageManager {
         ZegoUIKit().updateVideoViewMode(
           callInvitationData.uiConfig.invitee.useVideoViewAspectFill,
         );
-        ZegoUIKit().turnCameraOn(true);
+        ZegoUIKit().turnCameraOn(targetRoomID: _invitationData.callID, true);
       }
     }
 
@@ -1343,7 +1355,10 @@ class ZegoCallInvitationPageManager {
       ..callID = sendRequestProtocol.callID
       ..invitationID = invitationID
       ..invitees = List.from(sendRequestProtocol.invitees)
-      ..inviter = ZegoUIKitUser(id: inviter.id, name: inviter.name)
+      ..inviter = ZegoUIKitUser(
+        id: inviter.id,
+        name: inviter.name,
+      )
       ..type = type;
 
     ZegoLoggerService.logInfo(
@@ -1956,6 +1971,16 @@ class ZegoCallInvitationPageManager {
             ZegoUIKitPrebuiltCallController().minimize.state &&
         ZegoCallMiniOverlayPageState.invitingMinimized !=
             ZegoUIKitPrebuiltCallController().minimize.state) {
+      ZegoUIKit.instance.turnCameraOn(
+        targetRoomID: invitationData.callID,
+        false,
+      );
+    }
+
+    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state &&
+        ZegoCallMiniOverlayPageState.invitingMinimized !=
+            ZegoUIKitPrebuiltCallController().minimize.state) {
       _invitationData = ZegoCallInvitationData.empty();
     }
 
@@ -1965,13 +1990,6 @@ class ZegoCallInvitationPageManager {
     _remoteReceivedTimeoutGuard?.cancel();
     await _callerRingtone.stopRing();
     await _calleeRingtone.stopRing();
-
-    if (ZegoCallMiniOverlayPageState.inCallMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state &&
-        ZegoCallMiniOverlayPageState.invitingMinimized !=
-            ZegoUIKitPrebuiltCallController().minimize.state) {
-      ZegoUIKit.instance.turnCameraOn(false);
-    }
 
     ZegoLoggerService.logInfo(
       'cancelInvitationNotification',
@@ -2206,7 +2224,7 @@ class ZegoCallInvitationPageManager {
       'call machine page state:${callingMachine?.getPageState() ?? CallingState.kIdle}, '
       'invitation data:$_invitationData, '
       'in calling by ios background lock:$inCallingByIOSBackgroundLock, '
-      'current room info:${ZegoUIKit().getRoom()}',
+      'current room info:${ZegoUIKit().getCurrentRoom()}',
       tag: 'call-invitation',
       subTag: 'page manager, didChangeAppLifecycleState',
     );
@@ -2262,7 +2280,7 @@ class ZegoCallInvitationPageManager {
           }
         }
       } else {
-        if (ZegoUIKit().getRoom().id.isEmpty) {
+        if (!ZegoUIKit().hasRoomLogin()) {
           ZegoLoggerService.logInfo(
             'show notification now',
             tag: 'call-invitation',

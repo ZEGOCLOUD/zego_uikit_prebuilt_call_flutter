@@ -11,6 +11,7 @@ import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 class ZegoCallMemberListSheet extends StatefulWidget {
   const ZegoCallMemberListSheet({
     super.key,
+    required this.roomID,
     this.showMicrophoneState = true,
     this.showCameraState = true,
     this.itemBuilder,
@@ -18,6 +19,7 @@ class ZegoCallMemberListSheet extends StatefulWidget {
     this.rootNavigator = false,
   });
 
+  final String roomID;
   final bool showMicrophoneState;
   final bool showCameraState;
   final ZegoMemberListItemBuilder? itemBuilder;
@@ -51,6 +53,7 @@ class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
           SizedBox(
             height: constraints.maxHeight - 1.zR - 98.zH,
             child: ZegoMemberList(
+              roomID: widget.roomID,
               showCameraState: widget.showCameraState,
               showMicrophoneState: widget.showMicrophoneState,
               avatarBuilder: widget.avatarBuilder,
@@ -102,6 +105,7 @@ class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
 
 void showMemberListSheet(
   BuildContext context, {
+  required String roomID,
   showMicrophoneState = true,
   showCameraState = true,
   ZegoMemberListItemBuilder? itemBuilder,
@@ -130,6 +134,7 @@ void showMemberListSheet(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
               child: ZegoCallMemberListSheet(
+                roomID: roomID,
                 showCameraState: showCameraState,
                 showMicrophoneState: showMicrophoneState,
                 itemBuilder: itemBuilder,

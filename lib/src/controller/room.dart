@@ -7,11 +7,14 @@ mixin ZegoCallControllerRoom {
 }
 
 /// Room controller managing room-related operations such as token renewal.
-class ZegoCallControllerRoomImpl {
+class ZegoCallControllerRoomImpl with ZegoCallControllerRoomImplPrivate {
   /// Renew the token. Call when receiving the onTokenExpired callback.
   /// when receives [ZegoCallRoomEvents.onTokenExpired], you need use this API to update the token
   Future<void> renewToken(String token) async {
-    await ZegoUIKit().renewRoomToken(token);
+    await ZegoUIKit().renewRoomToken(
+      token,
+      targetRoomID: ZegoUIKit().getCurrentRoom().id,
+    );
 
     if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) != null) {
       ZegoUIKit().getSignalingPlugin().renewToken(token);

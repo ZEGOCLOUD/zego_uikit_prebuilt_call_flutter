@@ -66,6 +66,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   Widget backgroundView(BuildContext context) {
     if (ZegoCallInvitationType.videoCall == invitationType) {
       return ZegoAudioVideoView(
+        roomID: pageManager.invitationData.callID,
         user: inviter,
         avatarConfig: const ZegoAvatarConfig(
           showInAudioMode: false,
@@ -125,8 +126,10 @@ class ZegoCallingInviterView extends StatelessWidget {
           height: 200.zR,
           child: config.showAvatar
               ? ValueListenableBuilder(
-                  valueListenable:
-                      ZegoUIKitUserPropertiesNotifier(firstInvitee),
+                  valueListenable: ZegoUIKitUserPropertiesNotifier(
+                    roomID: pageManager.invitationData.callID,
+                    firstInvitee,
+                  ),
                   builder: (context, _, __) {
                     return avatarBuilder?.call(
                           context,

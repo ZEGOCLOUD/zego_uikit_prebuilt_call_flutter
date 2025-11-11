@@ -9,7 +9,9 @@ mixin ZegoCallControllerUser {
 /// Here are the APIs related to user
 class ZegoCallControllerUserImpl with ZegoCallControllerUserImplPrivate {
   /// user list stream notifier
-  Stream<List<ZegoUIKitUser>> get stream => ZegoUIKit().getUserListStream();
+  Stream<List<ZegoUIKitUser>> get stream => ZegoUIKit().getUserListStream(
+        targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+      );
 
   /// remove user from call, kick out
   ///
@@ -23,6 +25,9 @@ class ZegoCallControllerUserImpl with ZegoCallControllerUserImplPrivate {
       subTag: 'controller.user',
     );
 
-    return ZegoUIKit().removeUserFromRoom(userIDs);
+    return ZegoUIKit().removeUserFromRoom(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+      userIDs,
+    );
   }
 }

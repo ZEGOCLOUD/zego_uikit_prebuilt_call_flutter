@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
@@ -62,6 +63,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            callID: _pageManager?.invitationData.callID ?? '',
             result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
@@ -78,6 +80,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            callID: _pageManager?.invitationData.callID ?? '',
             result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
@@ -220,6 +223,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            callID: _pageManager?.invitationData.callID ?? '',
             result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
@@ -236,6 +240,7 @@ class ZegoCallKitBackgroundService {
             )
             .then((result) {
           _pageManager?.onLocalAcceptInvitation(
+            callID: _pageManager?.invitationData.callID ?? '',
             result.invitationID,
             result.error?.code ?? '',
             result.error?.message ?? '',
@@ -281,7 +286,11 @@ class ZegoCallKitBackgroundService {
       }
     }
 
-    await ZegoUIKit().leaveRoom().then((result) {
+    await ZegoUIKit()
+        .leaveRoom(
+      targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
+    )
+        .then((result) {
       ZegoLoggerService.logInfo(
         'leave room result, ${result.errorCode} ${result.extendedData}',
         tag: 'call-invitation',

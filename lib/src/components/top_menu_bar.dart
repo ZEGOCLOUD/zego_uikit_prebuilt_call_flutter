@@ -28,6 +28,8 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// @nodoc
 class ZegoCallTopMenuBar extends StatefulWidget {
+  final String roomID;
+
   final ZegoUIKitPrebuiltCallConfig config;
   final ZegoUIKitPrebuiltCallEvents events;
   final void Function(ZegoCallEndEvent event) defaultEndAction;
@@ -50,6 +52,7 @@ class ZegoCallTopMenuBar extends StatefulWidget {
 
   const ZegoCallTopMenuBar({
     super.key,
+    required this.roomID,
     required this.config,
     required this.events,
     required this.defaultEndAction,
@@ -182,7 +185,9 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
-                    .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .getCameraStateNotifier(
+                        targetRoomID: widget.roomID,
+                        ZegoUIKit().getLocalUser().id)
                     .value;
               }
             : null,
@@ -190,7 +195,10 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
-                    .getMicrophoneStateNotifier(ZegoUIKit().getLocalUser().id)
+                    .getMicrophoneStateNotifier(
+                      targetRoomID: widget.roomID,
+                      ZegoUIKit().getLocalUser().id,
+                    )
                     .value;
               }
             : null,
@@ -253,9 +261,11 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
 
     return withRoomUpdateNotifier
         ? ValueListenableBuilder<ZegoUIKitRoomState>(
-            valueListenable: ZegoUIKit().getRoomStateStream(),
+            valueListenable: ZegoUIKit().getRoomStateStream(
+              targetRoomID: widget.roomID,
+            ),
             builder: (context, roomState, _) {
-              if (roomState.reason != ZegoRoomStateChangedReason.Logined) {
+              if (roomState.reason != ZegoUIKitRoomStateChangedReason.Logined) {
                 return const SizedBox();
               }
 
@@ -297,6 +307,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
     switch (buttonName) {
       case ZegoCallMenuBarButtonName.toggleMicrophoneButton:
         return ZegoToggleMicrophoneButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultOn: microphoneDefaultValueFunc?.call() ??
@@ -304,12 +315,14 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         );
       case ZegoCallMenuBarButtonName.switchAudioOutputButton:
         return ZegoSwitchAudioOutputButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultUseSpeaker: widget.config.useSpeakerWhenJoining,
         );
       case ZegoCallMenuBarButtonName.toggleCameraButton:
         return ZegoToggleCameraButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           defaultOn: cameraDefaultValueFunc?.call() ??
@@ -317,6 +330,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         );
       case ZegoCallMenuBarButtonName.switchCameraButton:
         return ZegoSwitchCameraButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(
@@ -325,11 +339,14 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
           ),
           defaultUseFrontFacingCamera: ZegoUIKit()
               .getUseFrontFacingCameraStateNotifier(
-                  ZegoUIKit().getLocalUser().id)
+                targetRoomID: widget.roomID,
+                ZegoUIKit().getLocalUser().id,
+              )
               .value,
         );
       case ZegoCallMenuBarButtonName.hangUpButton:
         return ZegoLeaveButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(backgroundColor: Colors.transparent),
@@ -403,6 +420,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         );
       case ZegoCallMenuBarButtonName.showMemberListButton:
         return ZegoCallMemberListButton(
+          roomID: widget.roomID,
           config: widget.config.memberList,
           rootNavigator: widget.config.rootNavigator,
           avatarBuilder: widget.config.avatarBuilder,
@@ -414,6 +432,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         );
       case ZegoCallMenuBarButtonName.toggleScreenSharingButton:
         return ZegoScreenSharingToggleButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           onPressed: (isScreenSharing) {},
@@ -439,6 +458,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         );
       case ZegoCallMenuBarButtonName.chatButton:
         return ZegoCallInRoomMessageButton(
+          roomID: widget.roomID,
           buttonSize: buttonSize,
           iconSize: iconSize,
           icon: ButtonIcon(

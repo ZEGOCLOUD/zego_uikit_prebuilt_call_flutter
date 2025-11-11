@@ -220,7 +220,10 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       subTag: 'prebuilt',
     );
 
-    _eventListener = ZegoCallEventListener(widget.events);
+    _eventListener = ZegoCallEventListener(
+      widget.events,
+      roomID: widget.callID,
+    );
     _eventListener?.init();
 
     final isPrebuiltFromMinimizing = ZegoCallMiniOverlayPageState.idle !=
@@ -261,10 +264,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       listenUserEvents();
     } else {
       controller.private.initByPrebuilt(
+        roomID: widget.callID,
         prebuiltConfig: widget.config,
         popUpManager: popUpManager,
         events: events,
       );
+      controller.room.private.initByPrebuilt();
       controller.user.private.initByPrebuilt(config: widget.config);
       controller.audioVideo.private.initByPrebuilt(
         config: widget.config,
@@ -308,7 +313,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     subscriptions
       ..add(ZegoUIKit().getErrorStream().listen(onUIKitError))
-      ..add(ZegoUIKit().getRoomTokenExpiredStream().listen(onRoomTokenExpired));
+      ..add(ZegoUIKit()
+          .getRoomTokenExpiredStream(targetRoomID: widget.callID)
+          .listen(onRoomTokenExpired));
 
     ZegoUIKitPrebuiltCallInvitationService()
         .private
@@ -355,18 +362,19 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ZegoUIKitPrebuiltCallController().minimize.state) {
       ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
 
-      controller.private.uninitByPrebuilt();
+      controller.room.private.uninitByPrebuilt();
       controller.user.private.uninitByPrebuilt();
       controller.audioVideo.private.uninitByPrebuilt();
       controller.minimize.private.uninitByPrebuilt();
       controller.permission.private.uninitByPrebuilt();
       controller.pip.private.uninitByPrebuilt();
       controller.screenSharing.private.uninitByPrebuilt();
+      controller.private.uninitByPrebuilt();
 
       uninitBaseBeautyConfig();
       uninitAdvanceEffectsPlugins();
 
-      ZegoUIKit().leaveRoom().then((_) {
+      ZegoUIKit().leaveRoom(targetRoomID: widget.callID).then((_) {
         /// only effect call after leave room
         ZegoUIKit().enableCustomVideoProcessing(false);
       });
@@ -398,9 +406,13 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     userSubscriptions
       ..add(
-        ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
+        ZegoUIKit()
+            .getMeRemovedFromRoomStream(targetRoomID: widget.callID)
+            .listen(onMeRemovedFromRoom),
       )
-      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+      ..add(ZegoUIKit()
+          .getUserLeaveStream(targetRoomID: widget.callID)
+          .listen(onUserLeave));
   }
 
   void checkRequiredParticipant() {
@@ -538,6 +550,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     final height = screenSize.height / 3.0;
     final width = 16 / 9 * height;
     return ZegoMinimizingCallPage(
+      roomID: widget.callID,
       size: Size(width, height),
       background: widget.config.pip.android.background ??
           BackdropFilter(
@@ -641,8 +654,14 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
             config.audioVideoView.useVideoViewAspectFill,
           )
           ..enableVideoMirroring(config.audioVideoView.isVideoMirror)
-          ..turnCameraOn(config.turnOnCameraWhenJoining)
-          ..turnMicrophoneOn(config.turnOnMicrophoneWhenJoining)
+          ..turnCameraOn(
+            targetRoomID: widget.callID,
+            config.turnOnCameraWhenJoining,
+          )
+          ..turnMicrophoneOn(
+            targetRoomID: widget.callID,
+            config.turnOnMicrophoneWhenJoining,
+          )
           ..setAudioOutputToSpeaker(config.useSpeakerWhenJoining);
 
         await ZegoUIKit()
@@ -680,6 +699,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ZegoUIKitTrafficControlProperty.adaptiveResolution,
         ZegoUIKitTrafficControlProperty.adaptiveFPS,
       ],
+      targetRoomID: widget.callID,
       minimizeVideoConfig: ZegoVideoConfigExtension.preset360P(),
       isFocusOnRemote: true,
       streamType: ZegoStreamType.main,
@@ -816,7 +836,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           .private
           .currentCallInvitationDataSafe
           .invitationID;
-      final remoteUserIsEmpty = ZegoUIKit().getRemoteUsers().isEmpty;
+      final remoteUserIsEmpty = ZegoUIKit()
+          .getRemoteUsers(
+            targetRoomID: widget.callID,
+          )
+          .isEmpty;
       final localIsInitiator = ZegoUIKit().getLocalUser().id ==
           ZegoUIKit()
               .getSignalingPlugin()
@@ -970,7 +994,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   }
 
   void onUserLeave(List<ZegoUIKitUser> users) {
-    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
+    if (ZegoUIKit().getRemoteUsers(targetRoomID: widget.callID).isNotEmpty) {
       return;
     }
 
@@ -1054,6 +1078,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   ) {
     audioVideoViewCreator(ZegoUIKitUser user) {
       return ZegoAudioVideoView(
+        roomID: widget.callID,
         user: user,
         borderRadius: 18.0.zW,
         borderColor: Colors.transparent,
@@ -1074,16 +1099,18 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       rect: widget.config.audioVideoView.containerRect?.call() ??
           Rect.fromLTWH(0, 0, preferWidth, preferHeight),
       child: StreamBuilder<List<ZegoUIKitUser>>(
-        stream: ZegoUIKit().getUserListStream(),
+        stream: ZegoUIKit().getUserListStream(targetRoomID: widget.callID),
         builder: (context, snapshot) {
-          final allUsers = ZegoUIKit().getAllUsers();
+          final allUsers = ZegoUIKit().getAllUsers(targetRoomID: widget.callID);
           return StreamBuilder<List<ZegoUIKitUser>>(
-            stream: ZegoUIKit().getAudioVideoListStream(),
+            stream: ZegoUIKit().getAudioVideoListStream(
+              targetRoomID: widget.callID,
+            ),
             builder: (context, snapshot) {
               return widget.config.audioVideoView.containerBuilder?.call(
                     context,
                     allUsers,
-                    ZegoUIKit().getAudioVideoList(),
+                    ZegoUIKit().getAudioVideoList(targetRoomID: widget.callID),
                     audioVideoViewCreator,
                   ) ??
                   defaultAudioVideoContainerWidget;
@@ -1111,6 +1138,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
 
     return ZegoAudioVideoContainer(
+      roomID: widget.callID,
       layout: widget.config.layout,
       virtualUsersNotifier: virtualUserNotifier,
       sources: [
@@ -1183,6 +1211,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       right: 0,
       top: safeAreaInsets.top,
       child: ZegoCallTopMenuBar(
+        roomID: widget.callID,
         height: widget.config.topMenuBar.height ?? 80.zR,
         config: widget.config,
         events: events,
@@ -1212,6 +1241,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       bottom:
           isLightStyle ? safeAreaInsets.bottom + 10.zR : safeAreaInsets.bottom,
       child: ZegoCallBottomMenuBar(
+        roomID: widget.callID,
         buttonSize: Size(96.zR, 96.zR),
         config: widget.config,
         events: events,
@@ -1283,6 +1313,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
                 ?.call(context, size, user, extraInfo) ??
             Container(color: Colors.transparent),
         ZegoCallAudioVideoForeground(
+          roomID: widget.callID,
           size: size,
           user: user,
           showMicrophoneStateOnView:
@@ -1618,7 +1649,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return;
     }
 
-    final remoteUsers = ZegoUIKit().getRemoteUsers();
+    final remoteUsers = ZegoUIKit().getRemoteUsers(targetRoomID: widget.callID);
     final requiredParticipants =
         List<ZegoUIKitUser>.from(widget.config.user.requiredUsers.users);
     for (var requiredParticipant in requiredParticipants) {

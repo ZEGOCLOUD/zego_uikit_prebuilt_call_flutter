@@ -437,6 +437,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   }
 
   Future<bool> _acceptInvitation({
+    required String callID,
     required String callerID,
     String customData = '',
   }) async {
@@ -452,6 +453,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       ZegoSignalingPluginResponseInvitationResult result,
     ) async {
       _pageManager?.onLocalAcceptInvitation(
+        callID: callID,
         result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',

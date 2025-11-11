@@ -106,6 +106,7 @@ class _ZegoCallInvitationNotifyDialogState
               children: [
                 ValueListenableBuilder(
                   valueListenable: ZegoUIKitUserPropertiesNotifier(
+                    roomID: widget.invitationData.callID,
                     widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
                   ),
                   builder: (context, _, __) {
@@ -284,6 +285,7 @@ class _ZegoCallInvitationNotifyDialogState
         onPressed: (ZegoAcceptInvitationButtonResult result) {
           widget.pageManager.hideInvitationTopSheet();
           widget.pageManager.onLocalAcceptInvitation(
+            callID: widget.invitationData.callID,
             widget.invitationData.invitationID,
             result.code,
             result.message,

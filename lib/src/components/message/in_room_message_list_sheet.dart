@@ -12,12 +12,14 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
 class ZegoCallMessageListSheet extends StatefulWidget {
   const ZegoCallMessageListSheet({
     super.key,
+    required this.roomID,
     this.avatarBuilder,
     this.itemBuilder,
     this.scrollController,
     this.rootNavigator = false,
   });
 
+  final String roomID;
   final bool rootNavigator;
   final ZegoAvatarBuilder? avatarBuilder;
   final ZegoInRoomMessageItemBuilder? itemBuilder;
@@ -82,6 +84,7 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
       bottom: 0,
       height: height,
       child: ZegoInRoomMessageInput(
+        roomID: widget.roomID,
         placeHolder: 'Send a message to everyone',
         autofocus: false,
         focusNotifier: focusNotifier,
@@ -109,6 +112,7 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
                 resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.transparent,
                 body: ZegoInRoomChatView(
+                  roomID: widget.roomID,
                   avatarBuilder: widget.avatarBuilder,
                   itemBuilder: widget.itemBuilder,
                   scrollController: widget.scrollController,
@@ -175,6 +179,7 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
 
 void showMessageSheet(
   BuildContext context, {
+  required String roomID,
   ZegoAvatarBuilder? avatarBuilder,
   ZegoInRoomMessageItemBuilder? itemBuilder,
   ScrollController? scrollController,
@@ -209,6 +214,7 @@ void showMessageSheet(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
               child: ZegoCallMessageListSheet(
+                roomID: roomID,
                 avatarBuilder: avatarBuilder,
                 itemBuilder: itemBuilder,
                 scrollController: scrollController,
