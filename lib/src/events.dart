@@ -115,11 +115,11 @@ class ZegoCallAudioVideoEvents {
       onLocalMicrophoneExceptionOccurred;
 
   /// remote camera device exceptions
-  void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
+  void Function(ZegoUIKitUser, ZegoUIKitDeviceException?)?
       onRemoteCameraExceptionOccurred;
 
   /// remote microphone device exceptions
-  void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
+  void Function(ZegoUIKitUser, ZegoUIKitDeviceException?)?
       onRemoteMicrophoneExceptionOccurred;
 
   ZegoCallAudioVideoEvents({

@@ -144,13 +144,21 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
 
   void onLocalCameraExceptionOccurred() {
     events?.audioVideo?.onLocalCameraExceptionOccurred?.call(
-      ZegoUIKit().getLocalUser().cameraException.value,
+      ZegoUIKit()
+          .getLocalUser()
+          .cameraException
+          .value
+          ?.localDeviceExceptionType,
     );
   }
 
   void onLocalMicrophoneExceptionOccurred() {
     events?.audioVideo?.onLocalMicrophoneExceptionOccurred?.call(
-      ZegoUIKit().getLocalUser().microphoneException.value,
+      ZegoUIKit()
+          .getLocalUser()
+          .microphoneException
+          .value
+          ?.localDeviceExceptionType,
     );
   }
 }

@@ -231,7 +231,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.avatarBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
-  })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
+  })  : video = videoConfig ?? ZegoVideoConfigExtension.preset360P(),
         audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
         bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),

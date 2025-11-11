@@ -656,7 +656,7 @@ class ZegoRingtone {
     } else {
       // Set corresponding audio context based on current audio route
       final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
-      final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
+      final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.Speaker;
       final targetContext =
           isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
       final targetType =
@@ -814,7 +814,7 @@ class ZegoRingtone {
       subTag: 'ringtone',
     );
 
-    await switchTo(isSpeaker: currentAudioRoute == ZegoUIKitAudioRoute.speaker);
+    await switchTo(isSpeaker: currentAudioRoute == ZegoUIKitAudioRoute.Speaker);
   }
 
   Future<void> switchTo({bool isSpeaker = true}) async {
@@ -920,7 +920,7 @@ class ZegoRingtone {
 
       // Set correct audio context based on current route with retry mechanism
       final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
-      final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
+      final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.Speaker;
       final targetContext =
           isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
       final targetType =

@@ -107,7 +107,7 @@ class ZegoInviteeCallingBottomToolBarState
                                 ZegoUIKit().getLocalUser().id),
                         builder: (context, audioRoute, _) {
                           final isSpeakerOn =
-                              audioRoute == ZegoUIKitAudioRoute.speaker;
+                              audioRoute == ZegoUIKitAudioRoute.Speaker;
 
                           return buttonWrapper(
                             child: speakerButton(),

@@ -680,7 +680,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ZegoUIKitTrafficControlProperty.adaptiveResolution,
         ZegoUIKitTrafficControlProperty.adaptiveFPS,
       ],
-      minimizeVideoConfig: ZegoUIKitVideoConfig.preset360P(),
+      minimizeVideoConfig: ZegoVideoConfigExtension.preset360P(),
       isFocusOnRemote: true,
       streamType: ZegoStreamType.main,
     );
@@ -881,8 +881,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     );
 
     final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
-    final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
-    final isEarpiece = currentAudioRoute == ZegoUIKitAudioRoute.receiver;
+    final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.Speaker;
+    final isEarpiece = currentAudioRoute == ZegoUIKitAudioRoute.Receiver;
 
     ZegoLoggerService.logInfo(
       'audio route changed: speaker=$isSpeaker, earpiece=$isEarpiece',

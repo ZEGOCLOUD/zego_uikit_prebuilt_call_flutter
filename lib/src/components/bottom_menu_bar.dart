@@ -164,7 +164,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
         speakerDefaultValueFunc: needRestoreDeviceState
             ? () {
                 /// if is minimizing, take the local device state
-                return ZegoUIKitAudioRoute.speaker ==
+                return ZegoUIKitAudioRoute.Speaker ==
                     ZegoUIKit()
                         .getAudioOutputDeviceNotifier(
                           ZegoUIKit().getLocalUser().id,
@@ -203,7 +203,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
                     },
                     speakerDefaultValueFunc: () {
                       /// if is minimizing, take the local device state
-                      return ZegoUIKitAudioRoute.speaker ==
+                      return ZegoUIKitAudioRoute.Speaker ==
                           ZegoUIKit()
                               .getAudioOutputDeviceNotifier(
                                 ZegoUIKit().getLocalUser().id,
