@@ -67,9 +67,9 @@ Future<CallKitParams> _makeCallKitParam({
         : '';
   }
 
-  final isShowFullScreen =
-      (prefs.getBool(CallKitInnerVariable.showFullScreen.cacheKey) ??
-          CallKitInnerVariable.showFullScreen.defaultValue);
+  final isShowFullLockedScreen =
+      (prefs.getBool(CallKitInnerVariable.showFullLockedScreen.cacheKey) ??
+          CallKitInnerVariable.showFullLockedScreen.defaultValue);
 
   return CallKitParams(
     id: const Uuid().v4(),
@@ -98,7 +98,7 @@ Future<CallKitParams> _makeCallKitParam({
     ),
     android: AndroidParams(
       isCustomNotification: true,
-      isShowFullLockedScreen: isShowFullScreen,
+      isShowFullLockedScreen: isShowFullLockedScreen,
       isShowLogo: false,
       ringtonePath: tempRingtonePath,
       backgroundColor:

@@ -53,8 +53,8 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
     _setCallKitVariables({
       CallKitInnerVariable.callIDVisibility:
           androidNotificationConfig?.callIDVisibility ?? true,
-      CallKitInnerVariable.showFullScreen:
-          androidNotificationConfig?.showFullScreen ?? false,
+      CallKitInnerVariable.showFullLockedScreen:
+          androidNotificationConfig?.showOnLockedScreen ?? false,
       CallKitInnerVariable.ringtonePath:
           androidNotificationConfig?.callChannel.sound,
       CallKitInnerVariable.backgroundUrl:
@@ -115,7 +115,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       variables.forEach((key, value) {
         switch (key) {
           case CallKitInnerVariable.callIDVisibility:
-          case CallKitInnerVariable.showFullScreen:
+          case CallKitInnerVariable.showFullLockedScreen:
             prefs.setBool(key.cacheKey, value as bool? ?? key.defaultValue);
             break;
           case CallKitInnerVariable.textAccept:

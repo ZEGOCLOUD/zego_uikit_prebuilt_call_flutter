@@ -437,29 +437,37 @@ class ZegoUIKitPrebuiltCallInvitationService
     );
 
     try {
-      await private._initContext(config: config).then((_) async {
+      await private
+          ._initContext(
+        config: config,
+        requireConfig: requireConfig,
+      )
+          .then((_) async {
         ZegoLoggerService.logInfo(
           'initContext done',
           tag: 'call-invitation',
           subTag: 'service(${identityHashCode(this)}), init',
         );
 
-        if (Platform.isAndroid) {
-          final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
-          ZegoLoggerService.logInfo(
-            'mobile system version:$mobileSystemVersion',
-            tag: 'call-invitation',
-            subTag: 'service(${identityHashCode(this)}), init',
-          );
+        if (notificationConfig?.androidNotificationConfig?.showOnFullScreen ??
+            true) {
+          if (Platform.isAndroid) {
+            final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
+            ZegoLoggerService.logInfo(
+              'mobile system version:$mobileSystemVersion',
+              tag: 'call-invitation',
+              subTag: 'service(${identityHashCode(this)}), init',
+            );
 
-          if (mobileSystemVersion.major >= 14) {
-            FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
-              ZegoLoggerService.logInfo(
-                'requestFullIntentPermission done, res:$res',
-                tag: 'call-invitation',
-                subTag: 'callkit',
-              );
-            });
+            if (mobileSystemVersion.major >= 14) {
+              FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
+                ZegoLoggerService.logInfo(
+                  'requestFullIntentPermission done, res:$res',
+                  tag: 'call-invitation',
+                  subTag: 'callkit',
+                );
+              });
+            }
           }
         }
       });

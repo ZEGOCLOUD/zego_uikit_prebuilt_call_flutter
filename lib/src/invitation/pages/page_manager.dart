@@ -685,6 +685,13 @@ class ZegoCallInvitationPageManager {
             }
           }
         }
+
+        ZegoUIKit().enableSyncDeviceStatusBySEI(
+          callInvitationData
+              .requireConfig(_invitationData)
+              .device
+              .enableSyncDeviceStatusBySEI,
+        );
         ZegoUIKit()
             .init(
           appID: callInvitationData.appID,
