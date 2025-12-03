@@ -1,3 +1,8 @@
+
+## 4.22.1
+
+- Update dependency
+
 ## 4.22.0
 
 - Features
