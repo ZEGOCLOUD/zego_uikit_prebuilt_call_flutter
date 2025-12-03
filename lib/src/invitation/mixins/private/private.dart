@@ -519,6 +519,7 @@ class ZegoCallInvitationServicePrivateImpl
 
   Future<void> _initContext({
     ZegoCallInvitationConfig? config,
+    ZegoCallPrebuiltConfigQuery? requireConfig,
   }) async {
     ZegoLoggerService.logInfo(
       'init context',
@@ -545,6 +546,14 @@ class ZegoCallInvitationServicePrivateImpl
         }
       }
     }
+    ZegoUIKit().enableSyncDeviceStatusBySEI(
+      _data
+              ?.requireConfig(_pageManager?.invitationData ??
+                  ZegoCallInvitationData.empty())
+              .device
+              .enableSyncDeviceStatusBySEI ??
+          true,
+    );
     await ZegoUIKit().init(
       appID: _data?.appID ?? 0,
       appSign: _data?.appSign ?? '',
