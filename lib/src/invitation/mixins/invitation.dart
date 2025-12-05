@@ -45,7 +45,14 @@ class ZegoCallInvitationServiceAPIImpl
     }
 
     sendInvitationFunc(callID) {
-      return private._checkInCall()
+      final isInCall = private._checkInCall();
+      ZegoLoggerService.logWarn(
+        'isInCall:$isInCall, ',
+        tag: 'call-invitation',
+        subTag: 'service, send',
+      );
+
+      return isInCall
           ? private._addInvitation(
               callees: invitees,
               isVideoCall: isVideoCall,
@@ -78,7 +85,7 @@ class ZegoCallInvitationServiceAPIImpl
       ZegoLoggerService.logWarn(
         'callID($callID) is not valid, replace by $currentCallID',
         tag: 'call-invitation',
-        subTag: 'service, invitation',
+        subTag: 'service, send',
       );
     }
     if (private._pageManager?.callingMachine?.isPagePushed ?? false) {
