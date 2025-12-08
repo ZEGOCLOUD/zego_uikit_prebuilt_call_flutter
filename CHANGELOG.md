@@ -1,3 +1,6 @@
+## 4.22.2
+
+- Update dependency
 
 ## 4.22.1
 
@@ -7,7 +10,8 @@
 
 - Features
     - Added support to disable syncing device state by SEI through the **device** field in `ZegoCallDeviceConfig`.
-    - Added **showOnFullScreen** in `ZegoCallAndroidNotificationConfig`. When set to true, the app will request the **USE_FULL_SCREEN_INTENT** permission to allow notifications to be shown in full screen on Android 14+.
+    - Added **showOnFullScreen** in `ZegoCallAndroidNotificationConfig`. When set to true, the app will request the **USE_FULL_SCREEN_INTENT** permission to allow notifications to be shown in full
+      screen on Android 14+.
 
 - Migrations
     - Renamed **showFullScreen** to **showOnLockedScreen** in `ZegoCallAndroidNotificationConfig`, which controls whether notifications are displayed when the screen is locked.
