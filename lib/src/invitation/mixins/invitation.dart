@@ -45,9 +45,14 @@ class ZegoCallInvitationServiceAPIImpl
     }
 
     sendInvitationFunc(callID) {
+      /// todo: incall 替换为 是否同一个call id
+      final isSameCall = callID == private._pageManager?.invitationData.callID;
       final isInCall = private._checkInCall();
-      ZegoLoggerService.logWarn(
-        'isInCall:$isInCall, ',
+      ZegoLoggerService.logInfo(
+        'isInCall:${private._checkInCall()}, '
+        'previous call id:${private._pageManager?.invitationData.callID}, '
+        'call id:$callID, '
+        'isSameCall:$isSameCall, ',
         tag: 'call-invitation',
         subTag: 'service, send',
       );
