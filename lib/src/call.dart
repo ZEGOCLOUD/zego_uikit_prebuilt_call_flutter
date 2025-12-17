@@ -624,6 +624,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         subTag: 'prebuilt',
       );
 
+      ZegoUIKit().enableSyncDeviceStatusBySEI(
+        widget.config.device.enableSyncDeviceStatusBySEI,
+      );
       await ZegoUIKit()
           .init(
         appID: widget.appID,
@@ -1063,8 +1066,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
               DateTime.now().millisecondsSinceEpoch;
         },
         child: AbsorbPointer(
-          absorbing: isScreenBlockedNotifier
-              .value, // Decide whether to absorb touch based on screen blocking state
+          absorbing: isScreenBlockedNotifier.value,
+          // Decide whether to absorb touch based on screen blocking state
           child: child,
         ),
       ),

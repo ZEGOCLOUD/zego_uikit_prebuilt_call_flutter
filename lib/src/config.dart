@@ -56,6 +56,9 @@ class ZegoUIKitPrebuiltCallConfig {
   /// config about users.
   ZegoCallUserConfig user;
 
+  /// config about device
+  ZegoCallDeviceConfig device;
+
   /// Whether to enable accidental touch prevention during earpiece calls.
   /// When enabled, the screen will automatically dim and block touch when the phone is near the ear.
   /// The default value is `true`.
@@ -225,6 +228,7 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
     ZegoCallUserConfig? userConfig,
+    ZegoCallDeviceConfig? deviceConfig,
     ZegoLayout? layout,
     this.foreground,
     this.background,
@@ -239,6 +243,7 @@ class ZegoUIKitPrebuiltCallConfig {
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
         user = userConfig ?? ZegoCallUserConfig(),
+        device = deviceConfig ?? ZegoCallDeviceConfig(),
         hangUpConfirmDialog =
             hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig(),
         layout = layout ??
@@ -261,6 +266,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'duration:$duration, '
         'chatView:$chatView, '
         'user:$user, '
+        'device:$device, '
         'layout:$layout, '
         'pip:$pip, '
         'screenSharing:$screenSharing, '
@@ -895,6 +901,21 @@ class ZegoCallUserConfig {
 
   /// necessary user in the call.
   ZegoCallRequiredUserConfig requiredUsers;
+}
+
+class ZegoCallDeviceConfig {
+  ZegoCallDeviceConfig({
+    this.enableSyncDeviceStatusBySEI = true,
+  });
+
+  bool enableSyncDeviceStatusBySEI;
+
+  @override
+  String toString() {
+    return '{'
+        'enableSyncDeviceStatusBySEI:$enableSyncDeviceStatusBySEI, '
+        '}';
+  }
 }
 
 /// Necessary participants to participate in the call.
