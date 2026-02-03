@@ -1,3 +1,8 @@
+## 4.22.3
+
+- Bugs
+    - Fixed the issue where third-party music being played would be interrupted during startup
+
 ## 4.22.2
 
 - Update dependency
