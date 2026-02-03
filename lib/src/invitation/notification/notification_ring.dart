@@ -74,9 +74,14 @@ class ZegoRingtone {
   AudioContext get defaultAudioContext => AudioContext(
         iOS: AudioContextIOS(
           /// not silenced
-          category: AVAudioSessionCategory.playAndRecord,
+          category: AVAudioSessionCategory.ambient,
           options: const {
             AVAudioSessionOptions.mixWithOthers,
+
+            // /// Use defaultToSpeaker to prevent background music from being interrupted when category is playAndRecord,.
+            // /// Without this, PlayAndRecord defaults to the receiver (earpiece) on iPhone,
+            // /// which silences the speaker (and thus the background music).
+            // AVAudioSessionOptions.defaultToSpeaker,
           },
         ),
         android: const AudioContextAndroid(
@@ -135,10 +140,22 @@ class ZegoRingtone {
       ).build();
     }
 
-    return AudioContextConfig(
-      route: AudioContextConfigRoute.speaker,
-      respectSilence: false,
-    ).build();
+    return AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.ambient,
+        options: const {
+          AVAudioSessionOptions.mixWithOthers,
+        },
+      ),
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: true,
+        contentType: AndroidContentType.speech,
+        usageType: AndroidUsageType.voiceCommunication,
+        audioFocus: AndroidAudioFocus.gain,
+        audioMode: AndroidAudioMode.inCommunication,
+      ),
+    );
   }
 
   bool get isRingTimerRunning => _isRingTimerRunning;
@@ -638,6 +655,8 @@ class ZegoRingtone {
       'prefix:$prefix, '
       'source path:$sourcePath, '
       'isPlayByRingtone:$isPlayByRingtone, '
+      'testPlayRingtone:$testPlayRingtone, '
+      'audioPlayerVolume:$audioPlayerVolume, '
       '',
       tag: 'call-invitation',
       subTag: 'ringtone',
@@ -657,6 +676,13 @@ class ZegoRingtone {
       // Set corresponding audio context based on current audio route
       final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
       final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
+      
+      ZegoLoggerService.logInfo(
+        'Routing info: route=$currentAudioRoute, isSpeaker=$isSpeaker',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+
       final targetContext =
           isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
       final targetType =
