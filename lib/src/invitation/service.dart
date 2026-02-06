@@ -15,6 +15,7 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -47,15 +48,11 @@ import 'callkit/android/defines.dart';
 import 'callkit/android/entry_point.dart';
 import 'internal/permission.dart';
 
-part 'mixins/private/callkit.dart';
-
-part 'mixins/private/ios.callkit.dart';
-
-part 'mixins/private/private.dart';
-
 part 'mixins/invitation.dart';
-
+part 'mixins/private/callkit.dart';
 part 'mixins/private/invitation.dart';
+part 'mixins/private/ios.callkit.dart';
+part 'mixins/private/private.dart';
 
 /// To receive the call invites from others and let the calling notification show on the top bar when receiving it, you will need to initialize the call invitation service (ZegoUIKitPrebuiltCallInvitationService) first.
 ///
@@ -351,7 +348,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     private._isInit = true;
 
-    await ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
+    await ZegoUIKit().version().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'versions: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion',
         tag: 'call-invitation',

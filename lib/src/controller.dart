@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:floating/floating.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -33,38 +34,22 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 part 'controller/audio_video.dart';
-
 part 'controller/invitation.dart';
-
-part 'controller/screen_sharing.dart';
-
-part 'controller/minimize.dart';
-
-part 'controller/pip.dart';
-
 part 'controller/log.dart';
-
+part 'controller/minimize.dart';
 part 'controller/permission.dart';
-
-part 'controller/user.dart';
-
-part 'controller/room.dart';
-
+part 'controller/pip.dart';
 part 'controller/private/audio_video.dart';
-
 part 'controller/private/minimize.dart';
-
-part 'controller/private/pip.dart';
-
-part 'controller/private/room.dart';
-
-part 'controller/private/user.dart';
-
 part 'controller/private/permission.dart';
-
-part 'controller/private/screen_sharing.dart';
-
+part 'controller/private/pip.dart';
 part 'controller/private/private.dart';
+part 'controller/private/room.dart';
+part 'controller/private/screen_sharing.dart';
+part 'controller/private/user.dart';
+part 'controller/room.dart';
+part 'controller/screen_sharing.dart';
+part 'controller/user.dart';
 
 /// Used to control the call functionality.
 ///

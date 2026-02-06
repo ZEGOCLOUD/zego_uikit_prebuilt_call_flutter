@@ -14,6 +14,7 @@ import 'package:floating/floating.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:proximity_sensor/proximity_sensor.dart';
 import 'package:screen_brightness/screen_brightness.dart';
+import 'package:zego_plugin_adapter/zego_plugin_adapter.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -200,7 +201,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       );
     });
 
-    ZegoUIKit().getZegoUIKitVersion().then((uikitVersion) {
+    ZegoUIKit().version().then((uikitVersion) {
       ZegoLoggerService.logInfo(
         'version: zego_uikit_prebuilt_call:${ZegoUIKitPrebuiltCallController().version}; $uikitVersion, \n'
         'appID:${widget.appID}, \n'
