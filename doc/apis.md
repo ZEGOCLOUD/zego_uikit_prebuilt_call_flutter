@@ -1,840 +1,513 @@
-- [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcall)
-- [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
-  - [setNavigatorKey](#setnavigatorkey)
-  - [isInCalling](#isincalling)
-  - [init](#init)
-  - [uninit](#uninit)
-  - [useSystemCallingUI](#usesystemcallingui)
-  - [enterAcceptedOfflineCall](#enteracceptedofflinecall)
-    - [send](#send)
-    - [cancel](#cancel)
-    - [reject](#reject)
-    - [accept](#accept)
+# APIs
+
 - [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontroller)
   - [hangUp](#hangup)
-  - [screenSharing](#screensharing)
-    - [viewController](#viewcontroller)
-    - [showViewInFullscreenMode](#showviewinfullscreenmode)
-  - [minimize](#minimize)
-    - [isMinimizingNotifier(ValueNotifier)](#isminimizingnotifiervaluenotifier)
-    - [isMinimizing(bool)](#isminimizingbool)
-    - [state(ZegoCallMiniOverlayPageState)](#statezegocallminioverlaypagestate)
-    - [restore](#restore)
-    - [minimize](#minimize-1)
-    - [hide](#hide)
-  - [pip](#pip)
-    - [enable](#enable)
-    - [enableWhenBackground](#enablewhenbackground)
-    - [cancelBackground](#cancelbackground)
-  - [audioVideo](#audiovideo)
-    - [camera](#camera)
-      - [localState](#localstate)
-      - [localStateNotifier](#localstatenotifier)
-      - [state](#state)
-      - [stateNotifier](#statenotifier)
-      - [turnOn](#turnon)
-      - [switchState](#switchstate)
-      - [switchFrontFacing](#switchfrontfacing)
-      - [switchVideoMirroring](#switchvideomirroring)
-    - [microphone](#microphone)
-      - [localState](#localstate-1)
-      - [localStateNotifier](#localstatenotifier-1)
-      - [state](#state-1)
-      - [stateNotifier](#statenotifier-1)
-      - [turnOn](#turnon-1)
-      - [switchState](#switchstate-1)
-    - [audioOutput](#audiooutput)
-      - [localNotifier](#localnotifier)
-      - [notifier](#notifier)
-      - [switchToSpeaker](#switchtospeaker)
-  - [user](#user)
-    - [stream](#stream)
-    - [remove](#remove)
-  
+- [audioVideo](#audiovideo)
+  - [microphone](#microphone)
+    - [turnOn](#turnon)
+    - [switchState](#switchstate)
+    - [localState](#localstate)
+    - [state](#state)
+  - [camera](#camera)
+    - [turnOn](#turnon-1)
+    - [switchState](#switchstate-1)
+    - [switchFrontFacing](#switchfrontfacing)
+    - [switchVideoMirroring](#switchvideomirroring)
+  - [audioOutput](#audiooutput)
+    - [switchToSpeaker](#switchtospeaker)
+- [minimize](#minimize)
+  - [minimize](#minimize-1)
+  - [state](#state-1)
+  - [isMinimizing](#isminimizing)
+  - [restore](#restore)
+  - [hide](#hide)
+  - [minimizeInviting](#minimizeinviting)
+  - [restoreInviting](#restoreinviting)
+- [pip](#pip)
+  - [status](#status)
+  - [available](#available)
+  - [enable](#enable)
+  - [enableWhenBackground](#enablewhenbackground)
+  - [cancelBackground](#cancelbackground)
+- [room](#room)
+  - [renewToken](#renewtoken)
+- [screenSharing](#screensharing)
+  - [showViewInFullscreenMode](#showviewinfullscreenmode)
+  - [viewController](#viewcontroller)
+- [user](#user)
+  - [remove](#remove)
+  - [stream](#stream)
+- [log](#log)
+  - [exportLogs](#exportlogs)
+
 ---
 
-# [ZegoUIKitPrebuiltCall](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCall-class.html)
+## ZegoUIKitPrebuiltCallController
 
->
-> Call Widget.
->
-> You can embed this widget into any page of your project to integrate the functionality of a call.
->
-> If you need the function of `call invitation`, please use `ZegoUIKitPrebuiltCallInvitationService` together.
->
-> - function prototype:
->
->```dart
->
->class ZegoUIKitPrebuiltCall extends StatefulWidget {
->  const ZegoUIKitPrebuiltCall({
->    Key? key,
->    required this.appID,
->    required this.appSign,
->    required this.callID,
->    required this.userID,
->    required this.userName,
->    required this.config,
->    this.events,
->    this.onDispose,
->    this.plugins,
->  }) : super(key: key);
->
->  /// You can create a project and obtain an appID from the [ZEGOCLOUD Admin >Console](https://console.zegocloud.com).
->  final int appID;
->
->  /// You can create a project and obtain an appSign from the [ZEGOCLOUD >Admin Console](https://console.zegocloud.com).
->  final String appSign;
->
->  /// The ID of the currently logged-in user.
->  /// It can be any valid string.
->  /// Typically, you would use the ID from your own user system, such as >Firebase.
->  final String userID;
->
->  /// The name of the currently logged-in user.
->  /// It can be any valid string.
->  /// Typically, you would use the name from your own user system, such as >Firebase.
->  final String userName;
->
->  /// The ID of the call.
->  /// This ID is a unique identifier for the current call, so you need to >ensure its uniqueness.
->  /// It can be any valid string.
->  /// Users who provide the same callID will be logged into the same room >for the call.
->  final String callID;
->
->  /// Initialize the configuration for the call.
->  final ZegoUIKitPrebuiltCallConfig config;
->
->  /// Initialize the events for the call.
->  final ZegoUIKitPrebuiltCallEvents? events;
->
->  /// Callback when the page is destroyed.
->  final VoidCallback? onDispose;
->
->  final List<IZegoUIKitPlugin>? plugins;
->}
->```
+Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a **singleton instance** class.
 
-# [ZegoUIKitPrebuiltCallInvitationService](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallInvitationService-class.html)
+### hangUp
 
-## setNavigatorKey
+- **Function Action**
+  - End the current call.
 
-> we need a context object, to push/pop page when receive invitation request, so we need navigatorKey to get context.
->
-> - function prototype:
->
-> ```dart
-> void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey)
-> ```
+- **Function Prototype**
+  ```dart
+  Future<bool> hangUp(
+    BuildContext context, {
+    bool showConfirmation = false,
+    ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
+  })
+  ```
 
-## isInCalling
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().hangUp(context);
+  ```
 
-> - function prototype:
->
-> ```dart
-> bool get isInCalling
-> ```
-> 
-
-## init
-
->
-> you must call this method as soon as the user login(or re-login, auto-login) to your app.
->
-> You must include [ZegoUIKitSignalingPlugin] in [plugins] to support the invitation feature.
->
-> If you need to set [ZegoUIKitPrebuiltCallConfig], you can do so through [requireConfig].
-> Each time the [ZegoUIKitPrebuiltCall] starts, it will request this callback to obtain the current call's config.
->
-> Additionally, you can customize the call ringtone through [ringtoneConfig], and configure notifications through [notificationConfig].
-> You can also customize the invitation interface with [uiConfig]. If you want to modify the related text on the interface, you can set [innerText].
-> If you want to listen for events and perform custom logics, you can use [invitationEvents] to obtain related invitation events, and for call-related events, you need to use [events].
->
-> - function prototype:
->
-> ```dart
-> Future<void> init({
->    required int appID,
->    String appSign = '',
->    String token = '',
->    required String userID,
->    required String userName,
->    required List<IZegoUIKitPlugin> plugins,
->    /// call abouts.
->    ZegoCallPrebuiltConfigQuery? requireConfig,
->    ZegoUIKitPrebuiltCallEvents? events,
->    /// invitation abouts.
->    ZegoCallInvitationConfig? config,
->    ZegoCallRingtoneConfig? ringtoneConfig,
->    ZegoCallInvitationUIConfig? uiConfig,
->    ZegoCallInvitationNotificationConfig? notificationConfig,
->    ZegoCallInvitationInnerText? innerText,
->    ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
->  }) async
-> ```
-
-## uninit
-
-> must call this method as soon as the user logout from  app
->
-> - function prototype:
->
-> ```dart
-> Future<void> uninit() async
-> ```
-
-## useSystemCallingUI
-
-> - function prototype:
->
-> ```dart
-> void useSystemCallingUI(List<IZegoUIKitPlugin> plugins)
-> ```
-
-## enterAcceptedOfflineCall
-
-> Due to some time-consuming and waiting operations, such as data loading
-> or user login in the App.
-> so in certain situations, it may not be appropriate to navigate to
-> [ZegoUIKitPrebuiltCall] directly when [ZegoUIKitPrebuiltCallInvitationService.init].
->
-> This is because the behavior of jumping to ZegoUIKitPrebuiltCall
-> may be **overwritten by some subsequent jump behaviors of the App**.
-> Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
-> in App will be a better choice.
->
-> When you want to do this, set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
-> to false in [ZegoUIKitPrebuiltCallInvitationService.init] and then
-> call this method after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
-> finish loading(data or user login)
->
-> - function prototype:
->
-> ```dart
-> void enterAcceptedOfflineCall()
-> ```
->
-> - example:
->
-> ```dart
-> @override
-> void initState() {
->   super.initState();
->
->   WidgetsBinding.instance.addPostFrameCallback((_) {
->     ZegoUIKitPrebuiltCallInvitationService().init().then((_) {
->       /// When you enter your home page (after completing your time-consuming operations, such as login, loading data, etc.)
->       /// skip to call page page if app active by offline call
->       ZegoUIKitPrebuiltCallInvitationService().enterAcceptedOfflineCall();
->     });
->   });
-> }
-> ```
-
-### send
-
-> This function is used to send call invitations to one or more specified users.
->
-> You can provide a list of target users `invitees` and specify whether it is a video call `isVideoCall`. If it is not a video call, it defaults to an audio call.
->
-> You can also pass additional custom data `customData` to the invitees.
->
-> Additionally, you can specify the call ID `callID`. If not provided, the system will generate one automatically based on certain rules.
->
-> If you want to set a ringtone for offline call invitations, set `resourceID` to a value that matches the push resource ID in the ZEGOCLOUD management console.
->
-> You can also set the notification title `notificationTitle` and message `notificationMessage`.
->
-> If the call times out, the call will automatically hang up after the specified timeout duration `timeoutSeconds` (in seconds).
->
-> Note that this function behaves the same as `ZegoSendCallInvitationButton`.
->
-> - function prototype:
->
-> ```dart
-> Future<bool> send({
->    required List<ZegoCallUser> invitees,
->    required bool isVideoCall,
->    String customData = '',
->    String? callID,
->    String? resourceID,
->    String? notificationTitle,
->    String? notificationMessage,
->    int timeoutSeconds = 60,
->  }) async
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallInvitationService().send(...);
-> ```
-
-### cancel
-
-> To cancel the invitation for `callees` in a call, you can include your cancellation reason using the `customData`.
->
-> Additionally, you can receive notifications by listening to `onIncomingCallCanceled` when the incoming call is canceled.
->
-> - function prototype:
->
-> ```dart
-> Future<bool> cancel({
->    required List<ZegoCallUser> callees,
->    String customData = '',
->  }) async
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallInvitationService().cancel(...);
-> ```
-
-### reject
-
-> when reject the current call invitation, you can use the `customData` parameter if you need to provide a reason for the rejection to the other party.
->
-> Additionally, the inviting party can receive notifications of the rejection by listening to `onOutgoingCallRejectedCauseBusy` or `onOutgoingCallDeclined` when the other party declines the call invitation.
->
->> - function prototype:
->>
->
-> ```dart
-> Future<bool> reject({
->    String customData = '',
->  }) async
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallInvitationService().reject();
-> ```
-
-### accept
-
-> To accept the current call invitation, you can use the `customData` parameter if you need to provide a reason for the acceptance to the other party.
->
-> Additionally, the inviting party can receive notifications by listening to `onOutgoingCallAccepted` when the other party accepts the call invitation.
->
-> - function prototype:
->
-> ```dart
-> Future<bool> accept({
->    String customData = '',
->  }) async
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallInvitationService().accept();
-> ```
-
-# [ZegoUIKitPrebuiltCallController](../zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallController-class.html)
-
-> A singleton class, can be accessed and its APIs can be accessed using either ZegoUIKitPrebuiltCallController().
-
-## hangUp
-
-> This function is used to end the current call.
->
-> You can pass the context `context` for any necessary pop-ups or page transitions.
->
-> By using the `showConfirmation` parameter, you can control whether to display a confirmation dialog to confirm ending the call.
->
-> The `reason` parameter specifies the reason for ending the call, which will be passed to the `onCallEnd` event callback.
->
-> This function behaves the same as the close button in the calling interface's top right corner, and it is also affected by the `onHangUpConfirmation` and `onHangUp` settings in the config.
->
-> - function prototype:
->
-> ```dart
->  Future<bool> hangUp(
->    BuildContext context, {
->    bool showConfirmation = false,
->    ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
->  }) async
-> ```
->
-> - parameters:
->
->   - `BuildContext context`: The context for any necessary pop-ups or page transitions.
->   - `bool showConfirmation`: Whether to display a confirmation dialog to confirm ending the call. Default is `false`.
->   - `ZegoCallEndReason reason`: The reason for ending the call. Default is `ZegoCallEndReason.localHangUp`.
->
-> - ZegoCallEndReason enum values:
->
->   ```dart
->   enum ZegoCallEndReason {
->     /// the call ended due to a local hang-up
->     localHangUp,
->     
->     /// the call ended when the remote user hung up, leaving only one local user in the call
->     remoteHangUp,
->     
->     /// the call ended due to being kicked out
->     kickOut,
->     
->     /// Due to some reasons, the call is automatically hung up by local
->     /// such as [ZegoCallParticipantConfig.requiredParticipants] is not in call
->     abandoned,
->   }
->   ```
->
-> - example:
->
-> ```dart
-> // Hang up with confirmation dialog
-> await ZegoUIKitPrebuiltCallController().hangUp(
->   context,
->   showConfirmation: true,
->   reason: ZegoCallEndReason.localHangUp,
-> );
-> 
-> // Direct hang up without confirmation
-> await ZegoUIKitPrebuiltCallController().hangUp(context);
-> ```
-
-## screenSharing
-
-### viewController
-
-### showViewInFullscreenMode
-
-> This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
->
-> You need to provide the user's ID `userID` to determine which user to perform the operation on.
->
-> By using a boolean value `isFullscreen`, you can specify whether the user enters or exits full-screen mode.
->
-> - function prototype:
->
-> ```dart
-> void showViewInFullscreenMode(String userID, bool isFullscreen)
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallController().screenSharing.showViewInFullscreenMode(...);
-> ```
-
-## minimize
-
-### isMinimizingNotifier(ValueNotifier<bool>)
-
-> is it currently in the minimized state or not
->
-> - example:
->
-> ```dart
-> ValueListenableBuilder<bool>(
->   valueListenable:
->   ZegoUIKitPrebuiltCallController().minimize.isMinimizingNotifier,
->   builder: (context, isMinimized, _) {
->     ...
->   },
-> )
-> ```
-
-### isMinimizing(bool)
-
-> is it currently in the minimized state or not
->
-> - example:
->
-> ```dart
-> final isMinimizing = ZegoUIKitPrebuiltCallController().minimize.isMinimizing;
-> ```
-
-### state(ZegoCallMiniOverlayPageState)
-
-> current state of the minimized
->
-> - enum prototype:
->
-> ```dart
-> /// The current state of the minimized interface can be described as follows:
-> ///
-> /// [idle]: in a blank state, not yet minimized, or has been restored to the original Widget.
-> /// [calling]: in the process of being restored from the minimized state.
-> /// [minimizing]: in the minimized state.
-> enum ZegoCallMiniOverlayPageState {
->  idle,
->  calling,
->  minimizing,
-> }
-> ```
->
-> - example:
->
-> ```dart
-> final state = ZegoUIKitPrebuiltCallController().minimize.state;
-> ```
-
-### restore
-
-> restore the ZegoUIKitPrebuiltCall from minimize
->
-> - function prototype:
->
-> ```dart
->  bool restore(
->    BuildContext context, {
->    bool rootNavigator = true,
->    bool withSafeArea = false,
->  })
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallController().minimize.restore(...);
-> ```
-
-### minimize
-
-> to minimize the ZegoUIKitPrebuiltCall
->
-> - function prototype:
->
-> ```dart
-> bool minimize(
->    BuildContext context, {
->    bool rootNavigator = true,
->  })
-> ```
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallController().minimize.minimize(...);
-> ```
-
-### hide
-
-> if call ended in minimizing state, not need to navigate, just hide the minimize widget.
->
-> Note that this is not an active call end, but merely hide the minimize widget, which will not cause hang up.
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallController().minimize.hide();
-> ```
-
-## pip
-
-### enable
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> enable({
->   int aspectWidth = 9,
->   int aspectHeight = 16,
-> }) async
-> ```
-
-### enableWhenBackground
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> enableWhenBackground({
->   int aspectWidth = 9,
->   int aspectHeight = 16,
-> }) async
-> ```
-
-### cancelBackground
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> cancelBackground() async
-> ```
-
+---
 
 ## audioVideo
 
-### camera
-
-#### localState
-
-> camera state of local user
->
-> - function prototype:
->
-> ```dart
-> bool get localState
-> ```
-#### localStateNotifier
-
-> camera state notifier of local user
-> 
-> - function prototype:
->
-> ```dart
-> ValueNotifier<bool> get localStateNotifier
-> ```
-#### state
-
-> camera state of [userID]
->
-> - function prototype:
->
-> ```dart
-> bool state(String userID)
-> ```
-#### stateNotifier
-
-> camera state notifier of [userID]
-> 
-> - function prototype:
->
-> ```dart
-> ValueNotifier<bool> stateNotifier(String userID)
-> ```
-
-#### turnOn
-
-> turn on/off [userID] camera, if [userID] is empty, then it refers to local user
->
-> - function prototype:
->
-> ```dart
-> void turnOn(bool isOn, {String? userID})
-> ```
-
-#### switchState
-
-> switch [userID] camera state, if [userID] is empty, then it refers to local user
->
-> - function prototype:
->
-> ```dart
-> void switchState({String? userID})
-> ```
-
-#### switchFrontFacing
-> local use front facing camera or back
-> 
-> - function prototype:
->
-> ```dart
-> void switchFrontFacing(bool isFrontFacing)
-> ```
-
-#### switchVideoMirroring
-> switch video mirror mode
->
-> - function prototype:
->
-> ```dart
-> void switchVideoMirroring(bool isVideoMirror)
-> ```
+APIs related to audio and video.
 
 ### microphone
 
-#### localState
-
-> microphone state of local user
->
-> - function prototype:
->
-> ```dart
-> bool get localState
-> ```
-
-#### localStateNotifier
-
-> microphone state notifier of local user
->
-> - function prototype:
->
-> ```dart
-> ValueNotifier<bool> get localStateNotifier
-> ```
-
-#### state
-
-> microphone state of [userID]
->
-> - function prototype:
->
-> ```dart
-> bool state(String userID)
-> ```
-
-#### stateNotifier
-
-> microphone state notifier of [userID]
->
-> - function prototype:
->
-> ```dart
-> ValueNotifier<bool> stateNotifier(String userID)
-> ```
+Microphone controller - control microphone switch and state query.
 
 #### turnOn
 
-> turn on/off [userID] microphone, if [userID] is empty, then it refers to local user
->
-> - function prototype:
->
-> ```dart
-> void turnOn(bool isOn, {String? userID})
-> ```
+- **Function Action**
+  - Turn on/off microphone.
+
+- **Function Prototype**
+  ```dart
+  Future<void> turnOn(bool isOn, {String? userID})
+  ```
+
+- **Example**
+  ```dart
+  // Turn on local microphone
+  ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(true);
+
+  // Turn off remote user's microphone
+  ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(false, userID: 'remote_user_id');
+  ```
 
 #### switchState
 
-> switch [userID] microphone state, if [userID] is empty, then it refers to local user
->
-> - function prototype:
->
-> ```dart
-> void switchState({String? userID})
-> ```
+- **Function Action**
+  - Switch microphone state (toggle).
+
+- **Function Prototype**
+  ```dart
+  void switchState({String? userID})
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.microphone.switchState();
+  ```
+
+#### localState
+
+- **Function Action**
+  - Get microphone state of local user.
+
+- **Function Prototype**
+  ```dart
+  bool get localState
+  ```
+
+#### state
+
+- **Function Action**
+  - Get microphone state of a specific user.
+
+- **Function Prototype**
+  ```dart
+  bool state(String userID)
+  ```
+
+### camera
+
+Camera controller - control camera switch, front/back switching, mirroring, etc.
+
+#### turnOn
+
+- **Function Action**
+  - Turn on/off camera.
+
+- **Function Prototype**
+  ```dart
+  Future<void> turnOn(bool isOn, {String? userID})
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.camera.turnOn(true);
+  ```
+
+#### switchState
+
+- **Function Action**
+  - Switch camera state (toggle).
+
+- **Function Prototype**
+  ```dart
+  void switchState({String? userID})
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.camera.switchState();
+  ```
+
+#### switchFrontFacing
+
+- **Function Action**
+  - Switch local camera between front and back.
+
+- **Function Prototype**
+  ```dart
+  void switchFrontFacing(bool isFrontFacing)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.camera.switchFrontFacing(true);
+  ```
+
+#### switchVideoMirroring
+
+- **Function Action**
+  - Switch video mirror mode.
+
+- **Function Prototype**
+  ```dart
+  void switchVideoMirroring(bool isVideoMirror)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.camera.switchVideoMirroring(true);
+  ```
 
 ### audioOutput
 
-```dart
-/// Audio route
-enum ZegoUIKitAudioRoute {
-  speaker,
-  headphone,
+Audio output controller.
 
-  /// bluetooth device
-  bluetooth,
-
-  /// telephone receiver
-  receiver,
-
-  /// external USB audio device
-  externalUSB,
-
-  /// apple AirPlay
-  airPlay,
-}
-```
-
-#### localNotifier
-
-> local audio output device notifier
->
-> - function prototype:
->
-> ```dart
-> ValueNotifier<ZegoUIKitAudioRoute> get localNotifier
-> ```
-#### notifier
-
-> audio output device notifier of [userID]
->
-> - function prototype:
->
-> ```dart
->  ValueNotifier<ZegoUIKitAudioRoute> notifier(String userID)
-> ```
 #### switchToSpeaker
 
-> set audio output to speaker or earpiece(telephone receiver)
->
-> - function prototype:
->
-> ```dart
-> void switchToSpeaker(bool isSpeaker)
-> ```
+- **Function Action**
+  - Set audio output to speaker or earpiece.
+
+- **Function Prototype**
+  ```dart
+  void switchToSpeaker(bool isSpeaker)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().audioVideo.audioOutput.switchToSpeaker(true);
+  ```
+
+---
+
+## minimize
+
+Minimization controller providing call interface minimization and restoration functionality.
+
+### minimize
+
+- **Function Action**
+  - Minimize the ZegoUIKitPrebuiltCall.
+
+- **Function Prototype**
+  ```dart
+  bool minimize(
+    BuildContext context, {
+    bool rootNavigator = true,
+  })
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().minimize.minimize(context);
+  ```
+
+### state
+
+- **Function Action**
+  - Get current minimization state.
+
+- **Function Prototype**
+  ```dart
+  ZegoCallMiniOverlayPageState get state
+  ```
+
+### isMinimizing
+
+- **Function Action**
+  - Check if it is currently in the minimized state.
+
+- **Function Prototype**
+  ```dart
+  bool get isMinimizing
+  ```
+
+### restore
+
+- **Function Action**
+  - Restore the ZegoUIKitPrebuiltCall from minimize.
+
+- **Function Prototype**
+  ```dart
+  bool restore(
+    BuildContext context, {
+    bool rootNavigator = true,
+    bool withSafeArea = false,
+  })
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().minimize.restore(context);
+  ```
+
+### hide
+
+- **Function Action**
+  - Hide the minimize widget (if call ended in minimizing state).
+
+- **Function Prototype**
+  ```dart
+  void hide()
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().minimize.hide();
+  ```
+
+### minimizeInviting
+
+- **Function Action**
+  - Minimize the inviting interface.
+
+- **Function Prototype**
+  ```dart
+  bool minimizeInviting(
+    BuildContext context, {
+    bool rootNavigator = true,
+    required ZegoCallInvitationType invitationType,
+    required ZegoUIKitUser inviter,
+    required List<ZegoUIKitUser> invitees,
+    required bool isInviter,
+    required ZegoCallInvitationPageManager pageManager,
+    required ZegoUIKitPrebuiltCallInvitationData callInvitationData,
+    String? customData,
+  })
+  ```
+
+### restoreInviting
+
+- **Function Action**
+  - Restore the inviting interface.
+
+- **Function Prototype**
+  ```dart
+  bool restoreInviting(
+    BuildContext context, {
+    bool rootNavigator = true,
+    bool withSafeArea = false,
+  })
+  ```
+
+---
+
+## pip
+
+Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality.
+
+### status
+
+- **Function Action**
+  - Get current PIP status.
+
+- **Function Prototype**
+  ```dart
+  Future<ZegoPiPStatus> get status
+  ```
+
+### available
+
+- **Function Action**
+  - Check if PIP is available.
+
+- **Function Prototype**
+  ```dart
+  Future<bool> get available
+  ```
+
+### enable
+
+- **Function Action**
+  - Enable PIP mode.
+
+- **Function Prototype**
+  ```dart
+  Future<ZegoPiPStatus> enable({
+    int aspectWidth = 9,
+    int aspectHeight = 16,
+  })
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().pip.enable();
+  ```
+
+### enableWhenBackground
+
+- **Function Action**
+  - Enable PIP mode when app goes to background.
+
+- **Function Prototype**
+  ```dart
+  Future<ZegoPiPStatus> enableWhenBackground({
+    int aspectWidth = 9,
+    int aspectHeight = 16,
+  })
+  ```
+
+### cancelBackground
+
+- **Function Action**
+  - Cancel background PIP mode.
+
+- **Function Prototype**
+  ```dart
+  Future<void> cancelBackground()
+  ```
+
+---
 
 ## room
 
+Room controller managing room-related operations.
+
 ### renewToken
 
-> When receives [ZegoCallRoomEvents.onTokenExpired], you need use this API to update the token.
->
-> This method updates the room token for both the room and signaling plugin.
->
-> - function prototype:
->
-> ```dart
-> Future<void> renewToken(String token) async
-> ```
->
-> - parameters:
->
->   - `String token`: The new token string obtained from your server.
->
-> - example:
->
-> ```dart
-> // Update token when it's about to expire
-> await ZegoUIKitPrebuiltCallController().room.renewToken(newToken);
-> ```
->
-> - example with onTokenExpired event:
->
-> ```dart
-> ZegoUIKitPrebuiltCall(
->   ...
->   events: ZegoUIKitPrebuiltCallEvents(
->       room: ZegoCallRoomEvents(
->           onTokenExpired: (remainSeconds) async {
->               // Request new token from your server
->               final newToken = await requestNewTokenFromServer();
->               
->               // Update the token
->               await ZegoUIKitPrebuiltCallController().room.renewToken(newToken);
->               
->               return newToken;
->           },
->       ),
->   ),
-> );
-> ```
-  
+- **Function Action**
+  - Renew the token. Call when receiving the onTokenExpired callback.
+
+- **Function Prototype**
+  ```dart
+  Future<void> renewToken(String token)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().room.renewToken('new_token');
+  ```
+
+---
+
+## screenSharing
+
+Screen sharing controller.
+
+### showViewInFullscreenMode
+
+- **Function Action**
+  - Set fullscreen display mode for screen sharing.
+
+- **Function Prototype**
+  ```dart
+  void showViewInFullscreenMode(String userID, bool isFullscreen)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().screenSharing.showViewInFullscreenMode('user_id', true);
+  ```
+
+### viewController
+
+- **Function Action**
+  - Get screen sharing view controller.
+
+- **Function Prototype**
+  ```dart
+  ZegoScreenSharingViewController get viewController
+  ```
+
+---
+
 ## user
 
-### stream
->  user list stream notifier
->
-> - function prototype:
->
-> ```dart
-> Stream<List<ZegoUIKitUser>> get stream
-> ```
->
-> - example:
-> 
-> ```dart
-> StreamBuilder<List<ZegoUIKitUser>>(
->   stream: ZegoUIKit().getUserListStream(),
->   builder: (context, snapshot) {
->     final allUsers = ZegoUIKit().getAllUsers();
->     ...
->   },
-> )
-> ```
+User controller.
 
 ### remove
 
-> remove user from call, kick out
->
-> - function prototype:
->
-> ```dart
-> Future<bool> remove(List<String> userIDs) async
-> ```
->
-> @return Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
->
-> - example:
->
-> ```dart
-> ZegoUIKitPrebuiltCallController().user.remove();
-> ```
+- **Function Action**
+  - Remove user from call (kick out).
+
+- **Function Prototype**
+  ```dart
+  Future<bool> remove(List<String> userIDs)
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().user.remove(['user_id_1']);
+  ```
+
+### stream
+
+- **Function Action**
+  - Get user list stream notifier.
+
+- **Function Prototype**
+  ```dart
+  Stream<List<ZegoUIKitUser>> get stream
+  ```
+
+---
+
+## log
+
+Log controller for exporting and collecting call-related logs.
+
+### exportLogs
+
+- **Function Action**
+  - Export log files.
+
+- **Function Prototype**
+  ```dart
+  Future<bool> exportLogs({
+    String? title,
+    String? content,
+    String? fileName,
+    List<ZegoLogExporterFileType> fileTypes = const [
+      ZegoLogExporterFileType.txt,
+      ZegoLogExporterFileType.log,
+      ZegoLogExporterFileType.zip
+    ],
+    List<ZegoLogExporterDirectoryType> directories = const [
+      ZegoLogExporterDirectoryType.zegoUIKits,
+      ZegoLogExporterDirectoryType.zimAudioLog,
+      ZegoLogExporterDirectoryType.zimLogs,
+      ZegoLogExporterDirectoryType.zefLogs,
+      ZegoLogExporterDirectoryType.zegoLogs,
+    ],
+    void Function(double progress)? onProgress,
+  })
+  ```
+
+- **Example**
+  ```dart
+  ZegoUIKitPrebuiltCallController().log.exportLogs();
+  ```

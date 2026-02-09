@@ -20,6 +20,7 @@
 
 # Versions
 
+- [5.0.0](#5000)  **(💥 breaking changes)**
 - [4.15.2](#4152)
 - [4.15.0](#4150)
 - [4.12.0](#4120)
@@ -31,6 +32,119 @@
 - [4.1.9](#419)
 - [4.1.4](#414)  **(💥 breaking changes)**
 - [4.0.0](#400)  **(💥 breaking changes)**
+
+<br />
+<br />
+
+# 5.0.0
+---
+
+# Introduction
+
+> In this migration guide, we will explain how to upgrade from version 4.x to the latest 5.0.0 version.
+>
+> 5.0 aligns with `zego_uikit 3.0`, removes all v4 deprecated APIs, and consolidates controller namespaces. Some configurations were renamed or moved for consistency.
+
+# Major Interface Changes
+
+- Dependencies
+  - require `zego_uikit: ^3.0.0`
+- Controller namespace consolidation
+  - remove legacy `ZegoUIKitPrebuiltCallMiniOverlayMachine`, use `ZegoUIKitPrebuiltCallController().minimize`
+  - screen sharing APIs moved under `controller.screenSharing`
+- Invitation APIs
+  - keep v4 structure; all legacy direct methods removed, use `controller.invitation.*`
+- Android notification config
+  - v4 nested channel configs retained; legacy flat fields removed
+
+<details>
+  <summary>Deprecated → New API Mapping</summary>
+
+  - ZegoUIKitPrebuiltCallMiniOverlayMachine.state() → ZegoUIKitPrebuiltCallController().minimize.state
+  - ZegoUIKitPrebuiltCallMiniOverlayMachine.isMinimizing → ZegoUIKitPrebuiltCallController().minimize.isMinimizing
+  - ZegoUIKitPrebuiltCallMiniOverlayMachine.switchToIdle() → ZegoUIKitPrebuiltCallController().minimize.hide()
+  - controller.screenSharingViewController → controller.screenSharing.viewController
+  - controller.showScreenSharingViewInFullscreenMode(userID, isFullscreen) → controller.screenSharing.showViewInFullscreenMode(userID, isFullscreen)
+  - controller.sendCallInvitation(...) → controller.invitation.send(...)
+  - controller.cancelCallInvitation(...) → controller.invitation.cancel(...)
+  - controller.rejectCallInvitation(...) → controller.invitation.reject(...)
+  - controller.acceptCallInvitation(...) → controller.invitation.accept(...)
+</details>
+
+<details>
+  <summary>Migration Guide</summary>
+
+  > Modify your code based on the following guidelines to make it compatible with version 5.0.0:
+  >
+  > 4.x Version Code:
+  >
+  > ```dart
+  > // Deprecated in 5.0
+  > final machine = ZegoUIKitPrebuiltCallMiniOverlayMachine();
+  > if (machine.isMinimizing) { ... }
+  > machine.switchToIdle();
+  >
+  > // Deprecated in 5.0
+  > ZegoUIKitPrebuiltCallController().showScreenSharingViewInFullscreenMode(userID, true);
+  >
+  > // Deprecated direct invitation calls
+  > ZegoUIKitPrebuiltCallController().sendCallInvitation(invitees: ..., isVideoCall: true);
+  > ```
+  >
+  > 5.0.0 Version Code:
+  >
+  > ```dart
+  > // Use controller.minimize
+  > final controller = ZegoUIKitPrebuiltCallController();
+  > if (controller.minimize.isMinimizing) { ... }
+  > controller.minimize.hide();
+  >
+  > // Screen Sharing APIs
+  > controller.screenSharing.showViewInFullscreenMode(userID, true);
+  >
+  > // Invitation APIs
+  > await controller.invitation.send(invitees: ..., isVideoCall: true);
+  > ```
+</details>
+
+<details>
+  <summary>Android Notification Config</summary>
+
+  > v5 keeps v4 nested channel structure, legacy flat fields are removed:
+  >
+  > 4.15+ Version Code:
+  >
+  > ```dart
+  > ZegoCallInvitationNotificationConfig(
+  >   androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+  >     fullScreenBackgroundAssetURL: '...',
+  >     callChannel: ZegoCallAndroidNotificationChannelConfig(
+  >       channelID: 'call_invitation',
+  >       channelName: 'Call Invitation',
+  >       sound: 'call',
+  >       icon: 'call',
+  >       vibrate: true,
+  >     ),
+  >     messageChannel: ZegoCallAndroidNotificationChannelConfig(
+  >       channelID: 'zimkit_message',
+  >       channelName: 'Chat Message',
+  >       sound: 'message',
+  >       icon: 'message',
+  >     ),
+  >   ),
+  > )
+  > ```
+</details>
+
+<details>
+  <summary>Compatibility Notes</summary>
+
+  - All v4 `@Deprecated` symbols are removed in 5.0. Use the new controller namespaces.
+  - If you still see analyzer errors, run:
+  > ```shell
+  > dart analyze | grep zego
+  > ```
+</details>
 
 <br />
 <br />
