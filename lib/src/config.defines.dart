@@ -7,6 +7,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/internal/defines.dart';
 
+/// Custom builder for the audio/video container.
+/// This allows you to customize the layout and display of audio/video views in the call.
 typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
   BuildContext context,
   List<ZegoUIKitUser> allUsers,
@@ -16,6 +18,7 @@ typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
   ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator,
 );
 
+/// Dialog information for hang-up confirmation.
 class ZegoCallHangUpConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
   ZegoCallHangUpConfirmDialogInfo({
     super.title = 'Hangup Confirmation',

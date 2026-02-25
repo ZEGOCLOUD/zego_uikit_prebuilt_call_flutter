@@ -46,22 +46,47 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// {@category APIs}
 /// {@category Events}
 /// {@category Configs}
+/// {@category Defines}
 /// {@category Components}
+/// {@category Invitation}
 /// {@category Migration_v4.x}
+/// {@category Migration_v5.x}
 ///
 /// Call interface component providing complete 1-on-1 and group audio/video call functionality with customizable UI and rich configuration options.
 class ZegoUIKitPrebuiltCall extends StatefulWidget {
   const ZegoUIKitPrebuiltCall({
+
+    /// The key for the widget.
     super.key,
+
+    /// You can create a project and obtain an appID from the [ZEGOCLOUD Admin Console](https://console.zegocloud.com).
     required this.appID,
+
+    /// The ID of the call.
     required this.callID,
+
+    /// The ID of the currently logged-in user.
     required this.userID,
+
+    /// The name of the currently logged-in user.
     required this.userName,
+
+    /// Initialize the configuration for the call.
     required this.config,
+
+    /// The app sign for authentication.
     this.appSign = '',
+
+    /// The token for authentication.
     this.token = '',
+
+    /// Initialize the events for the call.
     this.events,
+
+    /// Callback when the page is destroyed.
     this.onDispose,
+
+    /// Plugins to be used with the call (e.g., beauty plugin).
     this.plugins,
   });
 
@@ -110,6 +135,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   /// Callback when the page is destroyed.
   final VoidCallback? onDispose;
 
+  /// Plugins to be used with the call (e.g., beauty plugin).
   final List<IZegoUIKitPlugin>? plugins;
 
   @override

@@ -79,8 +79,9 @@ class ZegoUIKitPrebuiltCallController
 
   /// This function is used to end the current call.
   ///
-  /// You can pass the context [context] for any necessary pop-ups or page transitions.
-  /// By using the [showConfirmation] parameter, you can control whether to display a confirmation dialog to confirm ending the call.
+  /// [context] The context for any necessary pop-ups or page transitions.
+  /// [showConfirmation] Whether to show a confirmation dialog to confirm ending the call.
+  /// [reason] The reason for ending the call.
   ///
   /// if you want hangUp in minimize state, please call [minimize.hangUp]
   ///

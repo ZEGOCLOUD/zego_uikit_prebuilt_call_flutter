@@ -22,6 +22,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// In the [onPressed] callback, send a call invitation.
 void showCallingInvitationListSheet(
   BuildContext context, {
+
+  /// The ID of the call.
   required String callID,
 
   /// Members waiting to be selected (not in a call, not invited)
@@ -38,17 +40,35 @@ void showCallingInvitationListSheet(
 
   /// Member list sorting
   List<ZegoCallUser> Function(List<ZegoCallUser>)? userSort,
+
+  /// Whether to use the root navigator.
   bool rootNavigator = false,
+
+  /// The icon for the invite button.
   ButtonIcon? buttonIcon,
+
+  /// The size of the button icon.
   Size? buttonIconSize,
+
+  /// The size of the button.
   Size? buttonSize,
+
+  /// The builder for user avatars.
   ZegoAvatarBuilder? avatarBuilder,
+
+  /// The color of the user name.
   Color? userNameColor,
+
+  /// The background color of the bottom sheet.
   Color? backgroundColor,
 
   /// default is 'Invitees'
   String? popUpTitle,
+
+  /// The text style for the popup title.
   TextStyle? popUpTitleStyle,
+
+  /// The back icon for the popup.
   Widget? popUpBackIcon,
 
   /// default is 'Invite'
@@ -101,41 +121,93 @@ void showCallingInvitationListSheet(
 class ZegoSendCallingInvitationList extends StatefulWidget {
   const ZegoSendCallingInvitationList({
     super.key,
+
+    /// The key for the widget.
     required this.callID,
+
+    /// Members waiting to be selected.
     required this.waitingSelectUsers,
+
+    /// Callback after clicking the invite button.
     required this.onPressed,
+
+    /// Selected members (in a call or invited).
     this.selectedUsers = const [],
+
+    /// Member list sorting function.
     this.userSort,
+
+    /// The icon for the invite button.
     this.buttonIcon,
+
+    /// The title of the popup.
     this.popUpTitle,
+
+    /// The text style for the popup title.
     this.popUpTitleStyle,
+
+    /// The size of the button icon.
     this.buttonIconSize,
+
+    /// The size of the button.
     this.buttonSize,
+
+    /// The builder for user avatars.
     this.avatarBuilder,
+
+    /// The color of the user name.
     this.userNameColor,
+
+    /// The back icon for the popup.
     this.popUpBackIcon,
+
+    /// The icon for the invite button (default is 'Invite').
     this.inviteButtonIcon,
+
+    /// Whether to default select waiting members.
     this.defaultChecked = true,
   });
 
+  /// The ID of the call.
   final String callID;
+
+  /// Callback after clicking the invite button.
   final void Function(List<ZegoCallUser> selectedUsers) onPressed;
 
+  /// Members waiting to be selected.
   final List<ZegoCallUser> waitingSelectUsers;
+
+  /// Selected members (in a call or invited).
   final List<ZegoCallUser> selectedUsers;
+
+  /// Member list sorting function.
   final List<ZegoCallUser> Function(List<ZegoCallUser>)? userSort;
+
+  /// Whether to default select waiting members.
   final bool defaultChecked;
 
+  /// The icon for the invite button.
   final ButtonIcon? buttonIcon;
 
+  /// The size of the button icon.
   final Size? buttonIconSize;
+
+  /// The size of the button.
   final Size? buttonSize;
+
+  /// The builder for user avatars.
   final ZegoAvatarBuilder? avatarBuilder;
+
+  /// The color of the user name.
   final Color? userNameColor;
 
   /// default is 'Invitees'
   final String? popUpTitle;
+
+  /// The text style for the popup title.
   final TextStyle? popUpTitleStyle;
+
+  /// The back icon for the popup.
   final Widget? popUpBackIcon;
 
   /// default is 'Invite'

@@ -37,20 +37,27 @@ class ZegoCallControllerAudioVideoMicrophoneImpl
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           ZegoUIKit().getLocalUser().id);
 
-  /// microphone state of [userID]
+  /// Get microphone state for a specific user.
+  ///
+  /// [userID] The ID of the user whose microphone state to retrieve.
   bool state(String userID) => ZegoUIKit()
       .getMicrophoneStateNotifier(
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           userID)
       .value;
 
-  /// microphone state notifier of [userID]
+  /// Get microphone state notifier for a specific user.
+  ///
+  /// [userID] The ID of the user whose microphone state notifier to retrieve.
   ValueNotifier<bool> stateNotifier(String userID) =>
       ZegoUIKit().getMicrophoneStateNotifier(
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           userID);
 
-  /// turn on/off [userID] microphone, if [userID] is empty, then it refers to local user
+  /// Turn on/off microphone.
+  ///
+  /// [isOn] Whether to turn the microphone on or off.
+  /// [userID] The ID of the user whose microphone to control. If null, controls the local user.
   Future<void> turnOn(bool isOn, {String? userID}) async {
     ZegoLoggerService.logInfo(
       "turn ${isOn ? "on" : "off"} $userID microphone,",
@@ -65,7 +72,9 @@ class ZegoCallControllerAudioVideoMicrophoneImpl
     );
   }
 
-  /// switch [userID] microphone state, if [userID] is empty, then it refers to local user
+  /// Switch microphone state (toggle on/off).
+  ///
+  /// [userID] The ID of the user whose microphone to switch. If null, switches the local user's microphone.
   void switchState({String? userID}) {
     final targetUserID = userID ?? ZegoUIKit().getLocalUser().id;
     final currentMicrophoneState = ZegoUIKit()
@@ -94,20 +103,27 @@ class ZegoCallControllerAudioVideoCameraImpl
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           ZegoUIKit().getLocalUser().id);
 
-  /// camera state of [userID]
+  /// Get camera state for a specific user.
+  ///
+  /// [userID] The ID of the user whose camera state to retrieve.
   bool state(String userID) => ZegoUIKit()
       .getCameraStateNotifier(
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           userID)
       .value;
 
-  /// camera state notifier of [userID]
+  /// Get camera state notifier for a specific user.
+  ///
+  /// [userID] The ID of the user whose camera state notifier to retrieve.
   ValueNotifier<bool> stateNotifier(String userID) =>
       ZegoUIKit().getCameraStateNotifier(
           targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID,
           userID);
 
-  /// turn on/off [userID] camera, if [userID] is empty, then it refers to local user
+  /// Turn on/off camera.
+  ///
+  /// [isOn] Whether to turn the camera on or off.
+  /// [userID] The ID of the user whose camera to control. If null, controls the local user.
   Future<void> turnOn(bool isOn, {String? userID}) async {
     ZegoLoggerService.logInfo(
       "turn ${isOn ? "on" : "off"} $userID camera",
@@ -122,7 +138,9 @@ class ZegoCallControllerAudioVideoCameraImpl
     );
   }
 
-  /// switch [userID] camera state, if [userID] is empty, then it refers to local user
+  /// Switch camera state (toggle on/off).
+  ///
+  /// [userID] The ID of the user whose camera to switch. If null, switches the local user's camera.
   void switchState({String? userID}) {
     final targetUserID = userID ?? ZegoUIKit().getLocalUser().id;
     final currentCameraState = ZegoUIKit()
@@ -134,7 +152,9 @@ class ZegoCallControllerAudioVideoCameraImpl
     turnOn(!currentCameraState, userID: targetUserID);
   }
 
-  /// local use front facing camera or back
+  /// Switch between front and back camera.
+  ///
+  /// [isFrontFacing] Whether to use the front-facing camera.
   void switchFrontFacing(bool isFrontFacing) {
     ZegoLoggerService.logInfo(
       'switchFrontFacing, isFrontFacing:$isFrontFacing, ',
@@ -145,7 +165,9 @@ class ZegoCallControllerAudioVideoCameraImpl
     ZegoUIKit().useFrontFacingCamera(isFrontFacing);
   }
 
-  /// switch video mirror mode
+  /// Switch video mirror mode.
+  ///
+  /// [isVideoMirror] Whether to enable video mirroring.
   void switchVideoMirroring(bool isVideoMirror) {
     ZegoLoggerService.logInfo(
       'switchVideoMirroring, isVideoMirror:$isVideoMirror, ',
@@ -159,11 +181,13 @@ class ZegoCallControllerAudioVideoCameraImpl
 
 class ZegoCallControllerAudioVideoAudioOutputImpl
     with ZegoCallControllerAudioVideoDeviceImplPrivate {
-  /// local audio output device notifier
+  /// Get local audio output device notifier.
   ValueNotifier<ZegoUIKitAudioRoute> get localNotifier =>
       notifier(ZegoUIKit().getLocalUser().id);
 
-  /// get audio output device notifier
+  /// Get audio output device notifier for a specific user.
+  ///
+  /// [userID] The ID of the user whose audio output notifier to retrieve.
   ValueNotifier<ZegoUIKitAudioRoute> notifier(
     String userID,
   ) {
@@ -171,7 +195,9 @@ class ZegoCallControllerAudioVideoAudioOutputImpl
         targetRoomID: ZegoUIKitPrebuiltCallController().private.roomID, userID);
   }
 
-  /// set audio output to speaker or earpiece(telephone receiver)
+  /// Switch audio output to speaker or earpiece.
+  ///
+  /// [isSpeaker] Whether to switch to speaker (true) or earpiece (false).
   void switchToSpeaker(bool isSpeaker) {
     ZegoLoggerService.logInfo(
       'switchToSpeaker, isSpeaker:$isSpeaker, ',

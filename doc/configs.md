@@ -69,7 +69,7 @@ Default initialization parameters for the one-on-one voice call.
 factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
 ```
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -104,7 +104,7 @@ factory ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
 
 Configuration options for audio/video views.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -128,7 +128,7 @@ Configuration options for audio/video views.
 
 Configuration options for the top menu bar (toolbar).
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -148,7 +148,7 @@ Configuration options for the top menu bar (toolbar).
 
 Configuration options for the bottom menu bar (toolbar).
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -168,7 +168,7 @@ Configuration options for the bottom menu bar (toolbar).
 
 Configuration for the member list.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -180,7 +180,7 @@ Configuration for the member list.
 
 Call timing configuration.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -191,7 +191,7 @@ Call timing configuration.
 
 Control options for the bottom-left message list.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -201,7 +201,7 @@ Control options for the bottom-left message list.
 
 Confirmation dialog when hang up the call.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -215,7 +215,7 @@ Confirmation dialog when hang up the call.
 
 Configuration options for voice changer, beauty effects and reverberation effects.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -242,7 +242,7 @@ Configuration options for voice changer, beauty effects and reverberation effect
 
 Configuration for screen sharing.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -253,7 +253,7 @@ Configuration for screen sharing.
 
 Configuration for automatic screen sharing stop when ending from a non-app.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -264,7 +264,7 @@ Configuration for automatic screen sharing stop when ending from a non-app.
 
 Config about users.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -274,7 +274,7 @@ Config about users.
 
 Config about device.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -284,7 +284,7 @@ Config about device.
 
 Necessary participants to participate in the call.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -297,7 +297,7 @@ Necessary participants to participate in the call.
 
 PIP config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -311,7 +311,7 @@ PIP config.
 
 Android PIP config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -321,7 +321,7 @@ Android PIP config.
 
 iOS PIP config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -331,7 +331,7 @@ iOS PIP config.
 
 Control the text on the UI.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -372,7 +372,7 @@ Control the text on the UI.
 
 Call invitation configuration class.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -389,7 +389,7 @@ Call invitation configuration class.
 
 Offline config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -399,7 +399,7 @@ Offline config.
 
 In-calling config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -410,7 +410,7 @@ In-calling config.
 
 Missed call config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -425,7 +425,7 @@ Missed call config.
 
 Invitation PIP config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -435,7 +435,7 @@ Invitation PIP config.
 
 Invitation iOS PIP config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -445,7 +445,7 @@ Invitation iOS PIP config.
 
 Call invitation UI configuration class.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -457,7 +457,7 @@ Call invitation UI configuration class.
 
 Inviter UI config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -486,7 +486,7 @@ Inviter UI config.
 
 Invitee UI config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -518,7 +518,7 @@ Invitee UI config.
 
 Inviter minimized UI config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -529,7 +529,7 @@ Inviter minimized UI config.
 
 Invitee minimized UI config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -541,7 +541,7 @@ Invitee minimized UI config.
 
 Invitation notification config.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -552,7 +552,7 @@ Invitation notification config.
 
 Button UI configuration class.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -566,7 +566,7 @@ Button UI configuration class.
 
 Invitation popup UI configuration class.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -581,7 +581,7 @@ Invitation popup UI configuration class.
 
 Ringtone configuration for online calls.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -592,7 +592,7 @@ Ringtone configuration for online calls.
 
 iOS notification configuration.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -605,7 +605,7 @@ iOS notification configuration.
 
 Android notification configuration.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -622,7 +622,7 @@ Android notification configuration.
 
 Android notification channel configuration.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -636,7 +636,7 @@ Android notification channel configuration.
 
 System confirm dialog configuration.
 
-### Properties
+- **Properties**
 
 | Property | Type | Description |
 | :--- | :--- | :--- |

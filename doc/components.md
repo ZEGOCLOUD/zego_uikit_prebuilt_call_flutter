@@ -47,6 +47,17 @@ const ZegoUIKitPrebuiltCall({
 | **onDispose** | `VoidCallback?` | No | Callback when the widget is disposed. |
 | **plugins** | `List<IZegoUIKitPlugin>?` | No | The plugins to be used. |
 
+**Example**
+```dart
+ZegoUIKitPrebuiltCall(
+  appID: appID,
+  callID: callID,
+  userID: userID,
+  userName: userName,
+  config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
+);
+```
+
 ---
 
 ## ZegoUIKitPrebuiltCallInvitationService
@@ -226,6 +237,16 @@ Future<void> useSystemCallingUI(List<IZegoUIKitPlugin> plugins)
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | **plugins** | `List<IZegoUIKitPlugin>` | Yes | The plugins to be used. |
+
+**Example**
+```dart
+await ZegoUIKitPrebuiltCallInvitationService().init(
+  appID: appID,
+  userID: userID,
+  userName: userName,
+  plugins: [ZegoUIKitSignalingPlugin()],
+);
+```
 
 ---
 
@@ -464,6 +485,11 @@ void showViewInFullscreenMode(String userID, bool isFullscreen)
 | **userID** | `String` | Yes | The user ID. |
 | **isFullscreen** | `bool` | Yes | Whether to enter or exit full-screen mode. |
 
+**Example**
+```dart
+ZegoUIKitPrebuiltCallController().hangUp(context);
+```
+
 ---
 
 ## ZegoSendCallInvitationButton
@@ -533,6 +559,17 @@ const ZegoSendCallInvitationButton({
 | **unclickableBackgroundColor** | `Color?` | No | The background color when the button is unclickable. |
 | **networkLoadingConfig** | `ZegoNetworkLoadingConfig?` | No | The network loading configuration. |
 
+**Example**
+```dart
+ZegoSendCallInvitationButton(
+  invitees: [ZegoUIKitUser(id: 'user_id', name: 'User')],
+  isVideoCall: true,
+  onPressed: (code, message, invitees) {
+    debugPrint('onPressed: $code, $message');
+  },
+)
+```
+
 ---
 
 ## ZegoSendCallingInvitationButton
@@ -581,6 +618,14 @@ const ZegoSendCallingInvitationButton({
 | **inviteButtonIcon** | `Widget?` | No | Icon of invite button. |
 | **defaultChecked** | `bool` | No | Whether to default check the waiting users. |
 | **networkLoadingConfig** | `ZegoNetworkLoadingConfig?` | No | Network loading configuration. |
+
+**Example**
+```dart
+ZegoSendCallingInvitationButton(
+  callID: callID,
+  waitingSelectUsers: [ZegoCallUser('user_id', 'User')],
+)
+```
 
 ---
 
@@ -677,6 +722,14 @@ void showCallingInvitationListSheet(
 | **popUpBackIcon** | `Widget?` | No | Back icon of the pop-up. |
 | **inviteButtonIcon** | `Widget?` | No | Icon of the invite button. |
 
+**Example**
+```dart
+ZegoSendCallingInvitationList(
+  callID: callID,
+  waitingSelectUsers: [ZegoCallUser('user_id', 'User')],
+)
+```
+
 ---
 
 ## ZegoUIKitPrebuiltCallMiniOverlayPage
@@ -713,3 +766,10 @@ const ZegoUIKitPrebuiltCallMiniOverlayPage({
 | **soundWaveColor** | `Color` | No | The color of the sound wave. |
 | **padding** | `double` | No | The padding. |
 | **showDevices** | `bool` | No | Whether to show devices. |
+
+**Example**
+```dart
+ZegoUIKitPrebuiltCallMiniOverlayPage(
+  contextQuery: () => context,
+)
+```

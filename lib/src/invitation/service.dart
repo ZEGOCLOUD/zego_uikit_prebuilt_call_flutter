@@ -204,8 +204,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Set the navigation key for necessary configuration when navigating pages upon receiving invitations.
   ///
-  /// we need a context object, to push/pop page when receive invitation request
-  /// so we need navigatorKey to get context
+  /// [navigatorKey] The navigator key to get context for push/pop page when receive invitation request.
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
     ZegoLoggerService.logInfo(
       'isInit:${private._isInit},'
@@ -247,16 +246,20 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Initialize the service. Call when the user logs in; after configuration completes, calls can be received and invitations can be sent.
   ///
-  /// you must call this method as soon as the user login(or re-login, auto-login) to your app.
-  ///
-  /// You must include [ZegoUIKitSignalingPlugin] in [plugins] to support the invitation feature.
-  ///
-  /// If you need to set [ZegoUIKitPrebuiltCallConfig], you can do so through [requireConfig].
-  /// Each time the [ZegoUIKitPrebuiltCall] starts, it will request this callback to obtain the current call's config.
-  ///
-  /// Additionally, you can customize the call ringtone through [ringtoneConfig], and configure notifications through [notificationConfig].
-  /// You can also customize the invitation interface with [uiConfig]. If you want to modify the related text on the interface, you can set [innerText].
-  /// If you want to listen for events and perform custom logics, you can use [invitationEvents] to obtain related invitation events, and for call-related events, you need to use [events].
+  /// [appID] The App ID of your Zego project.
+  /// [userID] The ID of the user.
+  /// [userName] The name of the user.
+  /// [plugins] The list of plugins to be used. You must include [ZegoUIKitSignalingPlugin] to support the invitation feature.
+  /// [appSign] The app sign key for authentication. If [token] is not provided, this sign key will be used for authentication.
+  /// [token] Token for authentication. This is used when [appSign] is not provided or empty.
+  /// [requireConfig] Callback to obtain the call config.
+  /// [events] The events of the call.
+  /// [config] The configuration of the invitation.
+  /// [ringtoneConfig] The ringtone configuration for call notifications.
+  /// [uiConfig] The UI configuration of the invitation.
+  /// [notificationConfig] The notification configuration.
+  /// [innerText] The inner text configuration for invitation UI.
+  /// [invitationEvents] The events of the invitation.
   Future<void> init({
     required int appID,
     required String userID,
@@ -264,12 +267,8 @@ class ZegoUIKitPrebuiltCallInvitationService
     required List<IZegoUIKitPlugin> plugins,
     String appSign = '',
     String token = '',
-
-    /// call abouts.
     ZegoCallPrebuiltConfigQuery? requireConfig,
     ZegoUIKitPrebuiltCallEvents? events,
-
-    /// invitation abouts.
     ZegoCallInvitationConfig? config,
     ZegoCallRingtoneConfig? ringtoneConfig,
     ZegoCallInvitationUIConfig? uiConfig,
@@ -635,6 +634,8 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Enable offline system calling UI to support receiving invitations in the background, answering on lock screen, etc. (Note the call order with ZIMKit).
   ///
+  /// [plugins] The list of plugins to be used with the system calling UI.
+  ///
   ///  [FBI WARING]
   ///
   ///  if you use CallKit with ZIMKit, please note that.
@@ -648,7 +649,8 @@ class ZegoUIKitPrebuiltCallInvitationService
   ///   [ZegoUIKitSignalingPlugin()],
   /// );
   /// ```
-  Future<void> useSystemCallingUI(List<IZegoUIKitPlugin> plugins) async {
+  Future<void> useSystemCallingUI(
+    List<IZegoUIKitPlugin> plugins) async {
     ZegoLoggerService.logInfo(
       'plugins size: ${plugins.length}',
       tag: 'call-invitation',
@@ -697,12 +699,14 @@ class ZegoUIKitPrebuiltCallInvitationService
   ///
   /// This function is used to send call invitations to one or more specified users.
   ///
-  /// You can provide a list of target users [invitees] and specify whether it is a video call [isVideoCall]. If it is not a video call, it defaults to an audio call.
-  /// You can also pass additional custom data [customData] to the invitees.
-  /// Additionally, you can specify the call ID [callID]. If not provided, the system will generate one automatically based on certain rules.
-  /// If you want to set a ringtone for offline call invitations, set [resourceID] to a value that matches the push resource ID in the ZEGOCLOUD management console.
-  /// You can also set the notification title [notificationTitle] and message [notificationMessage].
-  /// If the call times out, the call will automatically hang up after the specified timeout duration [timeoutSeconds] (in seconds).
+  /// [invitees] List of users to send the call invitation to.
+  /// [isVideoCall] Determines whether the call is a video call. If false, it defaults to an audio call.
+  /// [customData] Custom data to be passed to the invitees.
+  /// [callID] The ID of the call. If not provided, the system will generate one automatically.
+  /// [resourceID] The resource ID for offline call notifications. This should match the push resource ID configured in the ZEGOCLOUD management console.
+  /// [notificationTitle] The title for the call notification.
+  /// [notificationMessage] The message for the call notification.
+  /// [timeoutSeconds] The timeout duration in seconds for the call invitation. Default is 60 seconds.
   ///
   /// Note that this function behaves the same as [ZegoSendCallInvitationButton].
   Future<bool> send({
@@ -729,8 +733,8 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Cancel a sent call invitation.
   ///
-  ///  To cancel the invitation for [callees] in a call, you can include your
-  ///  cancellation reason using the [customData].
+  /// [callees] List of callees whose invitation should be cancelled.
+  /// [customData] Custom data to be included with the cancellation.
   Future<bool> cancel({
     required List<ZegoCallUser> callees,
     String customData = '',
@@ -743,8 +747,8 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Reject the received call invitation.
   ///
-  /// To reject the current call invitation, you can use the [customData]
-  /// parameter if you need to provide a reason for the rejection to the other party.
+  /// [customData] Custom data to be passed to the caller when rejecting the invitation.
+  /// [causeByPopScope] Indicates whether the rejection was caused by a pop scope (e.g., back navigation). When true, the invitation top sheet will not be manually hidden.
   ///
   /// Additionally, the inviting party can receive notifications of the
   /// rejection by listening to [onOutgoingCallRejectedCauseBusy] or
@@ -772,8 +776,7 @@ class ZegoUIKitPrebuiltCallInvitationService
 
   /// Accept the received call invitation and enter the call.
   ///
-  /// To accept the current call invitation, you can use the [customData]
-  /// parameter if you need to provide a reason for the acceptance to the other party.
+  /// [customData] Custom data to be passed to the caller when accepting the invitation.
   ///
   /// Additionally, the inviting party can receive notifications by listening
   /// to [onOutgoingCallAccepted] when the other party accepts the call invitation.

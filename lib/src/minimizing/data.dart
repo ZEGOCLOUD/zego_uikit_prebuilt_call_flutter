@@ -29,10 +29,19 @@ class ZegoInCallMinimizeData {
     required this.durationStartTime,
   });
 
+  /// The call configuration.
   final ZegoUIKitPrebuiltCallConfig config;
+
+  /// The call events handler.
   final ZegoUIKitPrebuiltCallEvents events;
+
+  /// Whether the call was prebuilt from a minimized state.
   final bool isPrebuiltFromMinimizing;
+
+  /// The plugins used by the call.
   final List<IZegoUIKitPlugin>? plugins;
+
+  /// The start time of the call duration.
   final DateTime durationStartTime;
 }
 
@@ -48,17 +57,32 @@ class ZegoInvitingMinimizeData {
     this.customData,
   });
 
+  /// The type of call invitation (voice or video).
   final ZegoCallInvitationType invitationType;
+
+  /// The user who initiated the invitation.
   final ZegoUIKitUser inviter;
+
+  /// The list of users being invited.
   final List<ZegoUIKitUser> invitees;
+
+  /// Whether the current user is the inviter.
   final bool isInviter;
+
+  /// The page manager for the invitation.
   final ZegoCallInvitationPageManager pageManager;
+
+  /// The call invitation data.
   final ZegoUIKitPrebuiltCallInvitationData callInvitationData;
+
+  /// Custom data passed with the invitation.
   final String? customData;
 }
 
 /// Minimized data - using union type pattern
+/// Minimized data containing information needed to restore or manage minimized call states.
 class ZegoCallMinimizeData {
+  /// Creates minimized data for an in-call minimized state.
   const ZegoCallMinimizeData.inCall({
     required this.appID,
     required this.appSign,
@@ -70,6 +94,7 @@ class ZegoCallMinimizeData {
     required this.inCallData,
   }) : invitingData = null;
 
+  /// Creates minimized data for an inviting minimized state.
   const ZegoCallMinimizeData.inviting({
     required this.appID,
     required this.appSign,
@@ -81,16 +106,33 @@ class ZegoCallMinimizeData {
     required this.invitingData,
   }) : inCallData = null;
 
+  /// The ZEGOCLOUD app ID.
   final int appID;
+
+  /// The app sign for authentication.
   final String appSign;
+
+  /// The token for authentication.
   final String token;
+
+  /// The user ID.
   final String userID;
+
+  /// The user name.
   final String userName;
+
+  /// The call ID.
   final String callID;
+
+  /// Callback when the call is disposed.
   final VoidCallback? onDispose;
 
   // Union type data - only one can be non-null
+
+  /// In-call minimized data (non-null when in inCall state).
   final ZegoInCallMinimizeData? inCallData;
+
+  /// Inviting minimized data (non-null when in inviting state).
   final ZegoInvitingMinimizeData? invitingData;
 
   /// Get minimization type

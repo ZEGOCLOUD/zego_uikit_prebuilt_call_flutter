@@ -103,37 +103,101 @@ class ZegoUIKitPrebuiltCallInnerText {
   String screenBlockedSubtitle;
 
   ZegoUIKitPrebuiltCallInnerText({
+
+    /// The title of the audio effects dialog.
     String? audioEffectTitle,
+
+    /// The title of the reverb category.
     String? audioEffectReverbTitle,
+
+    /// The title of the voice changing category.
     String? audioEffectVoiceChangingTitle,
+
+    /// Voice changing effect: None
     String? voiceChangerNoneTitle,
+
+    /// Voice changing effect: Little Boy
     String? voiceChangerLittleBoyTitle,
+
+    /// Voice changing effect: Little Girl
     String? voiceChangerLittleGirlTitle,
+
+    /// Voice changing effect: Deep
     String? voiceChangerDeepTitle,
+
+    /// Voice changing effect: Crystal-clear
     String? voiceChangerCrystalClearTitle,
+
+    /// Voice changing effect: Robot
     String? voiceChangerRobotTitle,
+
+    /// Voice changing effect: Ethereal
     String? voiceChangerEtherealTitle,
+
+    /// Voice changing effect: Female
     String? voiceChangerFemaleTitle,
+
+    /// Voice changing effect: Male
     String? voiceChangerMaleTitle,
+
+    /// Voice changing effect: Optimus Prime
     String? voiceChangerOptimusPrimeTitle,
+
+    /// Voice changing effect: C Major
     String? voiceChangerCMajorTitle,
+
+    /// Voice changing effect: A Major
     String? voiceChangerAMajorTitle,
+
+    /// Voice changing effect: Harmonic minor
     String? voiceChangerHarmonicMinorTitle,
+
+    /// Reverb effect: None
     String? reverbTypeNoneTitle,
+
+    /// Reverb effect: Karaoke
     String? reverbTypeKTVTitle,
+
+    /// Reverb effect: Hall
     String? reverbTypeHallTitle,
+
+    /// Reverb effect: Concert
     String? reverbTypeConcertTitle,
+
+    /// Reverb effect: Rock
     String? reverbTypeRockTitle,
+
+    /// Reverb effect: Small room
     String? reverbTypeSmallRoomTitle,
+
+    /// Reverb effect: Large room
     String? reverbTypeLargeRoomTitle,
+
+    /// Reverb effect: Valley
     String? reverbTypeValleyTitle,
+
+    /// Reverb effect: Recording studio
     String? reverbTypeRecordingStudioTitle,
+
+    /// Reverb effect: Basement
     String? reverbTypeBasementTitle,
+
+    /// Reverb effect: Pop
     String? reverbTypePopularTitle,
+
+    /// Reverb effect: Gramophone
     String? reverbTypeGramophoneTitle,
+
+    /// Text shown when screen sharing is active.
     String? screenSharingTipText,
+
+    /// Text for the stop screen sharing button.
     String? stopScreenSharingButtonText,
+
+    /// Text shown when screen is blocked due to proximity sensor.
     String? screenBlockedTitle,
+
+    /// Subtitle shown when screen is blocked due to proximity sensor.
     String? screenBlockedSubtitle,
   })  : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
         audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',

@@ -7,12 +7,26 @@ import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 
 class ZegoUIKitPrebuiltCallEvents {
   ZegoUIKitPrebuiltCallEvents({
+
+    /// Callback triggered when the call ends.
     this.onCallEnd,
+
+    /// Callback triggered to confirm before hanging up the call.
     this.onHangUpConfirmation,
+
+    /// Error callback for call-related errors.
     this.onError,
+
+    /// User-related event callbacks.
     this.user,
+
+    /// Room-related event callbacks.
     this.room,
+
+    /// Audio/Video-related event callbacks.
     this.audioVideo,
+
+    /// Beauty effect-related event callbacks.
     this.beauty,
   });
 
@@ -124,13 +138,29 @@ class ZegoCallAudioVideoEvents {
       onRemoteMicrophoneExceptionOccurred;
 
   ZegoCallAudioVideoEvents({
+
+    /// Callback triggered when camera state changes.
     this.onCameraStateChanged,
+
+    /// Callback triggered when front camera state changes.
     this.onFrontFacingCameraStateChanged,
+
+    /// Callback triggered when microphone state changes.
     this.onMicrophoneStateChanged,
+
+    /// Callback triggered when audio output device changes.
     this.onAudioOutputChanged,
+
+    /// Callback triggered when local camera exception occurs.
     this.onLocalCameraExceptionOccurred,
+
+    /// Callback triggered when local microphone exception occurs.
     this.onLocalMicrophoneExceptionOccurred,
+
+    /// Callback triggered when remote camera exception occurs.
     this.onRemoteCameraExceptionOccurred,
+
+    /// Callback triggered when remote microphone exception occurs.
     this.onRemoteMicrophoneExceptionOccurred,
   });
 
@@ -158,7 +188,11 @@ class ZegoCallUserEvents {
   void Function(ZegoUIKitUser)? onLeave;
 
   ZegoCallUserEvents({
+
+    /// Callback triggered when a user enters the room.
     this.onEnter,
+
+    /// Callback triggered when a user leaves the room.
     this.onLeave,
   });
 
@@ -173,6 +207,8 @@ class ZegoCallUserEvents {
 
 /// events about room
 class ZegoCallRoomEvents {
+
+  /// Callback triggered when the room state changes.
   void Function(ZegoUIKitRoomState)? onStateChanged;
 
   /// the room Token authentication is about to expire,
@@ -183,7 +219,11 @@ class ZegoCallRoomEvents {
   String? Function(int remainSeconds)? onTokenExpired;
 
   ZegoCallRoomEvents({
+
+    /// Callback triggered when the room state changes.
     this.onStateChanged,
+
+    /// Callback triggered when the room token is about to expire.
     this.onTokenExpired,
   });
 
@@ -198,7 +238,11 @@ class ZegoCallRoomEvents {
 
 class ZegoCallBeautyEvents {
   ZegoCallBeautyEvents({
+
+    /// Error callback for beauty effect-related errors.
     this.onError,
+
+    /// Callback triggered when face detection data is available.
     this.onFaceDetection,
   });
 

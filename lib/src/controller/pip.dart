@@ -8,13 +8,23 @@ mixin ZegoCallControllerPIP {
 
 /// Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality.
 class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
+  /// Get the current PIP status.
   Future<ZegoPiPStatus> get status async => await private.pipImpl().status;
 
+  /// Check if PIP is available on this device.
   Future<bool> get available async => await private.pipImpl().available;
 
-  /// sourceRectHint: Rectangle\<int\>(0, 0, width, height)
+  /// Enable Picture-in-Picture mode.
+  ///
+  /// [aspectWidth] The width of the aspect ratio for PIP (default 9).
+  /// [aspectHeight] The height of the aspect ratio for PIP (default 16).
+  /// Returns the status of the PIP operation.
   Future<ZegoPiPStatus> enable({
+
+    /// The width of the aspect ratio for PIP.
     int aspectWidth = 9,
+
+    /// The height of the aspect ratio for PIP.
     int aspectHeight = 16,
   }) async {
     return private.pipImpl().enable(
@@ -23,8 +33,17 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
         );
   }
 
+  /// Enable Picture-in-Picture mode when the app is in background.
+  ///
+  /// [aspectWidth] The width of the aspect ratio for PIP (default 9).
+  /// [aspectHeight] The height of the aspect ratio for PIP (default 16).
+  /// Returns the status of the PIP operation.
   Future<ZegoPiPStatus> enableWhenBackground({
+
+    /// The width of the aspect ratio for PIP.
     int aspectWidth = 9,
+
+    /// The height of the aspect ratio for PIP.
     int aspectHeight = 16,
   }) async {
     return private.pipImpl().enableWhenBackground(
@@ -33,6 +52,7 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
         );
   }
 
+  /// Cancel the background PIP.
   Future<void> cancelBackground() async {
     return private.pipImpl().cancelBackground();
   }

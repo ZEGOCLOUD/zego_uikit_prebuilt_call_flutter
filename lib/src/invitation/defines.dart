@@ -13,6 +13,9 @@ typedef ZegoCallPrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
 );
 
 /// Call Type
+///
+/// [voiceCall] Represents a voice call invitation.
+/// [videoCall] Represents a video call invitation.
 enum ZegoCallInvitationType {
   voiceCall,
   videoCall,
@@ -42,13 +45,27 @@ extension ZegoCallTypeExtension on ZegoCallInvitationType {
   };
 }
 
+/// Data class containing information about a call invitation.
 class ZegoCallInvitationData {
+  /// The unique identifier for the call.
   String callID = '';
+
+  /// The unique identifier for the invitation.
   String invitationID = ''; //zim call id
+
+  /// The type of call (voice or video).
   ZegoCallInvitationType type = ZegoCallInvitationType.voiceCall;
+
+  /// List of users being invited.
   List<ZegoUIKitUser> invitees = [];
+
+  /// The user who sent the invitation.
   ZegoUIKitUser? inviter;
+
+  /// Timeout in seconds for the invitation.
   int timeoutSeconds = 60;
+
+  /// Custom data to send with the invitation.
   String customData = '';
 
   ZegoCallInvitationData({
@@ -138,12 +155,17 @@ class ZegoCallInvitationData {
 }
 
 /// User In Call
+/// User class representing a participant in a call invitation.
 class ZegoCallUser {
+  /// The unique identifier for the user.
   String id;
+
+  /// The display name of the user.
   String name;
 
   ZegoCallUser(this.id, this.name);
 
+  /// Create a ZegoCallUser from a ZegoUIKitUser.
   ZegoCallUser.fromUIKit(ZegoUIKitUser user) : this(user.id, user.name);
 
   @override

@@ -12,7 +12,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 /// "incoming" represents an incoming call, indicating that someone is calling you.
 /// "outgoing" represents an outgoing call, indicating that you are calling someone else.
 class ZegoUIKitPrebuiltCallInvitationEvents {
-  /// error stream
+
+  /// Error callback for invitation-related errors.
   Function(ZegoUIKitError)? onError;
 
   /// This callback will be triggered to **caller** or **callee** in current
@@ -119,23 +120,53 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   )? onOutgoingCallTimeout;
 
   ZegoUIKitPrebuiltCallInvitationEvents({
+
+    /// Error callback for invitation-related errors.
     this.onError,
+
+    /// Callback triggered when the invitation user state changes.
     this.onInvitationUserStateChanged,
+
+    /// Callback triggered when the callee clicks the decline button for an incoming call.
     this.onIncomingCallDeclineButtonPressed,
+
+    /// Callback triggered when the callee clicks the accept button for an incoming call.
     this.onIncomingCallAcceptButtonPressed,
+
+    /// Callback triggered when an incoming call is received.
     this.onIncomingCallReceived,
+
+    /// Callback triggered when an incoming call is cancelled.
     this.onIncomingCallCanceled,
+
+    /// Callback triggered when an incoming call times out.
     this.onIncomingCallTimeout,
+
+    /// Callback triggered when the callee clicks on a missed call notification.
     this.onIncomingMissedCallClicked,
     @Deprecated(
         'use onIncomingMissedCallDialBackFailed instead$deprecatedTipsV4152')
     Function()? onIncomingMissedCallReCallFailed,
+
+    /// Callback triggered when dialing back a missed call fails.
     this.onIncomingMissedCallDialBackFailed,
+
+    /// Callback triggered when the caller clicks the cancel button for an outgoing call.
     this.onOutgoingCallCancelButtonPressed,
+
+    /// Callback triggered when an outgoing call is sent.
     this.onOutgoingCallSent,
+
+    /// Callback triggered when an outgoing call is accepted.
     this.onOutgoingCallAccepted,
+
+    /// Callback triggered when an outgoing call is rejected because the callee is busy.
     this.onOutgoingCallRejectedCauseBusy,
+
+    /// Callback triggered when an outgoing call is declined.
     this.onOutgoingCallDeclined,
+
+    /// Callback triggered when an outgoing call times out.
     this.onOutgoingCallTimeout,
   }) {
     if (null != onIncomingMissedCallReCallFailed &&

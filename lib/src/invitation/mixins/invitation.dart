@@ -8,6 +8,16 @@ mixin ZegoCallInvitationServiceAPI {
 /// Here are the APIs related to invitation.
 class ZegoCallInvitationServiceAPIImpl
     with ZegoCallInvitationServiceAPIPrivate {
+  /// Send a call invitation to one or more users.
+  ///
+  /// [invitees] List of users to invite.
+  /// [isVideoCall] Whether this is a video call.
+  /// [customData] Custom data to send with the invitation.
+  /// [callID] Custom call ID. If not provided, a unique ID will be generated.
+  /// [resourceID] Resource ID for offline push notification.
+  /// [notificationTitle] Custom notification title for offline push.
+  /// [notificationMessage] Custom notification message for offline push.
+  /// [timeoutSeconds] Timeout in seconds for the invitation (default 60).
   Future<bool> send({
     required List<ZegoCallUser> invitees,
     required bool isVideoCall,
@@ -107,6 +117,10 @@ class ZegoCallInvitationServiceAPIImpl
     return sendInvitationFunc(currentCallID);
   }
 
+  /// Cancel an outgoing call invitation.
+  ///
+  /// [callees] List of callees to cancel the invitation for.
+  /// [customData] Custom data to send with the cancellation.
   Future<bool> cancel({
     required List<ZegoCallUser> callees,
     String customData = '',
@@ -147,6 +161,10 @@ class ZegoCallInvitationServiceAPIImpl
     );
   }
 
+  /// Reject an incoming call invitation.
+  ///
+  /// [customData] Custom data to send with the rejection.
+  /// [needHideInvitationTopSheet] Whether to hide the invitation top sheet after rejection.
   Future<bool> reject({
     String customData = '',
     bool needHideInvitationTopSheet = true,
@@ -199,6 +217,9 @@ class ZegoCallInvitationServiceAPIImpl
     );
   }
 
+  /// Accept an incoming call invitation.
+  ///
+  /// [customData] Custom data to send with the acceptance.
   Future<bool> accept({
     String customData = '',
   }) async {
@@ -243,6 +264,10 @@ class ZegoCallInvitationServiceAPIImpl
     );
   }
 
+  /// Join an existing call by invitation ID.
+  ///
+  /// [invitationID] The ID of the invitation to join.
+  /// [customData] Custom data to send when joining.
   Future<bool> join({
     required String invitationID,
     String? customData = '',

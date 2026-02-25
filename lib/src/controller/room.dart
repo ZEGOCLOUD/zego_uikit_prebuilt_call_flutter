@@ -10,6 +10,8 @@ mixin ZegoCallControllerRoom {
 class ZegoCallControllerRoomImpl with ZegoCallControllerRoomImplPrivate {
   /// Renew the token. Call when receiving the onTokenExpired callback.
   /// when receives [ZegoCallRoomEvents.onTokenExpired], you need use this API to update the token
+  ///
+  /// [token] The new token to use for authentication.
   Future<void> renewToken(String token) async {
     await ZegoUIKit().renewRoomToken(
       token,

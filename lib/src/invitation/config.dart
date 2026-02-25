@@ -90,7 +90,7 @@ class ZegoCallInvitationConfig {
   /// pip
   ZegoCallInvitationPIPConfig pip;
 
-  /// network config
+  /// Network loading configuration for showing loading indicators during network operations.
   ZegoNetworkLoadingConfig? networkLoading;
 
   @override
@@ -209,7 +209,8 @@ class ZegoCallInvitationMissedCallConfig {
 
 /// pip config
 class ZegoCallInvitationPIPConfig {
-  /// ios config
+
+  /// iOS Picture-in-Picture configuration.
   ZegoCallInvitationPIPIOSConfig iOS;
 
   ZegoCallInvitationPIPConfig({
@@ -264,7 +265,10 @@ class ZegoCallInvitationUIConfig {
   /// does invitation widget display with SafeArea or not
   bool withSafeArea;
 
+  /// UI configuration for the caller (inviter) side of the call invitation.
   ZegoCallInvitationInviterUIConfig inviter;
+
+  /// UI configuration for the callee (invitee) side of the call invitation.
   ZegoCallInvitationInviteeUIConfig invitee;
 
   @override
@@ -608,7 +612,10 @@ class ZegoCallInvitationNotificationConfig {
     this.androidNotificationConfig,
   });
 
+  /// iOS notification configuration for call invitations.
   ZegoCallIOSNotificationConfig? iOSNotificationConfig;
+
+  /// Android notification configuration for call invitations.
   ZegoCallAndroidNotificationConfig? androidNotificationConfig;
 
   @override
@@ -647,6 +654,8 @@ class ZegoCallRingtoneConfig {
 
 /// iOS notification config
 class ZegoCallIOSNotificationConfig {
+
+  /// The app name to be displayed in iOS notifications.
   String appName;
 
   /// is iOS sandbox or not. default is null which is auto mode.
@@ -821,6 +830,7 @@ class ZegoCallAndroidNotificationChannelConfig {
   /// ${project_root}/android/app/src/main/res/raw/${sound}.mp3
   String? sound;
 
+  /// Whether to enable vibration for notifications on Android.
   bool vibrate;
 
   ZegoCallAndroidNotificationChannelConfig({
@@ -844,10 +854,20 @@ class ZegoCallAndroidNotificationChannelConfig {
 
 /// Confirmation dialog like system.
 class ZegoCallSystemConfirmDialogConfig {
+
+  /// The title of the confirmation dialog.
   String? title;
+
+  /// The text style for the title.
   TextStyle? titleStyle;
+
+  /// The text style for the content.
   TextStyle? contentStyle;
+
+  /// The text style for the action button.
   TextStyle? actionTextStyle;
+
+  /// The brightness setting for the dialog background.
   Brightness? backgroundBrightness;
 
   ZegoCallSystemConfirmDialogConfig({

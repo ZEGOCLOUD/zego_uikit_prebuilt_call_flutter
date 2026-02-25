@@ -70,10 +70,20 @@ class ZegoCallEndEvent {
   ZegoCallInvitationData? invitationData;
 
   ZegoCallEndEvent({
+
+    /// The ID of the call that ended.
     required this.callID,
+
+    /// The reason why the call ended.
     required this.reason,
+
+    /// Whether the call ended while in a minimized state.
     required this.isFromMinimizing,
+
+    /// The user ID of the person who kicked out the local user (if applicable).
     this.kickerUserID,
+
+    /// The invitation data if the call was initiated from an invitation.
     this.invitationData,
   });
 
@@ -89,9 +99,12 @@ class ZegoCallEndEvent {
 }
 
 class ZegoCallHangUpConfirmationEvent {
+  /// Build context for showing dialogs.
   BuildContext context;
 
   ZegoCallHangUpConfirmationEvent({
+
+    /// The build context used for showing confirmation dialogs.
     required this.context,
   });
 

@@ -87,7 +87,11 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// ```
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
+
+    /// The key for the widget.
     super.key,
+
+    /// Callback function to get the current context.
     required this.contextQuery,
     this.rootNavigator = true,
     this.navigatorWithSafeArea = true,
@@ -108,28 +112,58 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
     this.avatarBuilder,
   });
 
+  /// The size of the minimized overlay.
   final Size? size;
+
+  /// The padding around the overlay content.
   final double padding;
+
+  /// The border radius of the overlay.
   final double borderRadius;
+
+  /// The border color of the overlay.
   final Color borderColor;
+
+  /// The color of the sound wave animation.
   final Color soundWaveColor;
+
+  /// The initial position of the overlay (top-left corner).
   final Offset topLeft;
+
+  /// Whether to show device status indicators (camera, microphone).
   final bool showDevices;
+
+  /// Whether to show the user's name.
   final bool showUserName;
 
+  /// Whether to show the leave button.
   final bool showLeaveButton;
+
+  /// Whether to show the local user's view.
   final bool showLocalUserView;
+
+  /// Custom icon for the leave button.
   final Widget? leaveButtonIcon;
 
+  /// Custom foreground widget to overlay on top of the video view.
   final Widget? foreground;
 
+  /// Custom foreground builder for the audio/video view.
   final ZegoAudioVideoViewForegroundBuilder? foregroundBuilder;
+
+  /// Custom background builder for the audio/video view.
   final ZegoAudioVideoViewBackgroundBuilder? backgroundBuilder;
+
+  /// Custom avatar builder for user avatars.
   final ZegoAvatarBuilder? avatarBuilder;
 
   /// You need to return the `context` of NavigatorState in this callback
   final BuildContext Function() contextQuery;
+
+  /// Whether to use the root navigator.
   final bool rootNavigator;
+
+  /// Whether to wrap the page with SafeArea.
   final bool navigatorWithSafeArea;
 
   @override

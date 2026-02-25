@@ -17,7 +17,11 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   bool get isMinimizing => isMinimizingNotifier.value;
   ValueNotifier<bool> get isMinimizingNotifier => _private.isMinimizingNotifier;
 
-  /// restore the ZegoUIKitPrebuiltCall from minimize
+  /// Restore the ZegoUIKitPrebuiltCall from minimize.
+  ///
+  /// [context] The build context.
+  /// [rootNavigator] Whether to use the root navigator.
+  /// [withSafeArea] Whether to wrap with SafeArea.
   bool restore(
     BuildContext context, {
     bool rootNavigator = true,
@@ -89,7 +93,10 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     return true;
   }
 
-  /// To minimize the ZegoUIKitPrebuiltCall
+  /// Minimize the ZegoUIKitPrebuiltCall.
+  ///
+  /// [context] The build context.
+  /// [rootNavigator] Whether to use the root navigator.
   bool minimize(
     BuildContext context, {
     bool rootNavigator = true,
@@ -136,7 +143,17 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     return true;
   }
 
-  /// Minimize the inviting interface
+  /// Minimize the inviting interface.
+  ///
+  /// [context] The build context.
+  /// [rootNavigator] Whether to use the root navigator.
+  /// [invitationType] The type of invitation (video or voice).
+  /// [inviter] The user who initiated the invitation.
+  /// [invitees] The list of users being invited.
+  /// [isInviter] Whether the current user is the inviter.
+  /// [pageManager] The invitation page manager.
+  /// [callInvitationData] The call invitation data.
+  /// [customData] Custom data to be passed with the invitation.
   bool minimizeInviting(
     BuildContext context, {
     bool rootNavigator = true,
@@ -215,7 +232,11 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     return true;
   }
 
-  /// Restore the inviting interface
+  /// Restore the inviting interface from minimized state.
+  ///
+  /// [context] The build context.
+  /// [rootNavigator] Whether to use the root navigator.
+  /// [withSafeArea] Whether to wrap with SafeArea.
   bool restoreInviting(
     BuildContext context, {
     bool rootNavigator = true,

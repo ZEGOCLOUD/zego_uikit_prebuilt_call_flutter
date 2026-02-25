@@ -25,22 +25,56 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// If you need to sort the user list, you can set it through [userSort].
 class ZegoSendCallingInvitationButton extends StatefulWidget {
   const ZegoSendCallingInvitationButton({
+
+    /// The key for the widget.
     super.key,
+
+    /// The ID of the call.
     required this.callID,
+
+    /// Users waiting to be selected (not in the call yet).
     required this.waitingSelectUsers,
+
+    /// Selected users (already in the call, cannot be unselected).
     required this.selectedUsers,
+
+    /// The sorting method of the user list.
     this.userSort,
+
+    /// The icon for the button.
     this.buttonIcon,
+
+    /// The title of the popup (default is 'Invitees').
     this.popUpTitle,
+
+    /// The text style for the popup title.
     this.popUpTitleStyle,
+
+    /// The size of the button icon.
     this.buttonIconSize,
+
+    /// The size of the button.
     this.buttonSize,
+
+    /// The builder for user avatars.
     this.avatarBuilder,
+
+    /// Custom builder for the invitation list sheet widget.
     this.sheetBuilder,
+
+    /// The color of the user name.
     this.userNameColor,
+
+    /// The back icon for the popup.
     this.popUpBackIcon,
+
+    /// The icon for the invite button.
     this.inviteButtonIcon,
+
+    /// Whether [waitingSelectUsers] is checked by default.
     this.defaultChecked = true,
+
+    /// Network loading configuration.
     this.networkLoadingConfig,
   });
 

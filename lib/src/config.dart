@@ -677,9 +677,17 @@ class ZegoCallHangUpConfirmDialogConfig {
   /// If not set, clicking the exit button will directly exit the call.
   /// If set, a confirmation dialog will be displayed when clicking the exit button, and you will need to confirm the exit before actually exiting.
   ZegoCallHangUpConfirmDialogInfo? info;
+
+  /// The text style for the dialog title.
   TextStyle? titleStyle;
+
+  /// The text style for the dialog content.
   TextStyle? contentStyle;
+
+  /// The text style for the action buttons.
   TextStyle? actionTextStyle;
+
+  /// The brightness setting for the dialog background.
   Brightness? backgroundBrightness;
 
   ZegoCallHangUpConfirmDialogConfig({
@@ -842,6 +850,8 @@ class ZegoCallAudioEffectConfig {
   double? sliderThumbRadius;
 
   ZegoCallAudioEffectConfig({
+
+    /// List of voice changer effects to display in the UI.
     this.voiceChangeEffect = const [
       VoiceChangerType.littleGirl,
       VoiceChangerType.deep,
@@ -856,6 +866,8 @@ class ZegoCallAudioEffectConfig {
       VoiceChangerType.aMajor,
       VoiceChangerType.harmonicMinor,
     ],
+
+    /// List of reverb effects to display in the UI.
     this.reverbEffect = const [
       ReverbType.ktv,
       ReverbType.hall,
@@ -869,19 +881,47 @@ class ZegoCallAudioEffectConfig {
       ReverbType.popular,
       ReverbType.gramophone,
     ],
+
+    /// The background color of the audio effect panel.
     this.backgroundColor,
+
+    /// The text style for the header title.
     this.headerTitleTextStyle,
+
+    /// The icon for the back button.
     this.backIcon,
+
+    /// The icon for the reset button.
     this.resetIcon,
+
+    /// The border color for selected icons.
     this.selectedIconBorderColor,
+
+    /// The border color for normal (unselected) icons.
     this.normalIconBorderColor,
+
+    /// The text style for selected buttons.
     this.selectedTextStyle,
+
+    /// The text style for normal (unselected) buttons.
     this.normalTextStyle,
+
+    /// The text style for the slider.
     this.sliderTextStyle,
+
+    /// The background color for the slider text.
     this.sliderTextBackgroundColor,
+
+    /// The active track color for the slider.
     this.sliderActiveTrackColor,
+
+    /// The inactive track color for the slider.
     this.sliderInactiveTrackColor,
+
+    /// The thumb color for the slider.
     this.sliderThumbColor,
+
+    /// The radius of the slider thumb.
     this.sliderThumbRadius,
   });
 
@@ -909,6 +949,8 @@ class ZegoCallDeviceConfig {
     this.enableSyncDeviceStatusBySEI = true,
   });
 
+  /// Whether to enable synchronizing device status via SEI (Supplemental Enhancement Information).
+  /// When enabled, the device status will be synced to other participants in the call.
   bool enableSyncDeviceStatusBySEI;
 
   @override

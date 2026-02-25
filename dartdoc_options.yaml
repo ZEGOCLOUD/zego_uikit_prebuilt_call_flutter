@@ -9,14 +9,23 @@ dartdoc:
       markdown: doc/configs.md
     "Components":
       markdown: doc/components.md
+    "Defines":
+      markdown: doc/defines.md
+    "Invitation":
+      markdown: doc/invitation.md
     "Migration_v4.x":
       markdown: doc/MigrateGuide_v4.x.md
+    "Migration_v5.x":
+      markdown: doc/MigrateGuide_v5.x.md
   categoryOrder:
     - "APIs"
     - "Events"
     - "Configs"
     - "Components"
+    - "Defines"
+    - "Invitation"
     - "Migration_v4.x"
+    - "Migration_v5.x"
   showUndocumentedCategories: true
   ignore:
     - broken-link

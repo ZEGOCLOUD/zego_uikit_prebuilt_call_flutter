@@ -12,11 +12,11 @@ class ZegoCallControllerScreenSharingImpl
     with ZegoCallControllerScreenImplPrivate {
   ZegoScreenSharingViewController get viewController => private.viewController;
 
-  /// Set fullscreen display mode for screen sharing
+  /// Set fullscreen display mode for screen sharing.
   /// This function is used to specify whether a certain user enters or exits full-screen mode during screen sharing.
   ///
-  /// You need to provide the user's ID [userID] to determine which user to perform the operation on.
-  /// By using a boolean value [isFullscreen], you can specify whether the user enters or exits full-screen mode.
+  /// [userID] The ID of the user whose view to show in fullscreen mode.
+  /// [isFullscreen] Whether to show the view in fullscreen mode.
   void showViewInFullscreenMode(String userID, bool isFullscreen) {
     ZegoLoggerService.logInfo(
       'showViewInFullscreenMode, '

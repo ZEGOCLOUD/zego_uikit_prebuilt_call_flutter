@@ -217,55 +217,155 @@ class ZegoCallInvitationInnerText {
   String minimizedCallingPageWaitingText;
 
   ZegoCallInvitationInnerText({
+
+    /// The title of the incoming video call dialog.
     String? incomingVideoCallDialogTitle,
+
+    /// The message of the incoming video call dialog.
     String? incomingVideoCallDialogMessage,
+
+    /// The title of the incoming voice call dialog.
     String? incomingVoiceCallDialogTitle,
+
+    /// The message of the incoming voice call dialog.
     String? incomingVoiceCallDialogMessage,
+
+    /// The title of the incoming video call page.
     String? incomingVideoCallPageTitle,
+
+    /// The message of the incoming video call page.
     String? incomingVideoCallPageMessage,
+
+    /// The title of the incoming voice call page.
     String? incomingVoiceCallPageTitle,
+
+    /// The message of the incoming voice call page.
     String? incomingVoiceCallPageMessage,
+
+    /// The button text for declining an incoming call.
     String? incomingCallPageDeclineButton,
+
+    /// The button text for accepting an incoming call.
     String? incomingCallPageAcceptButton,
+
+    /// The button text for cancelling an outgoing call.
     String? outgoingCallPageACancelButton,
+
+    /// The title of the outgoing video call page.
     String? outgoingVideoCallPageTitle,
+
+    /// The message of the outgoing video call page.
     String? outgoingVideoCallPageMessage,
+
+    /// The title of the outgoing voice call page.
     String? outgoingVoiceCallPageTitle,
+
+    /// The message of the outgoing voice call page.
     String? outgoingVoiceCallPageMessage,
+
+    /// The title of the incoming group video call dialog.
     String? incomingGroupVideoCallDialogTitle,
+
+    /// The message of the incoming group video call dialog.
     String? incomingGroupVideoCallDialogMessage,
+
+    /// The title of the incoming group voice call dialog.
     String? incomingGroupVoiceCallDialogTitle,
+
+    /// The message of the incoming group voice call dialog.
     String? incomingGroupVoiceCallDialogMessage,
+
+    /// The title of the incoming group video call page.
     String? incomingGroupVideoCallPageTitle,
+
+    /// The message of the incoming group video call page.
     String? incomingGroupVideoCallPageMessage,
+
+    /// The title of the incoming group voice call page.
     String? incomingGroupVoiceCallPageTitle,
+
+    /// The message of the incoming group voice call page.
     String? incomingGroupVoiceCallPageMessage,
+
+    /// The title of the outgoing group video call page.
     String? outgoingGroupVideoCallPageTitle,
+
+    /// The message of the outgoing group video call page.
     String? outgoingGroupVideoCallPageMessage,
+
+    /// The title of the outgoing group voice call page.
     String? outgoingGroupVoiceCallPageTitle,
+
+    /// The message of the outgoing group voice call page.
     String? outgoingGroupVoiceCallPageMessage,
+
+    /// The title of the missed call notification.
     String? missedCallNotificationTitle,
+
+    /// The content of the group video missed call notification.
     String? missedGroupVideoCallNotificationContent,
+
+    /// The content of the group audio missed call notification.
     String? missedGroupAudioCallNotificationContent,
+
+    /// The content of the video missed call notification.
     String? missedVideoCallNotificationContent,
+
+    /// The content of the audio missed call notification.
     String? missedAudioCallNotificationContent,
+
+    /// The subtitle of the system alert window confirmation dialog.
     String? systemAlertWindowConfirmDialogSubTitle,
+
+    /// The title of the permission manual confirmation dialog.
     String? permissionManuallyConfirmDialogTitle,
+
+    /// The subtitle of the permission manual confirmation dialog.
     String? permissionManuallyConfirmDialogSubTitle,
+
+    /// The title of the permission confirmation dialog.
     String? permissionConfirmDialogTitle,
+
+    /// The button text for allowing a permission.
     String? permissionConfirmDialogAllowButton,
+
+    /// The button text for denying a permission.
     String? permissionConfirmDialogDenyButton,
+
+    /// The button text for cancelling a permission request.
     String? permissionConfirmDialogCancelButton,
+
+    /// The button text for confirming a permission request.
     String? permissionConfirmDialogOKButton,
+
+    /// The text for the microphone button in the calling toolbar.
     String? callingToolbarMicrophoneButtonText,
+
+    /// The text for the microphone button when it's on.
     String? callingToolbarMicrophoneOnButtonText,
+
+    /// The text for the microphone button when it's off.
     String? callingToolbarMicrophoneOffButtonText,
+
+    /// The text for the speaker button in the calling toolbar.
     String? callingToolbarSpeakerButtonText,
+
+    /// The text for the speaker button when it's on.
     String? callingToolbarSpeakerOnButtonText,
+
+    /// The text for the speaker button when it's off.
     String? callingToolbarSpeakerOffButtonText,
+
+    /// The text for the camera button in the calling toolbar.
     String? callingToolbarCameraButtonText,
+
+    /// The text for the camera button when it's on.
     String? callingToolbarCameraOnButtonText,
+
+    /// The text for the camera button when it's off.
     String? callingToolbarCameraOffButtonText,
+
+    /// The text shown on the minimized calling page while waiting.
     String? minimizedCallingPageWaitingText,
   })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
         incomingVideoCallDialogMessage =
