@@ -90,7 +90,19 @@ Enum for call end reason.
 | **localHangUp** | The call ended due to a local hang-up. |
 | **remoteHangUp** | The call ended when the remote user hung up, leaving only one local user in the call. |
 | **kickOut** | The call ended due to being kicked out. |
-| **abandoned** | The call is automatically hung up by local. |
+| **abandoned** | The call is automatically hung up by local, such as required participants not being in the call. |
+
+---
+
+## ZegoCallMenuBarStyle
+
+Enum for menu bar style.
+
+| Name | Description |
+- **Enum Values**
+| :--- | :--- |
+| **light** | Light theme with transparent background. |
+| **dark** | Dark theme with black background. |
 
 ---
 

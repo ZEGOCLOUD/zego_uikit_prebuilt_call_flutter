@@ -165,14 +165,14 @@ Reject the call invitation.
 ```dart
 Future<bool> reject({
   String customData = '',
-  bool needHideInvitationTopSheet = true,
+  bool causeByPopScope = false,
 })
 ```
 
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | **customData** | `String` | No | Custom data. |
-| **needHideInvitationTopSheet** | `bool` | No | Whether to hide the invitation top sheet. |
+| **causeByPopScope** | `bool` | No | Indicates whether the rejection was caused by a pop scope (e.g., back navigation). When true, the invitation top sheet will not be manually hidden. |
 
 ### accept
 
@@ -187,22 +187,6 @@ Future<bool> accept({
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | **customData** | `String` | No | Custom data. |
-
-### join
-
-Join the call invitation.
-
-```dart
-Future<bool> join({
-  required String invitationID,
-  String? customData = '',
-})
-```
-
-| Parameter | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| **invitationID** | `String` | Yes | The invitation ID. |
-| **customData** | `String?` | No | Custom data. |
 
 ### enterAcceptedOfflineCall
 

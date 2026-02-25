@@ -628,8 +628,8 @@ Android notification channel configuration.
 | :--- | :--- | :--- |
 | **channelID** | `String` | Notification channel ID. |
 | **channelName** | `String` | Notification channel name. |
-| **icon** | `String?` | Icon file name (place in android/app/src/main/res/drawable/). |
-| **sound** | `String?` | Sound file name (must match Zego Console, place in android/app/src/main/res/raw/). |
+| **icon** | `String?` | Icon file name id. Place the icon file in android/app/src/main/res/drawable/. |
+| **sound** | `String?` | Sound file name id (must match Zego Console). Place the audio file in android/app/src/main/res/raw/. |
 | **vibrate** | `bool` | Enable vibration. Default is `true`. |
 
 ## ZegoCallSystemConfirmDialogConfig

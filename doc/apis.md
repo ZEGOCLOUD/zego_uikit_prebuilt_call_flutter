@@ -48,52 +48,31 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
 
 ### hangUp
 
-  - **Description**
+- **Description**
 
+  End the current call. If you want hangUp in minimize state, please call `minimize.hangUp`
 
+- **Prototype**
 
-
-  End the current call.
-
-  - **Prototype**
-
-
-
-
-  ```dart
+```dart
   Future<bool> hangUp(
     BuildContext context, {
     bool showConfirmation = false,
     ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name             | Description                                                                                     | Type                  | Default Value                     |
+  | :--------------- | :---------------------------------------------------------------------------------------------- | :-------------------- | :-------------------------------- |
+  | context          | The context for any necessary pop-ups or page transitions.                                                  | `BuildContext`      | `Optional`                      |
+  | showConfirmation | parameter, you can control whether to display a confirmation dialog to confirm ending the call. | `bool`              | `false`                         |
+  | reason           | The reason for ending the call.                                                                 | `ZegoCallEndReason` | `ZegoCallEndReason.localHangUp` |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | for any necessary pop-ups or page transitions. | `BuildContext` | `Optional` |
-    | showConfirmation | parameter, you can control whether to display a confirmation dialog to confirm ending the call. | `bool` | `false` |
-    | reason | The reason for ending the call. | `ZegoCallEndReason` | `ZegoCallEndReason.localHangUp` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | for any necessary pop-ups or page transitions. | `BuildContext` | `Optional` |
-    | showConfirmation | parameter, you can control whether to display a confirmation dialog to confirm ending the call. | `bool` | `false` |
-    | reason | The reason for ending the call. | `ZegoCallEndReason` | `ZegoCallEndReason.localHangUp` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().hangUp(context);
-  ```
+```
 
 ---
 
@@ -107,152 +86,91 @@ Microphone controller - control microphone switch and state query.
 
 #### turnOn
 
-  - **Description**
-
-
-
+- **Description**
 
   Turn on/off microphone.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<void> turnOn(bool isOn, {String? userID})
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name   | Description                                                                   | Type        | Default Value |
+  | :----- | :---------------------------------------------------------------------------- | :---------- | :------------ |
+  | isOn   | Whether to turn the camera on or off.                                         | `bool`    | `Optional`  |
+  | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
-    | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
-    | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   // Turn on local microphone
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(true);
 
   // Turn off remote user's microphone
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(false, userID: 'remote_user_id');
-  ```
+```
 
 #### switchState
 
-  - **Description**
-
-
-
+- **Description**
 
   Switch microphone state (toggle).
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void switchState({String? userID})
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name   | Description                                                                           | Type        | Default Value |
+  | :----- | :------------------------------------------------------------------------------------ | :---------- | :------------ |
+  | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | is empty, then it refers to local user | `String?` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.switchState();
-  ```
+```
 
 #### localState
 
-  - **Description**
-
-
-
+- **Description**
 
   Get microphone state of local user.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool get localState
-  ```
+```
 
 #### state
 
-  - **Description**
-
-
-
+- **Description**
 
   Get microphone state of a specific user.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool state(String userID)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name   | Description                                       | Type       | Default Value |
+  | :----- | :------------------------------------------------ | :--------- | :------------ |
+  | userID | The ID of the user whose camera state to retrieve | `String` | `Optional`  |
+- **Example**
 
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | The ID of the user whose camera state to retrieve | `String` | `Optional` |
-
-
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.state('remote_user_id');
-  ```
+```
 
-  - **Parameters**
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | The ID of the user whose camera state to retrieve | `String` | `Optional` |
-
+- **Parameters**
+  | Name   | Description                                       | Type       | Default Value |
+  | :----- | :------------------------------------------------ | :--------- | :------------ |
+  | userID | The ID of the user whose camera state to retrieve | `String` | `Optional`  |
 
 ### camera
 
@@ -260,169 +178,92 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 #### turnOn
 
-  - **Description**
-
-
-
+- **Description**
 
   Turn on/off camera.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<void> turnOn(bool isOn, {String? userID})
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name   | Description                                                                   | Type        | Default Value |
+  | :----- | :---------------------------------------------------------------------------- | :---------- | :------------ |
+  | isOn   | Whether to turn the camera on or off.                                         | `bool`    | `Optional`  |
+  | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
-    | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
-    | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.turnOn(true);
-  ```
+```
 
 #### switchState
 
-  - **Description**
-
-
-
+- **Description**
 
   Switch camera state (toggle).
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void switchState({String? userID})
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name   | Description                                                                           | Type        | Default Value |
+  | :----- | :------------------------------------------------------------------------------------ | :---------- | :------------ |
+  | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | is empty, then it refers to local user | `String?` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchState();
-  ```
+```
 
 #### switchFrontFacing
 
-  - **Description**
-
-
-
+- **Description**
 
   Switch local camera between front and back.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void switchFrontFacing(bool isFrontFacing)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name          | Description                             | Type     | Default Value |
+  | :------------ | :-------------------------------------- | :------- | :------------ |
+  | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchFrontFacing(true);
-  ```
+```
 
 #### switchVideoMirroring
 
-  - **Description**
-
-
-
+- **Description**
 
   Switch video mirror mode.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void switchVideoMirroring(bool isVideoMirror)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name          | Description                        | Type     | Default Value |
+  | :------------ | :--------------------------------- | :------- | :------------ |
+  | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchVideoMirroring(true);
-  ```
+```
 
 ### audioOutput
 
@@ -430,44 +271,25 @@ Audio output controller.
 
 #### switchToSpeaker
 
-  - **Description**
-
-
-
+- **Description**
 
   Set audio output to speaker or earpiece.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void switchToSpeaker(bool isSpeaker)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name      | Description                                              | Type     | Default Value |
+  | :-------- | :------------------------------------------------------- | :------- | :------------ |
+  | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().audioVideo.audioOutput.switchToSpeaker(true);
-  ```
+```
 
 ---
 
@@ -477,195 +299,121 @@ Minimization controller providing call interface minimization and restoration fu
 
 ### minimize
 
-  - **Description**
-
-
-
+- **Description**
 
   Minimize the ZegoUIKitPrebuiltCall.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool minimize(
     BuildContext context, {
     bool rootNavigator = true,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name          | Description                        | Type             | Default Value |
+  | :------------ | :--------------------------------- | :--------------- | :------------ |
+  | context       | The build context.                 | `BuildContext` | `Optional`  |
+  | rootNavigator | Whether to use the root navigator. | `bool`         | `true`      |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().minimize.minimize(context);
-  ```
+```
 
 ### state
 
-  - **Description**
-
-
-
+- **Description**
 
   Get current minimization state.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   ZegoCallMiniOverlayPageState get state
-  ```
+```
 
-  - **Example**
+- **Example**
 
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().minimize.state;
-  ```
+```
 
 ### isMinimizing
 
-  - **Description**
-
-
-
+- **Description**
 
   Check if it is currently in the minimized state.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool get isMinimizing
-  ```
+```
 
-  - **Example**
+- **Example**
 
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().minimize.isMinimizing;
-  ```
+```
 
 ### restore
 
-  - **Description**
-
-
-
+- **Description**
 
   Restore the ZegoUIKitPrebuiltCall from minimize.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool restore(
     BuildContext context, {
     bool rootNavigator = true,
     bool withSafeArea = false,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name          | Description                        | Type             | Default Value |
+  | :------------ | :--------------------------------- | :--------------- | :------------ |
+  | context       | The build context.                 | `BuildContext` | `Optional`  |
+  | rootNavigator | Whether to use the root navigator. | `bool`         | `true`      |
+  | withSafeArea  | Whether to wrap with SafeArea.     | `bool`         | `false`     |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-    | withSafeArea | Whether to wrap with SafeArea. | `bool` | `false` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-    | withSafeArea | Whether to wrap with SafeArea. | `bool` | `false` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().minimize.restore(context);
-  ```
+```
 
 ### hide
 
-  - **Description**
-
-
-
+- **Description**
 
   Hide the minimize widget (if call ended in minimizing state).
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void hide()
-  ```
+```
 
-  - **Example**
+- **Example**
 
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().minimize.hide();
-  ```
+```
 
 ### minimizeInviting
 
-  - **Description**
-
-
-
+- **Description**
 
   Minimize the inviting interface.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool minimizeInviting(
     BuildContext context, {
     bool rootNavigator = true,
@@ -677,44 +425,23 @@ Minimization controller providing call interface minimization and restoration fu
     required ZegoUIKitPrebuiltCallInvitationData callInvitationData,
     String? customData,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name               | Description                                   | Type                                    | Default Value |
+  | :----------------- | :-------------------------------------------- | :-------------------------------------- | :------------ |
+  | context            | The build context.                            | `BuildContext`                        | `Optional`  |
+  | rootNavigator      | Whether to use the root navigator.            | `bool`                                | `true`      |
+  | invitationType     | The type of invitation (video or voice).      | `ZegoCallInvitationType`              | `Required`  |
+  | inviter            | The user who initiated the invitation.        | `ZegoUIKitUser`                       | `Required`  |
+  | invitees           | The list of users being invited.              | `List<ZegoUIKitUser>`                 | `Required`  |
+  | isInviter          | Whether the current user is the inviter.      | `bool`                                | `Required`  |
+  | pageManager        | The invitation page manager.                  | `ZegoCallInvitationPageManager`       | `Required`  |
+  | callInvitationData | The call invitation data.                     | `ZegoUIKitPrebuiltCallInvitationData` | `Required`  |
+  | customData         | Custom data to be passed with the invitation. | `String?`                             | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-    | invitationType | The type of invitation (video or voice). | `ZegoCallInvitationType` | `Required` |
-    | inviter | The user who initiated the invitation. | `ZegoUIKitUser` | `Required` |
-    | invitees | The list of users being invited. | `List<ZegoUIKitUser>` | `Required` |
-    | isInviter | Whether the current user is the inviter. | `bool` | `Required` |
-    | pageManager | The invitation page manager. | `ZegoCallInvitationPageManager` | `Required` |
-    | callInvitationData | The call invitation data. | `ZegoUIKitPrebuiltCallInvitationData` | `Required` |
-    | customData | Custom data to be passed with the invitation. | `String?` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context. | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
-    | invitationType | The type of invitation (video or voice). | `ZegoCallInvitationType` | `Required` |
-    | inviter | The user who initiated the invitation. | `ZegoUIKitUser` | `Required` |
-    | invitees | The list of users being invited. | `List<ZegoUIKitUser>` | `Required` |
-    | isInviter | Whether the current user is the inviter. | `bool` | `Required` |
-    | pageManager | The invitation page manager. | `ZegoCallInvitationPageManager` | `Required` |
-    | callInvitationData | The call invitation data. | `ZegoUIKitPrebuiltCallInvitationData` | `Required` |
-    | customData | Custom data to be passed with the invitation. | `String?` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   // Example usage in invitation callback
   ZegoUIKitPrebuiltCallController().minimize.minimizeInviting(
     context,
@@ -725,39 +452,30 @@ Minimization controller providing call interface minimization and restoration fu
     pageManager: pageManager,
     callInvitationData: invitationData,
   );
-  ```
+```
 
 ### restoreInviting
 
-  - **Description**
-
-
-
+- **Description**
 
   Restore the inviting interface.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   bool restoreInviting(
     BuildContext context, {
     bool rootNavigator = true,
     bool withSafeArea = false,
   })
-  ```
+```
 
-  - **Parameters**
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | The build context | `BuildContext` | `Optional` |
-    | rootNavigator | Whether to use the root navigator | `bool` | `true` |
-    | withSafeArea | Whether to wrap with SafeArea | `bool` | `false` |
-
+- **Parameters**
+  | Name          | Description                       | Type             | Default Value |
+  | :------------ | :-------------------------------- | :--------------- | :------------ |
+  | context       | The build context                 | `BuildContext` | `Optional`  |
+  | rootNavigator | Whether to use the root navigator | `bool`         | `true`      |
+  | withSafeArea  | Whether to wrap with SafeArea     | `bool`         | `false`     |
 
 ---
 
@@ -767,185 +485,103 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 ### status
 
-  - **Description**
-
-
-
+- **Description**
 
   Get current PIP status.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<ZegoPiPStatus> get status
-  ```
+```
 
-  - **Parameters**
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | Unknown | `BuildContext` | `Optional` |
-    | rootNavigator | Unknown | `bool` | `true` |
-    | withSafeArea | Unknown | `bool` | `false` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | context | Unknown | `BuildContext` | `Optional` |
-    | rootNavigator | Unknown | `bool` | `true` |
-    | withSafeArea | Unknown | `bool` | `false` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   final status = await ZegoUIKitPrebuiltCallController().pip.status;
-  ```
+```
 
 ### available
 
-  - **Description**
-
-
-
+- **Description**
 
   Check if PIP is available.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<bool> get available
-  ```
+```
 
-  - **Example**
+- **Example**
 
-
-
-
-  ```dart
+```dart
   final isAvailable = await ZegoUIKitPrebuiltCallController().pip.available;
-  ```
+```
 
 ### enable
 
-  - **Description**
-
-
-
+- **Description**
 
   Enable PIP mode.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<ZegoPiPStatus> enable({
     int aspectWidth = 9,
     int aspectHeight = 16,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name         | Description                                          | Type    | Default Value |
+  | :----------- | :--------------------------------------------------- | :------ | :------------ |
+  | aspectWidth  | The width of the aspect ratio for PIP (default 9).   | `int` | `9`         |
+  | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16`        |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
-    | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
-    | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().pip.enable();
-  ```
+```
 
 ### enableWhenBackground
 
-  - **Description**
-
-
-
+- **Description**
 
   Enable PIP mode when app goes to background.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<ZegoPiPStatus> enableWhenBackground({
     int aspectWidth = 9,
     int aspectHeight = 16,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name         | Description                                          | Type    | Default Value |
+  | :----------- | :--------------------------------------------------- | :------ | :------------ |
+  | aspectWidth  | The width of the aspect ratio for PIP (default 9).   | `int` | `9`         |
+  | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16`        |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
-    | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
-    | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   await ZegoUIKitPrebuiltCallController().pip.enableWhenBackground();
-  ```
+```
 
 ### cancelBackground
 
-  - **Description**
-
-
-
+- **Description**
 
   Cancel background PIP mode.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<void> cancelBackground()
-  ```
+```
 
 ---
 
@@ -955,46 +591,30 @@ Room controller managing room-related operations.
 
 ### renewToken
 
-  - **Description**
-
-
-
+- **Description**
 
   Renew the token. Call when receiving the onTokenExpired callback.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<void> renewToken(String token)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name  | Description                             | Type       | Default Value |
+  | :---- | :-------------------------------------- | :--------- | :------------ |
+  | token | The new token to use for authentication | `String` | `Optional`  |
+- **Example**
 
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | token | The new token to use for authentication | `String` | `Optional` |
-
-
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().room.renewToken('new_token');
-  ```
+```
 
-  - **Parameters**
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | token | The new token to use for authentication | `String` | `Optional` |
-
+- **Parameters**
+  | Name  | Description                             | Type       | Default Value |
+  | :---- | :-------------------------------------- | :--------- | :------------ |
+  | token | The new token to use for authentication | `String` | `Optional`  |
 
 ---
 
@@ -1004,64 +624,38 @@ Screen sharing controller.
 
 ### showViewInFullscreenMode
 
-  - **Description**
-
-
-
+- **Description**
 
   Set fullscreen display mode for screen sharing.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   void showViewInFullscreenMode(String userID, bool isFullscreen)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name         | Description                                               | Type       | Default Value |
+  | :----------- | :-------------------------------------------------------- | :--------- | :------------ |
+  | userID       | The ID of the user whose view to show in fullscreen mode. | `String` | `Optional`  |
+  | isFullscreen | Whether to show the view in fullscreen mode.              | `bool`   | `Optional`  |
+- **Example**
 
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | The ID of the user whose view to show in fullscreen mode. | `String` | `Optional` |
-    | isFullscreen | Whether to show the view in fullscreen mode. | `bool` | `Optional` |
-  - **Parameters**
-
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userID | to determine which user to perform the operation on. | `String` | `Optional` |
-    | isFullscreen | , you can specify whether the user enters or exits full-screen mode. | `bool` | `Optional` |
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().screenSharing.showViewInFullscreenMode('user_id', true);
-  ```
+```
 
 ### viewController
 
-  - **Description**
-
-
-
+- **Description**
 
   Get screen sharing view controller.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   ZegoScreenSharingViewController get viewController
-  ```
+```
 
 ---
 
@@ -1071,64 +665,42 @@ User controller.
 
 ### remove
 
-  - **Description**
-
-
-
+- **Description**
 
   Remove user from call (kick out).
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<bool> remove(List<String> userIDs)
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name    | Description                                  | Type             | Default Value |
+  | :------ | :------------------------------------------- | :--------------- | :------------ |
+  | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional`  |
+- **Example**
 
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional` |
-
-
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().user.remove(['user_id_1']);
-  ```
+```
 
-  - **Parameters**
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional` |
-
+- **Parameters**
+  | Name    | Description                                  | Type             | Default Value |
+  | :------ | :------------------------------------------- | :--------------- | :------------ |
+  | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional`  |
 
 ### stream
 
-  - **Description**
-
-
-
+- **Description**
 
   Get user list stream notifier.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Stream<List<ZegoUIKitUser>> get stream
-  ```
+```
 
 ---
 
@@ -1138,19 +710,13 @@ Log controller for exporting and collecting call-related logs.
 
 ### exportLogs
 
-  - **Description**
-
-
-
+- **Description**
 
   Export log files.
 
-  - **Prototype**
+- **Prototype**
 
-
-
-
-  ```dart
+```dart
   Future<bool> exportLogs({
     String? title,
     String? content,
@@ -1169,39 +735,19 @@ Log controller for exporting and collecting call-related logs.
     ],
     void Function(double progress)? onProgress,
   })
-  ```
+```
 
-  - **Parameters**
+- **Parameters**
+  | Name        | Description                                                       | Type                                   | Default Value |
+  | :---------- | :---------------------------------------------------------------- | :------------------------------------- | :------------ |
+  | title       | export title, defaults to current timestamp                       | `String?`                            | `Optional`  |
+  | content     | export content description                                        | `String?`                            | `Optional`  |
+  | fileName    | Zip file name (without extension), defaults to current timestamp  | `String?`                            | `Optional`  |
+  | fileTypes   | List of file types to collect, defaults to                        | `List<ZegoLogExporterFileType>`      | `const [`   |
+  | directories | List of directory types to collect, defaults to 5 log directories | `List<ZegoLogExporterDirectoryType>` | `const [`   |
+  | Function    | Callback function to report export progress (0.0 to 1.0).           | `void Function(double progress)?` | `Optional`  |
+- **Example**
 
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | title | export title, defaults to current timestamp | `String?` | `Optional` |
-    | content | export content description | `String?` | `Optional` |
-    | fileName | Zip file name (without extension), defaults to current timestamp | `String?` | `Optional` |
-    | fileTypes | List of file types to collect, defaults to | `List<ZegoLogExporterFileType>` | `const [` |
-    | directories | List of directory types to collect, defaults to 5 log directories | `List<ZegoLogExporterDirectoryType>` | `const [` |
-    | Function | Unknown | `void` | `Optional` |
-
-
-  - **Example**
-
-
-
-
-  ```dart
+```dart
   ZegoUIKitPrebuiltCallController().log.exportLogs();
-  ```
-
-  - **Parameters**
-
-
-    | Name | Description | Type | Default Value |
-    | :--- | :--- | :--- | :--- |
-    | title | export title, defaults to current timestamp | `String?` | `Optional` |
-    | content | export content description | `String?` | `Optional` |
-    | fileName | Zip file name (without extension), defaults to current timestamp | `String?` | `Optional` |
-    | fileTypes | List of file types to collect, defaults to | `List<ZegoLogExporterFileType>` | `const [` |
-    | directories | List of directory types to collect, defaults to 5 log directories | `List<ZegoLogExporterDirectoryType>` | `const [` |
-    | Function | Unknown | `void` | `Optional` |
-
+```

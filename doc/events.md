@@ -32,7 +32,7 @@ Events for the Call. This class is used as the `events` parameter for the constr
 ### onCallEnd
 
 - **Description**
-  - This callback is triggered when call end, you can differentiate the reasons for call end by using the `event.reason`.
+  - This callback is triggered when call end, you can differentiate the reasons for call end by using the `event.reason`. if the call end reason is due to being kicked, you can determine who initiated the kick by using the variable `event.kickerUserID`.
 - **Prototype**
   - `void Function(ZegoCallEndEvent event, VoidCallback defaultAction)?`
 - **Example**
@@ -266,5 +266,87 @@ Events about beauty.
   ```dart
   onFaceDetection: (ZegoBeautyPluginFaceDetectionData data) {
     debugPrint('onFaceDetection: $data');
+  }
+  ```
+
+---
+
+## ZegoCallEndReason
+
+Enumeration of reasons why a call ends.
+
+- **Values**
+
+| Value | Description |
+| :--- | :--- |
+| **localHangUp** | The call ended due to a local hang-up. |
+| **remoteHangUp** | The call ended when the remote user hung up, leaving only one local user in the call. |
+| **kickOut** | The call ended due to being kicked out. |
+| **abandoned** | The call was automatically hung up due to some reasons, such as required participants not being in the call. |
+
+## ZegoCallEndEvent
+
+Event data for the `onCallEnd` callback. This class contains information about why and how the call ended.
+
+- **Properties**
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **callID** | `String` | The ID of the call that ended. |
+| **reason** | `ZegoCallEndReason` | The reason why the call ended. |
+| **isFromMinimizing** | `bool` | Whether the call ended while in a minimized state. If `true`, you cannot return to the previous page directly; you must hide the minimize page instead. |
+| **kickerUserID** | `String?` | The user ID of the person who kicked out the local user (only applicable when reason is `kickOut`). |
+| **invitationData** | `ZegoCallInvitationData?` | The invitation data if the call was initiated from an invitation. |
+
+- **Example**
+  ```dart
+  onCallEnd: (ZegoCallEndEvent event, VoidCallback defaultAction) {
+    debugPrint('onCallEnd, callID: ${event.callID}, reason: ${event.reason}');
+    if (event.isFromMinimizing) {
+      // If ended from minimized state, hide the minimize page
+      ZegoUIKitPrebuiltCallController().minimize.hide();
+    } else {
+      // Otherwise, return to the previous page
+      defaultAction.call();
+    }
+  }
+  ```
+
+## ZegoCallHangUpConfirmationEvent
+
+Event data for the `onHangUpConfirmation` callback. This class provides the context for showing confirmation dialogs.
+
+- **Properties**
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **context** | `BuildContext` | The build context used for showing confirmation dialogs. |
+
+- **Example**
+  ```dart
+  onHangUpConfirmation: (ZegoCallHangUpConfirmationEvent event, Future<bool> Function() defaultAction) async {
+    // Show custom confirmation dialog
+    final result = await showDialog<bool>(
+      context: event.context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hang up?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hang up'),
+          ),
+        ],
+      ),
+    );
+    
+    if (result == true) {
+      // Execute default action to return to previous page
+      return await defaultAction.call();
+    }
+    return false;
   }
   ```
