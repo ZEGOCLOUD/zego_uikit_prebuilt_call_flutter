@@ -3,7 +3,6 @@
 - [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
   - [init](#init)
   - [uninit](#uninit)
-  - [join](#join)
   - [send](#send)
   - [cancel](#cancel)
   - [reject](#reject)
@@ -18,8 +17,6 @@
   - [ZegoCallRingtoneConfig](#zegocallringtoneconfig)
   - [ZegoCallInvitationInnerText](#zegocallinvitationinnertext)
 - [ZegoUIKitPrebuiltCallInvitationEvents](#zegouikitprebuiltcallinvitationevents)
-- [Components](#components)
-  - [ZegoStartCallInvitationButton](#zegostartcallinvitationbutton)
 
 
 ---
@@ -30,10 +27,12 @@ Call invitation service singleton class that manages core features including sen
 
 ### init
 
-- **Function Action**
+  - **Description**
+
+
   - Initialize the service. Call when the user logs in.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<void> init({
     required int appID,
@@ -42,7 +41,7 @@ Call invitation service singleton class that manages core features including sen
     required List<IZegoUIKitPlugin> plugins,
     String appSign = '',
     String token = '',
-    [ZegoCallPrebuiltConfigQuery](defines.md#zegocallprebuiltconfigquery)? requireConfig,
+    ZegoCallPrebuiltConfigQuery requireConfig,
     ZegoUIKitPrebuiltCallEvents? events,
     ZegoCallInvitationConfig? config,
     ZegoCallRingtoneConfig? ringtoneConfig,
@@ -52,6 +51,26 @@ Call invitation service singleton class that manages core features including sen
     ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents,
   })
   ```
+
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | appID | The App ID of your Zego project | `int` | `Required` |
+    | userID | The ID of the user | `String` | `Required` |
+    | userName | The name of the user | `String` | `Required` |
+    | plugins | The list of plugins to be used. You must include | `List<IZegoUIKitPlugin>` | `Required` |
+    | appSign | is not provided or empty | `String` | `` |
+    | token | Token for authentication. This is used when | `String` | `` |
+    | requireConfig | Callback to obtain the call config | `ZegoCallPrebuiltConfigQuery` | `Optional` |
+    | events | The events of the call | `ZegoUIKitPrebuiltCallEvents?` | `Optional` |
+    | config | The configuration of the invitation | `ZegoCallInvitationConfig?` | `Optional` |
+    | ringtoneConfig | The ringtone configuration for call notifications | `ZegoCallRingtoneConfig?` | `Optional` |
+    | uiConfig | The UI configuration of the invitation | `ZegoCallInvitationUIConfig?` | `Optional` |
+    | notificationConfig | The notification configuration | `ZegoCallInvitationNotificationConfig?` | `Optional` |
+    | innerText | The inner text configuration for invitation UI | `ZegoCallInvitationInnerText?` | `Optional` |
+    | invitationEvents | The events of the invitation | `ZegoUIKitPrebuiltCallInvitationEvents?` | `Optional` |
+
 
 - **Example**
   ```dart
@@ -64,12 +83,34 @@ Call invitation service singleton class that manages core features including sen
   );
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | appID | The App ID of your Zego project | `int` | `Required` |
+    | userID | The ID of the user | `String` | `Required` |
+    | userName | The name of the user | `String` | `Required` |
+    | plugins | The list of plugins to be used. You must include | `List<IZegoUIKitPlugin>` | `Required` |
+    | appSign | is not provided or empty | `String` | `` |
+    | token | Token for authentication. This is used when | `String` | `` |
+    | requireConfig | Callback to obtain the call config | `ZegoCallPrebuiltConfigQuery` | `Optional` |
+    | events | The events of the call | `ZegoUIKitPrebuiltCallEvents?` | `Optional` |
+    | config | The configuration of the invitation | `ZegoCallInvitationConfig?` | `Optional` |
+    | ringtoneConfig | The ringtone configuration for call notifications | `ZegoCallRingtoneConfig?` | `Optional` |
+    | uiConfig | The UI configuration of the invitation | `ZegoCallInvitationUIConfig?` | `Optional` |
+    | notificationConfig | The notification configuration | `ZegoCallInvitationNotificationConfig?` | `Optional` |
+    | innerText | The inner text configuration for invitation UI | `ZegoCallInvitationInnerText?` | `Optional` |
+    | invitationEvents | The events of the invitation | `ZegoUIKitPrebuiltCallInvitationEvents?` | `Optional` |
+
+
 ### uninit
 
-- **Function Action**
+  - **Description**
+
+
   - Deinitialize the service. Must be called when the user logs out.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<void> uninit()
   ```
@@ -79,32 +120,14 @@ Call invitation service singleton class that manages core features including sen
   ZegoUIKitPrebuiltCallInvitationService().uninit();
   ```
 
-### join
-
-- **Function Action**
-  - Join a call invitation.
-
-- **Function Prototype**
-  ```dart
-  Future<bool> join({
-    required String invitationID,
-    String? customData = '',
-  })
-  ```
-
-- **Example**
-  ```dart
-  ZegoUIKitPrebuiltCallInvitationService().join(
-    invitationID: 'invitation_id',
-  );
-  ```
-
 ### send
 
-- **Function Action**
+  - **Description**
+
+
   - Send a call invitation to specified users.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<bool> send({
     required List<ZegoCallUser> invitees,
@@ -118,6 +141,20 @@ Call invitation service singleton class that manages core features including sen
   })
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | invitees | List of users to send the call invitation to | `List<ZegoCallUser>` | `Required` |
+    | isVideoCall | Determines whether the call is a video call. If false, it defaults to an audio call | `bool` | `Required` |
+    | customData | Custom data to be passed to the invitees | `String` | `` |
+    | callID | The ID of the call. If not provided, the system will generate one automatically | `String?` | `Optional` |
+    | resourceID | The resource ID for offline call notifications. This should match the push resource ID configured in the ZEGOCLOUD management console | `String?` | `Optional` |
+    | notificationTitle | The title for the call notification | `String?` | `Optional` |
+    | notificationMessage | The message for the call notification | `String?` | `Optional` |
+    | timeoutSeconds | The timeout duration in seconds for the call invitation. Default is 60 seconds | `int` | `60` |
+
+
 - **Example**
   ```dart
   ZegoUIKitPrebuiltCallInvitationService().send(
@@ -126,18 +163,42 @@ Call invitation service singleton class that manages core features including sen
   );
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | invitees | List of users to send the call invitation to | `List<ZegoCallUser>` | `Required` |
+    | isVideoCall | Determines whether the call is a video call. If false, it defaults to an audio call | `bool` | `Required` |
+    | customData | Custom data to be passed to the invitees | `String` | `` |
+    | callID | The ID of the call. If not provided, the system will generate one automatically | `String?` | `Optional` |
+    | resourceID | The resource ID for offline call notifications. This should match the push resource ID configured in the ZEGOCLOUD management console | `String?` | `Optional` |
+    | notificationTitle | The title for the call notification | `String?` | `Optional` |
+    | notificationMessage | The message for the call notification | `String?` | `Optional` |
+    | timeoutSeconds | The timeout duration in seconds for the call invitation. Default is 60 seconds | `int` | `60` |
+
+
 ### cancel
 
-- **Function Action**
+  - **Description**
+
+
   - Cancel a sent call invitation.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<bool> cancel({
     required List<ZegoCallUser> callees,
     String customData = '',
   })
   ```
+
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | callees | List of callees whose invitation should be cancelled | `List<ZegoCallUser>` | `Required` |
+    | customData | Custom data to be included with the cancellation | `String` | `` |
+
 
 - **Example**
   ```dart
@@ -146,12 +207,22 @@ Call invitation service singleton class that manages core features including sen
   );
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | callees | List of callees whose invitation should be cancelled | `List<ZegoCallUser>` | `Required` |
+    | customData | Custom data to be included with the cancellation | `String` | `` |
+
+
 ### reject
 
-- **Function Action**
+  - **Description**
+
+
   - Reject the received call invitation.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<bool> reject({
     String customData = '',
@@ -159,34 +230,68 @@ Call invitation service singleton class that manages core features including sen
   })
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | customData | Custom data to be passed to the caller when rejecting the invitation | `String` | `` |
+    | needHideInvitationTopSheet | Unknown | `bool` | `true` |
+
+
 - **Example**
   ```dart
   ZegoUIKitPrebuiltCallInvitationService().reject();
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | customData | Custom data to be passed to the caller when rejecting the invitation | `String` | `` |
+    | needHideInvitationTopSheet | Unknown | `bool` | `true` |
+
+
 ### accept
 
-- **Function Action**
+  - **Description**
+
+
   - Accept the received call invitation and enter the call.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<bool> accept({
     String customData = '',
   })
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | customData | Custom data to be passed to the caller when accepting the invitation | `String` | `` |
+
+
 - **Example**
   ```dart
   ZegoUIKitPrebuiltCallInvitationService().accept();
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | customData | Custom data to be passed to the caller when accepting the invitation | `String` | `` |
+
+
 ### enterAcceptedOfflineCall
 
-- **Function Action**
+  - **Description**
+
+
   - Enter an accepted offline call. Suitable for scenarios requiring navigation after data loading completes.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   void enterAcceptedOfflineCall()
   ```
@@ -198,29 +303,54 @@ Call invitation service singleton class that manages core features including sen
 
 ### setNavigatorKey
 
-- **Function Action**
+  - **Description**
+
+
   - Set the navigation key for necessary configuration when navigating pages upon receiving invitations.
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey)
   ```
+
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | navigatorKey | The navigator key to get context for push/pop page when receive invitation request | `GlobalKey<NavigatorState>` | `Optional` |
+
 
 - **Example**
   ```dart
   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   ```
 
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | navigatorKey | The navigator key to get context for push/pop page when receive invitation request | `GlobalKey<NavigatorState>` | `Optional` |
+
+
 ### useSystemCallingUI
 
-- **Function Action**
+  - **Description**
+
+
   - Enable offline system calling UI to support receiving invitations in the background, answering on lock screen, etc.
   - Note: If you use CallKit with ZIMKit, this must be called AFTER ZIMKit().init!!!
 
-- **Function Prototype**
+  - **Prototype**
   ```dart
   Future<void> useSystemCallingUI(List<IZegoUIKitPlugin> plugins)
   ```
+
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | plugins | The list of plugins to be used with the system calling UI | `List<IZegoUIKitPlugin>` | `Optional` |
+
 
 - **Example**
   ```dart
@@ -230,6 +360,13 @@ Call invitation service singleton class that manages core features including sen
     [ZegoUIKitSignalingPlugin()],
   );
   ```
+
+  - **Parameters**
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | plugins | The list of plugins to be used with the system calling UI | `List<IZegoUIKitPlugin>` | `Optional` |
+
 
 ---
 
@@ -372,25 +509,6 @@ Invitation-related event notifications and callbacks.
   - **Description**: Triggered to **caller** when the invitation times out.
 
 ---
-
-## Components
-
-### ZegoStartCallInvitationButton
-
-A button to start a call invitation.
-
-- **Properties**:
-  - `invitees`: List of users to invite.
-  - `isVideoCall`: Whether it is a video call.
-  - `customData`: Custom data to send with the invitation.
-  - `callID`: ID of the call.
-  - `resourceID`: Resource ID for notifications.
-  - `notificationTitle`: Title for the notification.
-  - `notificationMessage`: Message for the notification.
-  - `timeoutSeconds`: Timeout duration for the invitation.
-
----
-
 
 
 

@@ -52,9 +52,11 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
 
 
 
+
   End the current call.
 
   - **Prototype**
+
 
 
 
@@ -69,6 +71,7 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | for any necessary pop-ups or page transitions. | `BuildContext` | `Optional` |
@@ -77,12 +80,14 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | for any necessary pop-ups or page transitions. | `BuildContext` | `Optional` |
     | showConfirmation | parameter, you can control whether to display a confirmation dialog to confirm ending the call. | `bool` | `false` |
     | reason | The reason for ending the call. | `ZegoCallEndReason` | `ZegoCallEndReason.localHangUp` |
   - **Example**
+
 
 
 
@@ -106,9 +111,11 @@ Microphone controller - control microphone switch and state query.
 
 
 
+
   Turn on/off microphone.
 
   - **Prototype**
+
 
 
 
@@ -119,6 +126,7 @@ Microphone controller - control microphone switch and state query.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
@@ -126,11 +134,13 @@ Microphone controller - control microphone switch and state query.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
     | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
   - **Example**
+
 
 
 
@@ -148,9 +158,11 @@ Microphone controller - control microphone switch and state query.
 
 
 
+
   Switch microphone state (toggle).
 
   - **Prototype**
+
 
 
 
@@ -161,16 +173,19 @@ Microphone controller - control microphone switch and state query.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional` |
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | is empty, then it refers to local user | `String?` | `Optional` |
   - **Example**
+
 
 
 
@@ -184,9 +199,11 @@ Microphone controller - control microphone switch and state query.
 
 
 
+
   Get microphone state of local user.
 
   - **Prototype**
+
 
 
 
@@ -200,9 +217,11 @@ Microphone controller - control microphone switch and state query.
 
 
 
+
   Get microphone state of a specific user.
 
   - **Prototype**
+
 
 
 
@@ -210,13 +229,30 @@ Microphone controller - control microphone switch and state query.
   bool state(String userID)
   ```
 
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | userID | The ID of the user whose camera state to retrieve | `String` | `Optional` |
+
+
   - **Example**
+
 
 
 
   ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.state('remote_user_id');
   ```
+
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | userID | The ID of the user whose camera state to retrieve | `String` | `Optional` |
+
 
 ### camera
 
@@ -228,9 +264,11 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 
 
+
   Turn on/off camera.
 
   - **Prototype**
+
 
 
 
@@ -241,6 +279,7 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
@@ -248,11 +287,13 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isOn | Whether to turn the camera on or off. | `bool` | `Optional` |
     | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional` |
   - **Example**
+
 
 
 
@@ -266,9 +307,11 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 
 
+
   Switch camera state (toggle).
 
   - **Prototype**
+
 
 
 
@@ -279,16 +322,19 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional` |
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | is empty, then it refers to local user | `String?` | `Optional` |
   - **Example**
+
 
 
 
@@ -302,9 +348,11 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 
 
+
   Switch local camera between front and back.
 
   - **Prototype**
+
 
 
 
@@ -315,16 +363,19 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional` |
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional` |
   - **Example**
+
 
 
 
@@ -338,9 +389,11 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 
 
+
   Switch video mirror mode.
 
   - **Prototype**
+
 
 
 
@@ -351,16 +404,19 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional` |
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional` |
   - **Example**
+
 
 
 
@@ -378,9 +434,11 @@ Audio output controller.
 
 
 
+
   Set audio output to speaker or earpiece.
 
   - **Prototype**
+
 
 
 
@@ -391,16 +449,19 @@ Audio output controller.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional` |
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional` |
   - **Example**
+
 
 
 
@@ -420,9 +481,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Minimize the ZegoUIKitPrebuiltCall.
 
   - **Prototype**
+
 
 
 
@@ -436,6 +499,7 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
@@ -443,11 +507,13 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
     | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
   - **Example**
+
 
 
 
@@ -461,9 +527,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Get current minimization state.
 
   - **Prototype**
+
 
 
 
@@ -472,6 +540,7 @@ Minimization controller providing call interface minimization and restoration fu
   ```
 
   - **Example**
+
 
 
 
@@ -485,9 +554,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Check if it is currently in the minimized state.
 
   - **Prototype**
+
 
 
 
@@ -496,6 +567,7 @@ Minimization controller providing call interface minimization and restoration fu
   ```
 
   - **Example**
+
 
 
 
@@ -509,9 +581,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Restore the ZegoUIKitPrebuiltCall from minimize.
 
   - **Prototype**
+
 
 
 
@@ -526,6 +600,7 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
@@ -534,12 +609,14 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
     | rootNavigator | Whether to use the root navigator. | `bool` | `true` |
     | withSafeArea | Whether to wrap with SafeArea. | `bool` | `false` |
   - **Example**
+
 
 
 
@@ -553,9 +630,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Hide the minimize widget (if call ended in minimizing state).
 
   - **Prototype**
+
 
 
 
@@ -564,6 +643,7 @@ Minimization controller providing call interface minimization and restoration fu
   ```
 
   - **Example**
+
 
 
 
@@ -577,9 +657,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Minimize the inviting interface.
 
   - **Prototype**
+
 
 
 
@@ -600,6 +682,7 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
@@ -614,6 +697,7 @@ Minimization controller providing call interface minimization and restoration fu
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | The build context. | `BuildContext` | `Optional` |
@@ -626,6 +710,7 @@ Minimization controller providing call interface minimization and restoration fu
     | callInvitationData | The call invitation data. | `ZegoUIKitPrebuiltCallInvitationData` | `Required` |
     | customData | Custom data to be passed with the invitation. | `String?` | `Optional` |
   - **Example**
+
 
 
 
@@ -648,9 +733,11 @@ Minimization controller providing call interface minimization and restoration fu
 
 
 
+
   Restore the inviting interface.
 
   - **Prototype**
+
 
 
 
@@ -661,6 +748,16 @@ Minimization controller providing call interface minimization and restoration fu
     bool withSafeArea = false,
   })
   ```
+
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | context | The build context | `BuildContext` | `Optional` |
+    | rootNavigator | Whether to use the root navigator | `bool` | `true` |
+    | withSafeArea | Whether to wrap with SafeArea | `bool` | `false` |
+
 
 ---
 
@@ -674,9 +771,11 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 
 
+
   Get current PIP status.
 
   - **Prototype**
+
 
 
 
@@ -687,6 +786,7 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | Unknown | `BuildContext` | `Optional` |
@@ -695,12 +795,14 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | context | Unknown | `BuildContext` | `Optional` |
     | rootNavigator | Unknown | `bool` | `true` |
     | withSafeArea | Unknown | `bool` | `false` |
   - **Example**
+
 
 
 
@@ -714,9 +816,11 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 
 
+
   Check if PIP is available.
 
   - **Prototype**
+
 
 
 
@@ -725,6 +829,7 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   ```
 
   - **Example**
+
 
 
 
@@ -738,9 +843,11 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 
 
+
   Enable PIP mode.
 
   - **Prototype**
+
 
 
 
@@ -754,6 +861,7 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
@@ -761,11 +869,13 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
     | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
   - **Example**
+
 
 
 
@@ -779,9 +889,11 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 
 
+
   Enable PIP mode when app goes to background.
 
   - **Prototype**
+
 
 
 
@@ -795,6 +907,7 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
@@ -802,11 +915,13 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | aspectWidth | The width of the aspect ratio for PIP (default 9). | `int` | `9` |
     | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16` |
   - **Example**
+
 
 
 
@@ -820,9 +935,11 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 
 
+
   Cancel background PIP mode.
 
   - **Prototype**
+
 
 
 
@@ -842,9 +959,11 @@ Room controller managing room-related operations.
 
 
 
+
   Renew the token. Call when receiving the onTokenExpired callback.
 
   - **Prototype**
+
 
 
 
@@ -852,13 +971,30 @@ Room controller managing room-related operations.
   Future<void> renewToken(String token)
   ```
 
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | token | The new token to use for authentication | `String` | `Optional` |
+
+
   - **Example**
+
 
 
 
   ```dart
   ZegoUIKitPrebuiltCallController().room.renewToken('new_token');
   ```
+
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | token | The new token to use for authentication | `String` | `Optional` |
+
 
 ---
 
@@ -872,9 +1008,11 @@ Screen sharing controller.
 
 
 
+
   Set fullscreen display mode for screen sharing.
 
   - **Prototype**
+
 
 
 
@@ -885,6 +1023,7 @@ Screen sharing controller.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | The ID of the user whose view to show in fullscreen mode. | `String` | `Optional` |
@@ -892,11 +1031,13 @@ Screen sharing controller.
   - **Parameters**
 
 
+
     | Name | Description | Type | Default Value |
     | :--- | :--- | :--- | :--- |
     | userID | to determine which user to perform the operation on. | `String` | `Optional` |
     | isFullscreen | , you can specify whether the user enters or exits full-screen mode. | `bool` | `Optional` |
   - **Example**
+
 
 
 
@@ -910,9 +1051,11 @@ Screen sharing controller.
 
 
 
+
   Get screen sharing view controller.
 
   - **Prototype**
+
 
 
 
@@ -932,9 +1075,11 @@ User controller.
 
 
 
+
   Remove user from call (kick out).
 
   - **Prototype**
+
 
 
 
@@ -942,7 +1087,16 @@ User controller.
   Future<bool> remove(List<String> userIDs)
   ```
 
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional` |
+
+
   - **Example**
+
 
 
 
@@ -950,15 +1104,25 @@ User controller.
   ZegoUIKitPrebuiltCallController().user.remove(['user_id_1']);
   ```
 
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional` |
+
+
 ### stream
 
   - **Description**
 
 
 
+
   Get user list stream notifier.
 
   - **Prototype**
+
 
 
 
@@ -978,9 +1142,11 @@ Log controller for exporting and collecting call-related logs.
 
 
 
+
   Export log files.
 
   - **Prototype**
+
 
 
 
@@ -1005,10 +1171,37 @@ Log controller for exporting and collecting call-related logs.
   })
   ```
 
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | title | export title, defaults to current timestamp | `String?` | `Optional` |
+    | content | export content description | `String?` | `Optional` |
+    | fileName | Zip file name (without extension), defaults to current timestamp | `String?` | `Optional` |
+    | fileTypes | List of file types to collect, defaults to | `List<ZegoLogExporterFileType>` | `const [` |
+    | directories | List of directory types to collect, defaults to 5 log directories | `List<ZegoLogExporterDirectoryType>` | `const [` |
+    | Function | Unknown | `void` | `Optional` |
+
+
   - **Example**
+
 
 
 
   ```dart
   ZegoUIKitPrebuiltCallController().log.exportLogs();
   ```
+
+  - **Parameters**
+
+
+    | Name | Description | Type | Default Value |
+    | :--- | :--- | :--- | :--- |
+    | title | export title, defaults to current timestamp | `String?` | `Optional` |
+    | content | export content description | `String?` | `Optional` |
+    | fileName | Zip file name (without extension), defaults to current timestamp | `String?` | `Optional` |
+    | fileTypes | List of file types to collect, defaults to | `List<ZegoLogExporterFileType>` | `const [` |
+    | directories | List of directory types to collect, defaults to 5 log directories | `List<ZegoLogExporterDirectoryType>` | `const [` |
+    | Function | Unknown | `void` | `Optional` |
+
