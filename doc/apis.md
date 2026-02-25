@@ -54,13 +54,13 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
 
 - **Prototype**
 
-  ```dart
+    ```dart
     Future<bool> hangUp(
       BuildContext context, {
       bool showConfirmation = false,
       ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
     })
-  ```
+    ```
 
 - **Parameters**
   | Name             | Description                                                                                     | Type                  | Default Value                     |
@@ -70,9 +70,9 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
   | reason           | The reason for ending the call.                                                                 | `ZegoCallEndReason` | `ZegoCallEndReason.localHangUp` |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().hangUp(context);
-```
+    ```
 
 ---
 
@@ -92,9 +92,9 @@ Microphone controller - control microphone switch and state query.
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<void> turnOn(bool isOn, {String? userID})
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                                                   | Type        | Default Value |
@@ -103,13 +103,13 @@ Microphone controller - control microphone switch and state query.
   | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   // Turn on local microphone
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(true);
 
   // Turn off remote user's microphone
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.turnOn(false, userID: 'remote_user_id');
-```
+    ```
 
 #### switchState
 
@@ -119,9 +119,9 @@ Microphone controller - control microphone switch and state query.
 
 - **Prototype**
 
-```dart
+    ```dart
   void switchState({String? userID})
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                                                           | Type        | Default Value |
@@ -129,9 +129,9 @@ Microphone controller - control microphone switch and state query.
   | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.switchState();
-```
+    ```
 
 #### localState
 
@@ -141,9 +141,9 @@ Microphone controller - control microphone switch and state query.
 
 - **Prototype**
 
-```dart
+    ```dart
   bool get localState
-```
+    ```
 
 #### state
 
@@ -153,9 +153,9 @@ Microphone controller - control microphone switch and state query.
 
 - **Prototype**
 
-```dart
+    ```dart
   bool state(String userID)
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                       | Type       | Default Value |
@@ -163,9 +163,9 @@ Microphone controller - control microphone switch and state query.
   | userID | The ID of the user whose camera state to retrieve | `String` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.microphone.state('remote_user_id');
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                       | Type       | Default Value |
@@ -184,9 +184,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<void> turnOn(bool isOn, {String? userID})
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                                                   | Type        | Default Value |
@@ -195,9 +195,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   | userID | The ID of the user whose camera to control. If null, controls the local user. | `String?` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.turnOn(true);
-```
+    ```
 
 #### switchState
 
@@ -207,9 +207,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 - **Prototype**
 
-```dart
+    ```dart
   void switchState({String? userID})
-```
+    ```
 
 - **Parameters**
   | Name   | Description                                                                           | Type        | Default Value |
@@ -217,9 +217,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   | userID | The ID of the user whose camera to switch. If null, switches the local user's camera. | `String?` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchState();
-```
+    ```
 
 #### switchFrontFacing
 
@@ -229,9 +229,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 - **Prototype**
 
-```dart
+    ```dart
   void switchFrontFacing(bool isFrontFacing)
-```
+    ```
 
 - **Parameters**
   | Name          | Description                             | Type     | Default Value |
@@ -239,9 +239,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   | isFrontFacing | Whether to use the front-facing camera. | `bool` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchFrontFacing(true);
-```
+    ```
 
 #### switchVideoMirroring
 
@@ -251,9 +251,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
 
 - **Prototype**
 
-```dart
+    ```dart
   void switchVideoMirroring(bool isVideoMirror)
-```
+    ```
 
 - **Parameters**
   | Name          | Description                        | Type     | Default Value |
@@ -261,9 +261,9 @@ Camera controller - control camera switch, front/back switching, mirroring, etc.
   | isVideoMirror | Whether to enable video mirroring. | `bool` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.camera.switchVideoMirroring(true);
-```
+    ```
 
 ### audioOutput
 
@@ -277,9 +277,9 @@ Audio output controller.
 
 - **Prototype**
 
-```dart
+    ```dart
   void switchToSpeaker(bool isSpeaker)
-```
+    ```
 
 - **Parameters**
   | Name      | Description                                              | Type     | Default Value |
@@ -287,9 +287,9 @@ Audio output controller.
   | isSpeaker | Whether to switch to speaker (true) or earpiece (false). | `bool` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().audioVideo.audioOutput.switchToSpeaker(true);
-```
+    ```
 
 ---
 
@@ -305,12 +305,12 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   bool minimize(
     BuildContext context, {
     bool rootNavigator = true,
   })
-```
+    ```
 
 - **Parameters**
   | Name          | Description                        | Type             | Default Value |
@@ -319,9 +319,9 @@ Minimization controller providing call interface minimization and restoration fu
   | rootNavigator | Whether to use the root navigator. | `bool`         | `true`      |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().minimize.minimize(context);
-```
+    ```
 
 ### state
 
@@ -331,15 +331,15 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   ZegoCallMiniOverlayPageState get state
-```
+    ```
 
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().minimize.state;
-```
+    ```
 
 ### isMinimizing
 
@@ -349,15 +349,15 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   bool get isMinimizing
-```
+    ```
 
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().minimize.isMinimizing;
-```
+    ```
 
 ### restore
 
@@ -367,13 +367,13 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   bool restore(
     BuildContext context, {
     bool rootNavigator = true,
     bool withSafeArea = false,
   })
-```
+    ```
 
 - **Parameters**
   | Name          | Description                        | Type             | Default Value |
@@ -383,9 +383,9 @@ Minimization controller providing call interface minimization and restoration fu
   | withSafeArea  | Whether to wrap with SafeArea.     | `bool`         | `false`     |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().minimize.restore(context);
-```
+    ```
 
 ### hide
 
@@ -395,15 +395,15 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   void hide()
-```
+    ```
 
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().minimize.hide();
-```
+    ```
 
 ### minimizeInviting
 
@@ -413,7 +413,7 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   bool minimizeInviting(
     BuildContext context, {
     bool rootNavigator = true,
@@ -425,7 +425,7 @@ Minimization controller providing call interface minimization and restoration fu
     required ZegoUIKitPrebuiltCallInvitationData callInvitationData,
     String? customData,
   })
-```
+    ```
 
 - **Parameters**
   | Name               | Description                                   | Type                                    | Default Value |
@@ -441,7 +441,7 @@ Minimization controller providing call interface minimization and restoration fu
   | customData         | Custom data to be passed with the invitation. | `String?`                             | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   // Example usage in invitation callback
   ZegoUIKitPrebuiltCallController().minimize.minimizeInviting(
     context,
@@ -452,7 +452,7 @@ Minimization controller providing call interface minimization and restoration fu
     pageManager: pageManager,
     callInvitationData: invitationData,
   );
-```
+    ```
 
 ### restoreInviting
 
@@ -462,13 +462,13 @@ Minimization controller providing call interface minimization and restoration fu
 
 - **Prototype**
 
-```dart
+    ```dart
   bool restoreInviting(
     BuildContext context, {
     bool rootNavigator = true,
     bool withSafeArea = false,
   })
-```
+    ```
 
 - **Parameters**
   | Name          | Description                       | Type             | Default Value |
@@ -491,15 +491,15 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<ZegoPiPStatus> get status
-```
+    ```
 
 - **Example**
 
-```dart
+    ```dart
   final status = await ZegoUIKitPrebuiltCallController().pip.status;
-```
+    ```
 
 ### available
 
@@ -509,15 +509,15 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<bool> get available
-```
+    ```
 
 - **Example**
 
-```dart
+    ```dart
   final isAvailable = await ZegoUIKitPrebuiltCallController().pip.available;
-```
+    ```
 
 ### enable
 
@@ -527,12 +527,12 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<ZegoPiPStatus> enable({
     int aspectWidth = 9,
     int aspectHeight = 16,
   })
-```
+    ```
 
 - **Parameters**
   | Name         | Description                                          | Type    | Default Value |
@@ -541,9 +541,9 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16`        |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().pip.enable();
-```
+    ```
 
 ### enableWhenBackground
 
@@ -553,12 +553,12 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<ZegoPiPStatus> enableWhenBackground({
     int aspectWidth = 9,
     int aspectHeight = 16,
   })
-```
+    ```
 
 - **Parameters**
   | Name         | Description                                          | Type    | Default Value |
@@ -567,9 +567,9 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
   | aspectHeight | The height of the aspect ratio for PIP (default 16). | `int` | `16`        |
 - **Example**
 
-```dart
+    ```dart
   await ZegoUIKitPrebuiltCallController().pip.enableWhenBackground();
-```
+    ```
 
 ### cancelBackground
 
@@ -579,9 +579,9 @@ Picture-in-Picture (PIP) controller for enabling and disabling PIP functionality
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<void> cancelBackground()
-```
+    ```
 
 ---
 
@@ -597,9 +597,9 @@ Room controller managing room-related operations.
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<void> renewToken(String token)
-```
+    ```
 
 - **Parameters**
   | Name  | Description                             | Type       | Default Value |
@@ -607,9 +607,9 @@ Room controller managing room-related operations.
   | token | The new token to use for authentication | `String` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().room.renewToken('new_token');
-```
+    ```
 
 - **Parameters**
   | Name  | Description                             | Type       | Default Value |
@@ -630,9 +630,9 @@ Screen sharing controller.
 
 - **Prototype**
 
-```dart
+    ```dart
   void showViewInFullscreenMode(String userID, bool isFullscreen)
-```
+    ```
 
 - **Parameters**
   | Name         | Description                                               | Type       | Default Value |
@@ -641,9 +641,9 @@ Screen sharing controller.
   | isFullscreen | Whether to show the view in fullscreen mode.              | `bool`   | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().screenSharing.showViewInFullscreenMode('user_id', true);
-```
+    ```
 
 ### viewController
 
@@ -653,9 +653,9 @@ Screen sharing controller.
 
 - **Prototype**
 
-```dart
+    ```dart
   ZegoScreenSharingViewController get viewController
-```
+    ```
 
 ---
 
@@ -671,9 +671,9 @@ User controller.
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<bool> remove(List<String> userIDs)
-```
+    ```
 
 - **Parameters**
   | Name    | Description                                  | Type             | Default Value |
@@ -681,9 +681,9 @@ User controller.
   | userIDs | The list of user IDs to remove from the call | `List<String>` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().user.remove(['user_id_1']);
-```
+    ```
 
 - **Parameters**
   | Name    | Description                                  | Type             | Default Value |
@@ -698,9 +698,9 @@ User controller.
 
 - **Prototype**
 
-```dart
+    ```dart
   Stream<List<ZegoUIKitUser>> get stream
-```
+    ```
 
 ---
 
@@ -716,7 +716,7 @@ Log controller for exporting and collecting call-related logs.
 
 - **Prototype**
 
-```dart
+    ```dart
   Future<bool> exportLogs({
     String? title,
     String? content,
@@ -735,7 +735,7 @@ Log controller for exporting and collecting call-related logs.
     ],
     void Function(double progress)? onProgress,
   })
-```
+    ```
 
 - **Parameters**
   | Name        | Description                                                       | Type                                   | Default Value |
@@ -748,6 +748,6 @@ Log controller for exporting and collecting call-related logs.
   | Function    | Callback function to report export progress (0.0 to 1.0).           | `void Function(double progress)?` | `Optional`  |
 - **Example**
 
-```dart
+    ```dart
   ZegoUIKitPrebuiltCallController().log.exportLogs();
-```
+    ```

@@ -12,10 +12,20 @@
   - [useSystemCallingUI](#usesystemcallingui)
 - [Configs](#configs)
   - [ZegoCallInvitationConfig](#zegocallinvitationconfig)
+  - [ZegoCallInvitationOfflineConfig](#zegocallinvitationofflineconfig)
+  - [ZegoCallInvitationInCallingConfig](#zegocallinvitationincallingconfig)
+  - [ZegoCallInvitationMissedCallConfig](#zegocallinvitationmissedcallconfig)
+  - [ZegoCallInvitationPIPConfig](#zegocallinvitationpipconfig)
+  - [ZegoCallInvitationPIPIOSConfig](#zegocallinvitationpipiosconfig)
   - [ZegoCallInvitationUIConfig](#zegocallinvitationuiconfig)
   - [ZegoCallInvitationInviterUIConfig](#zegocallinvitationinviteruiconfig)
+  - [ZegoCallInvitationInviterMinimizedUIConfig](#zegocallinvitationinviterminimizeduiconfig)
   - [ZegoCallInvitationInviteeUIConfig](#zegocallinvitationinviteeuiconfig)
+  - [ZegoCallInvitationInviteeMinimizedUIConfig](#zegocallinvitationinviteeminimizeduiconfig)
   - [ZegoCallInvitationNotificationConfig](#zegocallinvitationnotificationconfig)
+  - [ZegoCallIOSNotificationConfig](#zegocalliosnotificationconfig)
+  - [ZegoCallAndroidNotificationConfig](#zegocallandroidnotificationconfig)
+  - [ZegoCallAndroidNotificationChannelConfig](#zegocallandroidnotificationchannelconfig)
   - [ZegoCallRingtoneConfig](#zegocallringtoneconfig)
   - [ZegoCallButtonUIConfig](#zegocallbuttonuiconfig)
   - [ZegoCallInvitationNotifyPopUpUIConfig](#zegocallinvitationnotifypopupuiconfig)
@@ -336,6 +346,62 @@ Configuration for call invitation (permissions, offline call, in-calling, missed
 
 ---
 
+### ZegoCallInvitationOfflineConfig
+
+Offline call configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **autoEnterAcceptedOfflineCall** | Whether to automatically enter the accepted offline call. | `bool` | true |
+
+---
+
+### ZegoCallInvitationInCallingConfig
+
+In-calling configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **canInvitingInCalling** | Whether to allow invitations in calling. | `bool` | false |
+| **onlyInitiatorCanInvite** | Whether only the initiator can invite. | `bool` | false |
+
+---
+
+### ZegoCallInvitationMissedCallConfig
+
+Missed call configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **enabled** | Whether to allow popup the missed notification. | `bool` | false |
+| **enableDialBack** | Whether to allow redial the missed when click notification. | `bool` | false |
+| **resourceID** | The resource id for notification. | `String?` | - |
+| **notificationTitle** | The title for the notification. | `String? Function()?` | - |
+| **notificationMessage** | The message for the notification. | `String? Function()?` | - |
+| **timeoutSeconds** | The timeout duration in seconds for the redial invitation. | `int` | 30 |
+
+---
+
+### ZegoCallInvitationPIPConfig
+
+Invitation PIP configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **iOS** | iOS PIP configuration. | `ZegoCallInvitationPIPIOSConfig` | - |
+
+---
+
+### ZegoCallInvitationPIPIOSConfig
+
+Invitation iOS PIP configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **support** | Whether to enable PIP under iOS. | `bool` | false |
+
+---
+
 ### ZegoCallInvitationUIConfig
 
 Configuration for call invitation UI (caller/callee UI customization).
@@ -375,6 +441,17 @@ Configuration for caller (inviter) UI in call invitation.
 
 ---
 
+### ZegoCallInvitationInviterMinimizedUIConfig
+
+Inviter minimized UI configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **cancelButton** | Cancel button configuration. | `ZegoCallButtonUIConfig` | - |
+| **showTips** | Show tip or not. | `bool` | true |
+
+---
+
 ### ZegoCallInvitationInviteeUIConfig
 
 Configuration for callee (invitee) UI in call invitation.
@@ -405,6 +482,18 @@ Configuration for callee (invitee) UI in call invitation.
 
 ---
 
+### ZegoCallInvitationInviteeMinimizedUIConfig
+
+Invitee minimized UI configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **acceptButton** | Accept button configuration. | `ZegoCallButtonUIConfig` | - |
+| **declineButton** | Decline button configuration. | `ZegoCallButtonUIConfig` | - |
+| **showTips** | Show tip or not. | `bool` | true |
+
+---
+
 ### ZegoCallInvitationNotificationConfig
 
 Configuration for call invitation notification (iOS/Android).
@@ -413,6 +502,50 @@ Configuration for call invitation notification (iOS/Android).
 | :--- | :--- | :--- | :--- |
 | **iOSNotificationConfig** | iOS notification configuration. | `ZegoCallIOSNotificationConfig?` | - |
 | **androidNotificationConfig** | Android notification configuration. | `ZegoCallAndroidNotificationConfig?` | - |
+
+---
+
+### ZegoCallIOSNotificationConfig
+
+iOS notification configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **appName** | App name displayed in notification. | `String` | - |
+| **isSandboxEnvironment** | iOS sandbox mode. Auto-detected if null. | `bool?` | - |
+| **certificateIndex** | Certificate index from Zego Console. | `ZegoSignalingPluginMultiCertificate` | - |
+| **systemCallingIconName** | Icon name for CallKit lock screen (without extension). | `String` | - |
+
+---
+
+### ZegoCallAndroidNotificationConfig
+
+Android notification configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **callIDVisibility** | Show/hide call ID in notification. | `bool` | true |
+| **showOnLockedScreen** | Show on locked screen. | `bool` | true |
+| **showOnFullScreen** | Show full screen intent. | `bool` | true |
+| **certificateIndex** | Certificate index from Zego Console. | `ZegoSignalingPluginMultiCertificate` | - |
+| **fullScreenBackgroundAssetURL** | Background image URL for full screen. | `String?` | - |
+| **callChannel** | Call notification channel configuration. | `ZegoCallAndroidNotificationChannelConfig` | - |
+| **messageChannel** | Message notification channel configuration. | `ZegoCallAndroidNotificationChannelConfig` | - |
+| **missedCallChannel** | Missed call notification channel configuration. | `ZegoCallAndroidNotificationChannelConfig` | - |
+
+---
+
+### ZegoCallAndroidNotificationChannelConfig
+
+Android notification channel configuration.
+
+| Property | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **channelID** | Notification channel ID. | `String` | - |
+| **channelName** | Notification channel name. | `String` | - |
+| **icon** | Icon file name id. Place the icon file in android/app/src/main/res/drawable/. | `String?` | - |
+| **sound** | Sound file name id (must match Zego Console). Place the audio file in android/app/src/main/res/raw/. | `String?` | - |
+| **vibrate** | Enable vibration. | `bool` | true |
 
 ---
 
