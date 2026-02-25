@@ -37,7 +37,6 @@
 Enum for buttons that can be added to the top or bottom toolbar.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **toggleCameraButton** | Button for controlling the camera switch. |
 | **toggleMicrophoneButton** | Button for controlling the microphone switch. |
@@ -59,7 +58,6 @@ Enum for buttons that can be added to the top or bottom toolbar.
 Enum for call invitation type.
 
 | Name | Description | Value |
-- **Enum Values**
 | :--- | :--- | :--- |
 | **voiceCall** | Voice call. | `0` |
 | **videoCall** | Video call. | `1` |
@@ -71,7 +69,6 @@ Enum for call invitation type.
 Enum for overlay window state.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **idle** | Idle state. |
 | **inCall** | In prebuilt call page. |
@@ -85,7 +82,6 @@ Enum for overlay window state.
 Enum for call end reason.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **localHangUp** | The call ended due to a local hang-up. |
 | **remoteHangUp** | The call ended when the remote user hung up, leaving only one local user in the call. |
@@ -99,7 +95,6 @@ Enum for call end reason.
 Enum for menu bar style.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **light** | Light theme with transparent background. |
 | **dark** | Dark theme with black background. |
@@ -111,7 +106,6 @@ Enum for menu bar style.
 Event for call end.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **callID** | Current call id. | `String` |
 | **kickerUserID** | The user ID of who kick you out. | `String?` |
@@ -126,7 +120,6 @@ Event for call end.
 Event for hang up confirmation.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **context** | Build context. | `BuildContext` |
 
@@ -137,7 +130,6 @@ Event for hang up confirmation.
 Data for call invitation.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **callID** | Call ID. | `String` |
 | **invitationID** | Invitation ID. | `String` |
@@ -154,7 +146,6 @@ Data for call invitation.
 User in call.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **id** | User ID. | `String` |
 | **name** | User name. | `String` |
@@ -166,7 +157,6 @@ User in call.
 Events about user.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **onEnter** | This callback is triggered when user enter. | `void Function(ZegoUIKitUser)?` |
 | **onLeave** | This callback is triggered when user leave. | `void Function(ZegoUIKitUser)?` |
@@ -178,7 +168,6 @@ Events about user.
 Events about room.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **onStateChanged** | This callback is triggered when room state changed. | `void Function(ZegoUIKitRoomState)?` |
 | **onTokenExpired** | The room Token authentication is about to expire. | `String? Function(int remainSeconds)?` |
@@ -190,7 +179,6 @@ Events about room.
 Events about audio-video.
 
 | Name | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **onCameraStateChanged** | This callback is triggered when camera state changed. | `void Function(bool)?` |
 | **onFrontFacingCameraStateChanged** | This callback is triggered when front camera state changed. | `void Function(bool)?` |
@@ -207,8 +195,6 @@ Events about audio-video.
 
 Events about beauty.
 
-- **Properties**
-
 | Name | Description | Type |
 | :--- | :--- | :--- |
 | **onError** | Error callback for beauty effect-related errors. | `Function(ZegoBeautyError)?` |
@@ -219,8 +205,6 @@ Events about beauty.
 ## ZegoCallPrebuiltConfigQuery
 
 Typedef for config query.
-
-- **Prototype**
 
 ```dart
 typedef ZegoCallPrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
@@ -235,7 +219,6 @@ typedef ZegoCallPrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
 Enum for call invitation permissions.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **camera** | Camera permission. |
 | **microphone** | Microphone permission. |
@@ -249,7 +232,6 @@ Enum for call invitation permissions.
 Enum for minimize type.
 
 | Name | Description |
-- **Enum Values**
 | :--- | :--- |
 | **none** | Not minimized. |
 | **inCall** | In-call minimized. |
@@ -262,7 +244,6 @@ Enum for minimize type.
 Data for in-call minimized state.
 
 | Property | Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **config** | `ZegoUIKitPrebuiltCallConfig` | Call configuration. |
 | **events** | `ZegoUIKitPrebuiltCallEvents` | Call events. |
@@ -277,7 +258,6 @@ Data for in-call minimized state.
 Data for inviting minimized state.
 
 | Property | Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **invitationType** | `ZegoCallInvitationType` | Invitation type. |
 | **inviter** | `ZegoUIKitUser` | Inviter user. |
@@ -328,7 +308,6 @@ const ZegoCallMinimizeData.inviting({
 ### Properties
 
 | Property | Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **appID** | `int` | Application ID. |
 | **appSign** | `String` | Application sign. |
@@ -343,7 +322,6 @@ const ZegoCallMinimizeData.inviting({
 ### Methods
 
 | Method | Return Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **get type** | `ZegoMinimizeType` | Get minimization type. |
 | **get isInCall** | `bool` | Check if in-call minimized. |
@@ -358,7 +336,6 @@ const ZegoCallMinimizeData.inviting({
 Base class for confirmation dialog info.
 
 | Property | Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **title** | `String` | Dialog title. |
 | **message** | `String` | Dialog message content. |
@@ -372,7 +349,6 @@ Base class for confirmation dialog info.
 Dialog info for hang up confirmation.
 
 | Property | Type | Description |
-- **Properties**
 | :--- | :--- | :--- |
 | **title** | `String` | Dialog title. Default is 'Hangup Confirmation'. |
 | **message** | `String` | Dialog message content. Default is 'Do you want to hangup?'. |
@@ -403,7 +379,6 @@ typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
 Builder info class for invitation calling UI.
 
 | Property | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **inviter** | The user who initiated the call. | `ZegoUIKitUser` |
 | **invitees** | List of users being invited. | `List<ZegoUIKitUser>` |
@@ -478,7 +453,6 @@ typedef ZegoCallInvitationNotifyDialogBuilder = Widget Function(
 Helper class for common invitation permission configurations.
 
 | Property | Description | Type |
-- **Properties**
 | :--- | :--- | :--- |
 | **withoutSystemAlertWindow** | Pre-configured list without system alert window permission. | `List<ZegoCallInvitationPermission>` |
 | **audio** | Pre-configured list with only microphone permission. | `List<ZegoCallInvitationPermission>` |
@@ -490,7 +464,6 @@ Helper class for common invitation permission configurations.
 System confirm dialog info class for permission requests.
 
 | Property | Description | Type | Default Value |
-- **Properties**
 | :--- | :--- | :--- | :--- |
 | **title** | Dialog title. | `String` | - |
 | **message** | Dialog message content. | `String` | '' |

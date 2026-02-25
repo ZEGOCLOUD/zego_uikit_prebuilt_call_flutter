@@ -54,13 +54,13 @@ Used to control the call functionality. `ZegoUIKitPrebuiltCallController` is a *
 
 - **Prototype**
 
-```dart
-  Future<bool> hangUp(
-    BuildContext context, {
-    bool showConfirmation = false,
-    ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
-  })
-```
+  ```dart
+    Future<bool> hangUp(
+      BuildContext context, {
+      bool showConfirmation = false,
+      ZegoCallEndReason reason = ZegoCallEndReason.localHangUp,
+    })
+  ```
 
 - **Parameters**
   | Name             | Description                                                                                     | Type                  | Default Value                     |
