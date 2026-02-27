@@ -50,7 +50,6 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// {@category Components}
 /// {@category Invitation}
 /// {@category Migration_v4.x}
-/// {@category Migration_v5.x}
 ///
 /// Call interface component providing complete 1-on-1 and group audio/video call functionality with customizable UI and rich configuration options.
 class ZegoUIKitPrebuiltCall extends StatefulWidget {

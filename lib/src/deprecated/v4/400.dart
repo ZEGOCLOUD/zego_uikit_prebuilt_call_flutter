@@ -3,8 +3,8 @@ import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
-import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/deprecated_419.dart';
-import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/deprecated_4_1_10.dart';
+import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/419.dart';
+import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/4_1_10.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 const deprecatedTipsV400 = ', '

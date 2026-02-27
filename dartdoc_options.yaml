@@ -15,8 +15,6 @@ dartdoc:
       markdown: doc/invitation.md
     "Migration_v4.x":
       markdown: doc/MigrateGuide_v4.x.md
-    "Migration_v5.x":
-      markdown: doc/MigrateGuide_v5.x.md
   categoryOrder:
     - "APIs"
     - "Events"
@@ -25,7 +23,6 @@ dartdoc:
     - "Defines"
     - "Invitation"
     - "Migration_v4.x"
-    - "Migration_v5.x"
   showUndocumentedCategories: true
   ignore:
     - broken-link

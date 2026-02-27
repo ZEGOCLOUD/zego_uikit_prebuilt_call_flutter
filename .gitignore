@@ -7,6 +7,8 @@
 .atom/
 .buildlog/
 .history
+.claude
+.settings
 .svn/
 /test/*
 example/test/*
