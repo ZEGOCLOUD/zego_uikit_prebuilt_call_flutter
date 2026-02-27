@@ -42,6 +42,10 @@ enum ZegoCallEndReason {
   abandoned,
 }
 
+/// Event data passed when a call ends.
+///
+/// This class contains information about the call end event, including
+/// the call ID, end reason, kicker user ID, and invitation data.
 class ZegoCallEndEvent {
   /// current call id
   String callID;
@@ -97,6 +101,9 @@ class ZegoCallEndEvent {
   }
 }
 
+/// Event data passed when a hang-up confirmation is requested.
+///
+/// This class contains the build context needed to show confirmation dialogs.
 class ZegoCallHangUpConfirmationEvent {
   /// Build context for showing dialogs.
   BuildContext context;

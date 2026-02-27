@@ -5,6 +5,26 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 
+/// Event callbacks for the call functionality.
+///
+/// This class provides various event callbacks that can be used to handle
+/// call lifecycle events, user events, room events, audio/video events,
+/// and beauty effect events.
+///
+/// Example:
+/// ```dart
+/// ZegoUIKitPrebuiltCallEvents(
+///   onCallEnd: (event, defaultAction) {
+///     // Handle call end
+///     defaultAction();
+///   },
+///   user: ZegoCallUserEvents(
+///     onEnter: (user) {
+///       // Handle user enter
+///     },
+///   ),
+/// )
+/// ```
 class ZegoUIKitPrebuiltCallEvents {
   ZegoUIKitPrebuiltCallEvents({
     /// Callback triggered when the call ends.
@@ -107,7 +127,10 @@ class ZegoUIKitPrebuiltCallEvents {
   }
 }
 
-/// events about audio-video
+/// Event callbacks for audio and video related functionality.
+///
+/// This class provides callbacks for camera state changes, microphone state changes,
+/// audio output device changes, and device exception handling.
 class ZegoCallAudioVideoEvents {
   /// This callback is triggered when camera state changed
   void Function(bool)? onCameraStateChanged;
@@ -177,7 +200,9 @@ class ZegoCallAudioVideoEvents {
   }
 }
 
-/// events about user
+/// Event callbacks for user-related functionality.
+///
+/// This class provides callbacks for user entering and leaving the call.
 class ZegoCallUserEvents {
   /// This callback is triggered when user enter
   void Function(ZegoUIKitUser)? onEnter;
@@ -202,7 +227,9 @@ class ZegoCallUserEvents {
   }
 }
 
-/// events about room
+/// Event callbacks for room-related functionality.
+///
+/// This class provides callbacks for room state changes and token expiration.
 class ZegoCallRoomEvents {
   /// Callback triggered when the room state changes.
   void Function(ZegoUIKitRoomState)? onStateChanged;
@@ -231,6 +258,9 @@ class ZegoCallRoomEvents {
   }
 }
 
+/// Event callbacks for beauty effect functionality.
+///
+/// This class provides callbacks for beauty effect errors and face detection data.
 class ZegoCallBeautyEvents {
   ZegoCallBeautyEvents({
     /// Error callback for beauty effect-related errors.

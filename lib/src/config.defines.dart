@@ -19,6 +19,9 @@ typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
 );
 
 /// Dialog information for hang-up confirmation.
+///
+/// This class provides the title and message displayed in the confirmation
+/// dialog when a user attempts to hang up the call.
 class ZegoCallHangUpConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
   ZegoCallHangUpConfirmDialogInfo({
     super.title = 'Hangup Confirmation',

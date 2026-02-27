@@ -8,6 +8,10 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/components/assets.dart';
 
+/// Button for opening the beauty effect panel.
+///
+/// This button triggers the beauty effect settings panel where users can
+/// adjust beauty effects like skin smoothing, whitening, and other enhancements.
 class ZegoCallBeautyEffectButton extends StatefulWidget {
   const ZegoCallBeautyEffectButton({
     super.key,

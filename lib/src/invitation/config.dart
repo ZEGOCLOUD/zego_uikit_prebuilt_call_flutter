@@ -108,6 +108,10 @@ class ZegoCallInvitationConfig {
   }
 }
 
+/// Configuration for offline call invitation behavior.
+///
+/// This class allows you to configure whether to automatically enter
+/// an accepted offline call or manually navigate to the call page.
 class ZegoCallInvitationOfflineConfig {
   ZegoCallInvitationOfflineConfig({
     this.autoEnterAcceptedOfflineCall = true,
@@ -163,6 +167,10 @@ class ZegoCallInvitationInCallingConfig {
   }
 }
 
+/// Configuration for missed call notifications.
+///
+/// This class allows you to configure missed call notification settings,
+/// including enabling/disabling notifications, dial-back functionality, and notification content.
 class ZegoCallInvitationMissedCallConfig {
   ZegoCallInvitationMissedCallConfig({
     this.enabled = false,
@@ -207,7 +215,9 @@ class ZegoCallInvitationMissedCallConfig {
   }
 }
 
-/// pip config
+/// Picture-in-Picture (PIP) configuration for call invitations.
+///
+/// This class allows you to configure PIP settings for the invitation feature.
 class ZegoCallInvitationPIPConfig {
   /// iOS Picture-in-Picture configuration.
   ZegoCallInvitationPIPIOSConfig iOS;
@@ -217,8 +227,9 @@ class ZegoCallInvitationPIPConfig {
   }) : iOS = iOS ?? ZegoCallInvitationPIPIOSConfig();
 }
 
-/// iOS pip
-/// only available on 15.0
+/// iOS Picture-in-Picture (PIP) configuration.
+///
+/// Only available on iOS 15.0 and above.
 class ZegoCallInvitationPIPIOSConfig {
   ZegoCallInvitationPIPIOSConfig({
     this.support = false,

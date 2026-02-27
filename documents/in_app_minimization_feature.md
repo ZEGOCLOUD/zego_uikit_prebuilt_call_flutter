@@ -1,38 +1,38 @@
-# ZEGO UIKit Prebuilt Call Flutter - 应用内最小化功能文档
+# ZEGO UIKit Prebuilt Call Flutter - In-App Minimization Feature Documentation
 
-## 概述
+## Overview
 
-应用内最小化功能允许用户将通话界面最小化为应用内的可拖拽悬浮窗口。该功能支持**通话中最小化**和**邀请中最小化**两种场景，为用户提供无缝的通话体验。
+The in-app minimization feature allows users to minimize the call interface to a draggable floating window within the app. This feature supports two scenarios: **in-call minimization** and **invitation minimization**, providing users with a seamless calling experience.
 
-## 架构概览
+## Architecture Overview
 
-### 核心组件
+### Core Components
 
 ```
 lib/src/minimizing/
-├── data.dart              # 最小化数据结构
-├── defines.dart           # 状态定义和枚举
-├── overlay_machine.dart   # 悬浮窗状态机
-├── overlay_page.dart      # 主悬浮窗组件
-└── mini_button.dart       # 最小化按钮组件
+├── data.dart              # Minimization data structures
+├── defines.dart           # State definitions and enums
+├── overlay_machine.dart   # Floating window state machine
+├── overlay_page.dart      # Main floating window component
+└── mini_button.dart       # Minimization button component
 
 lib/src/controller/
-├── minimize.dart          # 主最小化控制器
+├── minimize.dart          # Main minimization controller
 └── private/
-    └── minimize.dart      # 私有实现细节
+    └── minimize.dart      # Private implementation details
 
 lib/src/invitation/
 └── pages/
-    ├── page_manager.dart  # 邀请页面管理
+    ├── page_manager.dart  # Invitation page management
     └── calling/
-        └── machine.dart   # 邀请状态机
+        └── machine.dart   # Invitation state machine
 ```
 
-## 数据结构
+## Data Structures
 
 ### ZegoCallMinimizeData
 
-最小化的主数据容器，使用联合类型模式：
+The main data container for minimization, using a union type pattern:
 
 ```dart
 class ZegoCallMinimizeData {
@@ -43,12 +43,12 @@ class ZegoCallMinimizeData {
   final String userName;
   final String callID;
   final VoidCallback? onDispose;
-  
-  // 联合类型，使用命名构造函数
+
+  // Union type, using named constructors
   final ZegoInCallMinimizeData? inCall;
   final ZegoInvitingMinimizeData? inviting;
-  
-  // 命名构造函数
+
+  // Named constructors
   const ZegoCallMinimizeData.inCall({
     required this.appID,
     required this.appSign,
@@ -59,7 +59,7 @@ class ZegoCallMinimizeData {
     this.onDispose,
     required ZegoInCallMinimizeData inCallData,
   }) : inCall = inCallData, inviting = null;
-  
+
   const ZegoCallMinimizeData.inviting({
     required this.appID,
     required this.appSign,
@@ -75,7 +75,7 @@ class ZegoCallMinimizeData {
 
 ### ZegoInCallMinimizeData
 
-通话中最小化数据：
+Minimization data during a call:
 
 ```dart
 class ZegoInCallMinimizeData {
@@ -89,7 +89,7 @@ class ZegoInCallMinimizeData {
 
 ### ZegoInvitingMinimizeData
 
-邀请中最小化数据：
+Minimization data during invitation:
 
 ```dart
 class ZegoInvitingMinimizeData {
@@ -99,32 +99,32 @@ class ZegoInvitingMinimizeData {
 }
 ```
 
-## 状态管理
+## State Management
 
 ### ZegoCallMiniOverlayPageState
 
 ```dart
 enum ZegoCallMiniOverlayPageState {
-  idle,               // 无悬浮窗显示
-  inCallMinimized,    // 通话界面已最小化
-  invitingMinimized,  // 邀请界面已最小化
+  idle,               // No floating window displayed
+  inCallMinimized,    // Call interface minimized
+  invitingMinimized,  // Invitation interface minimized
 }
 ```
 
 ### ZegoCallMiniOverlayMachine
 
-管理悬浮窗可见性和状态转换的状态机：
+A state machine that manages floating window visibility and state transitions:
 
 ```dart
 class ZegoCallMiniOverlayMachine {
   static final ZegoCallMiniOverlayMachine _instance = ZegoCallMiniOverlayMachine._internal();
   factory ZegoCallMiniOverlayMachine() => _instance;
-  
+
   ZegoCallMiniOverlayPageState _state = ZegoCallMiniOverlayPageState.idle;
   final List<Function(ZegoCallMiniOverlayPageState)> _listeners = [];
-  
+
   ZegoCallMiniOverlayPageState state() => _state;
-  
+
   void changeState(ZegoCallMiniOverlayPageState newState) {
     if (_state != newState) {
       final oldState = _state;
@@ -135,24 +135,24 @@ class ZegoCallMiniOverlayMachine {
 }
 ```
 
-## 关键工作流程
+## Key Workflows
 
-### 1. 通话中最小化
+### 1. In-Call Minimization
 
-**触发条件**: 用户在通话过程中点击最小化按钮
+**Trigger**: User clicks the minimize button during a call
 
-**流程**:
+**Flow**:
 
 ```
-1. 用户点击最小化按钮
-2. ZegoCallMinimizingButton.onPressed() 被调用
-3. ZegoUIKitPrebuiltCallController().minimize.minimize() 被调用
-4. 悬浮窗状态变为 inCallMinimized
-5. ZegoCallMiniOverlayPage 显示最小化通话界面
-6. 完整通话界面从导航栈中弹出
+1. User clicks minimize button
+2. ZegoCallMinimizingButton.onPressed() is called
+3. ZegoUIKitPrebuiltCallController().minimize.minimize() is called
+4. Floating window state changes to inCallMinimized
+5. ZegoCallMiniOverlayPage displays the minimized call interface
+6. Full call interface is popped from navigation stack
 ```
 
-**代码路径**:
+**Code Path**:
 
 ```dart
 // lib/src/minimizing/mini_button.dart
@@ -164,147 +164,148 @@ onPressed: () {
 void minimize() {
   final minimizeData = private.minimizeData;
   if (minimizeData?.inCall != null) {
-    // 创建包含通话数据的悬浮窗
+    // Create floating window with call data
     ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.inCallMinimized
     );
-    // 弹出完整界面
+    // Pop full interface
     Navigator.of(context).pop();
   }
 }
 ```
 
-### 2. 邀请中最小化
+### 2. Invitation Minimization
 
-**触发条件**: 用户在邀请过程中点击最小化按钮
+**Trigger**: User clicks the minimize button during invitation
 
-**流程**:
+**Flow**:
 
 ```
-1. 用户在邀请界面点击最小化按钮
-2. ZegoCallMinimizingButton.onPressed() 被调用
-3. ZegoUIKitPrebuiltCallController().minimize.minimizeInviting() 被调用
-4. 悬浮窗状态变为 invitingMinimized
-5. ZegoCallMiniOverlayPage 显示最小化邀请界面
-6. 完整邀请界面从导航栈中弹出
+1. User clicks minimize button on invitation screen
+2. ZegoCallMinimizingButton.onPressed() is called
+3. ZegoUIKitPrebuiltCallController().minimize.minimizeInviting() is called
+4. Floating window state changes to invitingMinimized
+5. ZegoCallMiniOverlayPage displays the minimized invitation interface
+6. Full invitation interface is popped from navigation stack
 ```
 
-**代码路径**:
+**Code Path**:
 
 ```dart
 // lib/src/controller/minimize.dart
 void minimizeInviting() {
   final minimizeData = private.minimizeData;
   if (minimizeData?.inviting != null) {
-    // 创建包含邀请数据的悬浮窗
+    // Create floating window with invitation data
     ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.invitingMinimized
     );
-    // 弹出完整界面
+    // Pop full interface
     Navigator.of(context).pop();
   }
 }
 ```
 
-### 3. 状态转换
+### 3. State Transition
 
-**触发条件**: 邀请界面最小化时，对端同意邀请
+**Trigger**: Remote user accepts invitation while invitation is minimized
 
-**流程**:
+**Flow**:
 
 ```
-1. 对端用户同意邀请
-2. page_manager.dart 中调用 onInvitationAccepted()
-3. 检查当前状态是否为 invitingMinimized
-4. 立即将悬浮窗状态转换为 idle
-5. 清除最小化数据
-6. 通话页面以正确的空闲状态初始化
-7. 音视频连接成功建立
+1. Remote user accepts invitation
+2. page_manager.dart calls onInvitationAccepted()
+3. Check if current state is invitingMinimized
+4. Immediately transition floating window state to idle
+5. Clear minimization data
+6. Call page initializes with correct idle state
+7. Audio/video connection successfully established
 ```
 
-**代码路径**:
+**Code Path**:
 
 ```dart
 // lib/src/invitation/pages/page_manager.dart
 void onInvitationAccepted(Map<String, dynamic> params) {
-  // ... 现有逻辑 ...
-  
-  // 关键修复：如果邀请界面当前处于最小化状态，
-  // 立即转换悬浮窗状态，确保通话页面能正确初始化
+  // ... existing logic ...
+
+  // Key fix: If invitation screen is currently minimized,
+  // immediately transition floating window state to ensure
+  // call page can initialize correctly
   if (ZegoCallMiniOverlayPageState.invitingMinimized ==
       ZegoUIKitPrebuiltCallController().minimize.state) {
-  
-    // 立即隐藏悬浮窗，将状态设置为空闲
+
+    // Immediately hide floating window, set state to idle
     ZegoCallMiniOverlayMachine()
         .changeState(ZegoCallMiniOverlayPageState.idle);
 
-    // 清除最小化数据，防止通话页面在初始化时检测到
-    // 非空闲的悬浮窗状态
+    // Clear minimization data to prevent call page from detecting
+    // non-idle floating window state during initialization
     ZegoUIKitPrebuiltCallController().minimize.private.clearMinimizeData();
   }
-  
-  // 继续正常流程
+
+  // Continue normal flow
   if (isInCalling) {
     callingMachine?.stateOnlineAudioVideo.enter();
   }
 }
 ```
 
-## 控制器实现
+## Controller Implementation
 
 ### ZegoUIKitPrebuiltCallController.minimize
 
-最小化操作的主要公共接口：
+Main public interface for minimization operations:
 
 ```dart
 class ZegoUIKitPrebuiltCallController {
-  ZegoCallControllerMinimizingImpl get minimize => 
+  ZegoCallControllerMinimizingImpl get minimize =>
     ZegoCallControllerMinimizingImpl();
 }
 
 class ZegoCallControllerMinimizingImpl {
-  /// 最小化当前通话界面
+  /// Minimize current call interface
   void minimize();
-  
-  /// 最小化当前邀请界面
+
+  /// Minimize current invitation interface
   void minimizeInviting();
-  
-  /// 恢复最小化的通话界面
+
+  /// Restore minimized call interface
   void restore();
-  
-  /// 恢复最小化的邀请界面
+
+  /// Restore minimized invitation interface
   void restoreInviting();
-  
-  /// 隐藏悬浮窗（通话结束时使用）
+
+  /// Hide floating window (used when call ends)
   void hide();
 }
 ```
 
-### 私有实现
+### Private Implementation
 
 ```dart
 class ZegoCallControllerMinimizingImpl {
-  ZegoCallControllerMinimizePrivate get private => 
+  ZegoCallControllerMinimizePrivate get private =>
     ZegoCallControllerMinimizePrivateImpl();
-  
-  /// 监听邀请状态变化
+
+  /// Listen for invitation state changes
   void _listenInvitationStateChanged(ZegoCallInvitationPageManager pageManager);
-  
-  /// 邀请被接受时自动转换最小化状态
+
+  /// Auto-transition minimization state when invitation is accepted
   void _autoConvertToInCallMinimized();
-  
-  /// 将邀请配置转换为预构建通话配置
+
+  /// Convert invitation config to prebuilt call config
   ZegoUIKitPrebuiltCallConfig _convertCallingConfigToPrebuiltConfig(
     ZegoUIKitPrebuiltCallingConfig callingConfig
   );
 }
 ```
 
-## 悬浮窗组件实现
+## Floating Window Component Implementation
 
 ### ZegoUIKitPrebuiltCallMiniOverlayPage
 
-根据状态显示不同内容的主悬浮窗组件：
+Main floating window component that displays different content based on state:
 
 ```dart
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
@@ -314,7 +315,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
       builder: (context) => _buildOverlayContent(),
     );
   }
-  
+
   Widget _buildOverlayContent() {
     switch (ZegoCallMiniOverlayMachine().state()) {
       case ZegoCallMiniOverlayPageState.inCallMinimized:
@@ -328,50 +329,50 @@ class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
 }
 ```
 
-### 组件类型
+### Component Types
 
 #### ZegoMinimizingCallPage
 
-显示最小化通话界面，包含：
+Displays minimized call interface, containing:
 
-- 用户头像和姓名
-- 通话时长
-- 最小化/恢复按钮
-- 挂断按钮
+- User avatar and name
+- Call duration
+- Minimize/restore button
+- Hang up button
 
 #### ZegoMinimizingCallingPage
 
-显示最小化邀请界面，包含：
+Displays minimized invitation interface, containing:
 
-- 邀请者信息
-- 通话类型指示器
-- 最小化/恢复按钮
-- 接听/拒绝按钮
+- Inviter information
+- Call type indicator
+- Minimize/restore button
+- Answer/reject buttons
 
-## 关键技术要点
+## Key Technical Points
 
-### 1. 状态同步
+### 1. State Synchronization
 
-悬浮窗状态必须与实际通话状态同步，防止初始化问题：
+Floating window state must be synchronized with actual call state to prevent initialization issues:
 
 ```dart
-// 修复前：通话页面看到 invitingMinimized 状态
+// Before fix: Call page sees invitingMinimized state
 {call} {prebuilt} {mini machine state is not idle, context will not be init}
 
-// 修复后：立即状态转换
+// After fix: Immediate state transition
 ZegoCallMiniOverlayMachine().changeState(ZegoCallMiniOverlayPageState.idle);
 private.clearMinimizeData();
 ```
 
-### 2. 导航栈管理
+### 2. Navigation Stack Management
 
-最小化涉及弹出完整界面和管理导航栈：
+Minimization involves popping the full interface and managing the navigation stack:
 
 ```dart
-// 最小化时弹出完整界面
+// Pop full interface on minimize
 Navigator.of(context).pop();
 
-// 恢复时推送界面
+// Push interface on restore
 Navigator.of(context).push(
   MaterialPageRoute(
     builder: (context) => ZegoUIKitPrebuiltCall(...),
@@ -379,24 +380,24 @@ Navigator.of(context).push(
 );
 ```
 
-### 3. 数据持久化
+### 3. Data Persistence
 
-最小化数据必须在状态变化间持久化，并在适当时机清理：
+Minimization data must persist between state transitions and be cleaned up at the appropriate time:
 
 ```dart
-// 转换状态时更新数据
+// Update data when transitioning state
 private.updateMinimizeData(newMinimizeData);
 
-// 不再需要时清除数据
+// Clear data when no longer needed
 private.clearMinimizeData();
 ```
 
-### 4. 事件处理
+### 4. Event Handling
 
-系统必须在最小化状态下处理各种邀请事件：
+The system must handle various invitation events while minimized:
 
 ```dart
-// 监听邀请状态变化
+// Listen for invitation state changes
 pageManager.callingMachine?.onStateChanged = (CallingState state) {
   if (state == CallingState.kOnlineAudioVideo) {
     _autoConvertToInCallMinimized();
@@ -404,39 +405,39 @@ pageManager.callingMachine?.onStateChanged = (CallingState state) {
 };
 ```
 
-## 性能考虑
+## Performance Considerations
 
-1. **状态机效率**: 悬浮窗机器使用单例模式
-2. **内存管理**: 适当清理最小化数据
-3. **导航优化**: 最小化导航栈操作
-4. **事件监听器管理**: 正确注册和清理
+1. **State Machine Efficiency**: Floating window machine uses singleton pattern
+2. **Memory Management**: Properly clean up minimization data
+3. **Navigation Optimization**: Minimize navigation stack operations
+4. **Event Listener Management**: Properly register and clean up
 
-## 测试场景
+## Test Scenarios
 
-### 1. 基本最小化
+### 1. Basic Minimization
 
-- 通话过程中最小化
-- 邀请过程中最小化
-- 从最小化状态恢复
+- Minimize during a call
+- Minimize during invitation
+- Restore from minimized state
 
-### 2. 状态转换
+### 2. State Transitions
 
-- 最小化时邀请被接受
-- 最小化时邀请被拒绝
-- 最小化时通话结束
+- Invitation accepted while minimized
+- Invitation rejected while minimized
+- Call ended while minimized
 
-### 3. 边界情况
+### 3. Edge Cases
 
-- 多次最小化/恢复操作
-- 最小化时应用后台化
-- 最小化时网络状态变化
+- Multiple minimize/restore operations
+- App backgrounded while minimized
+- Network state changes while minimized
 
-## 未来增强
+## Future Enhancements
 
-1. **动画支持**: 状态间的平滑过渡
-2. **自定义悬浮窗样式**: 用户可配置的外观
-3. **手势控制**: 滑动恢复、拖拽重新定位
+1. **Animation Support**: Smooth transitions between states
+2. **Custom Floating Window Style**: User-configurable appearance
+3. **Gesture Control**: Swipe to restore, drag to reposition
 
-## 总结
+## Summary
 
-应用内最小化功能为通话和邀请提供了强大且用户友好的最小化状态处理方式。最近对邀请最小化时被接受的修复确保了可靠的状态转换和正确的通话初始化。该架构设计为可扩展和可维护的，在数据、状态管理和UI组件之间有清晰的关注点分离。
+The in-app minimization feature provides a powerful and user-friendly way to handle minimization states for calls and invitations. The recent fix for invitation acceptance while minimized ensures reliable state transitions and correct call initialization. The architecture is designed to be extensible and maintainable, with clear separation of concerns between data, state management, and UI components.

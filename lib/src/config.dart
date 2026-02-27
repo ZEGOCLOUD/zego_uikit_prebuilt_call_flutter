@@ -934,6 +934,9 @@ class ZegoCallAudioEffectConfig {
   bool get isSupportReverb => reverbEffect.isNotEmpty;
 }
 
+/// Configuration for user settings in the call.
+///
+/// This class allows you to configure required users and other user-related settings.
 class ZegoCallUserConfig {
   ZegoCallUserConfig({
     ZegoCallRequiredUserConfig? requiredUsers,
@@ -943,6 +946,10 @@ class ZegoCallUserConfig {
   ZegoCallRequiredUserConfig requiredUsers;
 }
 
+/// Configuration for device settings in the call.
+///
+/// This class allows you to configure device-related settings such as
+/// synchronizing device status via SEI (Supplemental Enhancement Information).
 class ZegoCallDeviceConfig {
   ZegoCallDeviceConfig({
     this.enableSyncDeviceStatusBySEI = true,

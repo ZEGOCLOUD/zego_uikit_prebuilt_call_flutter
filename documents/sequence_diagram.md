@@ -1,186 +1,186 @@
-# ZEGO呼叫邀请时序图
+# ZEGO Call Invitation Sequence Diagrams
 
-以下时序图展示了ZEGO呼叫邀请系统中各种操作的API调用流程，基于ZIM SDK实现。
+The following sequence diagrams illustrate the API call flows for various operations in the ZEGO Call Invitation system, implemented based on the ZIM SDK.
 
-## 发起呼叫邀请 (Send Invitation)
+## Send Invitation
 
 ```plantuml
 @startuml
-participant "发起方应用" as AppA
+participant "Caller App" as AppA
 participant "ZegoCallInvitationService" as ServiceA
 participant "ZegoUIKitSignalingPlugin" as PluginA
 participant "ZIM SDK" as ZIMA
-participant "服务器" as Server
+participant "Server" as Server
 participant "ZIM SDK" as ZIMB
 participant "ZegoUIKitSignalingPlugin" as PluginB
 participant "ZegoCallInvitationService" as ServiceB
-participant "接收方应用" as AppB
+participant "Callee App" as AppB
 
 AppA -> ServiceA: send(invitees, isVideoCall, ...)
 ServiceA -> PluginA: sendInvitation(invitees, timeout, ...)
 activate PluginA
 PluginA -> ZIMA: callInvite(invitees, ZIMCallInviteConfig)
 activate ZIMA
-ZIMA -> Server: 发送邀请
+ZIMA -> Server: Send invitation
 activate Server
-Server -> ZIMB: 推送邀请
+Server -> ZIMB: Push invitation
 activate ZIMB
-ZIMB -> PluginB: 触发onCallInvitationReceived事件
-PluginB -> ServiceB: 触发onIncomingInvitationReceived事件
-ServiceB -> AppB: 触发onIncomingCallReceived回调
-Server --> ZIMA: 返回发送结果
+ZIMB -> PluginB: Trigger onCallInvitationReceived event
+PluginB -> ServiceB: Trigger onIncomingInvitationReceived event
+ServiceB -> AppB: Trigger onIncomingCallReceived callback
+Server --> ZIMA: Return send result
 deactivate Server
-ZIMA --> PluginA: 返回ZIMCallInvitationSentResult
+ZIMA --> PluginA: Return ZIMCallInvitationSentResult
 deactivate ZIMA
-PluginA --> ServiceA: 返回ZegoSignalingPluginSendInvitationResult
+PluginA --> ServiceA: Return ZegoSignalingPluginSendInvitationResult
 deactivate PluginA
-ServiceA --> AppA: 返回发送结果(布尔值)
+ServiceA --> AppA: Return send result (boolean)
 
 @enduml
 ```
 
-## 接受呼叫邀请 (Accept Invitation)
+## Accept Invitation
 
 ```plantuml
 @startuml
-participant "接收方应用" as AppB
+participant "Callee App" as AppB
 participant "ZegoCallInvitationService" as ServiceB
 participant "ZegoUIKitSignalingPlugin" as PluginB
 participant "ZIM SDK" as ZIMB
-participant "服务器" as Server
+participant "Server" as Server
 participant "ZIM SDK" as ZIMA
 participant "ZegoUIKitSignalingPlugin" as PluginA
 participant "ZegoCallInvitationService" as ServiceA
-participant "发起方应用" as AppA
+participant "Caller App" as AppB
 
 AppB -> ServiceB: accept(customData)
 ServiceB -> PluginB: acceptInvitation(invitationID, extendedData)
 activate PluginB
 PluginB -> ZIMB: callAccept(invitationID, ZIMCallAcceptConfig)
 activate ZIMB
-ZIMB -> Server: 发送接受请求
+ZIMB -> Server: Send accept request
 activate Server
-Server -> ZIMA: 推送接受通知
+Server -> ZIMA: Push accept notification
 activate ZIMA
-ZIMA -> PluginA: 触发onCallInvitationAccepted事件
-PluginA -> ServiceA: 触发OutgoingInvitationAccepted事件
-ServiceA -> AppA: 触发onOutgoingCallAccepted回调
-Server --> ZIMB: 返回接受结果
+ZIMA -> PluginA: Trigger onCallInvitationAccepted event
+PluginA -> ServiceA: Trigger OutgoingInvitationAccepted event
+ServiceA -> AppA: Trigger onOutgoingCallAccepted callback
+Server --> ZIMB: Return accept result
 deactivate Server
-ZIMB --> PluginB: 返回ZIMCallAcceptanceSentResult
+ZIMB --> PluginB: Return ZIMCallAcceptanceSentResult
 deactivate ZIMB
-PluginB --> ServiceB: 返回ZegoSignalingPluginResponseInvitationResult
+PluginB --> ServiceB: Return ZegoSignalingPluginResponseInvitationResult
 deactivate PluginB
-ServiceB --> AppB: 返回接受结果(布尔值)
+ServiceB --> AppB: Return accept result (boolean)
 
 @enduml
 ```
 
-## 拒绝呼叫邀请 (Reject Invitation)
+## Reject Invitation
 
 ```plantuml
 @startuml
-participant "接收方应用" as AppB
+participant "Callee App" as AppB
 participant "ZegoCallInvitationService" as ServiceB
 participant "ZegoUIKitSignalingPlugin" as PluginB
 participant "ZIM SDK" as ZIMB
-participant "服务器" as Server
+participant "Server" as Server
 participant "ZIM SDK" as ZIMA
 participant "ZegoUIKitSignalingPlugin" as PluginA
 participant "ZegoCallInvitationService" as ServiceA
-participant "发起方应用" as AppA
+participant "Caller App" as AppA
 
 AppB -> ServiceB: reject(customData)
 ServiceB -> PluginB: refuseInvitation(invitationID, extendedData)
 activate PluginB
 PluginB -> ZIMB: callReject(invitationID, ZIMCallRejectConfig)
 activate ZIMB
-ZIMB -> Server: 发送拒绝请求
+ZIMB -> Server: Send reject request
 activate Server
-Server -> ZIMA: 推送拒绝通知
+Server -> ZIMA: Push reject notification
 activate ZIMA
-ZIMA -> PluginA: 触发onCallInvitationRejected事件
-PluginA -> ServiceA: 触发onOutgoingInvitationRejected事件
-ServiceA -> AppA: 触发onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined回调
-Server --> ZIMB: 返回拒绝结果
+ZIMA -> PluginA: Trigger onCallInvitationRejected event
+PluginA -> ServiceA: Trigger onOutgoingInvitationRejected event
+ServiceA -> AppA: Trigger onOutgoingCallRejectedCauseBusy/onOutgoingCallDeclined callback
+Server --> ZIMB: Return reject result
 deactivate Server
-ZIMB --> PluginB: 返回ZIMCallRejectionSentResult
+ZIMB --> PluginB: Return ZIMCallRejectionSentResult
 deactivate ZIMB
-PluginB --> ServiceB: 返回ZegoSignalingPluginResponseInvitationResult
+PluginB --> ServiceB: Return ZegoSignalingPluginResponseInvitationResult
 deactivate PluginB
-ServiceB --> AppB: 返回拒绝结果(布尔值)
+ServiceB --> AppB: Return reject result (boolean)
 
 @enduml
 ```
 
-## 取消呼叫邀请 (Cancel Invitation)
+## Cancel Invitation
 
 ```plantuml
 @startuml
-participant "发起方应用" as AppA
+participant "Caller App" as AppA
 participant "ZegoCallInvitationService" as ServiceA
 participant "ZegoUIKitSignalingPlugin" as PluginA
 participant "ZIM SDK" as ZIMA
-participant "服务器" as Server
+participant "Server" as Server
 participant "ZIM SDK" as ZIMB
 participant "ZegoUIKitSignalingPlugin" as PluginB
 participant "ZegoCallInvitationService" as ServiceB
-participant "接收方应用" as AppB
+participant "Callee App" as AppB
 
 AppA -> ServiceA: cancel(callees, customData)
 ServiceA -> PluginA: cancelInvitation(invitationID, invitees, extendedData)
 activate PluginA
 PluginA -> ZIMA: callCancel(invitees, invitationID, ZIMCallCancelConfig)
 activate ZIMA
-ZIMA -> Server: 发送取消请求
+ZIMA -> Server: Send cancel request
 activate Server
-Server -> ZIMB: 推送取消通知
+Server -> ZIMB: Push cancel notification
 activate ZIMB
-ZIMB -> PluginB: 触发onCallInvitationCancelled事件
-PluginB -> ServiceB: 触发IncomingInvitationCancelled事件
-ServiceB -> AppB: 触发onIncomingCallCanceled回调
-Server --> ZIMA: 返回取消结果
+ZIMB -> PluginB: Trigger onCallInvitationCancelled event
+PluginB -> ServiceB: Trigger IncomingInvitationCancelled event
+ServiceB -> AppB: Trigger onIncomingCallCanceled callback
+Server --> ZIMA: Return cancel result
 deactivate Server
-ZIMA --> PluginA: 返回ZIMCallCancelSentResult
+ZIMA --> PluginA: Return ZIMCallCancelSentResult
 deactivate ZIMA
-PluginA --> ServiceA: 返回ZegoSignalingPluginCancelInvitationResult
+PluginA --> ServiceA: Return ZegoSignalingPluginCancelInvitationResult
 deactivate PluginA
-ServiceA --> AppA: 返回取消结果(布尔值)
+ServiceA --> AppA: Return cancel result (boolean)
 
 @enduml
 ```
 
-## 超时处理 (Timeout Handling)
+## Timeout Handling
 
 ```plantuml
 @startuml
-participant "发起方应用" as AppA
+participant "Caller App" as AppA
 participant "ZegoCallInvitationService" as ServiceA
 participant "ZegoUIKitSignalingPlugin" as PluginA
 participant "ZIM SDK" as ZIMA
-participant "服务器" as Server
+participant "Server" as Server
 participant "ZIM SDK" as ZIMB
 participant "ZegoUIKitSignalingPlugin" as PluginB
 participant "ZegoCallInvitationService" as ServiceB
-participant "接收方应用" as AppB
+participant "Callee App" as AppB
 
-... 等待超时时间 ...
+... Wait for timeout ...
 
-Server -> ZIMA: 超时通知
+Server -> ZIMA: Timeout notification
 activate ZIMA
-ZIMA -> PluginA: 触发onCallInviteesAnsweredTimeout事件
-PluginA -> ServiceA: 触发onOutgoingInvitationTimeout事件
-ServiceA -> AppA: 触发onOutgoingCallTimeout回调
+ZIMA -> PluginA: Trigger onCallInviteesAnsweredTimeout event
+PluginA -> ServiceA: Trigger onOutgoingInvitationTimeout event
+ServiceA -> AppA: Trigger onOutgoingCallTimeout callback
 deactivate ZIMA
 
-Server -> ZIMB: 超时通知
+Server -> ZIMB: Timeout notification
 activate ZIMB
-ZIMB -> PluginB: 触发onCallInvitationTimeout事件
-PluginB -> ServiceB: 触发onIncomingInvitationTimeout事件
-ServiceB -> AppB: 触发onIncomingCallTimeout回调
+ZIMB -> PluginB: Trigger onCallInvitationTimeout event
+PluginB -> ServiceB: Trigger onIncomingInvitationTimeout event
+ServiceB -> AppB: Trigger onIncomingCallTimeout callback
 deactivate ZIMB
 
 @enduml
 ```
 
-这些时序图展示了ZEGO呼叫邀请系统中各种操作的详细流程，包括从应用层到ZIM SDK的完整API调用链。
+These sequence diagrams illustrate the detailed flows of various operations in the ZEGO Call Invitation system, including the complete API call chain from the application layer to the ZIM SDK.

@@ -1,12 +1,10 @@
+# ZEGO Call Invitation Protocol Documentation
 
+The ZEGO Call Invitation system handles communication through a series of standardized protocols, defining the data formats and structures exchanged during communication.
 
-# 一、ZEGO呼叫邀请协议文档
+## 1. Protocol Version Control (ZegoCallInvitationProtocolVersion)
 
-ZEGO呼叫邀请系统通过一系列标准化的协议来处理通信，这些协议定义了在通信过程中交换的数据格式和结构。
-
-## 1. 协议版本控制 (ZegoCallInvitationProtocolVersion)
-
-所有协议都使用版本号标识，当前版本为"f1.0"，用于标准化不同版本间的兼容性处理。
+All protocols use a version identifier. The current version is "f1.0", which is used for standardizing compatibility handling between different versions.
 
 ```dart
 mixin ZegoCallInvitationProtocolVersion {
@@ -18,25 +16,25 @@ mixin ZegoCallInvitationProtocolVersion {
 }
 ```
 
-## 2. 协议键值定义 (ZegoCallInvitationProtocolKey)
+## 2. Protocol Key Definitions (ZegoCallInvitationProtocolKey)
 
-通信过程中使用的标准键名：
+Standard key names used during communication:
 
-| 键名 | 说明 |
-|-----|-----|
-| callID | 呼叫ID |
-| invitationID | 邀请ID |
-| timeout | 超时时间 |
-| customData | 自定义数据 |
-| invitees | 被邀请者列表 |
-| inviterName | 邀请者名称 |
-| userID | 用户ID |
-| userName | 用户名称 |
-| operationType | 操作类型 |
-| reason | 拒绝原因 |
-| refuseByDecline | 拒绝原因-拒绝 |
-| refuseByBusy | 拒绝原因-忙碌 |
-| version | 协议版本号 |
+| Key | Description |
+|-----|-------------|
+| callID | Call ID |
+| invitationID | Invitation ID |
+| timeout | Timeout duration |
+| customData | Custom data |
+| invitees | List of invitees |
+| inviterName | Inviter's name |
+| userID | User ID |
+| userName | User's name |
+| operationType | Operation type |
+| reason | Rejection reason |
+| refuseByDecline | Rejection reason - declined |
+| refuseByBusy | Rejection reason - busy |
+| version | Protocol version |
 
 ```dart
 class ZegoCallInvitationProtocolKey {
@@ -60,135 +58,139 @@ class ZegoCallInvitationProtocolKey {
 }
 ```
 
-# 二、协议
+---
 
-## 1. 发送邀请协议
+# Protocols
 
-在ZEGO呼叫邀请系统中，使用了两层协议封装：
+## 1. Send Invitation Protocol
 
-1. **外层协议(ZegoUIKitInvitationSendProtocol)**: 用于ZIM SDK通信层
-2. **内层协议(ZegoCallInvitationSendRequestProtocol等)**: 用于呼叫邀请业务逻辑
+The ZEGO Call Invitation system uses a two-layer protocol structure:
 
-内层协议会被序列化为JSON字符串，然后作为外层协议的customData字段值传递。这种嵌套结构使得系统能够在保持底层通信协议稳定的同时，扩展上层业务逻辑。
+1. **Outer Protocol (ZegoUIKitInvitationSendProtocol)**: Used for ZIM SDK communication layer
+2. **Inner Protocol (ZegoCallInvitationSendRequestProtocol, etc.)**: Used for call invitation business logic
 
-### 外层发送邀请协议 (ZegoUIKitInvitationSendProtocol)
+The inner protocol is serialized as a JSON string and passed as the `customData` field value of the outer protocol. This nested structure allows the system to extend upper-layer business logic while keeping the underlying communication protocol stable.
 
-用于ZIM SDK底层通信的数据结构：
+### Outer Send Invitation Protocol (ZegoUIKitInvitationSendProtocol)
 
-| 字段 | 类型 | 说明 |
-|-----|-----|-----|
-| inviter | ZegoUIKitUser | 邀请者信息 |
-| type | int | 呼叫类型(0:语音呼叫, 1:视频呼叫) |
-| customData | String | 自定义数据，其中包含序列化后的内层协议 |
+Data structure used for ZIM SDK underlying communication:
 
-JSON格式示例：
+| Field | Type | Description |
+|-------|------|-------------|
+| inviter | ZegoUIKitUser | Inviter information |
+| type | int | Call type (0: voice call, 1: video call) |
+| customData | String | Custom data containing serialized inner protocol |
+
+JSON format example:
 ```json
 {
   "inviter": {
     "id": "user123",
-    "name": "张三"
+    "name": "John"
   },
   "type": 1,
-  "custom_data": "{\"call_id\":\"uniqueCallID\",\"inviter_name\":\"张三\",\"invitees\":[{\"user_id\":\"user1\",\"user_name\":\"李四\"}],\"timeout\":60,\"custom_data\":\"自定义数据\",\"v\":\"f1.0\"}"
+  "custom_data": "{\"call_id\":\"uniqueCallID\",\"inviter_name\":\"John\",\"invitees\":[{\"user_id\":\"user1\",\"user_name\":\"Alice\"}],\"timeout\":60,\"custom_data\":\"custom data\",\"v\":\"f1.0\"}"
 }
 ```
 
-### 内层发送邀请协议 (ZegoCallInvitationSendRequestProtocol)
+### Inner Send Invitation Protocol (ZegoCallInvitationSendRequestProtocol)
 
-用于发送呼叫邀请的数据结构，被封装在ZegoUIKitInvitationSendProtocol的customData字段中：
+Data structure for sending call invitations, encapsulated in the `customData` field of `ZegoUIKitInvitationSendProtocol`:
 
-| 字段 | 类型 | 说明 |
-|-----|-----|-----|
-| callID | String | 呼叫ID |
-| inviterName | String | 邀请者名称 |
-| invitees | List<ZegoUIKitUser> | 被邀请者列表 |
-| customData | String | 自定义数据 |
-| timeout | int | 超时时间(秒)，默认60秒 |
-| version | String | 协议版本号 |
+| Field | Type | Description |
+|-------|------|-------------|
+| callID | String | Call ID |
+| inviterName | String | Inviter's name |
+| invitees | List<ZegoUIKitUser> | List of invitees |
+| customData | String | Custom data |
+| timeout | int | Timeout in seconds, default is 60 seconds |
+| version | String | Protocol version |
 
-JSON格式示例：
+JSON format example:
 ```json
 {
   "call_id": "uniqueCallID",
-  "inviter_name": "张三",
+  "inviter_name": "John",
   "invitees": [
-    {"user_id": "user1", "user_name": "李四"},
-    {"user_id": "user2", "user_name": "王五"}
+    {"user_id": "user1", "user_name": "Alice"},
+    {"user_id": "user2", "user_name": "Bob"}
   ],
   "timeout": 60,
-  "custom_data": "自定义数据",
+  "custom_data": "custom data",
   "v": "f1.0"
 }
 ```
 
-## 2. 取消邀请协议 (ZegoCallInvitationCancelRequestProtocol)
+## 2. Cancel Invitation Protocol (ZegoCallInvitationCancelRequestProtocol)
 
-用于取消已发送的呼叫邀请：
+Used to cancel a sent call invitation:
 
-| 字段 | 类型 | 说明 |
-|-----|-----|-----|
-| callID | String | 呼叫ID |
-| customData | String | 自定义数据 |
-| operationType | String | 操作类型，固定为"cancelInvitation" |
-| version | String | 协议版本号 |
+| Field | Type | Description |
+|-------|------|-------------|
+| callID | String | Call ID |
+| customData | String | Custom data |
+| operationType | String | Operation type, fixed as "cancelInvitation" |
+| version | String | Protocol version |
 
-JSON格式示例：
+JSON format example:
 ```json
 {
   "call_id": "uniqueCallID",
   "operation_type": "cancelInvitation",
-  "custom_data": "取消原因",
+  "custom_data": "cancellation reason",
   "v": "f1.0"
 }
 ```
 
-## 3. 拒绝邀请协议 (ZegoCallInvitationRejectRequestProtocol)
+## 3. Reject Invitation Protocol (ZegoCallInvitationRejectRequestProtocol)
 
-用于拒绝收到的呼叫邀请：
+Used to reject a received call invitation:
 
-| 字段 | 类型 | 说明 |
-|-----|-----|-----|
-| targetInvitationID | String | 目标邀请ID |
-| reason | String | 拒绝原因 |
-| customData | String | 自定义数据 |
-| version | String | 协议版本号 |
+| Field | Type | Description |
+|-------|------|-------------|
+| targetInvitationID | String | Target invitation ID |
+| reason | String | Rejection reason |
+| customData | String | Custom data |
+| version | String | Protocol version |
 
-JSON格式示例：
+JSON format example:
 ```json
 {
   "invitation_id": "invitationID",
   "reason": "decline/busy",
-  "custom_data": "自定义拒绝原因",
+  "custom_data": "custom rejection reason",
   "v": "f1.0"
 }
 ```
 
-## 4. 接受邀请协议 (ZegoCallInvitationAcceptRequestProtocol)
+## 4. Accept Invitation Protocol (ZegoCallInvitationAcceptRequestProtocol)
 
-用于接受收到的呼叫邀请：
+Used to accept a received call invitation:
 
-| 字段 | 类型 | 说明 |
-|-----|-----|-----|
-| customData | String | 自定义数据 |
-| version | String | 协议版本号 |
+| Field | Type | Description |
+|-------|------|-------------|
+| customData | String | Custom data |
+| version | String | Protocol version |
 
-JSON格式示例：
+JSON format example:
 ```json
 {
-  "custom_data": "自定义接受信息",
+  "custom_data": "custom acceptance message",
   "v": "f1.0"
 }
 ```
 
-# 三、协议交互流程
+---
 
-## 1. 发起呼叫邀请
-   - 构造内层`ZegoCallInvitationSendRequestProtocol`对象
-   - 序列化为JSON字符串作为外层`ZegoUIKitInvitationSendProtocol`的customData
-   - 将外层协议序列化为JSON并通过ZIM SDK发送
+# Protocol Interaction Flow
+
+## 1. Initiating a Call Invitation
+- Construct the inner `ZegoCallInvitationSendRequestProtocol` object
+- Serialize it as a JSON string as the `customData` of the outer `ZegoUIKitInvitationSendProtocol`
+- Serialize the outer protocol as JSON and send it through the ZIM SDK
 
 ```dart
-// 构造内层协议
+// Construct inner protocol
 final sendProtocol = ZegoCallInvitationSendRequestProtocol(
   callID: callID,
   inviterName: ZegoUIKit().getLocalUser().name,
@@ -200,24 +202,24 @@ final sendProtocol = ZegoCallInvitationSendRequestProtocol(
   customData: customData,
 ).toJson();
 
-// 构造外层协议并传递内层协议(作为外层协议的data参数)
+// Construct outer protocol and pass inner protocol (as data parameter of outer protocol)
 final zimExtendedData = const JsonEncoder().convert(
   ZegoUIKitInvitationSendProtocol(
     inviter: ZegoUIKitUser(id: inviterID, name: inviterName),
     type: type,
-    customData: sendProtocol,  // 内层协议作为data参数
+    customData: sendProtocol,  // Inner protocol as data parameter
   ).toJson(),
 );
 ```
 
-## 2. 取消呼叫邀请
-   - 构造`ZegoCallInvitationCancelRequestProtocol`对象
-   - 序列化为JSON并通过ZIM SDK发送
+## 2. Canceling a Call Invitation
+- Construct the `ZegoCallInvitationCancelRequestProtocol` object
+- Serialize as JSON and send through the ZIM SDK
 
-## 3. 接受呼叫邀请
-   - 构造`ZegoCallInvitationAcceptRequestProtocol`对象
-   - 序列化为JSON并通过ZIM SDK发送
+## 3. Accepting a Call Invitation
+- Construct the `ZegoCallInvitationAcceptRequestProtocol` object
+- Serialize as JSON and send through the ZIM SDK
 
-## 4. 拒绝呼叫邀请
-   - 构造`ZegoCallInvitationRejectRequestProtocol`对象
-   - 序列化为JSON并通过ZIM SDK发送
+## 4. Rejecting a Call Invitation
+- Construct the `ZegoCallInvitationRejectRequestProtocol` object
+- Serialize as JSON and send through the ZIM SDK

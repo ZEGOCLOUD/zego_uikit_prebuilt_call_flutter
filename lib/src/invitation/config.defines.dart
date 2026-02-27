@@ -170,6 +170,10 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
   }
 }
 
+/// Permissions required for call invitations.
+///
+/// This enum defines the permissions needed for the call invitation feature,
+/// including camera, microphone, system alert window, and manually configured permissions.
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
