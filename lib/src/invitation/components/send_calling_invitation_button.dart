@@ -25,7 +25,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// If you need to sort the user list, you can set it through [userSort].
 class ZegoSendCallingInvitationButton extends StatefulWidget {
   const ZegoSendCallingInvitationButton({
-
     /// The key for the widget.
     super.key,
 

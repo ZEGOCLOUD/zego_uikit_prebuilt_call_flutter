@@ -850,7 +850,6 @@ class ZegoCallAudioEffectConfig {
   double? sliderThumbRadius;
 
   ZegoCallAudioEffectConfig({
-
     /// List of voice changer effects to display in the UI.
     this.voiceChangeEffect = const [
       VoiceChangerType.littleGirl,

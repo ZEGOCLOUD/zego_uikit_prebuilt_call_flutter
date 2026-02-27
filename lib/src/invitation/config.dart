@@ -209,7 +209,6 @@ class ZegoCallInvitationMissedCallConfig {
 
 /// pip config
 class ZegoCallInvitationPIPConfig {
-
   /// iOS Picture-in-Picture configuration.
   ZegoCallInvitationPIPIOSConfig iOS;
 
@@ -654,7 +653,6 @@ class ZegoCallRingtoneConfig {
 
 /// iOS notification config
 class ZegoCallIOSNotificationConfig {
-
   /// The app name to be displayed in iOS notifications.
   String appName;
 
@@ -854,7 +852,6 @@ class ZegoCallAndroidNotificationChannelConfig {
 
 /// Confirmation dialog like system.
 class ZegoCallSystemConfirmDialogConfig {
-
   /// The title of the confirmation dialog.
   String? title;
 

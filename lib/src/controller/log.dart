@@ -13,11 +13,10 @@ class ZegoCallControllerLogImpl {
   /// [title] export title, defaults to current timestamp
   /// [content] export content description
   /// [fileName] Zip file name (without extension), defaults to current timestamp
-  /// [fileTypes] List of file types to collect, defaults to [ZegoLogExporterFileType.txt, ZegoLogExporterFileType.log, ZegoLogExporterFileType.zip]
+  /// [fileTypes] List of file types to collect, defaults to `ZegoLogExporterFileType.txt, ZegoLogExporterFileType.log, ZegoLogExporterFileType.zip`
   /// [directories] List of directory types to collect, defaults to 5 log directories
   /// [onProgress] Optional progress callback, returns progress percentage (0.0 to 1.0)
   Future<bool> exportLogs({
-
     /// The title for the exported log file.
     String? title,
 

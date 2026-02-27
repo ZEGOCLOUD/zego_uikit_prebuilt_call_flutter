@@ -22,7 +22,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// In the [onPressed] callback, send a call invitation.
 void showCallingInvitationListSheet(
   BuildContext context, {
-
   /// The ID of the call.
   required String callID,
 

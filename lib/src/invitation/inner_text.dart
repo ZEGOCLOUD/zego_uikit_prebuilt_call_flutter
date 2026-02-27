@@ -217,7 +217,6 @@ class ZegoCallInvitationInnerText {
   String minimizedCallingPageWaitingText;
 
   ZegoCallInvitationInnerText({
-
     /// The title of the incoming video call dialog.
     String? incomingVideoCallDialogTitle,
 

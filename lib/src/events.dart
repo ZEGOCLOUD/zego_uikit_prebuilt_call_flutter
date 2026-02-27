@@ -7,7 +7,6 @@ import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
 
 class ZegoUIKitPrebuiltCallEvents {
   ZegoUIKitPrebuiltCallEvents({
-
     /// Callback triggered when the call ends.
     this.onCallEnd,
 
@@ -138,7 +137,6 @@ class ZegoCallAudioVideoEvents {
       onRemoteMicrophoneExceptionOccurred;
 
   ZegoCallAudioVideoEvents({
-
     /// Callback triggered when camera state changes.
     this.onCameraStateChanged,
 
@@ -188,7 +186,6 @@ class ZegoCallUserEvents {
   void Function(ZegoUIKitUser)? onLeave;
 
   ZegoCallUserEvents({
-
     /// Callback triggered when a user enters the room.
     this.onEnter,
 
@@ -207,7 +204,6 @@ class ZegoCallUserEvents {
 
 /// events about room
 class ZegoCallRoomEvents {
-
   /// Callback triggered when the room state changes.
   void Function(ZegoUIKitRoomState)? onStateChanged;
 
@@ -219,7 +215,6 @@ class ZegoCallRoomEvents {
   String? Function(int remainSeconds)? onTokenExpired;
 
   ZegoCallRoomEvents({
-
     /// Callback triggered when the room state changes.
     this.onStateChanged,
 
@@ -238,7 +233,6 @@ class ZegoCallRoomEvents {
 
 class ZegoCallBeautyEvents {
   ZegoCallBeautyEvents({
-
     /// Error callback for beauty effect-related errors.
     this.onError,
 

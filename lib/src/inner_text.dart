@@ -103,7 +103,6 @@ class ZegoUIKitPrebuiltCallInnerText {
   String screenBlockedSubtitle;
 
   ZegoUIKitPrebuiltCallInnerText({
-
     /// The title of the audio effects dialog.
     String? audioEffectTitle,
 

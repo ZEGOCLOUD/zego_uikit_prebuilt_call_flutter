@@ -56,7 +56,6 @@ typedef ZegoCallingPageBuilder = Widget? Function(
 
 /// Button UI configuration class for button visibility, size, icons, and styling.
 class ZegoCallButtonUIConfig {
-
   /// The size of the button.
   Size? size;
 
@@ -97,7 +96,6 @@ typedef ZegoCallInvitationNotifyDialogBuilder = Widget Function(
 
 /// Invitation popup UI configuration class for displaying invitation popups and custom builders when receiving invitations.
 class ZegoCallInvitationNotifyPopUpUIConfig {
-
   /// The padding around the popup.
   EdgeInsetsGeometry? padding;
 

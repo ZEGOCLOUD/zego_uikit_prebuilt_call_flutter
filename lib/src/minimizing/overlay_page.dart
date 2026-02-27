@@ -87,7 +87,6 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 /// ```
 class ZegoUIKitPrebuiltCallMiniOverlayPage extends StatefulWidget {
   const ZegoUIKitPrebuiltCallMiniOverlayPage({
-
     /// The key for the widget.
     super.key,
 

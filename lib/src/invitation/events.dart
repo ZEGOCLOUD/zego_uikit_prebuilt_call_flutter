@@ -12,7 +12,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 /// "incoming" represents an incoming call, indicating that someone is calling you.
 /// "outgoing" represents an outgoing call, indicating that you are calling someone else.
 class ZegoUIKitPrebuiltCallInvitationEvents {
-
   /// Error callback for invitation-related errors.
   Function(ZegoUIKitError)? onError;
 
@@ -120,7 +119,6 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   )? onOutgoingCallTimeout;
 
   ZegoUIKitPrebuiltCallInvitationEvents({
-
     /// Error callback for invitation-related errors.
     this.onError,
 

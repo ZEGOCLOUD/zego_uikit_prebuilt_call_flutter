@@ -250,8 +250,8 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// [userID] The ID of the user.
   /// [userName] The name of the user.
   /// [plugins] The list of plugins to be used. You must include [ZegoUIKitSignalingPlugin] to support the invitation feature.
-  /// [appSign] The app sign key for authentication. If [token] is not provided, this sign key will be used for authentication.
-  /// [token] Token for authentication. This is used when [appSign] is not provided or empty.
+  /// `appSign` The app sign key for authentication. If [token] is not provided, this sign key will be used for authentication.
+  /// [token] Token for authentication. This is used when `appSign` is not provided or empty.
   /// [requireConfig] Callback to obtain the call config.
   /// [events] The events of the call.
   /// [config] The configuration of the invitation.
@@ -649,8 +649,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   ///   [ZegoUIKitSignalingPlugin()],
   /// );
   /// ```
-  Future<void> useSystemCallingUI(
-    List<IZegoUIKitPlugin> plugins) async {
+  Future<void> useSystemCallingUI(List<IZegoUIKitPlugin> plugins) async {
     ZegoLoggerService.logInfo(
       'plugins size: ${plugins.length}',
       tag: 'call-invitation',

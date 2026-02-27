@@ -70,7 +70,6 @@ class ZegoCallEndEvent {
   ZegoCallInvitationData? invitationData;
 
   ZegoCallEndEvent({
-
     /// The ID of the call that ended.
     required this.callID,
 
@@ -103,7 +102,6 @@ class ZegoCallHangUpConfirmationEvent {
   BuildContext context;
 
   ZegoCallHangUpConfirmationEvent({
-
     /// The build context used for showing confirmation dialogs.
     required this.context,
   });

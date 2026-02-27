@@ -97,7 +97,7 @@ Calls can be received and invitations can be sent after this method is called.
   | userName           | The name of the user                              | `String`                                 | `Required`  |
   | plugins            | The list of plugins to be used. You must include [ZegoUIKitSignalingPlugin] to support the invitation feature.  | `List<IZegoUIKitPlugin>`                 | `Required`  |
   | appSign            | The app sign key for authentication. If [token] is not provided, this sign key will be used for authentication.                          | `String`                                 | ``            |
-  | token              | Token for authentication. This is used when [appSign] is not provided or empty.       | `String`                                 | ``            |
+  | token              | Token for authentication. This is used when `appSign` is not provided or empty.       | `String`                                 | ``            |
   | requireConfig      | Callback to obtain the call config                | `ZegoCallPrebuiltConfigQuery`            | `Optional`  |
   | events             | The events of the call                            | `ZegoUIKitPrebuiltCallEvents?`           | `Optional`  |
   | config             | The configuration of the invitation               | `ZegoCallInvitationConfig?`              | `Optional`  |

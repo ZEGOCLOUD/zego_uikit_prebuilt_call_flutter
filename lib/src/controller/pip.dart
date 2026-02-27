@@ -35,7 +35,6 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
   /// [aspectHeight] The height of the aspect ratio for PIP (default 16).
   /// Returns the status of the PIP operation.
   Future<ZegoPiPStatus> enableWhenBackground({
-
     /// The width of the aspect ratio for PIP.
     int aspectWidth = 9,
 
