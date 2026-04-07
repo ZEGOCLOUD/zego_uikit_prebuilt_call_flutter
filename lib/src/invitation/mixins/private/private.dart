@@ -431,6 +431,10 @@ class ZegoCallInvitationServicePrivateImpl
             _pageManager?.onAndroidOfflineInvitationAccepted(
               offlineCallKitCacheParameter,
             );
+          } else {
+            _pageManager?.onAndroidOfflineInvitationReceived(
+              offlineCallKitCacheParameter,
+            );
           }
         });
       }

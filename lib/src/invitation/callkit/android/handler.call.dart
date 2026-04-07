@@ -307,7 +307,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
             callType: message.callType,
             payloadData: message.customData,
             timeoutSeconds: 60,
-            accept: true,
+            accept: false,
           ),
         );
 
@@ -404,6 +404,18 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           /// After launching the app, will check in the [ZegoUIKitPrebuiltCallInvitationService.init] method.
           /// If there is exist an OfflineCallKitParams, simulate accepting the online call and join the room directly.
           /// write accept to local, wait direct accept and enter call in ZegoUIKitPrebuiltCallInvitationService.init
+
+          await ZegoUIKitCallCache().offlineCallKit.setCacheParams(
+                ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
+                  invitationID: message.invitationID,
+                  inviter: message.inviter,
+                  callID: callID,
+                  callType: message.callType,
+                  payloadData: message.customData,
+                  timeoutSeconds: 60,
+                  accept: true,
+                ),
+              );
 
           await _acceptCallInvitation(
             message: message,

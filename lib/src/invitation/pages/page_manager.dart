@@ -981,7 +981,7 @@ class ZegoCallInvitationPageManager {
     ZegoCallInvitationOfflineCallKitCacheParameterProtocol protocol,
   ) {
     ZegoLoggerService.logInfo(
-      'on android offline invitation received, '
+      'on android offline invitation accepted, '
       'protocol:${protocol.dict}',
       tag: 'call-invitation',
       subTag: 'page manager',
@@ -1002,6 +1002,25 @@ class ZegoCallInvitationPageManager {
 
     isCurrentInvitationFromAcceptedAndroidOffline = true;
     isWaitingEnterAcceptedOfflineCall = true;
+  }
+
+  void onAndroidOfflineInvitationReceived(
+    ZegoCallInvitationOfflineCallKitCacheParameterProtocol protocol,
+  ) {
+    ZegoLoggerService.logInfo(
+      'on android offline invitation received, '
+      'protocol:${protocol.dict}',
+      tag: 'call-invitation',
+      subTag: 'page manager',
+    );
+
+    onInvitationReceived({
+      'inviter': protocol.inviter,
+      'type': protocol.callType.value,
+      'data': protocol.payloadData,
+      'invitation_id': protocol.invitationID,
+      'timeout_second': protocol.timeoutSeconds,
+    });
   }
 
   void enterAcceptedOfflineCall() {
