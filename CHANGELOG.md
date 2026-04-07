@@ -1,3 +1,8 @@
+## 4.22.4
+
+- Bugs  
+    - Fixed the issue where Android offline incoming call handling logic would be incorrect
+
 ## 4.22.3
 
 - Bugs
