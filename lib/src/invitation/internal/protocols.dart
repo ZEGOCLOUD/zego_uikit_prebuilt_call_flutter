@@ -288,6 +288,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   ZegoCallInvitationOfflineCallKitCacheParameterProtocol({
     required this.invitationID,
     required this.inviter,
+    required this.invitees,
     required this.callType,
     required this.callID,
     required this.payloadData,
@@ -297,6 +298,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
 
   String invitationID = '';
   ZegoUIKitUser inviter = ZegoUIKitUser.empty();
+  List<ZegoUIKitUser> invitees = [];
   ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
   String payloadData = '';
   String callID = '';

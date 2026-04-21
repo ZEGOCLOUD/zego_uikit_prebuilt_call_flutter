@@ -320,6 +320,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoUIKit().getLocalUser().audioRoute.addListener(onAudioRouteChanged);
 
     checkRequiredParticipant();
+
+    /// check invitation participant
+    checkInvitationParticipant();
   }
 
   @override
@@ -367,6 +370,8 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       uninitAdvanceEffectsPlugins();
 
       ZegoUIKit().leaveRoom().then((_) {
+        ZegoUIKit().clearLeaveUsersCache(widget.callID);
+
         /// only effect call after leave room
         ZegoUIKit().enableCustomVideoProcessing(false);
       });
@@ -401,6 +406,82 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
         ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
       )
       ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+  }
+
+  Future<void> checkInvitationParticipant() async {
+    final callInvitationData = ZegoUIKitPrebuiltCallInvitationService()
+        .private
+        .currentCallInvitationData;
+    if (callInvitationData?.isEmpty ?? true) {
+      ZegoLoggerService.logInfo(
+        'call invitation data is empty',
+        tag: 'call',
+        subTag: 'prebuilt, checkInvitationParticipant',
+      );
+      return;
+    }
+
+    final inviter = callInvitationData?.inviter ?? ZegoUIKitUser.empty();
+    final invitees = callInvitationData?.invitees ?? [];
+    final localUser = ZegoUIKit().getLocalUser();
+
+    // 合并去重：从内存和缓存中获取离开的用户，基于 user id 去重
+    final leavedRoomUsersInMemory = ZegoUIKit().getLeaveUsers();
+    final leavedRoomUsersInCache =
+        await ZegoUIKit().getLeaveUsersCache(widget.callID);
+    final leavedRoomUsers = {
+      for (final user in [...leavedRoomUsersInMemory, ...leavedRoomUsersInCache])
+        user.id: user
+    }.values.toList();
+
+    // 计算通话中的其他成员：inviter + invitees - localUser
+    final otherMembers = <ZegoUIKitUser>[];
+    if (inviter.id.isNotEmpty && inviter.id != localUser.id) {
+      otherMembers.add(inviter);
+    }
+    for (final invitee in invitees) {
+      if (invitee.id != localUser.id) {
+        otherMembers.add(invitee);
+      }
+    }
+
+    if (otherMembers.isEmpty) {
+      ZegoLoggerService.logInfo(
+        'no other members in this call',
+        tag: 'call',
+        subTag: 'prebuilt, checkInvitationParticipant',
+      );
+      return;
+    }
+
+    // 检查所有其他成员是否都已在 leavedRoomUsers 中
+    final allOtherMembersLeft = otherMembers.every(
+      (member) => leavedRoomUsers.any((leaved) => leaved.id == member.id),
+    );
+
+    if (allOtherMembersLeft) {
+      ZegoLoggerService.logInfo(
+        'all other members have left the room, ending call',
+        tag: 'call',
+        subTag: 'prebuilt, checkInvitationParticipant',
+      );
+
+      // 复用结束通话的逻辑
+      endCallIfOnlyLocalUser();
+    } else {
+      ZegoLoggerService.logInfo(
+        'some other members are still in the room, '
+        'inviter:$inviter, '
+        'invitees:$invitees, '
+        'localUser:$localUser, '
+        'otherMembers:$otherMembers, '
+        'leavedRoomUsersInMemory:$leavedRoomUsersInMemory, '
+        'leavedRoomUsersInCache:$leavedRoomUsersInCache, '
+        'leavedRoomUsers:$leavedRoomUsers',
+        tag: 'call',
+        subTag: 'prebuilt, checkInvitationParticipant',
+      );
+    }
   }
 
   void checkRequiredParticipant() {
@@ -972,18 +1053,28 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     }
   }
 
-  void onUserLeave(List<ZegoUIKitUser> users) {
-    if (ZegoUIKit().getRemoteUsers().isNotEmpty) {
+  /// 检查是否只有本地用户，如果是则结束通话
+  void endCallIfOnlyLocalUser() {
+    final remoteUsers = ZegoUIKit().getRemoteUsers();
+    if (remoteUsers.isNotEmpty) {
+      /// still have someone in call
+      ZegoLoggerService.logInfo(
+        'remote users:${remoteUsers.map((e) => e.toShortString())}, ',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+
       return;
     }
 
+    /// only local user in call
     ZegoLoggerService.logInfo(
-      'onUserLeave',
+      'only local user in call, ',
       tag: 'call',
       subTag: 'prebuilt',
     );
 
-    //  remote users is empty
+    ///  remote users is empty
     final callEndEvent = ZegoCallEndEvent(
       callID: widget.callID,
       reason: ZegoCallEndReason.remoteHangUp,
@@ -1003,6 +1094,17 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     } else {
       defaultAction.call();
     }
+  }
+
+  void onUserLeave(List<ZegoUIKitUser> users) {
+    ZegoLoggerService.logInfo(
+      'onUserLeave:${users.map((e) => e.toShortString())}, ',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    // 复用结束通话的检查逻辑
+    endCallIfOnlyLocalUser();
   }
 
   Widget clickListener({required Widget child}) {

@@ -27,6 +27,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart'
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notification_manager.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 /// TODO: Unpack to solve the strong dependency issue of signalin
 
@@ -276,6 +277,13 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     final callSendRequestProtocol =
         ZegoCallInvitationSendRequestProtocol.fromJson(message.customData);
 
+    ZegoUIKit().clearLeaveUsersCache(callSendRequestProtocol.callID);
+    ZegoLoggerService.logInfo(
+      'cleared leave users cache for room:${callSendRequestProtocol.callID}',
+      tag: 'call-invitation',
+      subTag: 'offline',
+    );
+
     ZegoLoggerService.logInfo(
       'handle message, '
       'from other isolate:$messageFromIsolate, '
@@ -291,7 +299,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       signalingPluginNeedUninstalled: signalingPluginInstalled,
       signalingSubscriptions: signalingSubscriptions,
       appSign: appSign,
-      callID: callSendRequestProtocol.callID,
+      callSendRequestProtocol: callSendRequestProtocol,
     );
     _listenSignalingEvents(signalingSubscriptions, message: message);
 
@@ -303,6 +311,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
             invitationID: message.invitationID,
             inviter: message.inviter,
+            invitees: callSendRequestProtocol.invitees,
             callID: callSendRequestProtocol.callID,
             callType: message.callType,
             payloadData: message.customData,
@@ -349,7 +358,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
     required ValueNotifier<bool> signalingPluginNeedUninstalled,
     required List<StreamSubscription<dynamic>> signalingSubscriptions,
     required String appSign,
-    required String callID,
+    required ZegoCallInvitationSendRequestProtocol callSendRequestProtocol,
   }) {
     flutterCallkitIncomingStreamSubscription =
         FlutterCallkitIncoming.onEvent.listen((
@@ -409,7 +418,8 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
                 ZegoCallInvitationOfflineCallKitCacheParameterProtocol(
                   invitationID: message.invitationID,
                   inviter: message.inviter,
-                  callID: callID,
+                  invitees: callSendRequestProtocol.invitees,
+                  callID: callSendRequestProtocol.callID,
                   callType: message.callType,
                   payloadData: message.customData,
                   timeoutSeconds: 60,
@@ -420,7 +430,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           await _acceptCallInvitation(
             message: message,
             appSign: appSign,
-            callID: callID,
+            callID: callSendRequestProtocol.callID,
           );
 
           break;
@@ -457,6 +467,12 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         default:
           break;
       }
+
+      ZegoLoggerService.logInfo(
+        'onEvent done',
+        tag: 'call-invitation',
+        subTag: 'offline, call handler',
+      );
     });
   }
 
