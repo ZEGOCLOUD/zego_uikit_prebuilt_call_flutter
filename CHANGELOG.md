@@ -1,6 +1,11 @@
+## 4.22.5
+
+- Bugs 
+    - Fixed the issue in the offline call scenario where the local user cannot automatically end the call when all other participants leave the room.
+
 ## 4.22.4
 
-- Bugs  
+- Bugs
     - Fixed the issue where Android offline incoming call handling logic would be incorrect
 
 ## 4.22.3
