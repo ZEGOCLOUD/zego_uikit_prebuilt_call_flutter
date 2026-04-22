@@ -49,6 +49,9 @@ class ZegoUIKitPrebuiltCallConfig {
 
   ZegoCallPIPConfig pip;
 
+  /// No response auto-end configuration, automatically detects and exits the call when no one enters the call
+  ZegoCallNoResponseEndConfig noResponseEnd;
+
   /// Set advanced engine configuration, Used to enable advanced functions.
   /// For details, please consult ZEGO technical support.
   Map<String, String> advanceConfigs;
@@ -235,6 +238,7 @@ class ZegoUIKitPrebuiltCallConfig {
     this.avatarBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
+    ZegoCallNoResponseEndConfig? noResponseEnd,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
         audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
@@ -253,7 +257,8 @@ class ZegoUIKitPrebuiltCallConfig {
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
         audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
         pip = pipConfig ?? ZegoCallPIPConfig(),
-        screenSharing = ZegoCallScreenSharingConfig();
+        screenSharing = ZegoCallScreenSharingConfig(),
+        noResponseEnd = noResponseEnd ?? ZegoCallNoResponseEndConfig();
 
   @override
   String toString() {
@@ -270,6 +275,7 @@ class ZegoUIKitPrebuiltCallConfig {
         'layout:$layout, '
         'pip:$pip, '
         'screenSharing:$screenSharing, '
+        'noResponseEnd:$noResponseEnd, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
         'useFrontCameraWhenJoining:$useFrontCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
