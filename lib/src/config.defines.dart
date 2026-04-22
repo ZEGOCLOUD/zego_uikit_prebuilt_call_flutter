@@ -78,3 +78,30 @@ class ZegoCallScreenSharingAutoStopConfig {
         '}';
   }
 }
+
+/// No response auto-end configuration, automatically detects and exits the call when no one enters the call
+class ZegoCallNoResponseEndConfig {
+  /// Whether to enable the no-response auto-end mechanism
+  /// When SDK's onRoomUserUpdate.delete and onRoomStreamUpdate.delete are not sent,
+  /// automatically exit the call if no one enters within the specified time
+  /// Default value is false
+  bool enabled;
+
+  /// No-response timeout (seconds)
+  /// Automatically exit the call if no one enters within the specified time
+  /// Default value is 3 seconds
+  int timeoutSeconds;
+
+  ZegoCallNoResponseEndConfig({
+    this.enabled = false,
+    this.timeoutSeconds = 3,
+  });
+
+  @override
+  String toString() {
+    return 'ZegoCallNoResponseEndConfig:{'
+        'enabled:$enabled, '
+        'timeoutSeconds:$timeoutSeconds, '
+        '}';
+  }
+}

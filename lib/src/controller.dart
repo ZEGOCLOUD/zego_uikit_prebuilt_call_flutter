@@ -2,12 +2,12 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
+// Package imports:
+import 'package:floating/floating.dart';
+
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-// Package imports:
-import 'package:floating/floating.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -36,33 +36,33 @@ part 'controller/audio_video.dart';
 
 part 'controller/invitation.dart';
 
-part 'controller/screen_sharing.dart';
+part 'controller/log.dart';
 
 part 'controller/minimize.dart';
 
-part 'controller/pip.dart';
-
-part 'controller/log.dart';
-
 part 'controller/permission.dart';
 
-part 'controller/user.dart';
-
-part 'controller/room.dart';
+part 'controller/pip.dart';
 
 part 'controller/private/audio_video.dart';
 
 part 'controller/private/minimize.dart';
 
+part 'controller/private/permission.dart';
+
 part 'controller/private/pip.dart';
 
-part 'controller/private/user.dart';
-
-part 'controller/private/permission.dart';
+part 'controller/private/private.dart';
 
 part 'controller/private/screen_sharing.dart';
 
-part 'controller/private/private.dart';
+part 'controller/private/user.dart';
+
+part 'controller/room.dart';
+
+part 'controller/screen_sharing.dart';
+
+part 'controller/user.dart';
 
 /// Used to control the call functionality.
 ///
@@ -88,7 +88,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
-  String get version => "4.22.5";
+  String get version => "4.23.0";
 
   /// This function is used to end the current call.
   ///

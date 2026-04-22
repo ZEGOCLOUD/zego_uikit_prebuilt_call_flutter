@@ -1,6 +1,11 @@
+## 4.23
+
+- Features
+    - Automatically ending a call when there is no response in call in `ZegoCallNoResponseEndConfig.timeoutSeconds` seconds, default is disabled.
+
 ## 4.22.5
 
-- Bugs 
+- Bugs
     - Fixed the issue in the offline call scenario where the local user cannot automatically end the call when all other participants leave the room.
 
 ## 4.22.4

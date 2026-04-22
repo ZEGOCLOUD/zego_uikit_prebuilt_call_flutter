@@ -138,6 +138,9 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
   DateTime? durationStartTime;
   var durationNotifier = ValueNotifier<Duration>(Duration.zero);
 
+  /// No response auto-end timer, automatically exits the call when SDK's onRoomUserUpdate.delete and onRoomStreamUpdate.delete are not sent
+  Timer? noResponseEndTimer;
+
   final popUpManager = ZegoCallPopUpManager();
 
   // Proximity sensor related variables
@@ -323,6 +326,53 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
     /// check invitation participant
     checkInvitationParticipant();
+
+    /// Start no response auto-end timer (if enabled)
+    _startNoResponseEndTimer();
+  }
+
+  /// Start no response auto-end timer
+  void _startNoResponseEndTimer() {
+    if (!widget.config.noResponseEnd.enabled) {
+      ZegoLoggerService.logInfo(
+        'no response end timer is disabled',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'start no response end timer, timeout: ${widget.config.noResponseEnd.timeoutSeconds} seconds',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    noResponseEndTimer?.cancel();
+    noResponseEndTimer = Timer(
+      Duration(seconds: widget.config.noResponseEnd.timeoutSeconds),
+      () {
+        ZegoLoggerService.logInfo(
+          'no response end timer triggered, checking if should end call',
+          tag: 'call',
+          subTag: 'prebuilt',
+        );
+        endCallIfOnlyLocalUser();
+      },
+    );
+  }
+
+  /// Cancel no response auto-end timer
+  void _cancelNoResponseEndTimer() {
+    if (noResponseEndTimer != null && noResponseEndTimer!.isActive) {
+      ZegoLoggerService.logInfo(
+        'no response end timer cancelled',
+        tag: 'call',
+        subTag: 'prebuilt',
+      );
+      noResponseEndTimer?.cancel();
+      noResponseEndTimer = null;
+    }
   }
 
   @override
@@ -352,6 +402,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     ZegoUIKit().getLocalUser().audioRoute.removeListener(onAudioRouteChanged);
 
     durationTimer?.cancel();
+    _cancelNoResponseEndTimer();
 
     controller.pip.cancelBackground();
     if (ZegoCallMiniOverlayPageState.inCallMinimized !=
@@ -371,6 +422,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
       ZegoUIKit().leaveRoom().then((_) {
         ZegoUIKit().clearLeaveUsersCache(widget.callID);
+        ZegoUIKit().clearDeletedStreamUserIDs(widget.callID);
 
         /// only effect call after leave room
         ZegoUIKit().enableCustomVideoProcessing(false);
@@ -405,7 +457,24 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ..add(
         ZegoUIKit().getMeRemovedFromRoomStream().listen(onMeRemovedFromRoom),
       )
-      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave));
+      ..add(ZegoUIKit().getUserLeaveStream().listen(onUserLeave))
+      ..add(ZegoUIKit().getUserJoinStream().listen(onUserJoin));
+  }
+
+  /// Called when a user joins the call, cancels the no response auto-end timer
+  void onUserJoin(List<ZegoUIKitUser> users) {
+    if (users.isEmpty) {
+      return;
+    }
+
+    ZegoLoggerService.logInfo(
+      'onUserJoin:${users.map((e) => e.toShortString())}, cancelling no response end timer',
+      tag: 'call',
+      subTag: 'prebuilt',
+    );
+
+    // Cancel no response auto-end timer because a new user has joined
+    _cancelNoResponseEndTimer();
   }
 
   Future<void> checkInvitationParticipant() async {
@@ -425,27 +494,29 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     final invitees = callInvitationData?.invitees ?? [];
     final localUser = ZegoUIKit().getLocalUser();
 
-    // 合并去重：从内存和缓存中获取离开的用户，基于 user id 去重
+    // Merge and deduplicate: get left users from memory and cache, deduplicate based on user id
     final leavedRoomUsersInMemory = ZegoUIKit().getLeaveUsers();
     final leavedRoomUsersInCache =
         await ZegoUIKit().getLeaveUsersCache(widget.callID);
+    final deletedStreamUsersInCache =
+        await ZegoUIKit().getDeletedStreamUserIDs(widget.callID);
     final leavedRoomUsers = {
-      for (final user in [...leavedRoomUsersInMemory, ...leavedRoomUsersInCache])
+      for (final user in [...leavedRoomUsersInMemory, ...leavedRoomUsersInCache, ...deletedStreamUsersInCache])
         user.id: user
     }.values.toList();
 
-    // 计算通话中的其他成员：inviter + invitees - localUser
-    final otherMembers = <ZegoUIKitUser>[];
+    // Calculate other members in the call: inviter + invitees - localUser
+    final otherMembersInCall = <ZegoUIKitUser>[];
     if (inviter.id.isNotEmpty && inviter.id != localUser.id) {
-      otherMembers.add(inviter);
+      otherMembersInCall.add(inviter);
     }
     for (final invitee in invitees) {
       if (invitee.id != localUser.id) {
-        otherMembers.add(invitee);
+        otherMembersInCall.add(invitee);
       }
     }
 
-    if (otherMembers.isEmpty) {
+    if (otherMembersInCall.isEmpty) {
       ZegoLoggerService.logInfo(
         'no other members in this call',
         tag: 'call',
@@ -454,33 +525,39 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       return;
     }
 
-    // 检查所有其他成员是否都已在 leavedRoomUsers 中
-    final allOtherMembersLeft = otherMembers.every(
+    // Check if all other members have left
+    final allOtherMembersInCallLeft = otherMembersInCall.every(
       (member) => leavedRoomUsers.any((leaved) => leaved.id == member.id),
     );
 
-    if (allOtherMembersLeft) {
+    if (allOtherMembersInCallLeft) {
       ZegoLoggerService.logInfo(
-        'all other members have left the room, ending call',
+        'all other members in call have left the room, ending call',
         tag: 'call',
         subTag: 'prebuilt, checkInvitationParticipant',
       );
 
-      // 复用结束通话的逻辑
+      // Cancel no response auto-end timer
+      _cancelNoResponseEndTimer();
+
+      // Reuse the end call logic
       endCallIfOnlyLocalUser();
     } else {
       ZegoLoggerService.logInfo(
         'some other members are still in the room, '
-        'inviter:$inviter, '
-        'invitees:$invitees, '
-        'localUser:$localUser, '
-        'otherMembers:$otherMembers, '
-        'leavedRoomUsersInMemory:$leavedRoomUsersInMemory, '
-        'leavedRoomUsersInCache:$leavedRoomUsersInCache, '
-        'leavedRoomUsers:$leavedRoomUsers',
+        'otherMembersInCall:${otherMembersInCall.map((e) => e.toShortString())}, '
+        'leavedRoomUsers:${leavedRoomUsers.map((e) => e.toShortString())}, '
+        '\n---'
+        'inviter:${inviter.toShortString()}, '
+        'invitees:${invitees.map((e) => e.toShortString())}, '
+        'localUser:${localUser.toShortString()}, '
+        'leavedRoomUsersInMemory:${leavedRoomUsersInMemory.map((e) => e.toShortString())}, '
+        'leavedRoomUsersInCache:${leavedRoomUsersInCache.map((e) => e.toShortString())}, '
+        'deletedStreamUsersInCache:${deletedStreamUsersInCache.map((e) => e.toShortString())}, ',
         tag: 'call',
         subTag: 'prebuilt, checkInvitationParticipant',
       );
+      return;
     }
   }
 
