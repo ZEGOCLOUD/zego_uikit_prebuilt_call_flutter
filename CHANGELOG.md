@@ -1,4 +1,9 @@
-## 4.23
+## 4.23.1
+
+- Bugs
+    - Fixed the issue where the second call is automatically hung up after enable `ZegoCallNoResponseEndConfig.enabled` .
+
+## 4.23.0
 
 - Features
     - Automatically ending a call when there is no response in call in `ZegoCallNoResponseEndConfig.timeoutSeconds` seconds, default is disabled.
