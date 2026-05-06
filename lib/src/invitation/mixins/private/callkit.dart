@@ -48,6 +48,9 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       subTag: 'callkit',
     );
 
+    /// Close the offline incoming call pop-up window
+    ZegoCallPluginPlatform.instance.dismissAllNotifications();
+
     _myPageManager = pageManager;
 
     _setCallKitVariables({
