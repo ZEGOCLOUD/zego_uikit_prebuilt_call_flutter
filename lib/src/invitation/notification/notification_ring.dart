@@ -76,7 +76,7 @@ class ZegoRingtone {
           /// not silenced
           category: AVAudioSessionCategory.ambient,
           options: const {
-            AVAudioSessionOptions.mixWithOthers,
+            // AVAudioSessionOptions.mixWithOthers,
 
             // /// Use defaultToSpeaker to prevent background music from being interrupted when category is playAndRecord,.
             // /// Without this, PlayAndRecord defaults to the receiver (earpiece) on iPhone,
