@@ -1,6 +1,7 @@
 # CLAUDE.md
 
-> **Note**: This library is part of the `zego_uikits` monorepo. See the root [CLAUDE.md](https://github.com/your-org/zego_uikits/blob/main/CLAUDE.md) for cross-library dependencies and architecture overview.
+> **Note**: This library is part of the `zego_uikits` monorepo.
+> For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -84,6 +85,8 @@ flutter pub run import_sorter:main
 ```
 
 ## Architecture
+
+> For comprehensive architecture details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ### Core APIs
 

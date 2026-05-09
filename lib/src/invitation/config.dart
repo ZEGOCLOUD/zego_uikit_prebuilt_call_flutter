@@ -320,15 +320,19 @@ class ZegoCallInvitationInviterUIConfig {
   /// microphone button
   ZegoCallButtonUIConfig? microphoneButton;
 
-  /// Whether to open the microphone when on calling
-  /// default value is true
+  /// Whether to open the microphone when on calling.
+  ///
+  /// This setting will override [ZegoCallConfig.turnOnMicrophoneWhenJoining] when in call invitation scenario.
+  /// The default value is `true`.
   bool defaultMicrophoneOn;
 
   /// camera button
   ZegoCallButtonUIConfig? cameraButton;
 
-  /// Whether to open the camera when on calling
-  /// default value is true
+  /// Whether to open the camera when on calling.
+  ///
+  /// This setting will override [ZegoCallConfig.turnOnCameraWhenJoining] when in call invitation scenario.
+  /// The default value is `true`.
   bool defaultCameraOn;
 
   /// camera switch button
@@ -337,8 +341,10 @@ class ZegoCallInvitationInviterUIConfig {
   /// speaker button
   ZegoCallButtonUIConfig? speakerButton;
 
-  /// Whether to open the speaker when on calling
-  /// default value is false
+  /// Whether to open the speaker when on calling.
+  ///
+  /// This setting will override [ZegoCallConfig.useSpeakerWhenJoining] when in call invitation scenario.
+  /// The default value is `false`.
   bool defaultSpeakerOn;
 
   /// show avatar or not
