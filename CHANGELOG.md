@@ -1,4 +1,4 @@
-## 4.23.2
+## 4.23.2/4.23.3
 
 - Bugs
     - When clicking the icon to activate the application, the offline incoming call pop-up window will automatically close.

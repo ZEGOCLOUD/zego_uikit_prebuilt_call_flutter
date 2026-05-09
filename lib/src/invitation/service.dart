@@ -8,7 +8,6 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
@@ -16,7 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
@@ -43,19 +42,16 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/notification/notificatio
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/plugins.dart';
+
 import 'callkit/android/defines.dart';
 import 'callkit/android/entry_point.dart';
 import 'internal/permission.dart';
 
-part 'mixins/private/callkit.dart';
-
-part 'mixins/private/ios.callkit.dart';
-
-part 'mixins/private/private.dart';
-
 part 'mixins/invitation.dart';
-
+part 'mixins/private/callkit.dart';
 part 'mixins/private/invitation.dart';
+part 'mixins/private/ios.callkit.dart';
+part 'mixins/private/private.dart';
 
 /// To receive the call invites from others and let the calling notification show on the top bar when receiving it, you will need to initialize the call invitation service (ZegoUIKitPrebuiltCallInvitationService) first.
 ///
