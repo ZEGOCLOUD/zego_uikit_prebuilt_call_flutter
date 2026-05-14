@@ -287,6 +287,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       'handle message, '
       'from other isolate:$messageFromIsolate, '
       'message:$message, '
+      'handlerInfo:${message.handlerInfo}, '
       'protocol:${callSendRequestProtocol.toJson()}, ',
       tag: 'call-invitation',
       subTag: 'offline, call handler',
@@ -316,6 +317,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
             payloadData: message.customData,
             timeoutSeconds: 60,
             accept: false,
+            requiredInviter: message.handlerInfo?.requiredInviter,
           ),
         );
 
@@ -423,6 +425,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
                   payloadData: message.customData,
                   timeoutSeconds: 60,
                   accept: true,
+                  requiredInviter: message.handlerInfo?.requiredInviter,
                 ),
               );
 

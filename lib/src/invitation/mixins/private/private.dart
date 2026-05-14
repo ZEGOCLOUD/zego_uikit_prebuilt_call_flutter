@@ -350,6 +350,7 @@ class ZegoCallInvitationServicePrivateImpl
                   .private
                   .innerText
                   .missedAudioCallNotificationContent,
+          requiredInviter: _data!.config.requiredInviter,
         ).toJsonString(),
       );
 

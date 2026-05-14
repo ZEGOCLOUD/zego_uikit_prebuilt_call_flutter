@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
@@ -102,9 +103,15 @@ class ZegoCallInvitationPageManager {
   ZegoCallInvitationLocalParameter _localInvitationParameter =
       ZegoCallInvitationLocalParameter.empty();
 
+  /// 离线呼叫的 requiredInviter 配置（从缓存中读取）
+  ZegoCallRequiredInviterConfig? _offlineRequiredInviter;
+
   bool get appInBackground => _appInBackground;
 
   ZegoCallInvitationData get invitationData => _invitationData;
+
+  /// 获取 offline requiredInviter 配置（优先使用离线缓存的，如果没有则使用 callInvitationData.config 中的）
+  ZegoCallRequiredInviterConfig? get offlineRequiredInviter => _offlineRequiredInviter;
 
   bool get isAdvanceInvitationMode =>
       ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode;
@@ -1000,6 +1007,9 @@ class ZegoCallInvitationPageManager {
       ..timeoutSeconds = protocol.timeoutSeconds
       ..type = protocol.callType;
 
+    /// 存储离线呼叫的 requiredInviter 配置
+    _offlineRequiredInviter = protocol.requiredInviter;
+
     isCurrentInvitationFromAcceptedAndroidOffline = true;
     isWaitingEnterAcceptedOfflineCall = true;
   }
@@ -1013,6 +1023,9 @@ class ZegoCallInvitationPageManager {
       tag: 'call-invitation',
       subTag: 'page manager',
     );
+
+    /// 存储离线呼叫的 requiredInviter 配置
+    _offlineRequiredInviter = protocol.requiredInviter;
 
     onInvitationReceived({
       'inviter': protocol.inviter,

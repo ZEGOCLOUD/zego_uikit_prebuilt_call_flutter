@@ -205,7 +205,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
           tag: 'call-invitation',
           subTag: 'calling page',
         );
-        ZegoLoggerService.logError(
+        ZegoLoggerService.logWarn(
           'In order to correct the issue of video rendering, the PIP is reset to '
           '${widget.callInvitationData.config.pip.iOS.support ? 'enable' : 'disable'} '
           'this time',
@@ -223,29 +223,58 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
       tag: 'call-invitation',
       subTag: 'calling page',
     );
-    if (!widget.pageManager.isGroupCall) {
-      /// 1v1 call
-      final inviter =
-          widget.pageManager.invitationData.inviter ?? ZegoUIKitUser.empty();
-      if (!inviter.isEmpty() && inviter.id != ZegoUIKit().getLocalUser().id) {
-        /// not local request
-        if (callConfig.user.requiredUsers.users.isEmpty) {
-          callConfig.user.requiredUsers.users = [
-            widget.pageManager.invitationData.inviter!,
-          ];
-          ZegoLoggerService.logInfo(
-            'requiredUsers.users set as (${callConfig.user.requiredUsers.users})',
-            tag: 'call-invitation',
-            subTag: 'calling page',
-          );
-        } else {
-          ZegoLoggerService.logInfo(
-            'config.user.requiredUsers.users had value(${callConfig.user.requiredUsers.users}) before, would not replace it',
-            tag: 'call-invitation',
-            subTag: 'calling page',
-          );
+
+    final inviter =
+        widget.pageManager.invitationData.inviter ?? ZegoUIKitUser.empty();
+    if (!inviter.isEmpty() && inviter.id != ZegoUIKit().getLocalUser().id) {
+      if (callConfig.user.requiredUsers.users.isEmpty) {
+        /// 处理离线呼叫的 requiredInviter 配置
+        final offlineRequiredInviter =
+            widget.pageManager.offlineRequiredInviter;
+        ZegoLoggerService.logInfo(
+          'apply offline requiredInviter config: $offlineRequiredInviter',
+          tag: 'call-invitation',
+          subTag: 'calling page',
+        );
+
+        if (null != offlineRequiredInviter) {
+          /// 优先使用离线缓存的 requiredInviter 配置
+          final isOneOnOneCall = !widget.pageManager.isGroupCall;
+          final shouldEnableRequiredInviter = (isOneOnOneCall &&
+                  offlineRequiredInviter.enabledOnOneOnOneCall) ||
+              (!isOneOnOneCall && offlineRequiredInviter.enabledOnGroupCall);
+
+          if (shouldEnableRequiredInviter) {
+            callConfig.user.requiredUsers.enabled = true;
+            callConfig.user.requiredUsers.detectSeconds =
+                offlineRequiredInviter.detectSeconds;
+            callConfig.user.requiredUsers.users = [inviter];
+            ZegoLoggerService.logInfo(
+              'requiredUsers.users set as ($inviter) from offline requiredInviter',
+              tag: 'call-invitation',
+              subTag: 'calling page',
+            );
+          } else {
+            ZegoLoggerService.logInfo(
+              'offline requiredInviter config is disabled, would not set requiredUsers.users',
+              tag: 'call-invitation',
+              subTag: 'calling page',
+            );
+          }
         }
+      } else {
+        ZegoLoggerService.logInfo(
+          'config.user.requiredUsers.users had value(${callConfig.user.requiredUsers.users}) before, would not replace it',
+          tag: 'call-invitation',
+          subTag: 'calling page',
+        );
       }
+    } else {
+      ZegoLoggerService.logInfo(
+        'inviter is local user, would not set requiredUsers.users',
+        tag: 'call-invitation',
+        subTag: 'calling page',
+      );
     }
 
     final prebuiltCall = ZegoUIKitPrebuiltCall(

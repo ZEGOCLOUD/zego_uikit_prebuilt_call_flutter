@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/shared_pref_defines.dart';
@@ -51,6 +52,9 @@ class HandlerPrivateInfo {
   String missedVideoCallNotificationContent;
   String missedAudioCallNotificationContent;
 
+  /// required inviter config
+  ZegoCallRequiredInviterConfig? requiredInviter;
+
   HandlerPrivateInfo({
     required this.appID,
     required this.token,
@@ -82,6 +86,7 @@ class HandlerPrivateInfo {
     this.missedGroupAudioCallNotificationContent = '',
     this.missedVideoCallNotificationContent = '',
     this.missedAudioCallNotificationContent = '',
+    this.requiredInviter,
   });
 
   factory HandlerPrivateInfo.fromJson(Map<String, dynamic> json) {
@@ -116,6 +121,11 @@ class HandlerPrivateInfo {
       missedGroupAudioCallNotificationContent: json['amdncga'] ?? '',
       missedVideoCallNotificationContent: json['amdncv'] ?? '',
       missedAudioCallNotificationContent: json['amdnca'] ?? '',
+      requiredInviter: null != json['ri']
+          ? ZegoCallRequiredInviterConfig.fromJson(
+              json['ri'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
@@ -151,6 +161,7 @@ class HandlerPrivateInfo {
       'amdncga': missedGroupAudioCallNotificationContent,
       'amdncv': missedVideoCallNotificationContent,
       'amdnca': missedAudioCallNotificationContent,
+      if (requiredInviter != null) 'ri': requiredInviter!.toJson(),
     };
   }
 
@@ -187,6 +198,7 @@ class HandlerPrivateInfo {
         'missedGroupAudioCallNotificationContent:$missedGroupAudioCallNotificationContent,'
         'missedVideoCallNotificationContent:$missedVideoCallNotificationContent,'
         'missedAudioCallNotificationContent:$missedAudioCallNotificationContent,'
+        'requiredInviter:$requiredInviter,'
         '}';
   }
 

@@ -1,3 +1,10 @@
+## 4.24.0
+
+- Features
+
+    - Added inviter timeout detection feature with `ZegoCallRequiredInviterConfig`, supporting configuration of detection rules for one-on-one/group calls. If the inviter has not joined
+      after [detectSeconds] after entering the call, the call will be ended with `ZegoCallEndReason.abandoned`.
+
 ## 4.23.2/4.23.3
 
 - Bugs
