@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 class ZegoCallInvitationProtocolKey {
@@ -294,6 +295,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
     required this.payloadData,
     required this.timeoutSeconds,
     this.accept = false,
+    this.requiredInviter,
   });
 
   String invitationID = '';
@@ -305,6 +307,9 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
   bool accept = false;
   int timeoutSeconds = 60;
   int datetime = 0;
+
+  /// required inviter config
+  ZegoCallRequiredInviterConfig? requiredInviter;
 
   bool get isEmpty => invitationID.isEmpty || payloadData.isEmpty;
 
@@ -359,6 +364,13 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
     timeoutSeconds = dict['timeout'] as int? ?? 60;
     accept = dict['accept'] as bool? ?? false;
     datetime = dict['datetime'] as int? ?? 0;
+
+    /// parse required inviter config
+    if (dict.containsKey('required_inviter')) {
+      requiredInviter = ZegoCallRequiredInviterConfig.fromJson(
+        dict['required_inviter'] as Map<String, dynamic>? ?? {},
+      );
+    }
   }
 
   String toJson() {
@@ -374,5 +386,7 @@ class ZegoCallInvitationOfflineCallKitCacheParameterProtocol {
         'accept': accept,
         'timeout': timeoutSeconds,
         'datetime': datetime,
+        if (requiredInviter != null)
+          'required_inviter': requiredInviter!.toJson(),
       };
 }

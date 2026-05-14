@@ -16,6 +16,7 @@ class ZegoCallInvitationConfig {
       ZegoCallInvitationPermission.camera,
       ZegoCallInvitationPermission.microphone,
     ],
+    ZegoCallRequiredInviterConfig? requiredInviter,
     ZegoCallInvitationInCallingConfig? inCalling,
     ZegoCallInvitationOfflineConfig? offline,
     ZegoCallSystemConfirmDialogConfig? systemWindowConfirmDialog,
@@ -32,6 +33,7 @@ class ZegoCallInvitationConfig {
   })  : systemWindowConfirmDialog =
             systemWindowConfirmDialog ?? ZegoCallSystemConfirmDialogConfig(),
         offline = offline ?? ZegoCallInvitationOfflineConfig(),
+        requiredInviter = requiredInviter ?? ZegoCallRequiredInviterConfig(),
         inCalling = inCalling ??
             ZegoCallInvitationInCallingConfig(
               canInvitingInCalling: canInvitingInCalling,
@@ -82,6 +84,9 @@ class ZegoCallInvitationConfig {
   ///  missed call config
   ZegoCallInvitationMissedCallConfig missedCall;
 
+  /// required inviter config
+  ZegoCallRequiredInviterConfig requiredInviter;
+
   /// When requests systemAlertWindows in Android, should the confirmation box pop up first?
   /// Default will pop-up a confirmation box. If not, please set it to null.
   ZegoCallSystemConfirmDialogConfig? systemWindowConfirmDialog;
@@ -99,6 +104,7 @@ class ZegoCallInvitationConfig {
         'calling:$inCalling, '
         'offline:$offline, '
         'missedCall:$missedCall, '
+        'requiredInviter:$requiredInviter, '
         'systemWindowConfirmDialog:$systemWindowConfirmDialog, '
         'pip:$pip, '
         'endCallWhenInitiatorLeave:$endCallWhenInitiatorLeave, '
@@ -130,6 +136,61 @@ class ZegoCallInvitationOfflineConfig {
   String toString() {
     return 'ZegoCallInvitationOfflineConfig:{'
         'autoEnterAcceptedOfflineCall:$autoEnterAcceptedOfflineCall, '
+        '}';
+  }
+}
+
+/// Necessary participants to inviter in the call.
+///
+/// If the inviter have not joined after
+/// [detectSeconds] after entering the call,
+/// the call will be triggered [ZegoUIKitPrebuiltCallEvents.onCallEnd] with [ZegoCallEndReason.abandoned]
+class ZegoCallRequiredInviterConfig {
+  ZegoCallRequiredInviterConfig({
+    this.detectSeconds = 2,
+    this.enabledOnOneOnOneCall = true,
+    this.enabledOnGroupCall = true,
+  });
+
+  /// is enable detection or not on one on one call
+  bool enabledOnOneOnOneCall;
+
+  /// is enable detection or not on group call
+  bool enabledOnGroupCall;
+
+  /// The time to start the detection, when it arrives, it will start to
+  /// detect whether inviter have entered the call.
+  ///
+  /// Note that this duration cannot be too short,
+  /// otherwise if the inviter enters the call relatively late under poor
+  /// network conditions, it will cause current call to be ended.
+  int detectSeconds;
+
+  /// Creates a new ZegoCallRequiredInviterConfig instance from JSON
+  factory ZegoCallRequiredInviterConfig.fromJson(Map<String, dynamic> json) {
+    return ZegoCallRequiredInviterConfig(
+      detectSeconds: json['detect_seconds'] as int? ?? 2,
+      enabledOnOneOnOneCall:
+          json['enabled_on_one_on_one_call'] as bool? ?? true,
+      enabledOnGroupCall: json['enabled_on_group_call'] as bool? ?? true,
+    );
+  }
+
+  /// Converts this instance to JSON format
+  Map<String, dynamic> toJson() {
+    return {
+      'detect_seconds': detectSeconds,
+      'enabled_on_one_on_one_call': enabledOnOneOnOneCall,
+      'enabled_on_group_call': enabledOnGroupCall,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'ZegoCallRequiredInviterConfig:{'
+        'detectSeconds:$detectSeconds, '
+        'enabledOnOneOnOneCall:$enabledOnOneOnOneCall, '
+        'enabledOnGroupCall:$enabledOnGroupCall, '
         '}';
   }
 }
@@ -835,6 +896,7 @@ class ZegoCallAndroidNotificationChannelConfig {
     this.sound = '',
     this.vibrate = true,
   });
+
   @override
   toString() {
     return 'ZegoCallAndroidNotificationChannelConfig:{'

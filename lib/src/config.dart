@@ -913,6 +913,13 @@ class ZegoCallUserConfig {
 
   /// necessary user in the call.
   ZegoCallRequiredUserConfig requiredUsers;
+
+  @override
+  String toString() {
+    return '{'
+        'requiredUsers:$requiredUsers, '
+        '}';
+  }
 }
 
 class ZegoCallDeviceConfig {
@@ -933,13 +940,13 @@ class ZegoCallDeviceConfig {
 /// Necessary participants to participate in the call.
 ///
 /// If the participant have not joined after
-/// [requiredParticipantCheckTimeoutSeconds] after entering the call,
+/// [detectSeconds] after entering the call,
 /// the call will be triggered [ZegoUIKitPrebuiltCallEvents.onCallEnd] with [ZegoCallEndReason.abandoned]
 class ZegoCallRequiredUserConfig {
   ZegoCallRequiredUserConfig({
     this.users = const [],
     this.detectSeconds = 5,
-    this.detectInDebugMode = false,
+    this.detectInDebugMode = true,
     this.enabled = false,
   });
 

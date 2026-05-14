@@ -589,6 +589,12 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
     if (isChecking) {
       updateRequiredUsersEnteredStatus();
       if (!isRequiredUserAllEntered) {
+        ZegoLoggerService.logWarn(
+          'requiredUsers not all entered, '
+          'hangUpIfRequiredUsersNotAllEntered in ${widget.config.user.requiredUsers.detectSeconds} seconds',
+          tag: 'call',
+          subTag: 'prebuilt, checkRequiredParticipant',
+        );
         Timer(
           Duration(
             seconds: widget.config.user.requiredUsers.detectSeconds,
@@ -1818,6 +1824,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   void updateRequiredUsersEnteredStatus() {
     if (widget.config.user.requiredUsers.users.isEmpty) {
+      ZegoLoggerService.logInfo(
+        'no requiredUsers, skip updateRequiredUsersEnteredStatus',
+        tag: 'call',
+        subTag: 'prebuilt, checkRequiredParticipant',
+      );
       return;
     }
 
@@ -1829,6 +1840,11 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           remoteUsers.indexWhere((user) => user.id == requiredParticipant.id);
       requiredUsersEnteredStatus[requiredParticipant.id] = -1 != index;
     }
+    ZegoLoggerService.logInfo(
+      'requiredUsersEnteredStatus:$requiredUsersEnteredStatus',
+      tag: 'call',
+      subTag: 'prebuilt, checkRequiredParticipant',
+    );
   }
 
   void hangUpIfRequiredUsersNotAllEntered() {
@@ -1838,7 +1854,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ZegoLoggerService.logWarn(
         'not all requiredUsers entered($requiredUsersEnteredStatus), call end.',
         tag: 'call',
-        subTag: 'prebuilt',
+        subTag: 'prebuilt, checkRequiredParticipant',
       );
 
       ZegoUIKitPrebuiltCallController().hangUp(
@@ -1850,7 +1866,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       ZegoLoggerService.logInfo(
         'all requiredUsers entered($requiredUsersEnteredStatus)',
         tag: 'call',
-        subTag: 'prebuilt',
+        subTag: 'prebuilt, checkRequiredParticipant',
       );
     }
   }
