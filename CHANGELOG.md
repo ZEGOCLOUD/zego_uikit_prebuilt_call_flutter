@@ -1,3 +1,8 @@
+## 4.24.1
+
+- Bugs
+    - Fixed the issue where the offline pop-up window on the called end did not automatically disappear after the offline call was canceled by the called end
+
 ## 4.24.0
 
 - Features
