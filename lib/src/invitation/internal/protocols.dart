@@ -55,6 +55,10 @@ class ZegoCallInvitationSendRequestProtocol
   });
 
   ZegoCallInvitationSendRequestProtocol.fromJson(String json) {
+    if (json.isEmpty) {
+      return;
+    }
+
     var dict = <String, dynamic>{};
     try {
       dict = jsonDecode(json) as Map<String, dynamic>;
