@@ -79,7 +79,7 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       );
       if (signalingPluginNeedInstalled.value) {
         await _installSignalingPlugin(
-          handlerInfo: message.handlerInfo,
+          message: message,
           appSign: appSign,
         );
       }
@@ -165,20 +165,6 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
       tag: 'call-invitation',
       subTag: 'offline, call handler',
     );
-
-    /// After setting, in the scenario of network disconnection,
-    /// for calls that have been canceled/ended,
-    /// zim says it will return the cancel/end event
-    await ZegoUIKit()
-        .getSignalingPlugin()
-        .setAdvancedConfig('zim_voip_call_id', message.invitationID)
-        .then((_) {
-      ZegoLoggerService.logInfo(
-        'set advanced config done',
-        tag: 'call-invitation',
-        subTag: 'offline, call handler',
-      );
-    });
 
     ZegoUIKit().reporter().report(
       event: ZegoCallReporter.eventCalleeRespondInvitation,
@@ -671,9 +657,10 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
   }
 
   Future<void> _installSignalingPlugin({
-    required HandlerPrivateInfo? handlerInfo,
+    required ZegoCallAndroidCallBackgroundMessageHandlerMessage message,
     required String appSign,
   }) async {
+    final handlerInfo = message.handlerInfo;
     if (null == handlerInfo) {
       removePreferenceValue(serializationKeyHandlerInfo);
 
@@ -712,6 +699,20 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           int.tryParse(handlerInfo.appID) ?? 0,
           appSign: appSign,
         );
+
+    /// After setting, in the scenario of network disconnection,
+    /// for calls that have been canceled/ended,
+    /// zim says it will return the cancel/end event
+    await ZegoUIKit()
+        .getSignalingPlugin()
+        .setAdvancedConfig('zim_voip_call_id', message.invitationID)
+        .then((_) {
+      ZegoLoggerService.logInfo(
+        'set advanced config done',
+        tag: 'call-invitation',
+        subTag: 'offline, call handler',
+      );
+    });
 
     ZegoLoggerService.logInfo(
       'login signaling plugin',
