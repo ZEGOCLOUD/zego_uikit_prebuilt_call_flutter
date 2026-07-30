@@ -1,3 +1,7 @@
+## 4.24.3
+
+- Fixed the issue where the required inviter timeout detection timer was not created when accepting and rejecting the same call concurrently.
+
 ## 4.24.2
 
 - Bugs
