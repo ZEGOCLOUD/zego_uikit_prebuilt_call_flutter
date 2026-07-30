@@ -110,8 +110,12 @@ class ZegoCallInvitationPageManager {
 
   ZegoCallInvitationData get invitationData => _invitationData;
 
-  /// 获取 offline requiredInviter 配置（优先使用离线缓存的，如果没有则使用 callInvitationData.config 中的）
-  ZegoCallRequiredInviterConfig? get offlineRequiredInviter => _offlineRequiredInviter;
+  /// 获取 requiredInviter 配置。
+  ///
+  /// 离线呼叫时优先使用随 CallKit 缓存的配置；在线呼叫或缓存不存在时，
+  /// 使用初始化时传入的配置，避免进入通话页后无法设置 requiredUsers。
+  ZegoCallRequiredInviterConfig? get offlineRequiredInviter =>
+      _offlineRequiredInviter ?? callInvitationData.config.requiredInviter;
 
   bool get isAdvanceInvitationMode =>
       ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode;
