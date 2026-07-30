@@ -1,3 +1,8 @@
+## 4.24.2
+
+- Bugs
+    - fix flutter_callkit_incoming version to 3.0.0
+
 ## 4.24.1
 
 - Bugs

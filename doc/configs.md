@@ -84,6 +84,10 @@
 > [ZegoCallInvitationOfflineConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationOfflineConfig-class.html)
 
 - bool `autoEnterAcceptedOfflineCall`:
+  > This manual-entry flow is effective only for Android offline calls accepted
+  > from the system calling UI. iOS CallKit accepted calls enter through the
+  > iOS CallKit handling flow and are not controlled by this setting.
+  >
   > Due to some time-consuming and waiting operations, such as data loading
   > or user login in the App.
   > so in certain situations, it may not be appropriate to navigate to
@@ -94,7 +98,7 @@
   > Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
   > in App will be a better choice.
   >
-  > When you want to do this, set it to **false** (default is true) and then
+  > For Android, when you want to use manual entry, set it to **false** (default is true) and then
   > call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
   >
   > Example:

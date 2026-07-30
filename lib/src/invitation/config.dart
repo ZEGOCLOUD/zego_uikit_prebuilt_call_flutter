@@ -128,8 +128,14 @@ class ZegoCallInvitationOfflineConfig {
   /// Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
   /// in App will be a better choice.
   ///
-  /// When you want to do this, set it to **false** (default is true) and then
-  /// call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  /// This manual-entry flow is effective only for Android offline calls
+  /// accepted from the system calling UI. iOS CallKit accepted calls enter
+  /// through the iOS CallKit handling flow and are not controlled by this
+  /// setting.
+  ///
+  /// For Android, when you want to use manual entry, set this to **false**
+  /// (default is true) and then call
+  /// [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall].
   bool autoEnterAcceptedOfflineCall;
 
   @override

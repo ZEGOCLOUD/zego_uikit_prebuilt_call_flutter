@@ -148,7 +148,12 @@ class ZegoUIKitPrebuiltCallInvitationService
   ZegoUIKitPrebuiltCallController get controller =>
       ZegoUIKitPrebuiltCallController.instance;
 
-  /// Enter an accepted offline call. Suitable for scenarios requiring navigation after data loading completes.
+  /// Enter an accepted offline call on Android. Suitable for scenarios
+  /// requiring navigation after data loading completes.
+  ///
+  /// This API is effective only for an Android offline call accepted from the
+  /// system calling UI. It has no effect for an iOS CallKit accepted call,
+  /// because iOS enters the call through its CallKit handling flow.
   ///
   /// Due to some time-consuming and waiting operations, such as data loading
   /// or user login in the App.
@@ -164,7 +169,8 @@ class ZegoUIKitPrebuiltCallInvitationService
   /// 1. set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
   /// to false in  [ZegoUIKitPrebuiltCallInvitationService.init]
   ///
-  /// 2. call [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
+  /// 2. On Android, call
+  /// [ZegoUIKitPrebuiltCallInvitationService.enterAcceptedOfflineCall]
   /// after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
   /// finish loading(data or user login)
   void enterAcceptedOfflineCall() {

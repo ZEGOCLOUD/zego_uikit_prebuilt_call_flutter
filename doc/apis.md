@@ -193,6 +193,10 @@
 
 ## enterAcceptedOfflineCall
 
+> This API is effective only for an Android offline call accepted from the
+> system calling UI. It has no effect for an iOS CallKit accepted call, because
+> iOS enters the call through its CallKit handling flow.
+>
 > Due to some time-consuming and waiting operations, such as data loading
 > or user login in the App.
 > so in certain situations, it may not be appropriate to navigate to
@@ -203,7 +207,7 @@
 > Therefore, manually navigate to [ZegoUIKitPrebuiltCall] using the API
 > in App will be a better choice.
 >
-> When you want to do this, set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
+> For Android, when you want to do this, set [ZegoCallInvitationOfflineConfig.autoEnterAcceptedOfflineCall]
 > to false in [ZegoUIKitPrebuiltCallInvitationService.init] and then
 > call this method after [ZegoUIKitPrebuiltCallInvitationService.init] done when your app
 > finish loading(data or user login)

@@ -728,6 +728,13 @@ class ZegoCallInvitationServicePrivateImpl
   }
 
   Future<void> clearInvitation() async {
+    ZegoLoggerService.logInfo(
+      'enter',
+      tag: 'call-invitation',
+      subTag:
+          'clearInvitation',
+    );
+
     ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
       [],
     );

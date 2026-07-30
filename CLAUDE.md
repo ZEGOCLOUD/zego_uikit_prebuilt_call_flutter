@@ -1,66 +1,17 @@
 # CLAUDE.md
 
-> **Note**: This library is part of the `zego_uikits` monorepo.
-> For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md).
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Workflow Orchestration
-
-### 1. Plan Node Default
-- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways, STOP and re-plan immediately - don't keep pushing
-- Use plan mode for verification steps, not just building
-- Write detailed specs upfront to reduce ambiguity
-
-### 2. Subagent Strategy
-- Use subagents liberally to keep main context window clean
-- Offload research, exploration, and parallel analysis to subagents
-- For complex problems, throw more compute at it via subagents
-- One tack per subagent for focused execution
-
-### 3. Self-Improvement Loop
-- After ANY correction from the user: update `tasks/lessons.md` with the pattern
-- Write rules for yourself that prevent the same mistake
-- Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
-
-### 4. Verification Before Done
-- Never mark a task complete without proving it works
-- Diff behavior between main and your changes when relevant
-- Ask yourself: "Would a staff engineer approve this?"
-- Run tests, check logs, demonstrate correctness
-
-### 5. Demand Elegance (Balanced)
-- For non-trivial changes: pause and ask "is there a more elegant way?"
-- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
-- Skip this for simple, obvious fixes - don't over-engineer
-- Challenge your own work before presenting it
-
-### 6. Autonomous Bug Fixing
-- When given a bug report: just fix it. Don't ask for hand-holding
-- Point at logs, errors, failing tests - then resolve them
-- Zero context switching required from the user
-- Go fix failing CI tests without being told how
-
-## Task Management
-
-1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
-2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
-4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to `tasks/todo.md`
-6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
-
-## Core Principles
-
-- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
-- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
-- **Minimat Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+This file guides Claude Code / AI agents working in this package. It is part of the `zego_uikits`
+Flutter monorepo. For deeper design details see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Project Overview
 
-ZegoUIKitPrebuiltCall is a Flutter SDK by ZEGOCLOUD for integrating 1-on-1 and group voice/video calls with call invitation support (online and offline). Current version: 5.0.0.
+`zego_uikit_prebuilt_call` (package: `zego_uikit_prebuilt_call`, version **4.24.2**) is a prebuilt
+Flutter kit by ZEGOCLOUD for 1-on-1 and group voice/video calls, with online and offline call
+invitation support (CallKit / push). UI + business logic are bundled; built on `zego_uikit` and uses
+`zego_uikit_signaling_plugin` (via `zego_plugin_adapter`) for invitations.
+
+- SDK: Dart `>=3.0.0 <4.0.0`, Flutter `>=3.0.0`
+- Native plugin class: `ZegoUIKitCallPlugin` (Android/iOS).
 
 ## Common Commands
 
@@ -179,20 +130,26 @@ bool isInCall;      // In active call state
 | `android/src/` | Android plugin (Kotlin) |
 | `ios/Classes/` | iOS plugin (Objective-C) |
 
-### Dependencies
+### Dependencies (from `pubspec.yaml`)
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `zego_uikit` | ^3.0.0 | Core SDK |
-| `zego_plugin_adapter` | ^2.14.2 | Plugin adapter |
+| `zego_uikit` | ^2.28.47 | Core SDK |
+| `zego_plugin_adapter` | ^2.14.2 | Plugin adapter / contracts |
 | `zego_uikit_signaling_plugin` | ^2.8.20 | Signaling for invitations |
-| `statemachine` | ^3.4.0 | State machine for calling flow |
+| `statemachine` | ^3.4.0 | State machine for invitation/calling flow |
 | `permission_handler` | ^12.0.1 | Runtime permissions |
-| `flutter_callkit_incoming` | ^2.5.5 | Native CallKit integration |
+| `flutter_callkit_incoming` | 3.0.0 | Native CallKit / incoming-call UI |
+| `flutter_ringtone_player` | ^4.0.0+4 | Ringtone playback |
+| `audioplayers` / `just_audio` | ^6.5.0 / ^0.10.4 | Invitation audio playback |
+| `vibration` | ^3.1.3 | Incoming-call vibration |
 | `flutter_volume_controller` | ^1.3.3 | Volume control |
-| `proximity_sensor` | ^1.3.9 | Proximity detection |
+| `proximity_sensor` | ^1.3.9 | Proximity detection (ear) |
 | `screen_brightness` | ^0.2.2+1 | Screen brightness control |
 | `floating` | ^6.0.0 | Android PiP |
+| `uuid` / `package_info_plus` | ^4.5.1 / ^8.3.0 | IDs / app info |
+
+> Local dev resolves `zego_*` siblings via path overrides in `pubspec_overrides.yaml`.
 
 ## Design Patterns
 
