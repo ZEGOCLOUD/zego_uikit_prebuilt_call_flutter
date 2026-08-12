@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Call Protocol Tool</title>
+  <style>
+    :root { --bg:#0b1220; --panel:#111c2e; --panel2:#16243a; --line:#263853; --text:#e8eef8; --muted:#91a2bb; --blue:#4f8cff; --green:#3ddc97; --amber:#ffca72; --red:#ff7188; }
+    * { box-sizing:border-box; }
+    html,body { width:100%; max-width:100%; overflow-x:hidden; }
+    body { margin:0; background:radial-gradient(circle at 15% 0%,#182d51 0,#0b1220 38%),var(--bg); color:var(--text); font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.5; }
+    button,input,select,textarea { font:inherit; }
+    .shell { width:100%; max-width:1440px; margin:0 auto; padding:32px 24px 48px; }
+    header { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:28px; }
+    .eyebrow { color:var(--blue); font:600 12px/1.2 "JetBrains Mono",monospace; letter-spacing:.14em; text-transform:uppercase; }
+    h1 { margin:8px 0 6px; font-size:clamp(26px,4vw,44px); letter-spacing:-.04em; }
+    .subtitle { margin:0; color:var(--muted); max-width:720px; }
+    .header-tools { display:flex; align-items:center; gap:10px; }
+    .badge { border:1px solid #355078; background:#142642; color:#b8d0ff; border-radius:999px; padding:8px 12px; font:500 12px "JetBrains Mono",monospace; white-space:nowrap; }
+    .language { min-height:36px; padding:7px 11px; border:1px solid #355078; background:#142642; color:#dce8ff; font:600 12px "JetBrains Mono",monospace; }
+    .layout { width:100%; display:grid; grid-template-columns:minmax(0,390px) minmax(0,1fr); gap:20px; align-items:start; }
+    .panel { min-width:0; max-width:100%; background:rgba(17,28,46,.92); border:1px solid var(--line); border-radius:16px; box-shadow:0 16px 50px #050a1380; }
+    .panel-head { padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+    .panel-head h2 { font-size:15px; margin:0; }
+    .panel-body { padding:20px; }
+    .field { margin-bottom:17px; }
+    label { display:block; color:#b9c6d9; font-size:13px; font-weight:600; margin-bottom:7px; }
+    .hint { color:var(--muted); font-size:11px; font-weight:400; margin-left:5px; }
+    input,select,textarea { width:100%; border:1px solid #304665; border-radius:9px; color:var(--text); background:#0d182a; outline:none; padding:10px 11px; transition:border-color .2s,box-shadow .2s; }
+    input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px #4f8cff25; }
+    textarea { min-height:76px; resize:vertical; font:12px/1.55 "JetBrains Mono",monospace; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .seg { display:grid; grid-template-columns:1fr 1fr; background:#0b1525; padding:4px; border-radius:10px; border:1px solid #304665; }
+    .seg input { position:absolute; opacity:0; pointer-events:none; }
+    .seg label { padding:8px 6px; margin:0; border-radius:7px; color:var(--muted); text-align:center; cursor:pointer; font-size:12px; }
+    .seg input:checked + label { background:#2858a9; color:white; }
+    .check { display:flex; align-items:center; gap:9px; padding:10px 0 2px; cursor:pointer; }
+    .check input { width:17px; height:17px; accent-color:var(--blue); }
+    .check label { margin:0; cursor:pointer; }
+    .actions { display:flex; gap:10px; margin-top:24px; }
+    button { min-height:42px; border:0; border-radius:9px; padding:0 16px; cursor:pointer; font-weight:700; transition:transform .2s,background .2s; }
+    button:hover { transform:translateY(-1px); } .primary { flex:1; background:var(--blue); color:white; } .primary:hover { background:#6b9eff; }
+    .secondary { background:#20334f; color:#dce8ff; }
+    .warning { display:none; color:var(--amber); font-size:12px; margin-top:9px; }
+    .output-stack { min-width:0; max-width:100%; display:grid; gap:20px; }
+    .result-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .result-top .status { color:var(--green); font:600 12px "JetBrains Mono",monospace; }
+    .copy-row { display:flex; gap:8px; align-items:stretch; margin-bottom:14px; }
+    .copy-row code { flex:1; min-width:0; overflow:auto; white-space:nowrap; padding:12px; border:1px solid #31527f; border-radius:9px; background:#08111f; color:#a9d4ff; font:12px/1.4 "JetBrains Mono",monospace; }
+    .copy { background:#1f875f; color:white; white-space:nowrap; }
+    .copy:hover { background:#2aa875; }
+    .tabs { display:flex; gap:6px; margin-bottom:10px; padding:4px; border:1px solid #263e60; border-radius:9px; background:#0a1526; width:max-content; max-width:100%; }
+    .tab { min-height:34px; padding:0 12px; border-radius:6px; background:transparent; color:var(--muted); font-size:12px; }
+    .tab:hover { background:#162943; transform:none; }
+    .tab.active { background:#2858a9; color:#fff; }
+    .codebox { overflow:auto; max-height:420px; border:1px solid #233b5c; border-radius:9px; background:#08111f; padding:15px; }
+    pre { margin:0; color:#c4d5ed; font:12px/1.6 "JetBrains Mono",monospace; white-space:pre-wrap; word-break:break-word; }
+    .field-guide { overflow:auto; border:1px solid #233b5c; border-radius:9px; background:#08111f; }
+    .field-guide table { width:100%; min-width:620px; border-collapse:collapse; font-size:12px; }
+    .field-guide th, .field-guide td { padding:11px 13px; border-bottom:1px solid #1c304b; text-align:left; vertical-align:top; }
+    .field-guide th { color:#9fb5d3; background:#0d192b; font-weight:600; }
+    .field-guide td { color:#c4d5ed; } .field-guide tr:last-child td { border-bottom:0; }
+    .field-guide code { color:#a9d4ff; font:12px "JetBrains Mono",monospace; }
+    .guide-table { width:100%; min-width:700px; border-collapse:collapse; font-size:12px; }
+    .guide-table th, .guide-table td { padding:11px 13px; border-bottom:1px solid #1c304b; text-align:left; vertical-align:top; }
+    .guide-table th { color:#9fb5d3; background:#0d192b; font-weight:600; }
+    .guide-table td { color:#c4d5ed; } .guide-table tr:last-child td { border-bottom:0; }
+    .guide-table .layer { color:#8fb3ec; font-weight:600; white-space:nowrap; }
+    .guide-section-title { margin:0 0 10px; color:#9fb5d3; font-size:12px; font-weight:600; }
+    .tokens { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .token { padding:13px; border:1px solid var(--line); border-radius:10px; background:#0d192b; }
+    .token small { display:block; color:var(--muted); font-size:11px; margin-bottom:4px; } .token strong { font:600 13px "JetBrains Mono",monospace; }
+    .flow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; color:var(--muted); font:11px "JetBrains Mono",monospace; }
+    .flow span { padding:7px 9px; border:1px solid #2f496d; border-radius:7px; background:#0d192b; color:#c5d9fb; } .flow b { color:var(--blue); }
+    @media (max-width:800px) { .shell{padding:22px 14px 36px} header{display:block}.badge{display:inline-block;margin-top:18px}.layout{grid-template-columns:1fr}.tokens{grid-template-columns:1fr 1fr} }
+    @media (max-width:430px) { .grid2,.tokens{grid-template-columns:1fr}.copy-row{display:block}.copy{width:100%;margin-top:8px} }
+    @media (prefers-reduced-motion:reduce) { * { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><h1 id="page-title" data-i18n="pageTitle">Call Protocol Tool</h1><p class="subtitle" id="subtitle">把 Prebuilt Call 的邀请参数转换成最终传给 ZIM 的 <code>extendedData</code>。</p></div>
+      <div class="header-tools"><div class="badge" data-i18n="badge">offline · no network</div><button class="language" id="language" type="button" aria-label="Switch language">中文</button></div>
+    </header>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-head"><h2 data-i18n="inputTitle">邀请参数</h2><span class="eyebrow" data-i18n="inputTag">INPUT</span></div>
+        <div class="panel-body">
+          <div class="field"><label data-i18n="operation">操作类型</label><div class="seg"><input type="radio" name="op" id="op-send" value="send" checked><label for="op-send" data-i18n="sendInvite">发送邀请</label><input type="radio" name="op" id="op-add" value="add"><label for="op-add" data-i18n="addInvite">追加邀请 / add</label></div><div id="add-warning" class="warning">normal 模式不支持 add；代码中的 add 路径固定使用 advanced。</div></div>
+          <div class="field"><label data-i18n="protocolMode">协议模式</label><div class="seg"><input type="radio" name="mode" id="mode-normal" value="normal" checked><label for="mode-normal" data-i18n="normalMode">normal</label><input type="radio" name="mode" id="mode-advanced" value="advanced"><label for="mode-advanced" data-i18n="advancedMode">advanced</label></div></div>
+          <div class="grid2"><div class="field"><label for="inviter-id" data-i18n="inviterId">邀请人 ID</label><input id="inviter-id" value="user_a"></div><div class="field"><label for="inviter-name" data-i18n="inviterName">邀请人名称</label><input id="inviter-name" value="Tom"></div></div>
+          <div class="field"><label for="invitees" id="invitees-label">被邀请人 <span class="hint" data-i18n="onePerLine">每行一个 ID</span></label><textarea id="invitees">user_b
+user_c</textarea></div>
+          <div class="grid2"><div class="field"><label for="call-type" data-i18n="callType">通话类型</label><select id="call-type"><option value="1">视频通话 · type 1</option><option value="0">语音通话 · type 0</option></select></div><div class="field"><label for="timeout" data-i18n="timeout">超时秒数</label><input id="timeout" type="number" min="1" value="60"></div></div>
+          <div class="grid2"><div class="field"><label for="call-id" data-i18n="callId">Call ID</label><input id="call-id" value="call_user_a_1720000000000"></div><div class="field"><label for="invitation-id" id="invitation-label">Invitation ID <span class="hint" data-i18n="addInvitationId">add 单独传给 ZIM</span></label><input id="invitation-id" value="invitation_abc123"></div></div>
+          <div class="field"><label for="custom-data" data-i18n="customData">customData</label><textarea id="custom-data" placeholder="可填写任意业务字符串"></textarea></div>
+          <div class="check"><input id="pretty" type="checkbox" checked><label for="pretty" data-i18n="pretty">同时显示格式化 JSON</label></div>
+          <div class="actions"><button class="primary" id="generate" data-i18n="generate">生成 ZIM data</button><button class="secondary" id="reset" data-i18n="reset">重置</button></div>
+        </div>
+      </section>
+
+      <section class="output-stack">
+        <div class="panel"><div class="panel-head result-top"><h2 data-i18n="finalTitle">最终传输数据 · ZIM extendedData</h2><span class="status" id="status">● ready</span></div><div class="panel-body"><div class="tabs" role="tablist"><button class="tab" id="tab-escaped" role="tab" aria-selected="false" data-i18n="escapedString">转义字符串</button><button class="tab active" id="tab-raw" role="tab" aria-selected="true" data-i18n="rawJson">原始 JSON</button></div><div class="copy-row"><code id="one-line"></code><button class="copy" id="copy" data-i18n="copy">复制</button></div><div class="codebox"><pre id="final-json"></pre></div></div></div>
+        <div class="panel"><div class="panel-head"><h2 data-i18n="nestedTitle">内部业务协议 · data / custom_data</h2><span class="eyebrow" data-i18n="nestedTag">NESTED</span></div><div class="panel-body"><div class="codebox"><pre id="inner-json"></pre></div></div></div>
+        <div class="panel"><div class="panel-head"><h2 data-i18n="guideTitle">协议字段说明</h2><span class="eyebrow" data-i18n="guideTag">REFERENCE</span></div><div class="panel-body"><div class="tabs" role="tablist"><button class="tab active" id="guide-normal" role="tab" aria-selected="true" data-i18n="guideNormal">普通模式</button><button class="tab" id="guide-advanced" role="tab" aria-selected="false" data-i18n="guideAdvanced">高级模式</button></div><p class="guide-section-title" data-i18n="outerProtocol">外层 ZIM 协议</p><div class="field-guide"><table class="guide-table"><thead><tr><th data-i18n="guideField">字段</th><th data-i18n="guideType">类型</th><th data-i18n="guideDescription">说明</th></tr></thead><tbody id="guide-outer-body"></tbody></table></div><p class="guide-section-title" data-i18n="innerProtocol">内层 sendProtocol</p><div class="field-guide"><table class="guide-table"><thead><tr><th data-i18n="guideField">字段</th><th data-i18n="guideType">类型</th><th data-i18n="guideDescription">说明</th></tr></thead><tbody id="guide-inner-body"></tbody></table></div></div></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const checked = name => document.querySelector(`input[name="${name}"]:checked`).value;
+    const pretty = value => JSON.stringify(value, null, 2);
+    const translations = {
+      en: { eyebrow:'Developer utility · ZIM signaling', pageTitle:'ZIM Protocol Inspector', subtitle:'Convert Prebuilt Call invitation parameters into the final ZIM extendedData.', badge:'offline · no network', inputTitle:'Invitation parameters', inputTag:'INPUT', operation:'Operation', sendInvite:'Send invitation', addInvite:'Add invitee / add', addWarning:'Normal mode does not support add; the add path uses advanced mode.', protocolMode:'Protocol mode', normalMode:'normal', advancedMode:'advanced', inviterId:'Inviter ID', inviterName:'Inviter name', invitees:'Invitees', onePerLine:'one ID per line', callType:'Call type', timeout:'Timeout (seconds)', callId:'Call ID', invitationId:'Invitation ID', addInvitationId:'sent to ZIM for add', customData:'Custom data', pretty:'Show formatted JSON', generate:'Generate ZIM data', reset:'Reset', finalTitle:'Final payload · ZIM extendedData', rawJson:'Raw JSON', escapedString:'Escaped string', copy:'Copy', nestedTitle:'Inner business protocol · data / custom_data', nestedTag:'NESTED', guideTitle:'Protocol field reference', guideTag:'REFERENCE', guideNormal:'Normal', guideAdvanced:'Advanced', outerProtocol:'Outer ZIM protocol', innerProtocol:'Inner sendProtocol', guideField:'Field', guideType:'Type', guideDescription:'Description', guideLayer:'Layer', guidePath:'JSON path', guideInner:'Inner sendProtocol', fieldInviterId:'Inviter user ID', fieldInviterName:'Inviter display name', fieldUserId:'Invitee user ID', fieldUserName:'Invitee display name', fieldType:'Call type: 0 voice, 1 video', fieldData:'Inner sendProtocol JSON string', fieldCustomData:'Business custom data', fieldCallId:'Business call ID', fieldTimeout:'Timeout in seconds', fieldVersion:'Protocol version', video:'Video call · type 1', voice:'Voice call · type 0', customPlaceholder:'Optional business string', ready:'● ready', generated:'● generated', unsupported:'● unsupported combination', copied:'Copied' },
+      zh: { eyebrow:'开发工具 · ZIM 信令', pageTitle:'ZIM 协议检查器', subtitle:'将 Prebuilt Call 的通话邀请参数转换为最终传给 ZIM 的 extendedData。', badge:'离线 · 无网络', inputTitle:'邀请参数', inputTag:'输入', operation:'操作类型', sendInvite:'发送邀请', addInvite:'追加邀请', addWarning:'普通模式不支持追加邀请；追加邀请路径固定使用高级模式。', protocolMode:'协议模式', normalMode:'普通模式', advancedMode:'高级模式', inviterId:'邀请人 ID', inviterName:'邀请人名称', invitees:'被邀请人', onePerLine:'每行一个 ID', callType:'通话类型', timeout:'超时时间（秒）', callId:'通话 ID', invitationId:'邀请 ID', addInvitationId:'追加时传给 ZIM', customData:'自定义数据', pretty:'显示格式化 JSON', generate:'生成 ZIM 数据', reset:'重置', finalTitle:'最终数据 · ZIM 扩展数据', rawJson:'原始 JSON', escapedString:'转义字符串', copy:'复制', nestedTitle:'内部业务协议 · 数据字段', nestedTag:'嵌套', guideTitle:'协议字段说明', guideTag:'参考', guideNormal:'普通模式', guideAdvanced:'高级模式', outerProtocol:'外层 ZIM 协议', innerProtocol:'内层 sendProtocol', guideField:'字段', guideType:'类型', guideDescription:'说明', guideLayer:'层级', guidePath:'JSON 路径', guideInner:'内层 sendProtocol', fieldInviterId:'邀请人用户 ID', fieldInviterName:'邀请人显示名称', fieldUserId:'被邀请人用户 ID', fieldUserName:'被邀请人显示名称', fieldType:'通话类型：0 语音，1 视频', fieldData:'内层 sendProtocol JSON 字符串', fieldCustomData:'业务自定义数据', fieldCallId:'业务通话 ID', fieldTimeout:'超时时间（秒）', fieldVersion:'协议版本', video:'视频通话 · 类型 1', voice:'语音通话 · 类型 0', customPlaceholder:'可填写业务字符串', ready:'● 就绪', generated:'● 已生成', unsupported:'● 不支持的组合', copied:'已复制' }
+    };
+    let language = 'en';
+    function applyLanguage() {
+      const t = translations[language];
+      const toolTitle = language === 'en' ? 'Call Protocol Tool' : '呼叫协议工具';
+      document.title = toolTitle;
+      document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t[node.dataset.i18n]; });
+      $('page-title').textContent = toolTitle;
+      $('subtitle').innerHTML = language === 'en' ? 'Convert Prebuilt Call invitation parameters into the final ZIM <code>extendedData</code>.' : '将 Prebuilt Call 的通话邀请参数转换为最终传给 ZIM 的 <code>extendedData</code>。';
+      $('invitees-label').childNodes[0].textContent = `${t.invitees} `;
+      $('invitation-label').childNodes[0].textContent = `${t.invitationId} `;
+      $('call-type').options[0].textContent = t.video; $('call-type').options[1].textContent = t.voice;
+      $('custom-data').placeholder = t.customPlaceholder; $('status').textContent = t.ready; $('copy').textContent = t.copy; $('language').textContent = language === 'en' ? '中文' : 'English'; $('language').setAttribute('aria-label', language === 'en' ? '切换到中文' : 'Switch to English');
+      renderGuide();
+      render();
+    }
+    let guideMode = 'normal';
+    function renderGuide() {
+      const en = language === 'en';
+      const d = en ? {
+        outerNormal:'normal outer', outerAdvanced:'advanced outer', inner:'inner sendProtocol',
+        inviterId:'Inviter user ID.', inviterName:'Inviter display name.', type:'Call type: 0 voice, 1 video.', data:'Inner sendProtocol JSON string.', inviter:'Inviter user object.', invitees:'Invitee list or invitee objects.', customData:'Business custom data.', callId:'Business call ID.', timeout:'Timeout in seconds.', userId:'Invitee user ID.', userName:'Invitee display name.', version:'Protocol version.'
+      } : {
+        outerNormal:'普通外层', outerAdvanced:'高级外层', inner:'内层 sendProtocol',
+        inviterId:'邀请人用户 ID。', inviterName:'邀请人显示名称。', type:'通话类型：0 语音，1 视频。', data:'内层 sendProtocol JSON 字符串。', inviter:'邀请人对象。', invitees:'被邀请人列表或被邀请人对象列表。', customData:'业务自定义数据。', callId:'业务通话 ID。', timeout:'超时时间，单位为秒。', userId:'被邀请人用户 ID。', userName:'被邀请人显示名称。', version:'协议版本。'
+      };
+      const rows = guideMode === 'normal' ? [
+        [d.outerNormal, 'inviter_id', 'string', d.inviterId],
+        [d.outerNormal, 'inviter_name', 'string', d.inviterName],
+        [d.outerNormal, 'type', 'number', d.type],
+        [d.outerNormal, 'data', 'string', d.data],
+        [d.inner, 'call_id', 'string', d.callId],
+        [d.inner, 'inviter_name', 'string', d.inviterName],
+        [d.inner, 'invitees[].user_id', 'string', d.userId],
+        [d.inner, 'invitees[].user_name', 'string', d.userName],
+        [d.inner, 'timeout', 'number', d.timeout],
+        [d.inner, 'custom_data', 'string', d.customData],
+        [d.inner, 'v', 'string', d.version]
+      ] : [
+        [d.outerAdvanced, 'inviter', 'object', d.inviter],
+        [d.outerAdvanced, 'invitees[]', 'string', d.invitees],
+        [d.outerAdvanced, 'type', 'number', d.type],
+        [d.outerAdvanced, 'custom_data', 'string', d.data],
+        [d.inner, 'call_id', 'string', d.callId],
+        [d.inner, 'inviter_name', 'string', d.inviterName],
+        [d.inner, 'invitees[].user_id', 'string', d.userId],
+        [d.inner, 'invitees[].user_name', 'string', d.userName],
+        [d.inner, 'timeout', 'number', d.timeout],
+        [d.inner, 'custom_data', 'string', d.customData],
+        [d.inner, 'v', 'string', d.version]
+      ];
+      const outerRows = rows.slice(0, guideMode === 'normal' ? 4 : 4);
+      const innerRows = rows.slice(4);
+      const renderRows = list => list.map(row => `<tr><td><code>${row[1]}</code></td><td><code>${row[2]}</code></td><td>${row[3]}</td></tr>`).join('');
+      $('guide-outer-body').innerHTML = renderRows(outerRows);
+      $('guide-inner-body').innerHTML = renderRows(innerRows);
+    }
+    function values() {
+      const mode = checked('mode'), op = checked('op');
+      const invitees = $('invitees').value.split(/\r?\n|,/).map(v => v.trim()).filter(Boolean);
+      const inner = { call_id: $('call-id').value.trim(), inviter_name: $('inviter-name').value.trim(), invitees: invitees.map(id => ({user_id:id, user_name:id})), timeout: Number($('timeout').value) || 60, custom_data: $('custom-data').value, v:'f1.0' };
+      const type = Number($('call-type').value);
+      let outer;
+      if (mode === 'advanced') outer = { inviter:{id:$('inviter-id').value.trim(),name:$('inviter-name').value.trim()}, invitees, type, custom_data: JSON.stringify(inner), inviter_id:$('inviter-id').value.trim(), inviter_name:$('inviter-name').value.trim(), data:JSON.stringify(inner) };
+      else outer = { inviter_id:$('inviter-id').value.trim(), inviter_name:$('inviter-name').value.trim(), type, data:JSON.stringify(inner) };
+      return {mode, op, inner, outer, invitees, type};
+    }
+    let outputTab = 'raw';
+    function render() {
+      const v = values(); const zim = JSON.stringify(v.outer); const escaped = JSON.stringify(zim); const isAdd = v.op === 'add';
+      $('one-line').textContent = outputTab === 'raw' ? zim : escaped; $('final-json').textContent = outputTab === 'raw' && $('pretty').checked ? pretty(v.outer) : (outputTab === 'raw' ? zim : escaped); $('inner-json').textContent = pretty(v.inner);
+      const t = translations[language]; const unsupported = isAdd && v.mode === 'normal'; $('status').textContent = unsupported ? t.unsupported : t.generated; $('status').style.color = unsupported ? 'var(--amber)' : 'var(--green)'; $('add-warning').style.display = unsupported ? 'block' : 'none'; $('add-warning').textContent = t.addWarning;
+    }
+    document.querySelectorAll('input[name="op"],input[name="mode"],#call-type,#pretty').forEach(el => el.addEventListener('change', render)); $('generate').addEventListener('click', render);
+    $('tab-raw').addEventListener('click', () => { outputTab = 'raw'; $('tab-raw').classList.add('active'); $('tab-escaped').classList.remove('active'); $('tab-raw').setAttribute('aria-selected','true'); $('tab-escaped').setAttribute('aria-selected','false'); render(); });
+    $('tab-escaped').addEventListener('click', () => { outputTab = 'escaped'; $('tab-escaped').classList.add('active'); $('tab-raw').classList.remove('active'); $('tab-escaped').setAttribute('aria-selected','true'); $('tab-raw').setAttribute('aria-selected','false'); render(); });
+    $('guide-normal').addEventListener('click', () => { guideMode = 'normal'; $('guide-normal').classList.add('active'); $('guide-advanced').classList.remove('active'); $('guide-normal').setAttribute('aria-selected','true'); $('guide-advanced').setAttribute('aria-selected','false'); renderGuide(); });
+    $('guide-advanced').addEventListener('click', () => { guideMode = 'advanced'; $('guide-advanced').classList.add('active'); $('guide-normal').classList.remove('active'); $('guide-advanced').setAttribute('aria-selected','true'); $('guide-normal').setAttribute('aria-selected','false'); renderGuide(); });
+    $('copy').addEventListener('click', async () => { await navigator.clipboard.writeText($('one-line').textContent); $('copy').textContent=translations[language].copied; setTimeout(() => $('copy').textContent=translations[language].copy, 1200); });
+    $('language').addEventListener('click', () => { language = language === 'en' ? 'zh' : 'en'; applyLanguage(); });
+    $('reset').addEventListener('click', () => { location.reload(); });
+    applyLanguage();
+  </script>
+</body>
+</html>
