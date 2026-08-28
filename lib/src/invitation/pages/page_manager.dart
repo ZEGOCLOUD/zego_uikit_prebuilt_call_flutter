@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
@@ -31,9 +32,11 @@ import 'calling/config.dart';
 class ZegoCallInvitationPageManager {
   ZegoUIKitPrebuiltCallInvitationData callInvitationData;
   ZegoCallInvitationNotificationManager? _notificationManager;
+  final Future<bool> Function()? waitForIOSCallKitAudioActivation;
 
   ZegoCallInvitationPageManager({
     required this.callInvitationData,
+    this.waitForIOSCallKitAudioActivation,
   });
 
   final _defaultPackageName = 'packages/zego_uikit_prebuilt_call/';
@@ -88,6 +91,10 @@ class ZegoCallInvitationPageManager {
   ///At this time, you need to agree directly onCallInvitationReceived
   /// todo wait zim sdk fix bug
   bool _hasCallkitIncomingCauseAppInBackground = false;
+
+  /// The answer operation came from CallKit. This must not depend on the
+  /// Flutter lifecycle because iOS may resume the app before signaling returns.
+  bool _isIOSCallKitAnswering = false;
 
   /// First click the Agree button in the offline pop-up, and then receive the invitation event later
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
@@ -153,6 +160,18 @@ class ZegoCallInvitationPageManager {
     );
 
     _hasCallkitIncomingCauseAppInBackground = value;
+  }
+
+  bool get isIOSCallKitAnswering => _isIOSCallKitAnswering;
+
+  set isIOSCallKitAnswering(bool value) {
+    ZegoLoggerService.logInfo(
+      'set isIOSCallKitAnswering:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager, ios callkit audio sequencing',
+    );
+
+    _isIOSCallKitAnswering = value;
   }
 
   bool get waitingCallInvitationReceivedAfterCallKitIncomingAccepted =>
@@ -590,11 +609,11 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onLocalAcceptInvitation(
+  Future<void> onLocalAcceptInvitation(
     String invitationID,
     String code,
     String message,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'local accept invitation, code:$code, message:$message, '
       'app in background:$_appInBackground',
@@ -638,7 +657,19 @@ class ZegoCallInvitationPageManager {
       return;
     }
 
-    if (Platform.isIOS && _appInBackground) {
+    final isIOSCallKitBackgroundAccept = Platform.isIOS &&
+        (_hasCallkitIncomingCauseAppInBackground || _isIOSCallKitAnswering);
+    ZegoLoggerService.logInfo(
+      'local accept invitation routing, '
+      'isIOSCallKitBackgroundAccept:$isIOSCallKitBackgroundAccept, '
+      'appInBackground:$_appInBackground, '
+      'hasCallkitIncomingCauseAppInBackground:$_hasCallkitIncomingCauseAppInBackground, '
+      'isIOSCallKitAnswering:$_isIOSCallKitAnswering',
+      tag: 'call-invitation',
+      subTag: 'page manager, ios callkit audio sequencing',
+    );
+
+    if (isIOSCallKitBackgroundAccept) {
       ZegoLoggerService.logInfo(
         'accept call by callkit in background-locked, manually enter room',
         tag: 'call-invitation',
@@ -672,6 +703,37 @@ class ZegoCallInvitationPageManager {
         /// At this point, when answering a CallKit call on iOS lock screen,
         /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
         /// Therefore, it is necessary to manually enter the room at this point.
+
+        // CallKit owns AVAudioSession activation for a locked-screen answer.
+        // Prepare the session, then wait for the native didActivate callback
+        // before Zego creates its audio capture AudioUnit.
+        await ZegoCallPluginPlatform.instance.prepareAudioSessionForCallKit(
+          isVideoCall:
+              _invitationData.type == ZegoCallInvitationType.videoCall,
+        );
+        final audioActivated =
+            await waitForIOSCallKitAudioActivation?.call() ?? true;
+        ZegoLoggerService.logInfo(
+          'CallKit audio activation observation completed before room entry, '
+          'activated:$audioActivated',
+          tag: 'call-invitation',
+          subTag: 'page manager, ios callkit audio sequencing',
+        );
+        if (!audioActivated) {
+          ZegoLoggerService.logError(
+            'CallKit did not activate AVAudioSession; abort locked-screen '
+            'answer before creating Zego AudioUnit',
+            tag: 'call-invitation',
+            subTag: 'page manager, ios callkit audio sequencing',
+          );
+          return;
+        }
+        ZegoLoggerService.logInfo(
+          'CallKit audio is active; proceeding with room entry and audio '
+          'capture initialization',
+          tag: 'call-invitation',
+          subTag: 'page manager, ios callkit audio sequencing',
+        );
 
         ZegoUIKit().login(
           callInvitationData.userID,
@@ -2039,6 +2101,7 @@ class ZegoCallInvitationPageManager {
       );
 
       inCallingByIOSBackgroundLock = false;
+      _isIOSCallKitAnswering = false;
       await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       await clearAllCallKitCalls();
 

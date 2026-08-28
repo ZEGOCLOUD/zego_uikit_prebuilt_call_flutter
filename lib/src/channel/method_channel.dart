@@ -90,33 +90,45 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
     });
   }
 
-  /// active audio by callkit
+  /// Prepare audio for CallKit. CallKit must activate the session itself.
   /// only support ios
   @override
-  Future<void> activeAudioByCallKit() async {
+  Future<void> prepareAudioSessionForCallKit({
+    bool isVideoCall = false,
+  }) async {
     if (Platform.isAndroid) {
       ZegoLoggerService.logInfo(
         'not support in Android',
         tag: 'call-channel',
-        subTag: 'activeAudioByCallKit',
+        subTag: 'prepareAudioSessionForCallKit',
       );
       return;
     }
 
     ZegoLoggerService.logInfo(
-      'activeAudioByCallKit',
+      'prepareAudioSessionForCallKit',
       tag: 'call-channel',
-      subTag: 'activeAudioByCallKit',
+      subTag: 'prepareAudioSessionForCallKit',
     );
 
     try {
-      await methodChannel.invokeMethod<String>('activeAudioByCallKit');
-    } on PlatformException catch (e) {
-      ZegoLoggerService.logError(
-        'Failed to active audio by callkit: $e.',
-        tag: 'call-channel',
-        subTag: 'activeAudioByCallKit',
+      final prepared = await methodChannel.invokeMethod<bool>(
+        'prepareAudioSessionForCallKit',
+        {'is_video_call': isVideoCall},
       );
+      if (prepared != true) {
+        throw PlatformException(
+          code: 'AUDIO_SESSION_PREPARE_FAILED',
+          message: 'Native audio session preparation returned false.',
+        );
+      }
+    } catch (e) {
+      ZegoLoggerService.logError(
+        'Failed to prepare audio for callkit: $e.',
+        tag: 'call-channel',
+        subTag: 'prepareAudioSessionForCallKit',
+      );
+      rethrow;
     }
   }
 

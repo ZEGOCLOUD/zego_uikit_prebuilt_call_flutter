@@ -13,6 +13,8 @@ mixin ZegoCallInvitationServiceIOSCallKitPrivatePrivate {
 class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ///
   bool _iOSCallKitServiceInit = false;
+  bool _callKitAudioActivated = false;
+  Completer<void>? _callKitAudioActivationCompleter;
 
   /// callkit event subscriptions
   final List<StreamSubscription<dynamic>> _callkitServiceSubscriptions = [];
@@ -135,18 +137,73 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   void _onCallkitActivateAudioEvent(
     ZegoSignalingPluginCallKitVoidEvent event,
   ) {
+    _callKitAudioActivated = true;
+    _callKitAudioActivationCompleter?.complete();
+    _callKitAudioActivationCompleter = null;
+
+    final localUser = ZegoUIKit().getLocalUser();
     ZegoLoggerService.logInfo(
-      'on callkit activate audio',
+      'on callkit activate audio, '
+      'callID:${ZegoUIKitPrebuiltCallInvitationService().private.currentCallInvitationDataSafe.callID}, '
+      'engineCreated:${ZegoUIKit().engineCreatedNotifier.value}, '
+      'engineState:${ZegoUIKit().getEngineStateNotifier().value}, '
+      'roomState:${ZegoUIKit().getRoomStateStream().value}, '
+      'isPublishing:${localUser.streamID.isNotEmpty}, '
+      'microphone:${localUser.microphone.value}, '
+      'capturedAudioFirstFrame:${ZegoUIKit().getAudioVideoCapturedAudioFirstFrameNotifier(null).value}',
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
+
+  }
+
+  /// Wait until CallKit owns and activates the AVAudioSession before the
+  /// locked-screen offline call creates the Zego audio capture pipeline.
+  Future<bool> waitForCallKitAudioActivation({
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
+    if (_callKitAudioActivated) {
+      ZegoLoggerService.logInfo(
+        'CallKit audio is already activated',
+        tag: 'call-invitation',
+        subTag: 'ios callkit audio sequencing',
+      );
+      return true;
+    }
+
+    final completer = _callKitAudioActivationCompleter ??= Completer<void>();
+    ZegoLoggerService.logInfo(
+      'waiting for CallKit audio activation before entering room, '
+      'timeout:${timeout.inMilliseconds}ms',
+      tag: 'call-invitation',
+      subTag: 'ios callkit audio sequencing',
+    );
+
+    try {
+      await completer.future.timeout(timeout);
+      return true;
+    } on TimeoutException {
+      if (identical(_callKitAudioActivationCompleter, completer)) {
+        _callKitAudioActivationCompleter = null;
+      }
+      ZegoLoggerService.logWarn(
+        'CallKit audio activation wait timed out; locked-screen answer will '
+        'not enter room',
+        tag: 'call-invitation',
+        subTag: 'ios callkit audio sequencing',
+      );
+      return false;
+    }
   }
 
   void _onCallkitDeactivateAudioEvent(
     ZegoSignalingPluginCallKitVoidEvent event,
   ) {
+    _callKitAudioActivated = false;
     ZegoLoggerService.logInfo(
-      'on callkit deactivate audio',
+      'on callkit deactivate audio, '
+      'isPublishing:${ZegoUIKit().getLocalUser().streamID.isNotEmpty}, '
+      'microphone:${ZegoUIKit().getLocalUser().microphone.value}',
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
@@ -189,8 +246,6 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
-
-    event.fulfill?.call();
 
     Future<void> onAnswerCallPerform() async {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);

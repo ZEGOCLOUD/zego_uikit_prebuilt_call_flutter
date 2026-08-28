@@ -27,9 +27,11 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  /// activeAudioByCallKit
-  Future<void> activeAudioByCallKit() {
-    throw UnimplementedError('activeAudioByCallKit has not been implemented.');
+  /// Prepares AVAudioSession for CallKit without activating it.
+  Future<void> prepareAudioSessionForCallKit({bool isVideoCall = false}) {
+    throw UnimplementedError(
+      'prepareAudioSessionForCallKit has not been implemented.',
+    );
   }
 
   /// showCallNotification

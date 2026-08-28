@@ -596,6 +596,77 @@ class ZegoUIKitPrebuiltCallInvitationService
     }
   }
 
+  /// Updates the callback used to obtain the prebuilt call configuration.
+  ///
+  /// The callback is used the next time a [ZegoUIKitPrebuiltCall] is created.
+  /// Pass `null` to restore the SDK default configuration callback.
+  /// Returns `false` when the service has not been initialized.
+  bool updateRequireConfig(ZegoCallPrebuiltConfigQuery? requireConfig) {
+    return private.updateRequireConfig(requireConfig);
+  }
+
+  /// Updates call-level event callbacks for subsequently created call pages.
+  ///
+  /// Pass `null` to remove the callbacks. Returns `false` when the service
+  /// has not been initialized.
+  bool updateCallEvents(ZegoUIKitPrebuiltCallEvents? events) {
+    return private.updateCallEvents(events);
+  }
+
+  /// Updates the invitation behavior configuration.
+  ///
+  /// The new configuration is used by subsequent invitation actions. Pass
+  /// `null` to restore the default configuration. Returns `false` when the
+  /// service has not been initialized.
+  bool updateInvitationConfig(ZegoCallInvitationConfig? config) {
+    return private.updateInvitationConfig(config);
+  }
+
+  /// Updates the ringtone configuration and reloads the ringtone sources.
+  ///
+  /// Pass `null` to restore the default ringtone configuration. Returns
+  /// `false` when the service has not been initialized.
+  bool updateRingtoneConfig(ZegoCallRingtoneConfig? ringtoneConfig) {
+    return private.updateRingtoneConfig(ringtoneConfig);
+  }
+
+  /// Updates the invitation UI configuration for subsequently created pages.
+  ///
+  /// This method does not rebuild an invitation page that is already visible.
+  /// Pass `null` to restore the default configuration. Returns `false` when
+  /// the service has not been initialized.
+  bool updateUIConfig(ZegoCallInvitationUIConfig? uiConfig) {
+    return private.updateUIConfig(uiConfig);
+  }
+
+  /// Updates the notification configuration for subsequent notifications.
+  ///
+  /// Android notification channels and push-plugin registration created during
+  /// [init] are not recreated. Pass `null` to restore the default
+  /// configuration. Returns `false` when the service has not been initialized.
+  bool updateNotificationConfig(
+    ZegoCallInvitationNotificationConfig? notificationConfig,
+  ) {
+    return private.updateNotificationConfig(notificationConfig);
+  }
+
+  /// Updates the invitation text for subsequently created pages and dialogs.
+  ///
+  /// This method does not rebuild a page or dialog that is already visible.
+  /// Pass `null` to restore the default text. Returns `false` when the service
+  /// has not been initialized.
+  bool updateInnerText(ZegoCallInvitationInnerText? innerText) {
+    return private.updateInnerText(innerText);
+  }
+
+  /// Updates invitation-level event callbacks.
+  ///
+  /// Pass `null` to remove the callbacks. Returns `false` when the service
+  /// has not been initialized.
+  bool updateInvitationEvents(ZegoUIKitPrebuiltCallInvitationEvents? events) {
+    return private.updateInvitationEvents(events);
+  }
+
   /// Deinitialize the service. Must be called when the user logs out.
   ///
   ///   you must call this method as soon as the user logout from your app

@@ -38,6 +38,13 @@ class ZegoCallKitBackgroundService {
   }
 
   void acceptInvitationInBackground() {
+    _pageManager?.isIOSCallKitAnswering = true;
+    ZegoLoggerService.logInfo(
+      'mark accept source as CallKit action callback',
+      tag: 'call-invitation',
+      subTag: 'call invitation service, ios callkit audio sequencing',
+    );
+
     if (!(_pageManager?.hasCallkitIncomingCauseAppInBackground ?? false)) {
       ZegoLoggerService.logInfo(
         'accept invitation, but has not callkit incoming cause by app in background',
@@ -177,6 +184,16 @@ class ZegoCallKitBackgroundService {
     String? callKitCallID, {
     bool needCheckHasCallkitIncoming = true,
   }) async {
+    // This method is called from CallKit's performAnswerCallAction. Keep the
+    // source marker independent of lifecycle and incoming-push ordering.
+    _pageManager?.isIOSCallKitAnswering = true;
+    ZegoLoggerService.logInfo(
+      'mark accept source as CallKit performAnswerCallAction, '
+      'callKitCallID:$callKitCallID',
+      tag: 'call-invitation',
+      subTag: 'call invitation service, ios callkit audio sequencing',
+    );
+
     ZegoLoggerService.logInfo(
       'accept invitation by callkit, '
       'callKitCallID:$callKitCallID, '

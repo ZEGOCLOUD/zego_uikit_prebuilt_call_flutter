@@ -54,27 +54,27 @@ class ZegoUIKitPrebuiltCallInvitationData {
   final String userName;
 
   /// we need the [ZegoUIKitPrebuiltCallConfig] to show [ZegoUIKitPrebuiltCall]
-  final ZegoCallPrebuiltConfigQuery requireConfig;
+  ZegoCallPrebuiltConfigQuery requireConfig;
 
   ZegoUIKitPrebuiltCallEvents? events;
 
-  final ZegoCallInvitationInnerText innerText;
+  ZegoCallInvitationInnerText innerText;
 
   ///
   final List<IZegoUIKitPlugin> plugins;
 
-  final ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
+  ZegoUIKitPrebuiltCallInvitationEvents? invitationEvents;
 
   /// you can customize your ringing bell
-  final ZegoCallRingtoneConfig ringtoneConfig;
+  ZegoCallRingtoneConfig ringtoneConfig;
 
   /// ui config
-  final ZegoCallInvitationUIConfig uiConfig;
+  ZegoCallInvitationUIConfig uiConfig;
 
   /// config
-  final ZegoCallInvitationConfig config;
+  ZegoCallInvitationConfig config;
 
-  final ZegoCallInvitationNotificationConfig notificationConfig;
+  ZegoCallInvitationNotificationConfig notificationConfig;
 
   /// we need a context object, to push/pop page when receive invitation request
   ContextQuery? contextQuery;

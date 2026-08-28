@@ -126,6 +126,99 @@ class ZegoCallInvitationServicePrivateImpl
   ZegoCallAndroidNotificationConfig? get androidNotificationConfig =>
       _data?.notificationConfig.androidNotificationConfig;
 
+  bool _canUpdateConfig(String name) {
+    if (_isInit && _data != null) {
+      return true;
+    }
+
+    ZegoLoggerService.logWarn(
+      'failed to update $name, service is not initialized',
+      tag: 'call-invitation',
+      subTag: 'service private(${identityHashCode(this)})',
+    );
+    return false;
+  }
+
+  bool updateRequireConfig(ZegoCallPrebuiltConfigQuery? requireConfig) {
+    if (!_canUpdateConfig('requireConfig')) {
+      return false;
+    }
+
+    _data!.requireConfig = requireConfig ?? _defaultConfig;
+    return true;
+  }
+
+  bool updateCallEvents(ZegoUIKitPrebuiltCallEvents? events) {
+    if (!_canUpdateConfig('call events')) {
+      return false;
+    }
+
+    _data!.events = events;
+    return true;
+  }
+
+  bool updateInvitationConfig(ZegoCallInvitationConfig? config) {
+    if (!_canUpdateConfig('invitation config')) {
+      return false;
+    }
+
+    _data!.config = config ?? ZegoCallInvitationConfig();
+    return true;
+  }
+
+  bool updateRingtoneConfig(ZegoCallRingtoneConfig? ringtoneConfig) {
+    if (!_canUpdateConfig('ringtone config')) {
+      return false;
+    }
+
+    final updatedConfig = ringtoneConfig ?? ZegoCallRingtoneConfig();
+    updatedConfig.syncFrom(_defaultRingtoneConfig);
+    _data!.ringtoneConfig = updatedConfig;
+    _pageManager?.initRing(updatedConfig);
+    return true;
+  }
+
+  bool updateUIConfig(ZegoCallInvitationUIConfig? uiConfig) {
+    if (!_canUpdateConfig('UI config')) {
+      return false;
+    }
+
+    _data!.uiConfig = uiConfig ?? ZegoCallInvitationUIConfig();
+    return true;
+  }
+
+  bool updateNotificationConfig(
+    ZegoCallInvitationNotificationConfig? notificationConfig,
+  ) {
+    if (!_canUpdateConfig('notification config')) {
+      return false;
+    }
+
+    _data!.notificationConfig =
+        notificationConfig ?? ZegoCallInvitationNotificationConfig();
+    return true;
+  }
+
+  bool updateInnerText(ZegoCallInvitationInnerText? innerText) {
+    if (!_canUpdateConfig('inner text')) {
+      return false;
+    }
+
+    final updatedInnerText = innerText ?? ZegoCallInvitationInnerText();
+    updatedInnerText.syncFrom(_defaultInnerText);
+    _data!.innerText = updatedInnerText;
+    return true;
+  }
+
+  bool updateInvitationEvents(ZegoUIKitPrebuiltCallInvitationEvents? events) {
+    if (!_canUpdateConfig('invitation events')) {
+      return false;
+    }
+
+    _data!.invitationEvents = events;
+    return true;
+  }
+
   Future<void> _initPrivate({
     required int appID,
     required String appSign,
@@ -188,6 +281,8 @@ class ZegoCallInvitationServicePrivateImpl
 
     _pageManager = ZegoCallInvitationPageManager(
       callInvitationData: _data!,
+      waitForIOSCallKitAudioActivation:
+          () => iOSCallkit.waitForCallKitAudioActivation(),
     );
     _pageManager!.init(
       ringtoneConfig: _data!.ringtoneConfig,
