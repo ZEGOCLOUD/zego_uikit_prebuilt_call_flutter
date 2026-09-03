@@ -708,8 +708,7 @@ class ZegoCallInvitationPageManager {
         // Prepare the session, then wait for the native didActivate callback
         // before Zego creates its audio capture AudioUnit.
         await ZegoCallPluginPlatform.instance.prepareAudioSessionForCallKit(
-          isVideoCall:
-              _invitationData.type == ZegoCallInvitationType.videoCall,
+          isVideoCall: _invitationData.type == ZegoCallInvitationType.videoCall,
         );
         final audioActivated =
             await waitForIOSCallKitAudioActivation?.call() ?? true;
@@ -791,6 +790,30 @@ class ZegoCallInvitationPageManager {
                 tag: 'call-invitation',
                 subTag: 'page manager',
               );
+            }
+
+            // When the app was killed but the device is not locked, CallKit
+            // can deliver the answer after the app has already become active.
+            // In that case there is no later `resumed` lifecycle event to
+            // trigger the page transition, so the room is entered while the
+            // calling machine remains idle.
+            if (!_appInBackground &&
+                WidgetsBinding.instance.lifecycleState ==
+                    AppLifecycleState.resumed &&
+                callingMachine?.getPageState() == CallingState.kIdle) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_appInBackground ||
+                    callingMachine?.getPageState() != CallingState.kIdle) {
+                  return;
+                }
+
+                ZegoLoggerService.logInfo(
+                  'app is active after CallKit answer, enter call page',
+                  tag: 'call-invitation',
+                  subTag: 'page manager, didChangeAppLifecycleState',
+                );
+                callingMachine?.stateOnlineAudioVideo.enter();
+              });
             }
           });
         });
