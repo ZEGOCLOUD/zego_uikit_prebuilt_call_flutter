@@ -148,6 +148,22 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
 
   // Proximity sensor related variables
   bool _isProximitySensorEnabled = false;
+
+  /// One shared stream for every subscriber of the proximity sensor.
+  ///
+  /// `ProximitySensor.events` calls `EventChannel.receiveBroadcastStream()`,
+  /// which builds a fresh broadcast controller on every call, and each one
+  /// registers its own handler under the same channel name. Since a channel
+  /// keeps a single handler, a second live subscription silently takes the
+  /// events away from the first, and whichever one is cancelled first clears
+  /// the handler and tears the native listener down for both. Two calls can
+  /// overlap whenever two call pages exist at once - a call restored from the
+  /// minimized overlay, or a new invitation arriving while the previous page
+  /// is still animating out - and the screen then stays blacked out with
+  /// touches blocked, because `isScreenBlockedNotifier` never sees the
+  /// "moved away" event. Caching the stream keeps the listen/cancel
+  /// bookkeeping inside one broadcast controller.
+  static final Stream<int> _proximityEvents = ProximitySensor.events;
   StreamSubscription? _proximitySubscription;
   double _originalBrightness = 1.0;
   var isScreenBlockedNotifier = ValueNotifier<bool>(false);
@@ -1090,7 +1106,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       });
 
       // 启用接近传感器
-      _proximitySubscription = ProximitySensor.events.listen((int event) {
+      _proximitySubscription = _proximityEvents.listen((int event) {
         if (event > 0) {
           // 物体靠近，关闭屏幕并屏蔽触摸
           ZegoLoggerService.logInfo(
