@@ -142,10 +142,11 @@ class ZegoRingtone {
 
     return AudioContext(
       iOS: AudioContextIOS(
+        /// `mixWithOthers` may only be combined with the `playAndRecord`,
+        /// `playback` or `multiRoute` categories. Passing it together with
+        /// `ambient` makes `AudioContextIOS` throw, so the ambient category is
+        /// used on its own here (ambient already mixes with other audio).
         category: AVAudioSessionCategory.ambient,
-        options: const {
-          AVAudioSessionOptions.mixWithOthers,
-        },
       ),
       android: const AudioContextAndroid(
         isSpeakerphoneOn: true,
