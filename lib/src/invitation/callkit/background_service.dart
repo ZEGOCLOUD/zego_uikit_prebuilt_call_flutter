@@ -12,6 +12,62 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
+void ensureCallKitRoomLeaveSucceeded(int errorCode, Object? extendedData) {
+  if (errorCode != 0) {
+    throw StateError(
+      'CallKit leave room failed: errorCode:$errorCode, '
+      'extendedData:$extendedData',
+    );
+  }
+}
+
+/// Runs one iOS CallKit hangup cleanup for overlapping end-action callbacks.
+class IOSCallKitHangupOperation {
+  Future<void>? _activeOperation;
+
+  Future<void> run(Future<void> Function() cleanup) {
+    final activeOperation = _activeOperation;
+    if (activeOperation != null) {
+      return activeOperation;
+    }
+
+    final operation = Future<void>.sync(cleanup);
+    _activeOperation = operation;
+
+    return operation.whenComplete(() {
+      if (identical(_activeOperation, operation)) {
+        _activeOperation = null;
+      }
+    });
+  }
+}
+
+/// Holds new CallKit entries while the current room and call page are cleaned up.
+///
+/// If cleanup leaves no call page to dispose, the wait flag is cleared as soon
+/// as cleanup completes. Otherwise, the page's dispose callback clears it.
+Future<void> runIOSCallKitHangupWithPageDisposeWait({
+  required Future<void> Function() cleanup,
+  required bool Function() hasCallPageToDispose,
+  required void Function(bool) setWaitFlag,
+  required void Function() beginCleanup,
+  required bool Function() endCleanup,
+}) async {
+  beginCleanup();
+  var cleanupSucceeded = false;
+
+  try {
+    setWaitFlag(true);
+    await cleanup();
+    cleanupSucceeded = true;
+  } finally {
+    final isLastCleanup = endCleanup();
+    if (cleanupSucceeded && isLastCleanup && !hasCallPageToDispose()) {
+      setWaitFlag(false);
+    }
+  }
+}
+
 /// @nodoc
 class ZegoCallKitBackgroundService {
   factory ZegoCallKitBackgroundService() => instance;
@@ -24,6 +80,7 @@ class ZegoCallKitBackgroundService {
   ZegoCallInvitationPageManager? _pageManager;
 
   bool _iOSCallKitDisplaying = false;
+  final _iOSCallKitHangupOperation = IOSCallKitHangupOperation();
 
   void register({
     required ZegoCallInvitationPageManager pageManager,
@@ -273,65 +330,91 @@ class ZegoCallKitBackgroundService {
     _pageManager?.setWaitCallPageDisposeFlag(value);
   }
 
-  Future<void> handUpCurrentCallByCallKit() async {
+  Future<void> handUpCurrentCallByCallKit() {
+    if (Platform.isIOS) {
+      return _iOSCallKitHangupOperation.run(
+        _handUpCurrentCallByCallKit,
+      );
+    }
+
+    return _handUpCurrentCallByCallKit();
+  }
+
+  Future<void> _handUpCurrentCallByCallKit() async {
+    final pageManager = _pageManager;
+
     ZegoLoggerService.logInfo(
-      'hang up by call kit, iOSBackgroundLockCalling:${_pageManager?.inCallingByIOSBackgroundLock}',
+      'hang up by call kit, iOSBackgroundLockCalling:${pageManager?.inCallingByIOSBackgroundLock}',
       tag: 'call-invitation',
       subTag: 'call invitation service',
     );
 
-    if (Platform.isIOS) {
-      if ((_pageManager?.appInBackground ?? false) &&
-          (_pageManager?.inCallingByIOSBackgroundLock ?? false)) {
-        /// ios lock in call
-      } else {
-        /// If the call is ended by the end button of iOS CallKit,
-        /// the widget navigation of the CallPage will not be properly
-        /// execute dispose function.
-        ///
-        /// As a result, during the next offline call,
-        /// the dispose of the previous CallPage will cause confusion in the widget
-        /// navigation.
-        ///
-        /// Here, it is marked as requiring waiting for the dispose of the previous call page.
-        ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(true);
-      }
-    }
-
-    await ZegoUIKit().leaveRoom().then((result) {
+    Future<void> cleanupCurrentCall() async {
+      final leaveResult = await ZegoUIKit().leaveRoom();
       ZegoLoggerService.logInfo(
-        'leave room result, ${result.errorCode} ${result.extendedData}',
+        'leave room result, ${leaveResult.errorCode} ${leaveResult.extendedData}',
         tag: 'call-invitation',
         subTag: 'call invitation service',
       );
-    });
-
-    if (Platform.isIOS &&
-        ((_pageManager?.inCallingByIOSBackgroundLock ?? false) ||
-            (_pageManager?.appInBackground ?? false))) {
-      _pageManager?.restoreToIdle();
-    } else {
-      ZegoLoggerService.logInfo(
-        'pop from hangup, ',
-        tag: 'call',
-        subTag: 'call invitation service, Navigator',
-      );
-
-      /// background callkit call, not need to navigate
-      try {
-        Navigator.of(_pageManager!.callInvitationData.contextQuery!.call())
-            .pop();
-      } catch (e) {
-        ZegoLoggerService.logError(
-          'Navigator pop exception:$e, '
-          'contextQuery:${_pageManager?.callInvitationData.contextQuery}',
-          tag: 'call-invitation',
-          subTag: 'call invitation service',
+      if (Platform.isIOS) {
+        ensureCallKitRoomLeaveSucceeded(
+          leaveResult.errorCode,
+          leaveResult.extendedData,
         );
+      }
+
+      if (Platform.isIOS &&
+          ((pageManager?.inCallingByIOSBackgroundLock ?? false) ||
+              (pageManager?.appInBackground ?? false))) {
+        await pageManager?.restoreToIdle();
+      } else {
+        ZegoLoggerService.logInfo(
+          'pop from hangup, ',
+          tag: 'call',
+          subTag: 'call invitation service, Navigator',
+        );
+
+        /// background callkit call, not need to navigate
+        try {
+          Navigator.of(pageManager!.callInvitationData.contextQuery!.call())
+              .pop();
+        } catch (e) {
+          ZegoLoggerService.logError(
+            'Navigator pop exception:$e, '
+            'contextQuery:${pageManager?.callInvitationData.contextQuery}',
+            tag: 'call-invitation',
+            subTag: 'call invitation service',
+          );
+        }
       }
     }
 
-    _pageManager?.inCallingByIOSBackgroundLock = false;
+    if (Platform.isIOS) {
+      try {
+        await runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: cleanupCurrentCall,
+          hasCallPageToDispose: () =>
+              pageManager?.callingMachine?.isPagePushed ?? false,
+          setWaitFlag: (value) =>
+              pageManager?.setWaitCallPageDisposeFlag(value),
+          beginCleanup: () => pageManager?.beginIOSCallKitHangupCleanup(),
+          endCleanup: () => pageManager?.endIOSCallKitHangupCleanup() ?? true,
+        );
+      } catch (e) {
+        ZegoLoggerService.logError(
+          'CallKit hangup cleanup failed; keep the page-dispose wait flag set '
+          'until a later cleanup succeeds: $e',
+          tag: 'call-invitation',
+          subTag: 'call invitation service',
+        );
+        rethrow;
+      }
+    } else {
+      await cleanupCurrentCall();
+    }
+
+    // Keep this state true when cleanup throws so a later CallKit event can retry.
+    pageManager?.inCallingByIOSBackgroundLock = false;
   }
 
   bool get isIOSCallKitDisplaying => _iOSCallKitDisplaying;

@@ -13,7 +13,13 @@ mixin ZegoCallInvitationServiceIOSCallKitPrivatePrivate {
 class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   ///
   bool _iOSCallKitServiceInit = false;
+
+  // Both CallKit bridges report audio activation. Each answer only accepts the
+  // source associated with its incoming-call path. Cache activation because it
+  // may arrive before room entry starts waiting. Events carry no callId, so a
+  // delayed event from the same source relies on CallKit's event ordering.
   bool _callKitAudioActivated = false;
+  String? _expectedCallKitAudioActivationSource;
   Completer<void>? _callKitAudioActivationCompleter;
 
   /// callkit event subscriptions
@@ -137,9 +143,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   void _onCallkitActivateAudioEvent(
     ZegoSignalingPluginCallKitVoidEvent event,
   ) {
-    _callKitAudioActivated = true;
-    _callKitAudioActivationCompleter?.complete();
-    _callKitAudioActivationCompleter = null;
+    _updateCallKitAudioActivation(true, source: 'zego_callkit');
 
     final localUser = ZegoUIKit().getLocalUser();
     ZegoLoggerService.logInfo(
@@ -154,11 +158,69 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       tag: 'call-invitation',
       subTag: 'ios callkit',
     );
-
   }
 
-  /// Wait until CallKit owns and activates the AVAudioSession before the
-  /// locked-screen offline call creates the Zego audio capture pipeline.
+  /// Online incoming calls report audio activation through the
+  /// `flutter_callkit_incoming` event stream.
+  void onFlutterCallKitAudioSessionChanged(bool isActivated) {
+    _updateCallKitAudioActivation(
+      isActivated,
+      source: 'flutter_callkit_incoming',
+    );
+  }
+
+  void resetCallKitAudioActivation({required String source}) {
+    // Start a fresh wait for each answer; do not reuse the previous call's
+    // activation state.
+    _callKitAudioActivated = false;
+    _expectedCallKitAudioActivationSource = source;
+    _callKitAudioActivationCompleter = null;
+
+    ZegoLoggerService.logInfo(
+      'reset CallKit audio activation before answer, source:$source',
+      tag: 'call-invitation',
+      subTag: 'ios callkit audio sequencing',
+    );
+  }
+
+  void _updateCallKitAudioActivation(
+    bool isActivated, {
+    required String source,
+  }) {
+    // Ignore events from the other bridge; they must not release this call's
+    // room-entry wait.
+    if (_expectedCallKitAudioActivationSource != source) {
+      ZegoLoggerService.logInfo(
+        'ignore CallKit audio activation from unexpected source:$source, '
+        'expected:$_expectedCallKitAudioActivationSource',
+        tag: 'call-invitation',
+        subTag: 'ios callkit audio sequencing',
+      );
+      return;
+    }
+
+    final wasActivated = _callKitAudioActivated;
+    _callKitAudioActivated = isActivated;
+
+    if (isActivated) {
+      final completer = _callKitAudioActivationCompleter;
+      if (completer != null && !completer.isCompleted) {
+        completer.complete();
+      }
+      _callKitAudioActivationCompleter = null;
+    } else if (wasActivated) {
+      _expectedCallKitAudioActivationSource = null;
+    }
+
+    ZegoLoggerService.logInfo(
+      'CallKit audio activation updated, activated:$isActivated, source:$source',
+      tag: 'call-invitation',
+      subTag: 'ios callkit audio sequencing',
+    );
+  }
+
+  /// CallKit owns AVAudioSession; room audio must not initialize before it is active.
+  /// Activation may arrive first, so check cached state; abort room entry on timeout.
   Future<bool> waitForCallKitAudioActivation({
     Duration timeout = const Duration(seconds: 5),
   }) async {
@@ -181,7 +243,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
     try {
       await completer.future.timeout(timeout);
-      return true;
+      return _callKitAudioActivated;
     } on TimeoutException {
       if (identical(_callKitAudioActivationCompleter, completer)) {
         _callKitAudioActivationCompleter = null;
@@ -199,7 +261,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   void _onCallkitDeactivateAudioEvent(
     ZegoSignalingPluginCallKitVoidEvent event,
   ) {
-    _callKitAudioActivated = false;
+    _updateCallKitAudioActivation(false, source: 'zego_callkit');
     ZegoLoggerService.logInfo(
       'on callkit deactivate audio, '
       'isPublishing:${ZegoUIKit().getLocalUser().streamID.isNotEmpty}, '
@@ -241,6 +303,10 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
   Future<void> _onCallkitPerformAnswerCallActionEvent(
     ZegoSignalingPluginCallKitActionEvent event,
   ) async {
+    // With the signaling plugin's CallKit answer action, wait for activation
+    // from that bridge.
+    resetCallKitAudioActivation(source: 'zego_callkit');
+
     ZegoLoggerService.logInfo(
       'on callkit perform answer call action',
       tag: 'call-invitation',

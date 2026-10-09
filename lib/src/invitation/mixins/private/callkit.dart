@@ -201,6 +201,12 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     switch (event?.event) {
       case Event.actionCallAccept:
+        // Online invitations are accepted through flutter_callkit_incoming. Clear the
+        // previous call's state and select the event source expected for this answer.
+        ZegoUIKitPrebuiltCallInvitationService()
+            .private
+            .iOSCallkit
+            .resetCallKitAudioActivation(source: 'flutter_callkit_incoming');
         ZegoUIKitCallCache()
             .offlineCallKit
             .getCallID()
@@ -218,6 +224,23 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         await ZegoCallKitBackgroundService().refuseInvitationInBackground();
         break;
       case Event.actionCallIncoming:
+        break;
+      case Event.actionCallToggleAudioSession:
+        // Online invitations report AVAudioSession activation through this event.
+        // Forward it to the shared iOS wait state used by both CallKit event sources.
+        final body = event?.body;
+        if (body is Map && body['isActivate'] is bool) {
+          ZegoUIKitPrebuiltCallInvitationService()
+              .private
+              .iOSCallkit
+              .onFlutterCallKitAudioSessionChanged(body['isActivate'] as bool);
+        } else {
+          ZegoLoggerService.logWarn(
+            'ignore invalid CallKit audio session event body:$body',
+            tag: 'call-invitation',
+            subTag: 'ios callkit audio sequencing',
+          );
+        }
         break;
       case Event.actionCallEnded:
 

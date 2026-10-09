@@ -14,7 +14,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
@@ -27,6 +26,29 @@ import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../notification/defines.dart';
 import 'calling/config.dart';
+
+/// Guards the CallKit page-dispose wait flag during asynchronous hangup cleanup.
+class IOSCallKitHangupWaitFlagGuard {
+  int _activeCleanupCount = 0;
+
+  bool get isCleanupInProgress => _activeCleanupCount > 0;
+
+  void beginCleanup() {
+    _activeCleanupCount++;
+  }
+
+  /// Returns whether this was the last active cleanup.
+  bool endCleanup() {
+    if (_activeCleanupCount == 0) {
+      throw StateError('No iOS CallKit hangup cleanup is active');
+    }
+
+    _activeCleanupCount--;
+    return !isCleanupInProgress;
+  }
+
+  bool shouldApplyWaitFlag(bool needWait) => needWait || !isCleanupInProgress;
+}
 
 /// @nodoc
 class ZegoCallInvitationPageManager {
@@ -81,6 +103,7 @@ class ZegoCallInvitationPageManager {
   /// navigation.
   ZegoCallInvitationData? _invitationDataOfWaitCallPageDisposeInIOSCallKit;
   final _waitCallPageDisposeFlagInIOSCallKit = ValueNotifier<bool>(false);
+  final _iosCallKitHangupWaitFlagGuard = IOSCallKitHangupWaitFlagGuard();
   Timer? _timerWaitAppResumedFlagInIOSCallKit;
 
   bool inCallingByIOSBackgroundLock = false;
@@ -2123,10 +2146,10 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager, restore to idle',
       );
 
-      inCallingByIOSBackgroundLock = false;
-      _isIOSCallKitAnswering = false;
       await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       await clearAllCallKitCalls();
+      inCallingByIOSBackgroundLock = false;
+      _isIOSCallKitAnswering = false;
 
       ZegoLoggerService.logInfo(
         'clear callkit infos done',
@@ -2452,14 +2475,42 @@ class ZegoCallInvitationPageManager {
     );
   }
 
-  /// If the call is ended by the end button of iOS CallKit,
-  /// the widget navigation of the CallPage will not be properly
-  /// execute dispose function.
-  ///
-  /// As a result, during the next offline call,
-  /// the dispose of the previous CallPage will cause confusion in the widget
-  /// navigation.
+  /// Prevents CallPage dispose callbacks from releasing the flag before
+  /// CallKit hangup cleanup has finished.
+  void beginIOSCallKitHangupCleanup() {
+    _iosCallKitHangupWaitFlagGuard.beginCleanup();
+
+    ZegoLoggerService.logInfo(
+      'activeIOSCallKitHangupCleanupCount:${_iosCallKitHangupWaitFlagGuard._activeCleanupCount}',
+      tag: 'call-invitation',
+      subTag: 'page manager, setPendingCallPageDisposeFlag',
+    );
+  }
+
+  bool endIOSCallKitHangupCleanup() {
+    final isLastCleanup = _iosCallKitHangupWaitFlagGuard.endCleanup();
+
+    ZegoLoggerService.logInfo(
+      'activeIOSCallKitHangupCleanupCount:${_iosCallKitHangupWaitFlagGuard._activeCleanupCount}',
+      tag: 'call-invitation',
+      subTag: 'page manager, setPendingCallPageDisposeFlag',
+    );
+
+    return isLastCleanup;
+  }
+
+  /// Tracks whether a previous CallKit page must dispose before a new call
+  /// can enter its room.
   void setWaitCallPageDisposeFlag(bool needWait) {
+    if (!_iosCallKitHangupWaitFlagGuard.shouldApplyWaitFlag(needWait)) {
+      ZegoLoggerService.logInfo(
+        'ignore clearing pending call page dispose flag during CallKit hangup cleanup',
+        tag: 'call-invitation',
+        subTag: 'page manager, setPendingCallPageDisposeFlag',
+      );
+      return;
+    }
+
     _waitCallPageDisposeFlagInIOSCallKit.value = needWait;
 
     ZegoLoggerService.logInfo(
