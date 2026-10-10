@@ -6,6 +6,85 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.da
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 void main() {
+  group('iOS CallKit page transition frame', () {
+    testWidgets('schedules a frame for the page transition callback',
+        (tester) async {
+      await tester.pump();
+      var callbackExecuted = false;
+
+      scheduleNextFrameCallback((_) => callbackExecuted = true);
+
+      expect(tester.binding.hasScheduledFrame, isTrue);
+      expect(callbackExecuted, isFalse);
+
+      await tester.pump();
+
+      expect(callbackExecuted, isTrue);
+    });
+  });
+
+  group('shouldEnterIOSCallPageAfterCallKitAnswer', () {
+    test('allows the still active accepted call to enter', () {
+      expect(
+        shouldEnterIOSCallPageAfterCallKitAnswer(
+          isAppInBackground: false,
+          isIOSCallKitHangupBlockingCallPageEntry: false,
+          callPageIsIdle: true,
+          acceptedCallID: 'accepted-call',
+          activeCallID: 'accepted-call',
+          acceptedInvitationID: 'accepted-invitation',
+          activeInvitationID: 'accepted-invitation',
+        ),
+        isTrue,
+      );
+    });
+
+    test('rejects a call that was cleared before the next frame', () {
+      expect(
+        shouldEnterIOSCallPageAfterCallKitAnswer(
+          isAppInBackground: false,
+          isIOSCallKitHangupBlockingCallPageEntry: false,
+          callPageIsIdle: true,
+          acceptedCallID: 'accepted-call',
+          activeCallID: '',
+          acceptedInvitationID: 'accepted-invitation',
+          activeInvitationID: '',
+        ),
+        isFalse,
+      );
+    });
+
+    test('rejects a different call that replaced the accepted call', () {
+      expect(
+        shouldEnterIOSCallPageAfterCallKitAnswer(
+          isAppInBackground: false,
+          isIOSCallKitHangupBlockingCallPageEntry: false,
+          callPageIsIdle: true,
+          acceptedCallID: 'accepted-call',
+          activeCallID: 'next-call',
+          acceptedInvitationID: 'accepted-invitation',
+          activeInvitationID: 'next-invitation',
+        ),
+        isFalse,
+      );
+    });
+
+    test('rejects the call while CallKit hangup state blocks page entry', () {
+      expect(
+        shouldEnterIOSCallPageAfterCallKitAnswer(
+          isAppInBackground: false,
+          isIOSCallKitHangupBlockingCallPageEntry: true,
+          callPageIsIdle: true,
+          acceptedCallID: 'accepted-call',
+          activeCallID: 'accepted-call',
+          acceptedInvitationID: 'accepted-invitation',
+          activeInvitationID: 'accepted-invitation',
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('ensureCallKitRoomLeaveSucceeded', () {
     test('accepts the success result code', () {
       expect(() => ensureCallKitRoomLeaveSucceeded(0, '{}'), returnsNormally);
@@ -219,6 +298,20 @@ void main() {
 
       expect(waitFlag, isTrue);
       expect(guard.isCleanupInProgress, isFalse);
+      final hangupBlocksPageEntry = guard.blocksCallPageEntry(waitFlag);
+      expect(hangupBlocksPageEntry, isTrue);
+      expect(
+        shouldEnterIOSCallPageAfterCallKitAnswer(
+          isAppInBackground: false,
+          isIOSCallKitHangupBlockingCallPageEntry: hangupBlocksPageEntry,
+          callPageIsIdle: true,
+          acceptedCallID: 'accepted-call',
+          activeCallID: 'accepted-call',
+          acceptedInvitationID: 'accepted-invitation',
+          activeInvitationID: 'accepted-invitation',
+        ),
+        isFalse,
+      );
 
       await runIOSCallKitHangupWithPageDisposeWait(
         cleanup: () async {},

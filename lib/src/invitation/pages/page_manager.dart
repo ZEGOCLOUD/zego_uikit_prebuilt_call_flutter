@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show FrameCallback;
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
@@ -27,11 +28,41 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../notification/defines.dart';
 import 'calling/config.dart';
 
+/// Schedules [callback] after a frame and requests that frame if needed.
+void scheduleNextFrameCallback(FrameCallback callback) {
+  final binding = WidgetsBinding.instance;
+  binding
+    ..addPostFrameCallback(callback)
+    ..scheduleFrame();
+}
+
+/// Determines whether a queued CallKit answer may still enter the call page.
+bool shouldEnterIOSCallPageAfterCallKitAnswer({
+  required bool isAppInBackground,
+  required bool isIOSCallKitHangupBlockingCallPageEntry,
+  required bool callPageIsIdle,
+  required String acceptedCallID,
+  required String activeCallID,
+  required String acceptedInvitationID,
+  required String activeInvitationID,
+}) {
+  return !isAppInBackground &&
+      !isIOSCallKitHangupBlockingCallPageEntry &&
+      callPageIsIdle &&
+      acceptedCallID.isNotEmpty &&
+      activeCallID == acceptedCallID &&
+      acceptedInvitationID.isNotEmpty &&
+      activeInvitationID == acceptedInvitationID;
+}
+
 /// Guards the CallKit page-dispose wait flag during asynchronous hangup cleanup.
 class IOSCallKitHangupWaitFlagGuard {
   int _activeCleanupCount = 0;
 
   bool get isCleanupInProgress => _activeCleanupCount > 0;
+
+  bool blocksCallPageEntry(bool isWaitingForCallPageDispose) =>
+      isCleanupInProgress || isWaitingForCallPageDispose;
 
   void beginCleanup() {
     _activeCleanupCount++;
@@ -824,9 +855,20 @@ class ZegoCallInvitationPageManager {
                 WidgetsBinding.instance.lifecycleState ==
                     AppLifecycleState.resumed &&
                 callingMachine?.getPageState() == CallingState.kIdle) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_appInBackground ||
-                    callingMachine?.getPageState() != CallingState.kIdle) {
+              final acceptedCallID = invitationData.callID;
+              final acceptedInvitationID = invitationID;
+              scheduleNextFrameCallback((_) {
+                if (!shouldEnterIOSCallPageAfterCallKitAnswer(
+                  isAppInBackground: _appInBackground,
+                  isIOSCallKitHangupBlockingCallPageEntry:
+                      isIOSCallKitHangupBlockingCallPageEntry,
+                  callPageIsIdle:
+                      callingMachine?.getPageState() == CallingState.kIdle,
+                  acceptedCallID: acceptedCallID,
+                  activeCallID: invitationData.callID,
+                  acceptedInvitationID: acceptedInvitationID,
+                  activeInvitationID: invitationData.invitationID,
+                )) {
                   return;
                 }
 
@@ -2486,6 +2528,11 @@ class ZegoCallInvitationPageManager {
       subTag: 'page manager, setPendingCallPageDisposeFlag',
     );
   }
+
+  bool get isIOSCallKitHangupBlockingCallPageEntry =>
+      _iosCallKitHangupWaitFlagGuard.blocksCallPageEntry(
+        _waitCallPageDisposeFlagInIOSCallKit.value,
+      );
 
   bool endIOSCallKitHangupCleanup() {
     final isLastCleanup = _iosCallKitHangupWaitFlagGuard.endCleanup();
