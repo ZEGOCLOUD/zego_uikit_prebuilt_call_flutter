@@ -35,9 +35,10 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  if ([@"activeAudioByCallKit" isEqualToString:call.method]) {
-    [self activeAudioByCallKit];
-    result(nil);
+  if ([@"prepareAudioSessionForCallKit" isEqualToString:call.method]) {
+    NSDictionary *arguments = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : @{};
+    BOOL isVideoCall = [arguments[@"is_video_call"] boolValue];
+    [self prepareAudioSessionForCallKit:isVideoCall result:result];
   } else if ([@"showNormalNotification" isEqualToString:call.method]) {
     [self showNormalNotification:call.arguments result:result];
   } else if ([@"dismissNotification" isEqualToString:call.method]) {
@@ -112,26 +113,49 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     completionHandler();
 }
 
-- (void)activeAudioByCallKit {
-    NSLog(@"activeAudioByCallKit");
-    NSError *error = nil;
-    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
-    if (error) {
-        NSLog(@"activeAudioByCallKit error: %@", error.localizedDescription);
-    }
+- (void)prepareAudioSessionForCallKit:(BOOL)isVideoCall
+                               result:(FlutterResult)result {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+        // videoChat automatically enables defaultToSpeaker, which can reset
+        // the route selected with the system CallKit controls to the speaker.
+        AVAudioSessionMode mode = AVAudioSessionModeVoiceChat;
+        AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionAllowBluetoothHFP;
 
-    error = nil;
-    [audioSession setMode:AVAudioSessionModeVoiceChat error:&error];
-    if (error) {
-        NSLog(@"activeAudioByCallKit error: %@", error.localizedDescription);
-    }
+        NSError *error = nil;
+        BOOL success = [audioSession
+            setCategory:AVAudioSessionCategoryPlayAndRecord
+                   mode:mode
+                options:options
+                  error:&error];
+        if (success) {
+            success = [audioSession setPreferredSampleRate:44100.0 error:&error];
+        }
+        if (success) {
+            success = [audioSession setPreferredIOBufferDuration:0.005 error:&error];
+        }
 
-    error = nil;
-    [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error];
-    if (error) {
-        NSLog(@"activeAudioByCallKit error: %@", error.localizedDescription);
-    }
+        if (success) {
+            // Do not call setActive:YES here. CallKit owns activation while
+            // answering from the lock screen and will notify didActivate.
+            NSLog(@"prepareAudioSessionForCallKit succeeded, callType:%@ mode:%@",
+                  isVideoCall ? @"video" : @"audio", mode);
+            result(@YES);
+            return;
+        }
+
+        NSLog(@"prepareAudioSessionForCallKit failed, domain:%@, code:%ld, error:%@",
+              error.domain, (long)error.code,
+              error.localizedDescription);
+
+        result([FlutterError
+            errorWithCode:@"AUDIO_SESSION_PREPARE_FAILED"
+            message:error.localizedDescription ?: @"Failed to prepare AVAudioSession"
+            details:@{
+                @"domain": error.domain ?: @"",
+                @"code": @(error.code),
+            }]);
+    });
 }
 
 - (void)dismissNotification:(NSDictionary *)arguments result:(FlutterResult)result {

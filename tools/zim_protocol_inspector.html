@@ -102,7 +102,7 @@ user_c</textarea></div>
       </section>
 
       <section class="output-stack">
-        <div class="panel"><div class="panel-head result-top"><h2 data-i18n="finalTitle">最终传输数据 · ZIM extendedData</h2><span class="status" id="status">● ready</span></div><div class="panel-body"><div class="tabs" role="tablist"><button class="tab" id="tab-escaped" role="tab" aria-selected="false" data-i18n="escapedString">转义字符串</button><button class="tab active" id="tab-raw" role="tab" aria-selected="true" data-i18n="rawJson">原始 JSON</button></div><div class="copy-row"><code id="one-line"></code><button class="copy" id="copy" data-i18n="copy">复制</button></div><div class="codebox"><pre id="final-json"></pre></div></div></div>
+        <div class="panel"><div class="panel-head result-top"><h2 data-i18n="finalTitle">最终传输数据 · ZIM extendedData</h2><span class="status" id="status">● ready</span></div><div class="panel-body"><div class="tabs" role="tablist"><button class="tab active" id="tab-escaped" role="tab" aria-selected="true" data-i18n="escapedString">转义字符串</button><button class="tab" id="tab-raw" role="tab" aria-selected="false" data-i18n="rawJson">原始 JSON</button></div><div class="copy-row"><code id="one-line"></code><button class="copy" id="copy" data-i18n="copy">复制</button></div><div class="codebox"><pre id="final-json"></pre></div></div></div>
         <div class="panel"><div class="panel-head"><h2 data-i18n="nestedTitle">内部业务协议 · data / custom_data</h2><span class="eyebrow" data-i18n="nestedTag">NESTED</span></div><div class="panel-body"><div class="codebox"><pre id="inner-json"></pre></div></div></div>
         <div class="panel"><div class="panel-head"><h2 data-i18n="guideTitle">协议字段说明</h2><span class="eyebrow" data-i18n="guideTag">REFERENCE</span></div><div class="panel-body"><div class="tabs" role="tablist"><button class="tab active" id="guide-normal" role="tab" aria-selected="true" data-i18n="guideNormal">普通模式</button><button class="tab" id="guide-advanced" role="tab" aria-selected="false" data-i18n="guideAdvanced">高级模式</button></div><p class="guide-section-title" data-i18n="outerProtocol">外层 ZIM 协议</p><div class="field-guide"><table class="guide-table"><thead><tr><th data-i18n="guideField">字段</th><th data-i18n="guideType">类型</th><th data-i18n="guideDescription">说明</th></tr></thead><tbody id="guide-outer-body"></tbody></table></div><p class="guide-section-title" data-i18n="innerProtocol">内层 sendProtocol</p><div class="field-guide"><table class="guide-table"><thead><tr><th data-i18n="guideField">字段</th><th data-i18n="guideType">类型</th><th data-i18n="guideDescription">说明</th></tr></thead><tbody id="guide-inner-body"></tbody></table></div></div></div>
       </section>
@@ -182,7 +182,7 @@ user_c</textarea></div>
       else outer = { inviter_id:$('inviter-id').value.trim(), inviter_name:$('inviter-name').value.trim(), type, data:JSON.stringify(inner) };
       return {mode, op, inner, outer, invitees, type};
     }
-    let outputTab = 'raw';
+    let outputTab = 'escaped';
     function render() {
       const v = values(); const zim = JSON.stringify(v.outer); const escaped = JSON.stringify(zim); const isAdd = v.op === 'add';
       $('one-line').textContent = outputTab === 'raw' ? zim : escaped; $('final-json').textContent = outputTab === 'raw' && $('pretty').checked ? pretty(v.outer) : (outputTab === 'raw' ? zim : escaped); $('inner-json').textContent = pretty(v.inner);

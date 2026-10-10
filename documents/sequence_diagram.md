@@ -1,6 +1,36 @@
 # ZEGO Call Invitation Sequence Diagrams
 
+> 基准：2026-10-10
+
 The following sequence diagrams illustrate the API call flows for various operations in the ZEGO Call Invitation system, implemented based on the ZIM SDK.
+
+## iOS CallKit Answer and Call Page Entry
+
+After an iOS CallKit answer, the SDK joins the room before presenting the call page. If the app is already active and the calling machine is still idle when room entry completes, the SDK schedules a frame callback and requests a frame. Before pushing the call page, the callback rechecks that the app is active, the page is idle, the accepted invitation is still current, and no CallKit hangup cleanup or pending page disposal blocks entry.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant CallKit
+    participant SDK as Call Invitation SDK
+    participant UIKit as ZegoUIKit
+    participant Flutter as Flutter Scheduler
+    participant Navigator
+
+    User->>CallKit: Answer offline call
+    CallKit->>SDK: Deliver accepted invitation
+    SDK->>UIKit: Join call room
+    UIKit-->>SDK: Room join completes
+    alt App is active and call page is idle
+        SDK->>Flutter: Register post-frame callback
+        SDK->>Flutter: Request next frame
+        Flutter-->>SDK: Run callback after frame
+        SDK->>SDK: Recheck app, page, invitation, and CallKit hangup state
+        SDK->>Navigator: Push call page
+    else App lifecycle transition enters the call page
+        SDK->>Navigator: Push call page from lifecycle handler
+    end
+```
 
 ## Send Invitation
 

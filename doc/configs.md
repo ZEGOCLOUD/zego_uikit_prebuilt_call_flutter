@@ -1,3 +1,5 @@
+> 基准： 2026-10-09
+
 - [Invitation](#invitation)
   - [ZegoCallInvitationConfig](#zegocallinvitationconfig)
     - [offline](#offline)
@@ -340,7 +342,7 @@
   
     - TextStyle? `textStyle`
 
-  - bool `defaultSpeakerOn`: Whether to open the speaker when on calling, default value is false
+  - bool `defaultSpeakerOn`: Whether to start a call with speaker output, default value is false. For iOS CallKit calls accepted from the lock screen, false starts with the receiver when no external audio route is active. The system speaker control can switch between the speaker and receiver during the call.
 
   - bool `useVideoViewAspectFill`: Video view mode, default value is false
 

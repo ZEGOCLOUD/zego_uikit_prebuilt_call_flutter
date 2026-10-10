@@ -26,6 +26,24 @@ enum CallingState {
 /// @nodoc
 typedef CallingMachineStateChanged = void Function(CallingState);
 
+/// Marks the call page pending before invoking Navigator.push.
+///
+/// If the synchronous push setup fails, restores the page state and rethrows.
+void pushCallPageWithPendingState({
+  required void Function() push,
+  required void Function(bool) setPagePushed,
+  void Function()? onPushFailure,
+}) {
+  setPagePushed(true);
+  try {
+    push();
+  } catch (_) {
+    setPagePushed(false);
+    onPushFailure?.call();
+    rethrow;
+  }
+}
+
 /// @nodoc
 /// State machine in the call
 class ZegoCallingMachine {
@@ -128,39 +146,46 @@ class ZegoCallingMachine {
     );
 
     try {
-      ZegoLoggerService.logInfo(
-        'push from onCallingEntry, ',
-        tag: 'call',
-        subTag: 'machine, Navigator',
-      );
-      final currentContext = callInvitationData.contextQuery?.call();
-      Navigator.of(currentContext!).push(
-        MaterialPageRoute(
-          builder: (context) => ZegoCallingPage(
-            pageManager: pageManager,
-            callInvitationData: callInvitationData,
-            inviter: pageManager.invitationData.inviter!,
-            invitees: pageManager.invitationData.invitees,
-            onInitState: () {
-              ZegoLoggerService.logInfo(
-                'push from onCallingEntry, onInitState',
-                tag: 'call',
-                subTag: 'machine, Navigator',
-              );
+      pushCallPageWithPendingState(
+        setPagePushed: (value) => isPagePushed = value,
+        onPushFailure: () => pageManager.setWaitCallPageDisposeFlag(false),
+        push: () {
+          ZegoLoggerService.logInfo(
+            'push from onCallingEntry, ',
+            tag: 'call',
+            subTag: 'machine, Navigator',
+          );
+          final currentContext = callInvitationData.contextQuery?.call();
+          Navigator.of(currentContext!).push(
+            MaterialPageRoute(
+              builder: (context) => ZegoCallingPage(
+                pageManager: pageManager,
+                callInvitationData: callInvitationData,
+                inviter: pageManager.invitationData.inviter!,
+                invitees: pageManager.invitationData.invitees,
+                onInitState: () {
+                  ZegoLoggerService.logInfo(
+                    'push from onCallingEntry, onInitState',
+                    tag: 'call',
+                    subTag: 'machine, Navigator',
+                  );
 
-              isPagePushed = true;
-            },
-            onDispose: () {
-              ZegoLoggerService.logInfo(
-                'push from onCallingEntry, onDispose',
-                tag: 'call',
-                subTag: 'machine, Navigator',
-              );
+                  isPagePushed = true;
+                },
+                onDispose: () {
+                  ZegoLoggerService.logInfo(
+                    'push from onCallingEntry, onDispose',
+                    tag: 'call',
+                    subTag: 'machine, Navigator',
+                  );
 
-              isPagePushed = false;
-            },
-          ),
-        ),
+                  isPagePushed = false;
+                  pageManager.setWaitCallPageDisposeFlag(false);
+                },
+              ),
+            ),
+          );
+        },
       );
     } catch (e) {
       ZegoLoggerService.logError(

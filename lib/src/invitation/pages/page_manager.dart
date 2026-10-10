@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show FrameCallback;
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
@@ -13,7 +14,7 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/ios/entry_point.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
@@ -27,13 +28,77 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../notification/defines.dart';
 import 'calling/config.dart';
 
+/// Resolves the initial audio route for an iOS CallKit answer.
+ZegoUIKitAudioRoute resolveIOSCallKitAudioRoute({
+  required bool useSpeakerWhenJoining,
+}) {
+  return useSpeakerWhenJoining
+      ? ZegoUIKitAudioRoute.speaker
+      : ZegoUIKitAudioRoute.receiver;
+}
+
+/// Schedules [callback] after a frame and requests that frame if needed.
+void scheduleNextFrameCallback(FrameCallback callback) {
+  final binding = WidgetsBinding.instance;
+  binding
+    ..addPostFrameCallback(callback)
+    ..scheduleFrame();
+}
+
+/// Determines whether a queued CallKit answer may still enter the call page.
+bool shouldEnterIOSCallPageAfterCallKitAnswer({
+  required bool isAppInBackground,
+  required bool isIOSCallKitHangupBlockingCallPageEntry,
+  required bool callPageIsIdle,
+  required String acceptedCallID,
+  required String activeCallID,
+  required String acceptedInvitationID,
+  required String activeInvitationID,
+}) {
+  return !isAppInBackground &&
+      !isIOSCallKitHangupBlockingCallPageEntry &&
+      callPageIsIdle &&
+      acceptedCallID.isNotEmpty &&
+      activeCallID == acceptedCallID &&
+      acceptedInvitationID.isNotEmpty &&
+      activeInvitationID == acceptedInvitationID;
+}
+
+/// Guards the CallKit page-dispose wait flag during asynchronous hangup cleanup.
+class IOSCallKitHangupWaitFlagGuard {
+  int _activeCleanupCount = 0;
+
+  bool get isCleanupInProgress => _activeCleanupCount > 0;
+
+  bool blocksCallPageEntry(bool isWaitingForCallPageDispose) =>
+      isCleanupInProgress || isWaitingForCallPageDispose;
+
+  void beginCleanup() {
+    _activeCleanupCount++;
+  }
+
+  /// Returns whether this was the last active cleanup.
+  bool endCleanup() {
+    if (_activeCleanupCount == 0) {
+      throw StateError('No iOS CallKit hangup cleanup is active');
+    }
+
+    _activeCleanupCount--;
+    return !isCleanupInProgress;
+  }
+
+  bool shouldApplyWaitFlag(bool needWait) => needWait || !isCleanupInProgress;
+}
+
 /// @nodoc
 class ZegoCallInvitationPageManager {
   ZegoUIKitPrebuiltCallInvitationData callInvitationData;
   ZegoCallInvitationNotificationManager? _notificationManager;
+  final Future<bool> Function()? waitForIOSCallKitAudioActivation;
 
   ZegoCallInvitationPageManager({
     required this.callInvitationData,
+    this.waitForIOSCallKitAudioActivation,
   });
 
   final _defaultPackageName = 'packages/zego_uikit_prebuilt_call/';
@@ -78,6 +143,7 @@ class ZegoCallInvitationPageManager {
   /// navigation.
   ZegoCallInvitationData? _invitationDataOfWaitCallPageDisposeInIOSCallKit;
   final _waitCallPageDisposeFlagInIOSCallKit = ValueNotifier<bool>(false);
+  final _iosCallKitHangupWaitFlagGuard = IOSCallKitHangupWaitFlagGuard();
   Timer? _timerWaitAppResumedFlagInIOSCallKit;
 
   bool inCallingByIOSBackgroundLock = false;
@@ -88,6 +154,10 @@ class ZegoCallInvitationPageManager {
   ///At this time, you need to agree directly onCallInvitationReceived
   /// todo wait zim sdk fix bug
   bool _hasCallkitIncomingCauseAppInBackground = false;
+
+  /// The answer operation came from CallKit. This must not depend on the
+  /// Flutter lifecycle because iOS may resume the app before signaling returns.
+  bool _isIOSCallKitAnswering = false;
 
   /// First click the Agree button in the offline pop-up, and then receive the invitation event later
   bool _waitingCallInvitationReceivedAfterCallKitIncomingAccepted = false;
@@ -153,6 +223,18 @@ class ZegoCallInvitationPageManager {
     );
 
     _hasCallkitIncomingCauseAppInBackground = value;
+  }
+
+  bool get isIOSCallKitAnswering => _isIOSCallKitAnswering;
+
+  set isIOSCallKitAnswering(bool value) {
+    ZegoLoggerService.logInfo(
+      'set isIOSCallKitAnswering:$value',
+      tag: 'call-invitation',
+      subTag: 'page manager, ios callkit audio sequencing',
+    );
+
+    _isIOSCallKitAnswering = value;
   }
 
   bool get waitingCallInvitationReceivedAfterCallKitIncomingAccepted =>
@@ -590,11 +672,11 @@ class ZegoCallInvitationPageManager {
     }
   }
 
-  void onLocalAcceptInvitation(
+  Future<void> onLocalAcceptInvitation(
     String invitationID,
     String code,
     String message,
-  ) {
+  ) async {
     ZegoLoggerService.logInfo(
       'local accept invitation, code:$code, message:$message, '
       'app in background:$_appInBackground',
@@ -638,7 +720,19 @@ class ZegoCallInvitationPageManager {
       return;
     }
 
-    if (Platform.isIOS && _appInBackground) {
+    final isIOSCallKitBackgroundAccept = Platform.isIOS &&
+        (_hasCallkitIncomingCauseAppInBackground || _isIOSCallKitAnswering);
+    ZegoLoggerService.logInfo(
+      'local accept invitation routing, '
+      'isIOSCallKitBackgroundAccept:$isIOSCallKitBackgroundAccept, '
+      'appInBackground:$_appInBackground, '
+      'hasCallkitIncomingCauseAppInBackground:$_hasCallkitIncomingCauseAppInBackground, '
+      'isIOSCallKitAnswering:$_isIOSCallKitAnswering',
+      tag: 'call-invitation',
+      subTag: 'page manager, ios callkit audio sequencing',
+    );
+
+    if (isIOSCallKitBackgroundAccept) {
       ZegoLoggerService.logInfo(
         'accept call by callkit in background-locked, manually enter room',
         tag: 'call-invitation',
@@ -673,6 +767,36 @@ class ZegoCallInvitationPageManager {
         /// the audio-video view interface not be rendered properly, causing the normal in-room logic to not run.
         /// Therefore, it is necessary to manually enter the room at this point.
 
+        // CallKit owns AVAudioSession activation for a locked-screen answer.
+        // Prepare the session, then wait for the native didActivate callback
+        // before Zego creates its audio capture AudioUnit.
+        await ZegoCallPluginPlatform.instance.prepareAudioSessionForCallKit(
+          isVideoCall: _invitationData.type == ZegoCallInvitationType.videoCall,
+        );
+        final audioActivated =
+            await waitForIOSCallKitAudioActivation?.call() ?? true;
+        ZegoLoggerService.logInfo(
+          'CallKit audio activation observation completed before room entry, '
+          'activated:$audioActivated',
+          tag: 'call-invitation',
+          subTag: 'page manager, ios callkit audio sequencing',
+        );
+        if (!audioActivated) {
+          ZegoLoggerService.logError(
+            'CallKit did not activate AVAudioSession; abort locked-screen '
+            'answer before creating Zego AudioUnit',
+            tag: 'call-invitation',
+            subTag: 'page manager, ios callkit audio sequencing',
+          );
+          return;
+        }
+        ZegoLoggerService.logInfo(
+          'CallKit audio is active; proceeding with room entry and audio '
+          'capture initialization',
+          tag: 'call-invitation',
+          subTag: 'page manager, ios callkit audio sequencing',
+        );
+
         ZegoUIKit().login(
           callInvitationData.userID,
           callInvitationData.userName,
@@ -697,11 +821,19 @@ class ZegoCallInvitationPageManager {
           }
         }
 
+        final callConfig = callInvitationData.requireConfig(_invitationData);
+        callingConfig.sync(
+          _invitationData.type,
+          callConfig,
+          callInvitationData.uiConfig.inviter,
+          callInvitationData.uiConfig.invitee,
+          localUserIsInviter: false,
+        );
         ZegoUIKit().enableSyncDeviceStatusBySEI(
-          callInvitationData
-              .requireConfig(_invitationData)
-              .device
-              .enableSyncDeviceStatusBySEI,
+          callConfig.device.enableSyncDeviceStatusBySEI,
+        );
+        final initialAudioRoute = resolveIOSCallKitAudioRoute(
+          useSpeakerWhenJoining: callConfig.useSpeakerWhenJoining,
         );
         ZegoUIKit()
             .init(
@@ -713,7 +845,9 @@ class ZegoCallInvitationPageManager {
             .then((value) async {
           ZegoUIKit()
             ..turnMicrophoneOn(true)
-            ..setAudioOutputToSpeaker(true);
+            ..setAudioOutputToSpeaker(
+              initialAudioRoute == ZegoUIKitAudioRoute.speaker,
+            );
 
           await ZegoUIKit()
               .joinRoom(invitationData.callID, token: callInvitationData.token)
@@ -729,6 +863,41 @@ class ZegoCallInvitationPageManager {
                 tag: 'call-invitation',
                 subTag: 'page manager',
               );
+            }
+
+            // When the app was killed but the device is not locked, CallKit
+            // can deliver the answer after the app has already become active.
+            // In that case there is no later `resumed` lifecycle event to
+            // trigger the page transition, so the room is entered while the
+            // calling machine remains idle.
+            if (!_appInBackground &&
+                WidgetsBinding.instance.lifecycleState ==
+                    AppLifecycleState.resumed &&
+                callingMachine?.getPageState() == CallingState.kIdle) {
+              final acceptedCallID = invitationData.callID;
+              final acceptedInvitationID = invitationID;
+              scheduleNextFrameCallback((_) {
+                if (!shouldEnterIOSCallPageAfterCallKitAnswer(
+                  isAppInBackground: _appInBackground,
+                  isIOSCallKitHangupBlockingCallPageEntry:
+                      isIOSCallKitHangupBlockingCallPageEntry,
+                  callPageIsIdle:
+                      callingMachine?.getPageState() == CallingState.kIdle,
+                  acceptedCallID: acceptedCallID,
+                  activeCallID: invitationData.callID,
+                  acceptedInvitationID: acceptedInvitationID,
+                  activeInvitationID: invitationData.invitationID,
+                )) {
+                  return;
+                }
+
+                ZegoLoggerService.logInfo(
+                  'app is active after CallKit answer, enter call page',
+                  tag: 'call-invitation',
+                  subTag: 'page manager, didChangeAppLifecycleState',
+                );
+                callingMachine?.stateOnlineAudioVideo.enter();
+              });
             }
           });
         });
@@ -2038,9 +2207,10 @@ class ZegoCallInvitationPageManager {
         subTag: 'page manager, restore to idle',
       );
 
-      inCallingByIOSBackgroundLock = false;
       await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       await clearAllCallKitCalls();
+      inCallingByIOSBackgroundLock = false;
+      _isIOSCallKitAnswering = false;
 
       ZegoLoggerService.logInfo(
         'clear callkit infos done',
@@ -2366,14 +2536,47 @@ class ZegoCallInvitationPageManager {
     );
   }
 
-  /// If the call is ended by the end button of iOS CallKit,
-  /// the widget navigation of the CallPage will not be properly
-  /// execute dispose function.
-  ///
-  /// As a result, during the next offline call,
-  /// the dispose of the previous CallPage will cause confusion in the widget
-  /// navigation.
+  /// Prevents CallPage dispose callbacks from releasing the flag before
+  /// CallKit hangup cleanup has finished.
+  void beginIOSCallKitHangupCleanup() {
+    _iosCallKitHangupWaitFlagGuard.beginCleanup();
+
+    ZegoLoggerService.logInfo(
+      'activeIOSCallKitHangupCleanupCount:${_iosCallKitHangupWaitFlagGuard._activeCleanupCount}',
+      tag: 'call-invitation',
+      subTag: 'page manager, setPendingCallPageDisposeFlag',
+    );
+  }
+
+  bool get isIOSCallKitHangupBlockingCallPageEntry =>
+      _iosCallKitHangupWaitFlagGuard.blocksCallPageEntry(
+        _waitCallPageDisposeFlagInIOSCallKit.value,
+      );
+
+  bool endIOSCallKitHangupCleanup() {
+    final isLastCleanup = _iosCallKitHangupWaitFlagGuard.endCleanup();
+
+    ZegoLoggerService.logInfo(
+      'activeIOSCallKitHangupCleanupCount:${_iosCallKitHangupWaitFlagGuard._activeCleanupCount}',
+      tag: 'call-invitation',
+      subTag: 'page manager, setPendingCallPageDisposeFlag',
+    );
+
+    return isLastCleanup;
+  }
+
+  /// Tracks whether a previous CallKit page must dispose before a new call
+  /// can enter its room.
   void setWaitCallPageDisposeFlag(bool needWait) {
+    if (!_iosCallKitHangupWaitFlagGuard.shouldApplyWaitFlag(needWait)) {
+      ZegoLoggerService.logInfo(
+        'ignore clearing pending call page dispose flag during CallKit hangup cleanup',
+        tag: 'call-invitation',
+        subTag: 'page manager, setPendingCallPageDisposeFlag',
+      );
+      return;
+    }
+
     _waitCallPageDisposeFlagInIOSCallKit.value = needWait;
 
     ZegoLoggerService.logInfo(

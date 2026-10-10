@@ -1,5 +1,7 @@
 # CallKit 文件结构说明
 
+基准：SDK 4.24.4 / 2026-10-09
+
 ## 概述
 
 CallKit模块采用平台分离的架构设计，Android和iOS各自有独立的实现，但保持相同的文件结构和处理逻辑。
@@ -116,6 +118,38 @@ ios/
 2. **分离性**: 平台特定代码完全分离，便于维护
 3. **扩展性**: 易于添加新的消息类型和处理器
 4. **兼容性**: 保持原有功能的完全兼容
+
+## iOS CallKit 结束通话与页面等待标记
+
+CallKit 结束通话时，SDK 先设置页面等待标记，挡住清理期间到来的下一通来电。同一时段内重叠的结束事件共用一次挂断清理；活动清理数用于防止其他并发清理提前解除保护。最后一个清理成功后，如果没有通话页路由就清除标记，否则等路由 dispose 后清除。iOS 离房返回非零错误码或清理步骤抛错都会保留标记并继续报告错误，下一次成功的挂断清理可以释放标记。锁屏通话状态只在 CallKit 信息清理成功后复位。清理未完成时，通话页 dispose 发出的清除请求不会生效。所有创建通话页的路由，包括最小化邀请恢复，都会在调用 Navigator push 前标记为待销毁，push 失败时回滚。判断依据是路由是否已发起或仍存在，不随应用前后台状态变化。
+
+```mermaid
+flowchart TD
+    A[CallKit 结束通话] --> B[设置页面等待标记]
+    B --> C[离开房间并清理页面]
+    C --> D{清理是否成功且已全部结束}
+    D -- 否 --> E[保留标记并上抛错误]
+    D -- 是 --> F{通话页路由仍在导航栈中}
+    F -- 是 --> G[等待页面 dispose 并清除标记]
+    F -- 否 --> H[立即清除标记]
+```
+
+## iOS CallKit 音频激活与进房
+
+iOS 来电有两条 CallKit 音频激活事件来源：VoIP 推送创建的来电由 signaling 插件提供 `didActivateAudioSession`；在线来电由 `flutter_callkit_incoming` 提供 `actionCallToggleAudioSession`。接听入口会先清空上一通激活状态，并指定本次等待器的预期事件来源；来自另一来源的激活和停用事件会被忽略。收到预期来源的激活事件后才放行进房，通话结束收到停用事件后清除激活状态。在线事件不包含通话 ID，因此同一来源的事件依赖 CallKit 按通话顺序送达。
+
+```mermaid
+sequenceDiagram
+    participant C as CallKit 接听入口
+    participant E as 激活事件来源
+    participant W as 音频等待器
+    participant R as 进房流程
+    C->>W: 重置上一通激活状态
+    C->>R: 发送接听信令并准备音频会话
+    E-->>W: didActivateAudioSession 或 actionCallToggleAudioSession=true
+    W-->>R: 放行初始化和进房
+    E-->>W: 通话结束时报告音频停用
+```
 
 ## 消息结构差异
 

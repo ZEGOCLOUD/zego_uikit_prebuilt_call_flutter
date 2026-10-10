@@ -257,34 +257,43 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
     // Recreate the inviting page
     try {
-      Navigator.of(context, rootNavigator: rootNavigator).push(
-        MaterialPageRoute(builder: (context) {
-          return ZegoCallingPage(
-            pageManager: invitingData.pageManager,
-            callInvitationData: invitingData.callInvitationData,
-            inviter: invitingData.inviter,
-            invitees: invitingData.invitees,
-            onInitState: () {
-              ZegoLoggerService.logInfo(
-                'ZegoCallingPage onInitState called, setting overlay state to idle',
-                tag: 'call',
-                subTag: 'controller.minimize',
+      pushCallPageWithPendingState(
+        setPagePushed: (value) =>
+            invitingData.pageManager.callingMachine?.isPagePushed = value,
+        onPushFailure: () =>
+            invitingData.pageManager.setWaitCallPageDisposeFlag(false),
+        push: () {
+          Navigator.of(context, rootNavigator: rootNavigator).push(
+            MaterialPageRoute(builder: (context) {
+              return ZegoCallingPage(
+                pageManager: invitingData.pageManager,
+                callInvitationData: invitingData.callInvitationData,
+                inviter: invitingData.inviter,
+                invitees: invitingData.invitees,
+                onInitState: () {
+                  ZegoLoggerService.logInfo(
+                    'ZegoCallingPage onInitState called, setting overlay state to idle',
+                    tag: 'call',
+                    subTag: 'controller.minimize',
+                  );
+                  invitingData.pageManager.callingMachine?.isPagePushed = true;
+                  // When the inviting interface is restored, set the overlay state to idle
+                  ZegoCallMiniOverlayMachine()
+                      .changeState(ZegoCallMiniOverlayPageState.idle);
+                },
+                onDispose: () {
+                  ZegoLoggerService.logInfo(
+                    'ZegoCallingPage onDispose called',
+                    tag: 'call',
+                    subTag: 'controller.minimize',
+                  );
+                  invitingData.pageManager.callingMachine?.isPagePushed = false;
+                  invitingData.pageManager.setWaitCallPageDisposeFlag(false);
+                },
               );
-              invitingData.pageManager.callingMachine?.isPagePushed = true;
-              // When the inviting interface is restored, set the overlay state to idle
-              ZegoCallMiniOverlayMachine()
-                  .changeState(ZegoCallMiniOverlayPageState.idle);
-            },
-            onDispose: () {
-              ZegoLoggerService.logInfo(
-                'ZegoCallingPage onDispose called',
-                tag: 'call',
-                subTag: 'controller.minimize',
-              );
-              invitingData.pageManager.callingMachine?.isPagePushed = false;
-            },
+            }),
           );
-        }),
+        },
       );
       return true;
     } catch (e) {
