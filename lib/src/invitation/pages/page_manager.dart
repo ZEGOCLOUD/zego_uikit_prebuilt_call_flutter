@@ -28,6 +28,15 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../notification/defines.dart';
 import 'calling/config.dart';
 
+/// Resolves the initial audio route for an iOS CallKit answer.
+ZegoUIKitAudioRoute resolveIOSCallKitAudioRoute({
+  required bool useSpeakerWhenJoining,
+}) {
+  return useSpeakerWhenJoining
+      ? ZegoUIKitAudioRoute.speaker
+      : ZegoUIKitAudioRoute.receiver;
+}
+
 /// Schedules [callback] after a frame and requests that frame if needed.
 void scheduleNextFrameCallback(FrameCallback callback) {
   final binding = WidgetsBinding.instance;
@@ -812,11 +821,19 @@ class ZegoCallInvitationPageManager {
           }
         }
 
+        final callConfig = callInvitationData.requireConfig(_invitationData);
+        callingConfig.sync(
+          _invitationData.type,
+          callConfig,
+          callInvitationData.uiConfig.inviter,
+          callInvitationData.uiConfig.invitee,
+          localUserIsInviter: false,
+        );
         ZegoUIKit().enableSyncDeviceStatusBySEI(
-          callInvitationData
-              .requireConfig(_invitationData)
-              .device
-              .enableSyncDeviceStatusBySEI,
+          callConfig.device.enableSyncDeviceStatusBySEI,
+        );
+        final initialAudioRoute = resolveIOSCallKitAudioRoute(
+          useSpeakerWhenJoining: callConfig.useSpeakerWhenJoining,
         );
         ZegoUIKit()
             .init(
@@ -828,7 +845,9 @@ class ZegoCallInvitationPageManager {
             .then((value) async {
           ZegoUIKit()
             ..turnMicrophoneOn(true)
-            ..setAudioOutputToSpeaker(true);
+            ..setAudioOutputToSpeaker(
+              initialAudioRoute == ZegoUIKitAudioRoute.speaker,
+            );
 
           await ZegoUIKit()
               .joinRoom(invitationData.callID, token: callInvitationData.token)

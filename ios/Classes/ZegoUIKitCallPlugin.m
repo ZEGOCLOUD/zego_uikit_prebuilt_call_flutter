@@ -117,13 +117,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                result:(FlutterResult)result {
     dispatch_async(dispatch_get_main_queue(), ^{
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-        AVAudioSessionMode mode = isVideoCall
-            ? AVAudioSessionModeVideoChat
-            : AVAudioSessionModeVoiceChat;
+        // videoChat automatically enables defaultToSpeaker, which can reset
+        // the route selected with the system CallKit controls to the speaker.
+        AVAudioSessionMode mode = AVAudioSessionModeVoiceChat;
         AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionAllowBluetoothHFP;
-        if (isVideoCall) {
-            options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
-        }
 
         NSError *error = nil;
         BOOL success = [audioSession
@@ -141,7 +138,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         if (success) {
             // Do not call setActive:YES here. CallKit owns activation while
             // answering from the lock screen and will notify didActivate.
-            NSLog(@"prepareAudioSessionForCallKit succeeded, mode:%@", mode);
+            NSLog(@"prepareAudioSessionForCallKit succeeded, callType:%@ mode:%@",
+                  isVideoCall ? @"video" : @"audio", mode);
             result(@YES);
             return;
         }

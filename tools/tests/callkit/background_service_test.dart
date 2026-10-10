@@ -1,7 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:zego_uikit/zego_uikit.dart' show ZegoUIKitAudioRoute;
+import 'package:zego_uikit_prebuilt_call/src/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/background_service.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
@@ -82,6 +87,83 @@ void main() {
         ),
         isFalse,
       );
+    });
+  });
+
+  group('resolveIOSCallKitAudioRoute', () {
+    test('uses the receiver when speaker is disabled', () {
+      expect(
+        resolveIOSCallKitAudioRoute(useSpeakerWhenJoining: false),
+        ZegoUIKitAudioRoute.receiver,
+      );
+    });
+
+    test('uses the speaker when speaker is enabled', () {
+      expect(
+        resolveIOSCallKitAudioRoute(useSpeakerWhenJoining: true),
+        ZegoUIKitAudioRoute.speaker,
+      );
+    });
+  });
+
+  group('ZegoUIKitPrebuiltCallingConfig.sync speaker precedence', () {
+    test('invitee default overrides a speaker-enabled call config', () {
+      final callConfig =
+          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      ZegoUIKitPrebuiltCallingConfig().sync(
+        ZegoCallInvitationType.videoCall,
+        callConfig,
+        ZegoCallInvitationInviterUIConfig(),
+        ZegoCallInvitationInviteeUIConfig(defaultSpeakerOn: false),
+        localUserIsInviter: false,
+      );
+      expect(
+        callConfig.useSpeakerWhenJoining,
+        isFalse,
+      );
+    });
+
+    test('explicit receiver selection overrides the invitee default', () {
+      final callConfig =
+          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      ZegoUIKitPrebuiltCallingConfig()
+        ..useSpeakerWhenJoining = false
+        ..sync(
+          ZegoCallInvitationType.videoCall,
+          callConfig,
+          ZegoCallInvitationInviterUIConfig(),
+          ZegoCallInvitationInviteeUIConfig(defaultSpeakerOn: true),
+          localUserIsInviter: false,
+        );
+      expect(callConfig.useSpeakerWhenJoining, isFalse);
+    });
+
+    test('explicit speaker selection overrides the invitee default', () {
+      final callConfig =
+          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: false);
+      ZegoUIKitPrebuiltCallingConfig()
+        ..useSpeakerWhenJoining = true
+        ..sync(
+          ZegoCallInvitationType.videoCall,
+          callConfig,
+          ZegoCallInvitationInviterUIConfig(),
+          ZegoCallInvitationInviteeUIConfig(defaultSpeakerOn: false),
+          localUserIsInviter: false,
+        );
+      expect(callConfig.useSpeakerWhenJoining, isTrue);
+    });
+
+    test('falls back to call config when invitation config is unset', () {
+      final callConfig =
+          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      ZegoUIKitPrebuiltCallingConfig().sync(
+        ZegoCallInvitationType.videoCall,
+        callConfig,
+        null,
+        null,
+        localUserIsInviter: false,
+      );
+      expect(callConfig.useSpeakerWhenJoining, isTrue);
     });
   });
 
