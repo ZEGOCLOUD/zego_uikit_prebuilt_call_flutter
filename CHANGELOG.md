@@ -1,3 +1,10 @@
+## 4.24.5
+
+- Bugs
+  - Fixed iOS offline call answer issues involving remote audio, CallKit audio activation, and
+    call page transitions.
+  - Honored the selected initial audio route when answering through iOS CallKit.
+
 ## 4.24.4
 
 - Support [Call Protocol Tool](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter/tree/master/tools/zim_protocol_inspector.html) to generate and inspect ZIM call invitation protocol data in normal and advanced modes.
