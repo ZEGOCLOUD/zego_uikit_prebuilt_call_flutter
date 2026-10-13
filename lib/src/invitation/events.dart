@@ -20,7 +20,7 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   ///
   /// If the user is not the inviter who initiated this call invitation or is not online, the callback will not be received.
   Function(List<ZegoSignalingPluginInvitationUserInfo>)?
-      onInvitationUserStateChanged;
+  onInvitationUserStateChanged;
 
   /// This callback will be triggered to **callee** when callee click decline button in incoming call
   Function()? onIncomingCallDeclineButtonPressed;
@@ -35,14 +35,12 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
     ZegoCallInvitationType callType,
     List<ZegoCallUser> callees,
     String customData,
-  )? onIncomingCallReceived;
+  )?
+  onIncomingCallReceived;
 
   /// This callback will be triggered to **callee** when the caller cancels the call invitation.
-  Function(
-    String callID,
-    ZegoCallUser caller,
-    String customData,
-  )? onIncomingCallCanceled;
+  Function(String callID, ZegoCallUser caller, String customData)?
+  onIncomingCallCanceled;
 
   /// The **callee** will receive a notification through this callback when the callee doesn't respond to the call invitation after a timeout duration.
   /// missed call callback
@@ -76,7 +74,8 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
 
     /// defaultAction is redial the missed call
     Future<void> Function() defaultAction,
-  )? onIncomingMissedCallClicked;
+  )?
+  onIncomingMissedCallClicked;
 
   /// missed call dial back failed
   Function()? onIncomingMissedCallDialBackFailed;
@@ -88,7 +87,8 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
     ZegoCallInvitationType callType,
     List<ZegoCallUser> callees,
     String customData,
-  )? onOutgoingCallSent;
+  )?
+  onOutgoingCallSent;
 
   /// This callback will be triggered to **caller** when caller cancels the call invitation by click the cancel button
   Function()? onOutgoingCallCancelButtonPressed;
@@ -97,25 +97,16 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
   Function(String callID, ZegoCallUser callee)? onOutgoingCallAccepted;
 
   /// The **caller** will receive a notification through this callback when the callee rejects the call invitation (the callee is busy).
-  Function(
-    String callID,
-    ZegoCallUser callee,
-    String customData,
-  )? onOutgoingCallRejectedCauseBusy;
+  Function(String callID, ZegoCallUser callee, String customData)?
+  onOutgoingCallRejectedCauseBusy;
 
   /// The **caller** will receive a notification through this callback when the callee declines the call invitation actively.
-  Function(
-    String callID,
-    ZegoCallUser callee,
-    String customData,
-  )? onOutgoingCallDeclined;
+  Function(String callID, ZegoCallUser callee, String customData)?
+  onOutgoingCallDeclined;
 
   /// The **caller** will receive a notification through this callback when the call invitation didn't get responses after a timeout duration.
-  Function(
-    String callID,
-    List<ZegoCallUser> callees,
-    bool isVideoCall,
-  )? onOutgoingCallTimeout;
+  Function(String callID, List<ZegoCallUser> callees, bool isVideoCall)?
+  onOutgoingCallTimeout;
 
   ZegoUIKitPrebuiltCallInvitationEvents({
     this.onError,
@@ -127,7 +118,8 @@ class ZegoUIKitPrebuiltCallInvitationEvents {
     this.onIncomingCallTimeout,
     this.onIncomingMissedCallClicked,
     @Deprecated(
-        'use onIncomingMissedCallDialBackFailed instead$deprecatedTipsV4152')
+      'use onIncomingMissedCallDialBackFailed instead$deprecatedTipsV4152',
+    )
     Function()? onIncomingMissedCallReCallFailed,
     this.onIncomingMissedCallDialBackFailed,
     this.onOutgoingCallCancelButtonPressed,

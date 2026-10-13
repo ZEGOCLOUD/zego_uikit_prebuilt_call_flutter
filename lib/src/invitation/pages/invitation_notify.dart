@@ -93,14 +93,14 @@ class _ZegoCallInvitationNotifyDialogState
             widget.config?.padding ?? EdgeInsets.symmetric(horizontal: 24.zW),
         width: widget.config?.width ?? 718.zW,
         height: widget.config?.height ?? 160.zH,
-        decoration: widget.config?.decoration ??
+        decoration:
+            widget.config?.decoration ??
             BoxDecoration(
               color: const Color(0xff333333).withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(16.0),
             ),
-        child: widget.config?.builder?.call(
-              widget.invitationData,
-            ) ??
+        child:
+            widget.config?.builder?.call(widget.invitationData) ??
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -108,13 +108,16 @@ class _ZegoCallInvitationNotifyDialogState
                   valueListenable: ZegoUIKitUserPropertiesNotifier(
                     widget.invitationData.inviter ?? ZegoUIKitUser.empty(),
                   ),
-                  builder: (context, _, __) {
+                  builder: (context, _, _) {
                     return Container(
                       width: 84.zR,
                       height: 84.zR,
                       decoration: const BoxDecoration(
-                          color: Color(0xffDBDDE3), shape: BoxShape.circle),
-                      child: widget.avatarBuilder?.call(
+                        color: Color(0xffDBDDE3),
+                        shape: BoxShape.circle,
+                      ),
+                      child:
+                          widget.avatarBuilder?.call(
                             context,
                             Size(84.zR, 84.zR),
                             widget.invitationData.inviter,
@@ -136,10 +139,7 @@ class _ZegoCallInvitationNotifyDialogState
                 ),
                 const Expanded(child: SizedBox()),
                 ...widget.declineButtonConfig.visible
-                    ? [
-                        declineButton(),
-                        SizedBox(width: 40.zW),
-                      ]
+                    ? [declineButton(), SizedBox(width: 40.zW)]
                     : [],
                 ...widget.acceptButtonConfig.visible ? [acceptButton()] : [],
               ],
@@ -167,15 +167,23 @@ class _ZegoCallInvitationNotifyDialogState
       child: Text(
         (ZegoCallInvitationType.videoCall == widget.invitationData.type
                 ? (widget.invitationData.invitees.length > 1
-                    ? widget.callInvitationConfig.innerText
-                        .incomingGroupVideoCallDialogTitle
-                    : widget.callInvitationConfig.innerText
-                        .incomingVideoCallDialogTitle)
+                      ? widget
+                            .callInvitationConfig
+                            .innerText
+                            .incomingGroupVideoCallDialogTitle
+                      : widget
+                            .callInvitationConfig
+                            .innerText
+                            .incomingVideoCallDialogTitle)
                 : (widget.invitationData.invitees.length > 1
-                    ? widget.callInvitationConfig.innerText
-                        .incomingGroupVoiceCallDialogTitle
-                    : widget.callInvitationConfig.innerText
-                        .incomingVoiceCallDialogTitle))
+                      ? widget
+                            .callInvitationConfig
+                            .innerText
+                            .incomingGroupVoiceCallDialogTitle
+                      : widget
+                            .callInvitationConfig
+                            .innerText
+                            .incomingVoiceCallDialogTitle))
             .replaceFirst(param_1, widget.invitationData.inviter?.name ?? ''),
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.left,
@@ -224,10 +232,12 @@ class _ZegoCallInvitationNotifyDialogState
         ).toJson(),
         textStyle: widget.declineButtonConfig.textStyle,
         icon: ButtonIcon(
-          icon: widget.declineButtonConfig.icon ??
+          icon:
+              widget.declineButtonConfig.icon ??
               Image(
-                image: ZegoCallImage.asset(InvitationStyleIconUrls.inviteReject)
-                    .image,
+                image: ZegoCallImage.asset(
+                  InvitationStyleIconUrls.inviteReject,
+                ).image,
                 fit: BoxFit.fill,
               ),
         ),
@@ -247,10 +257,10 @@ class _ZegoCallInvitationNotifyDialogState
         },
         networkLoadingConfig:
             widget.callInvitationConfig.config.networkLoading ??
-                ZegoNetworkLoadingConfig(
-                  enabled: true,
-                  progressColor: Colors.white,
-                ),
+            ZegoNetworkLoadingConfig(
+              enabled: true,
+              progressColor: Colors.white,
+            ),
       ),
     );
   }
@@ -267,7 +277,8 @@ class _ZegoCallInvitationNotifyDialogState
         customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
         textStyle: widget.acceptButtonConfig.textStyle,
         icon: ButtonIcon(
-          icon: widget.acceptButtonConfig.icon ??
+          icon:
+              widget.acceptButtonConfig.icon ??
               Image(
                 image: ZegoCallImage.asset(
                   imageURLByInvitationType(widget.invitationData.type),
@@ -291,10 +302,10 @@ class _ZegoCallInvitationNotifyDialogState
         },
         networkLoadingConfig:
             widget.callInvitationConfig.config.networkLoading ??
-                ZegoNetworkLoadingConfig(
-                  enabled: true,
-                  progressColor: Colors.white,
-                ),
+            ZegoNetworkLoadingConfig(
+              enabled: true,
+              progressColor: Colors.white,
+            ),
       ),
     );
   }
@@ -309,20 +320,30 @@ class _ZegoCallInvitationNotifyDialogState
   }
 
   String invitationTypeString(
-      ZegoCallInvitationType invitationType, List<ZegoUIKitUser> invitees) {
+    ZegoCallInvitationType invitationType,
+    List<ZegoUIKitUser> invitees,
+  ) {
     switch (invitationType) {
       case ZegoCallInvitationType.voiceCall:
         return invitees.length > 1
-            ? (widget.callInvitationConfig.innerText
-                .incomingGroupVoiceCallDialogMessage)
+            ? (widget
+                  .callInvitationConfig
+                  .innerText
+                  .incomingGroupVoiceCallDialogMessage)
             : (widget
-                .callInvitationConfig.innerText.incomingVoiceCallDialogMessage);
+                  .callInvitationConfig
+                  .innerText
+                  .incomingVoiceCallDialogMessage);
       case ZegoCallInvitationType.videoCall:
         return invitees.length > 1
-            ? (widget.callInvitationConfig.innerText
-                .incomingGroupVideoCallDialogMessage)
+            ? (widget
+                  .callInvitationConfig
+                  .innerText
+                  .incomingGroupVideoCallDialogMessage)
             : (widget
-                .callInvitationConfig.innerText.incomingVideoCallDialogMessage);
+                  .callInvitationConfig
+                  .innerText
+                  .incomingVideoCallDialogMessage);
     }
   }
 }

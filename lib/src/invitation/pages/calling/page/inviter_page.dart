@@ -67,20 +67,19 @@ class ZegoCallingInviterView extends StatelessWidget {
     if (ZegoCallInvitationType.videoCall == invitationType) {
       return ZegoAudioVideoView(
         user: inviter,
-        avatarConfig: const ZegoAvatarConfig(
-          showInAudioMode: false,
-        ),
-        backgroundBuilder: (
-          BuildContext context,
-          Size size,
-          ZegoUIKitUser? user,
+        avatarConfig: const ZegoAvatarConfig(showInAudioMode: false),
+        backgroundBuilder:
+            (
+              BuildContext context,
+              Size size,
+              ZegoUIKitUser? user,
 
-          /// {ZegoViewBuilderMapExtraInfoKey:value}
-          /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
-          Map<String, dynamic> extraInfo,
-        ) {
-          return defaultBackground();
-        },
+              /// {ZegoViewBuilderMapExtraInfoKey:value}
+              /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
+              Map<String, dynamic> extraInfo,
+            ) {
+              return defaultBackground();
+            },
       );
     }
 
@@ -88,28 +87,32 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget defaultBackground() {
-    return LayoutBuilder(builder: (context, constraints) {
-      return backgroundBuilder?.call(
-            context,
-            Size(constraints.maxWidth, constraints.maxHeight),
-            ZegoCallingBuilderInfo(
-              inviter: inviter,
-              invitees: invitees,
-              callType: invitationType,
-              customData: customData,
-            ),
-          ) ??
-          backgroundImage();
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return backgroundBuilder?.call(
+              context,
+              Size(constraints.maxWidth, constraints.maxHeight),
+              ZegoCallingBuilderInfo(
+                inviter: inviter,
+                invitees: invitees,
+                callType: invitationType,
+                customData: customData,
+              ),
+            ) ??
+            backgroundImage();
+      },
+    );
   }
 
   Widget surface(BuildContext context) {
     final isVideo = ZegoCallInvitationType.videoCall == invitationType;
 
-    final firstInvitee =
-        invitees.isNotEmpty ? invitees.first : ZegoUIKitUser.empty();
-    final firstInviteeName =
-        firstInvitee.name.isNotEmpty ? firstInvitee.name : firstInvitee.id;
+    final firstInvitee = invitees.isNotEmpty
+        ? invitees.first
+        : ZegoUIKitUser.empty();
+    final firstInviteeName = firstInvitee.name.isNotEmpty
+        ? firstInvitee.name
+        : firstInvitee.id;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -125,9 +128,10 @@ class ZegoCallingInviterView extends StatelessWidget {
           height: 200.zR,
           child: config.showAvatar
               ? ValueListenableBuilder(
-                  valueListenable:
-                      ZegoUIKitUserPropertiesNotifier(firstInvitee),
-                  builder: (context, _, __) {
+                  valueListenable: ZegoUIKitUserPropertiesNotifier(
+                    firstInvitee,
+                  ),
+                  builder: (context, _, _) {
                     return avatarBuilder?.call(
                           context,
                           Size(200.zR, 200.zR),
@@ -141,24 +145,28 @@ class ZegoCallingInviterView extends StatelessWidget {
         ),
         SizedBox(height: config.spacingBetweenAvatarAndName ?? 10.zR),
         config.showCentralName
-            ? centralName((isVideo
-                    ? (invitees.length > 1
-                        ? innerText.outgoingGroupVideoCallPageTitle
-                        : innerText.outgoingVideoCallPageTitle)
-                    : (invitees.length > 1
-                        ? innerText.outgoingGroupVoiceCallPageTitle
-                        : innerText.outgoingVoiceCallPageTitle))
-                .replaceFirst(param_1, firstInviteeName))
+            ? centralName(
+                (isVideo
+                        ? (invitees.length > 1
+                              ? innerText.outgoingGroupVideoCallPageTitle
+                              : innerText.outgoingVideoCallPageTitle)
+                        : (invitees.length > 1
+                              ? innerText.outgoingGroupVoiceCallPageTitle
+                              : innerText.outgoingVoiceCallPageTitle))
+                    .replaceFirst(param_1, firstInviteeName),
+              )
             : SizedBox(height: 59.zH),
         SizedBox(height: config.spacingBetweenNameAndCallingText ?? 47.zR),
         config.showCallingText
-            ? callingText(isVideo
-                ? (invitees.length > 1
-                    ? innerText.outgoingGroupVideoCallPageMessage
-                    : innerText.outgoingVideoCallPageMessage)
-                : (invitees.length > 1
-                    ? innerText.outgoingGroupVoiceCallPageMessage
-                    : innerText.outgoingVoiceCallPageMessage))
+            ? callingText(
+                isVideo
+                    ? (invitees.length > 1
+                          ? innerText.outgoingGroupVideoCallPageMessage
+                          : innerText.outgoingVideoCallPageMessage)
+                    : (invitees.length > 1
+                          ? innerText.outgoingGroupVoiceCallPageMessage
+                          : innerText.outgoingVoiceCallPageMessage),
+              )
             : SizedBox(height: 32.0.zR),
         const Expanded(child: SizedBox()),
         ZegoInviterCallingBottomToolBar(
@@ -174,18 +182,20 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget foreground(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return foregroundBuilder?.call(
-            context,
-            Size(constraints.maxWidth, constraints.maxHeight),
-            ZegoCallingBuilderInfo(
-              inviter: inviter,
-              invitees: invitees,
-              callType: invitationType,
-              customData: customData,
-            ),
-          ) ??
-          Container();
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return foregroundBuilder?.call(
+              context,
+              Size(constraints.maxWidth, constraints.maxHeight),
+              ZegoCallingBuilderInfo(
+                inviter: inviter,
+                invitees: invitees,
+                callType: invitationType,
+                customData: customData,
+              ),
+            ) ??
+            Container();
+      },
+    );
   }
 }

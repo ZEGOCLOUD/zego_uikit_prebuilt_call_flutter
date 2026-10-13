@@ -70,13 +70,15 @@ class _ZegoCallMemberListButtonState extends State<ZegoCallMemberListButton> {
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ??
+          color:
+              widget.icon?.backgroundColor ??
               ZegoUIKitDefaultTheme.buttonBackgroundColor,
           shape: BoxShape.circle,
         ),
         child: SizedBox.fromSize(
           size: sizeBoxSize,
-          child: widget.icon?.icon ??
+          child:
+              widget.icon?.icon ??
               ZegoCallImage.asset(ZegoCallIconUrls.topMemberNormal),
         ),
       ),

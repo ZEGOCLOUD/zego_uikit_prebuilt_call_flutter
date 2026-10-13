@@ -1,7 +1,8 @@
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-const deprecatedTipsV4150 = ', '
+const deprecatedTipsV4150 =
+    ', '
     'deprecated since 4.15.0, '
     'will be removed after 4.20.0,'
     'Migrate Guide:https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_4.x-topic.html#4150';
@@ -14,10 +15,12 @@ extension ZegoCallInvitationConfigDeprecated4150 on ZegoCallInvitationConfig {
       inCalling.canInvitingInCalling = value;
 
   @Deprecated(
-      'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
+    'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150',
+  )
   bool get onlyInitiatorCanInvite => inCalling.onlyInitiatorCanInvite;
   @Deprecated(
-      'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
+    'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150',
+  )
   set onlyInitiatorCanInvite(bool value) =>
       inCalling.onlyInitiatorCanInvite = value;
 }

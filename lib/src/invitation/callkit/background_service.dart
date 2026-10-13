@@ -82,9 +82,7 @@ class ZegoCallKitBackgroundService {
   bool _iOSCallKitDisplaying = false;
   final _iOSCallKitHangupOperation = IOSCallKitHangupOperation();
 
-  void register({
-    required ZegoCallInvitationPageManager pageManager,
-  }) {
+  void register({required ZegoCallInvitationPageManager pageManager}) {
     ZegoLoggerService.logInfo(
       'register, pageManager:$pageManager',
       tag: 'call-invitation',
@@ -125,12 +123,12 @@ class ZegoCallKitBackgroundService {
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
-          _pageManager?.onLocalAcceptInvitation(
-            result.invitationID,
-            result.error?.code ?? '',
-            result.error?.message ?? '',
-          );
-        });
+              _pageManager?.onLocalAcceptInvitation(
+                result.invitationID,
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
+            });
       } else {
         ZegoUIKit()
             .getSignalingPlugin()
@@ -141,12 +139,12 @@ class ZegoCallKitBackgroundService {
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
-          _pageManager?.onLocalAcceptInvitation(
-            result.invitationID,
-            result.error?.code ?? '',
-            result.error?.message ?? '',
-          );
-        });
+              _pageManager?.onLocalAcceptInvitation(
+                result.invitationID,
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
+            });
       }
     }
   }
@@ -175,7 +173,8 @@ class ZegoCallKitBackgroundService {
         );
 
         _pageManager
-            ?.waitingCallInvitationReceivedAfterCallKitIncomingRejected = true;
+                ?.waitingCallInvitationReceivedAfterCallKitIncomingRejected =
+            true;
 
         return;
       }
@@ -196,19 +195,19 @@ class ZegoCallKitBackgroundService {
             }),
           )
           .then((result) async {
-        ZegoLoggerService.logInfo(
-          'refuse advance done',
-          tag: 'call-invitation',
-          subTag: 'call invitation service',
-        );
+            ZegoLoggerService.logInfo(
+              'refuse advance done',
+              tag: 'call-invitation',
+              subTag: 'call invitation service',
+            );
 
-        await _pageManager?.onLocalRefuseInvitation(
-          result.invitationID,
-          result.error?.code ?? '',
-          result.error?.message ?? '',
-          needClearCallKit: needClearCallKit,
-        );
-      });
+            await _pageManager?.onLocalRefuseInvitation(
+              result.invitationID,
+              result.error?.code ?? '',
+              result.error?.message ?? '',
+              needClearCallKit: needClearCallKit,
+            );
+          });
     } else {
       await ZegoUIKit()
           .getSignalingPlugin()
@@ -221,19 +220,19 @@ class ZegoCallKitBackgroundService {
             }),
           )
           .then((result) async {
-        ZegoLoggerService.logInfo(
-          'refuse done',
-          tag: 'call-invitation',
-          subTag: 'call invitation service',
-        );
+            ZegoLoggerService.logInfo(
+              'refuse done',
+              tag: 'call-invitation',
+              subTag: 'call invitation service',
+            );
 
-        await _pageManager?.onLocalRefuseInvitation(
-          result.invitationID,
-          result.error?.code ?? '',
-          result.error?.message ?? '',
-          needClearCallKit: needClearCallKit,
-        );
-      });
+            await _pageManager?.onLocalRefuseInvitation(
+              result.invitationID,
+              result.error?.code ?? '',
+              result.error?.message ?? '',
+              needClearCallKit: needClearCallKit,
+            );
+          });
     }
   }
 
@@ -270,7 +269,8 @@ class ZegoCallKitBackgroundService {
         );
 
         _pageManager
-            ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted = true;
+                ?.waitingCallInvitationReceivedAfterCallKitIncomingAccepted =
+            true;
 
         return;
       }
@@ -293,12 +293,12 @@ class ZegoCallKitBackgroundService {
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
-          _pageManager?.onLocalAcceptInvitation(
-            result.invitationID,
-            result.error?.code ?? '',
-            result.error?.message ?? '',
-          );
-        });
+              _pageManager?.onLocalAcceptInvitation(
+                result.invitationID,
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
+            });
       } else {
         await ZegoUIKit()
             .getSignalingPlugin()
@@ -309,12 +309,12 @@ class ZegoCallKitBackgroundService {
               data: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             )
             .then((result) {
-          _pageManager?.onLocalAcceptInvitation(
-            result.invitationID,
-            result.error?.code ?? '',
-            result.error?.message ?? '',
-          );
-        });
+              _pageManager?.onLocalAcceptInvitation(
+                result.invitationID,
+                result.error?.code ?? '',
+                result.error?.message ?? '',
+              );
+            });
       }
     }
   }
@@ -332,9 +332,7 @@ class ZegoCallKitBackgroundService {
 
   Future<void> handUpCurrentCallByCallKit() {
     if (Platform.isIOS) {
-      return _iOSCallKitHangupOperation.run(
-        _handUpCurrentCallByCallKit,
-      );
+      return _iOSCallKitHangupOperation.run(_handUpCurrentCallByCallKit);
     }
 
     return _handUpCurrentCallByCallKit();
@@ -376,8 +374,9 @@ class ZegoCallKitBackgroundService {
 
         /// background callkit call, not need to navigate
         try {
-          Navigator.of(pageManager!.callInvitationData.contextQuery!.call())
-              .pop();
+          Navigator.of(
+            pageManager!.callInvitationData.contextQuery!.call(),
+          ).pop();
         } catch (e) {
           ZegoLoggerService.logError(
             'Navigator pop exception:$e, '

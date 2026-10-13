@@ -41,11 +41,11 @@ class _ZegoInviterCallingBottomToolBarState
   double get buttonSize => 120.zR;
 
   TextStyle get subButtonTextStyle => TextStyle(
-        color: Colors.white,
-        fontSize: 20.0.zR,
-        fontWeight: FontWeight.w400,
-        decoration: TextDecoration.none,
-      );
+    color: Colors.white,
+    fontSize: 20.0.zR,
+    fontWeight: FontWeight.w400,
+    decoration: TextDecoration.none,
+  );
 
   bool get canDisplayFirstRowButtons =>
       (widget.uiConfig.microphoneButton?.visible ?? false) ||
@@ -71,16 +71,16 @@ class _ZegoInviterCallingBottomToolBarState
                             textStyle: subButtonTextStyle,
                             label: widget.uiConfig.showSubButtonsText
                                 ? isMicrophoneOn
-                                    ? widget
-                                        .pageManager
-                                        .callInvitationData
-                                        .innerText
-                                        .callingToolbarMicrophoneOnButtonText
-                                    : widget
-                                        .pageManager
-                                        .callInvitationData
-                                        .innerText
-                                        .callingToolbarMicrophoneOffButtonText
+                                      ? widget
+                                            .pageManager
+                                            .callInvitationData
+                                            .innerText
+                                            .callingToolbarMicrophoneOnButtonText
+                                      : widget
+                                            .pageManager
+                                            .callInvitationData
+                                            .innerText
+                                            .callingToolbarMicrophoneOffButtonText
                                 : null,
                           );
                         },
@@ -89,7 +89,8 @@ class _ZegoInviterCallingBottomToolBarState
                         /// listen local audio output route changes
                         valueListenable: ZegoUIKit()
                             .getAudioOutputDeviceNotifier(
-                                ZegoUIKit().getLocalUser().id),
+                              ZegoUIKit().getLocalUser().id,
+                            ),
                         builder: (context, audioRoute, _) {
                           final isSpeakerOn =
                               audioRoute == ZegoUIKitAudioRoute.speaker;
@@ -99,16 +100,16 @@ class _ZegoInviterCallingBottomToolBarState
                             textStyle: subButtonTextStyle,
                             label: widget.uiConfig.showSubButtonsText
                                 ? isSpeakerOn
-                                    ? widget
-                                        .pageManager
-                                        .callInvitationData
-                                        .innerText
-                                        .callingToolbarSpeakerOnButtonText
-                                    : widget
-                                        .pageManager
-                                        .callInvitationData
-                                        .innerText
-                                        .callingToolbarSpeakerOffButtonText
+                                      ? widget
+                                            .pageManager
+                                            .callInvitationData
+                                            .innerText
+                                            .callingToolbarSpeakerOnButtonText
+                                      : widget
+                                            .pageManager
+                                            .callInvitationData
+                                            .innerText
+                                            .callingToolbarSpeakerOffButtonText
                                 : null,
                           );
                         },
@@ -123,30 +124,26 @@ class _ZegoInviterCallingBottomToolBarState
                               textStyle: subButtonTextStyle,
                               label: widget.uiConfig.showSubButtonsText
                                   ? isCameraOn
-                                      ? widget
-                                          .pageManager
-                                          .callInvitationData
-                                          .innerText
-                                          .callingToolbarCameraOnButtonText
-                                      : widget
-                                          .pageManager
-                                          .callInvitationData
-                                          .innerText
-                                          .callingToolbarCameraOffButtonText
+                                        ? widget
+                                              .pageManager
+                                              .callInvitationData
+                                              .innerText
+                                              .callingToolbarCameraOnButtonText
+                                        : widget
+                                              .pageManager
+                                              .callInvitationData
+                                              .innerText
+                                              .callingToolbarCameraOffButtonText
                                   : null,
                             );
                           },
                         ),
                     ],
                   ),
-                  SizedBox(
-                    height: buttonSize / 2.0,
-                  )
+                  SizedBox(height: buttonSize / 2.0),
                 ]
               : []),
-          Center(
-            child: buttonWrapper(child: cancelButton()),
-          ),
+          Center(child: buttonWrapper(child: cancelButton())),
         ],
       ),
     );
@@ -159,7 +156,7 @@ class _ZegoInviterCallingBottomToolBarState
             iconSize: Size(buttonSize, buttonSize),
             defaultOn:
                 widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining ??
-                    widget.uiConfig.defaultMicrophoneOn,
+                widget.uiConfig.defaultMicrophoneOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnMicrophoneWhenJoining =
                   isON;
@@ -179,7 +176,7 @@ class _ZegoInviterCallingBottomToolBarState
             iconSize: Size(buttonSize, buttonSize),
             defaultOn:
                 widget.pageManager.callingConfig.turnOnCameraWhenJoining ??
-                    widget.uiConfig.defaultCameraOn,
+                widget.uiConfig.defaultCameraOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.turnOnCameraWhenJoining = isON;
             },
@@ -194,7 +191,7 @@ class _ZegoInviterCallingBottomToolBarState
             iconSize: Size(buttonSize, buttonSize),
             defaultUseSpeaker:
                 widget.pageManager.callingConfig.useSpeakerWhenJoining ??
-                    widget.uiConfig.defaultSpeakerOn,
+                widget.uiConfig.defaultSpeakerOn,
             onPressed: (bool isON) {
               widget.pageManager.callingConfig.useSpeakerWhenJoining = isON;
             },
@@ -205,7 +202,8 @@ class _ZegoInviterCallingBottomToolBarState
   Widget cancelButton() {
     return (widget.uiConfig.cancelButton.visible)
         ? ZegoNetworkLoading(
-            config: widget.networkLoadingConfig ??
+            config:
+                widget.networkLoadingConfig ??
                 ZegoNetworkLoadingConfig(
                   enabled: true,
                   progressColor: Colors.white,
@@ -221,12 +219,16 @@ class _ZegoInviterCallingBottomToolBarState
                 callID: widget.pageManager.currentCallID,
               ).toJson(),
               text: widget.uiConfig.showMainButtonsText
-                  ? widget.pageManager.callInvitationData.innerText
-                      .outgoingCallPageACancelButton
+                  ? widget
+                        .pageManager
+                        .callInvitationData
+                        .innerText
+                        .outgoingCallPageACancelButton
                   : null,
               textStyle: widget.uiConfig.cancelButton.textStyle,
               icon: ButtonIcon(
-                icon: widget.uiConfig.cancelButton.icon ??
+                icon:
+                    widget.uiConfig.cancelButton.icon ??
                     Image(
                       image: ZegoCallImage.asset(
                         InvitationStyleIconUrls.toolbarBottomCancel,
@@ -234,9 +236,11 @@ class _ZegoInviterCallingBottomToolBarState
                       fit: BoxFit.fill,
                     ),
               ),
-              buttonSize: widget.uiConfig.cancelButton.size ??
+              buttonSize:
+                  widget.uiConfig.cancelButton.size ??
                   Size(buttonSize, buttonSize),
-              iconSize: widget.uiConfig.cancelButton.iconSize ??
+              iconSize:
+                  widget.uiConfig.cancelButton.iconSize ??
                   Size(buttonSize, buttonSize),
               onPressed: (ZegoCancelInvitationButtonResult result) {
                 widget.pageManager.onLocalCancelInvitation(
@@ -259,18 +263,10 @@ class _ZegoInviterCallingBottomToolBarState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: buttonSize,
-          height: buttonSize,
-          child: child,
-        ),
+        SizedBox(width: buttonSize, height: buttonSize, child: child),
         if (label != null) ...[
           SizedBox(height: 8.zR),
-          Text(
-            label,
-            style: textStyle,
-            textAlign: TextAlign.center,
-          ),
+          Text(label, style: textStyle, textAlign: TextAlign.center),
         ],
       ],
     );

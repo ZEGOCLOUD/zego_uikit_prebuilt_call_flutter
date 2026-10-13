@@ -32,7 +32,7 @@ class ZegoCallTopMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallEvents events;
   final void Function(ZegoCallEndEvent event) defaultEndAction;
   final Future<bool> Function(ZegoCallHangUpConfirmationEvent event)
-      defaultHangUpConfirmationAction;
+  defaultHangUpConfirmationAction;
 
   final ValueNotifier<bool> visibilityNotifier;
   final int autoHideSeconds;
@@ -139,9 +139,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        SizedBox(
-          width: 27.zR,
-        ),
+        SizedBox(width: 27.zR),
         Text(
           widget.config.topMenuBar.title,
           style: TextStyle(
@@ -159,9 +157,7 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ...getDisplayButtons(context),
-        SizedBox(
-          width: 27.zR,
-        )
+        SizedBox(width: 27.zR),
       ],
     );
   }
@@ -169,11 +165,9 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
   List<Widget> getDisplayButtons(BuildContext context) {
     final needRestoreDeviceState =
         widget.minimizeData.inCall?.isPrebuiltFromMinimizing == true ||
-            ZegoUIKitPrebuiltCallController()
-                .pip
-                .private
-                .pipImpl()
-                .isRestoredFromPIP;
+        ZegoUIKitPrebuiltCallController().pip.private
+            .pipImpl()
+            .isRestoredFromPIP;
 
     final buttons = [
       ...getDefaultButtons(
@@ -195,11 +189,10 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
               }
             : null,
       ),
-      ...widget.config.topMenuBar.extendButtons
-          .map((extendButton) => buttonWrapper(
-                child: extendButton,
-                withRoomUpdateNotifier: true,
-              ))
+      ...widget.config.topMenuBar.extendButtons.map(
+        (extendButton) =>
+            buttonWrapper(child: extendButton, withRoomUpdateNotifier: true),
+      ),
     ];
 
     /// limited item count display on menu bar,
@@ -260,7 +253,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
               }
 
               return button;
-            })
+            },
+          )
         : button;
   }
 
@@ -274,14 +268,16 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
     }
 
     return widget.config.topMenuBar.buttons
-        .map((buttonName) => buttonWrapper(
-              child: generateDefaultButtonsByEnum(
-                context,
-                buttonName,
-                cameraDefaultValueFunc: cameraDefaultValueFunc,
-                microphoneDefaultValueFunc: microphoneDefaultValueFunc,
-              ),
-            ))
+        .map(
+          (buttonName) => buttonWrapper(
+            child: generateDefaultButtonsByEnum(
+              context,
+              buttonName,
+              cameraDefaultValueFunc: cameraDefaultValueFunc,
+              microphoneDefaultValueFunc: microphoneDefaultValueFunc,
+            ),
+          ),
+        )
         .toList();
   }
 
@@ -299,7 +295,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: microphoneDefaultValueFunc?.call() ??
+          defaultOn:
+              microphoneDefaultValueFunc?.call() ??
               widget.config.turnOnMicrophoneWhenJoining,
         );
       case ZegoCallMenuBarButtonName.switchAudioOutputButton:
@@ -312,7 +309,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
         return ZegoToggleCameraButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: cameraDefaultValueFunc?.call() ??
+          defaultOn:
+              cameraDefaultValueFunc?.call() ??
               widget.config.turnOnCameraWhenJoining,
         );
       case ZegoCallMenuBarButtonName.switchCameraButton:
@@ -325,7 +323,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
           ),
           defaultUseFrontFacingCamera: ZegoUIKit()
               .getUseFrontFacingCameraStateNotifier(
-                  ZegoUIKit().getLocalUser().id)
+                ZegoUIKit().getLocalUser().id,
+              )
               .value,
         );
       case ZegoCallMenuBarButtonName.hangUpButton:
@@ -342,13 +341,15 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
               context: context,
             );
             defaultAction() async {
-              return widget
-                  .defaultHangUpConfirmationAction(hangUpConfirmationEvent);
+              return widget.defaultHangUpConfirmationAction(
+                hangUpConfirmationEvent,
+              );
             }
 
             var canHangUp = true;
             if (widget.events.onHangUpConfirmation != null) {
-              canHangUp = await widget.events.onHangUpConfirmation?.call(
+              canHangUp =
+                  await widget.events.onHangUpConfirmation?.call(
                     hangUpConfirmationEvent,
                     defaultAction,
                   ) ??
@@ -381,7 +382,8 @@ class _ZegoCallTopMenuBarState extends State<ZegoCallTopMenuBar> {
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
-              isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
+              isFromMinimizing:
+                  ZegoCallMiniOverlayPageState.inCallMinimized ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
               invitationData: ZegoUIKitPrebuiltCallInvitationService()
                   .private

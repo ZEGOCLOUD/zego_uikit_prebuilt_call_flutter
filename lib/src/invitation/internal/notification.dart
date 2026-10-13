@@ -14,13 +14,13 @@ String getNotificationTitle({
   return defaultTitle ??
       (isVideoCall
               ? ((callees.length > 1
-                      ? innerText?.incomingGroupVideoCallDialogTitle
-                      : innerText?.incomingVideoCallDialogTitle) ??
-                  param_1)
+                        ? innerText?.incomingGroupVideoCallDialogTitle
+                        : innerText?.incomingVideoCallDialogTitle) ??
+                    param_1)
               : ((callees.length > 1
-                      ? innerText?.incomingGroupVoiceCallDialogTitle
-                      : innerText?.incomingVoiceCallDialogTitle) ??
-                  param_1))
+                        ? innerText?.incomingGroupVoiceCallDialogTitle
+                        : innerText?.incomingVoiceCallDialogTitle) ??
+                    param_1))
           .replaceFirst(param_1, ZegoUIKit().getLocalUser().name);
 }
 
@@ -33,11 +33,11 @@ String getNotificationMessage({
   return defaultMessage ??
       (isVideoCall
           ? ((callees.length > 1
-                  ? innerText?.incomingGroupVideoCallDialogMessage
-                  : innerText?.incomingVideoCallDialogMessage) ??
-              'Incoming video call...')
+                    ? innerText?.incomingGroupVideoCallDialogMessage
+                    : innerText?.incomingVideoCallDialogMessage) ??
+                'Incoming video call...')
           : ((callees.length > 1
-                  ? innerText?.incomingGroupVoiceCallDialogMessage
-                  : innerText?.incomingVoiceCallDialogMessage) ??
-              'Incoming voice call...'));
+                    ? innerText?.incomingGroupVoiceCallDialogMessage
+                    : innerText?.incomingVoiceCallDialogMessage) ??
+                'Incoming voice call...'));
 }

@@ -40,54 +40,78 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     _iOSCallKitServiceInit = true;
 
     _callkitServiceSubscriptions
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitProviderDidResetEventStream()
-          .listen(_onCallkitProviderDidResetEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitProviderDidBeginEventStream()
-          .listen(_onCallkitProviderDidBeginEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitActivateAudioEventStream()
-          .listen(_onCallkitActivateAudioEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitDeactivateAudioEventStream()
-          .listen(_onCallkitDeactivateAudioEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitTimedOutPerformingActionEventStream()
-          .listen(_onCallkitTimedOutPerformingActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformStartCallActionEventStream()
-          .listen(_onCallkitPerformStartCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformAnswerCallActionEventStream()
-          .listen(_onCallkitPerformAnswerCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformEndCallActionEventStream()
-          .listen(_onCallkitPerformEndCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformSetHeldCallActionEventStream()
-          .listen(_onCallkitPerformSetHeldCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformSetMutedCallActionEventStream()
-          .listen(_onCallkitPerformSetMutedCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformSetGroupCallActionEventStream()
-          .listen(_onCallkitPerformSetGroupCallActionEvent))
-      ..add(ZegoUIKit()
-          .getSignalingPlugin()
-          .getCallkitPerformPlayDTMFCallActionEventStream()
-          .listen(_onCallkitPerformPlayDTMFCallActionEvent));
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitProviderDidResetEventStream()
+            .listen(_onCallkitProviderDidResetEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitProviderDidBeginEventStream()
+            .listen(_onCallkitProviderDidBeginEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitActivateAudioEventStream()
+            .listen(_onCallkitActivateAudioEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitDeactivateAudioEventStream()
+            .listen(_onCallkitDeactivateAudioEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitTimedOutPerformingActionEventStream()
+            .listen(_onCallkitTimedOutPerformingActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformStartCallActionEventStream()
+            .listen(_onCallkitPerformStartCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformAnswerCallActionEventStream()
+            .listen(_onCallkitPerformAnswerCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformEndCallActionEventStream()
+            .listen(_onCallkitPerformEndCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformSetHeldCallActionEventStream()
+            .listen(_onCallkitPerformSetHeldCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformSetMutedCallActionEventStream()
+            .listen(_onCallkitPerformSetMutedCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformSetGroupCallActionEventStream()
+            .listen(_onCallkitPerformSetGroupCallActionEvent),
+      )
+      ..add(
+        ZegoUIKit()
+            .getSignalingPlugin()
+            .getCallkitPerformPlayDTMFCallActionEventStream()
+            .listen(_onCallkitPerformPlayDTMFCallActionEvent),
+      );
 
     ZegoLoggerService.logInfo(
       'service has been inited',
@@ -140,9 +164,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     );
   }
 
-  void _onCallkitActivateAudioEvent(
-    ZegoSignalingPluginCallKitVoidEvent event,
-  ) {
+  void _onCallkitActivateAudioEvent(ZegoSignalingPluginCallKitVoidEvent event) {
     _updateCallKitAudioActivation(true, source: 'zego_callkit');
 
     final localUser = ZegoUIKit().getLocalUser();
@@ -299,7 +321,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
   }
 
-//
+  //
   Future<void> _onCallkitPerformAnswerCallActionEvent(
     ZegoSignalingPluginCallKitActionEvent event,
   ) async {
@@ -317,14 +339,11 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 
       /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
-      await ZegoUIKit().setAdvanceConfigs({
-        "support_apple_callkit": "true",
-      });
+      await ZegoUIKit().setAdvanceConfigs({"support_apple_callkit": "true"});
 
-      await ZegoUIKitCallCache()
-          .offlineCallKit
-          .getCallID()
-          .then((callKitCallID) async {
+      await ZegoUIKitCallCache().offlineCallKit.getCallID().then((
+        callKitCallID,
+      ) async {
         /// waiting express engine created
         if (!ZegoUIKit().engineCreatedNotifier.value) {
           ZegoLoggerService.logInfo(
@@ -350,11 +369,11 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
 
         await ZegoCallKitBackgroundService()
             .acceptCallKitIncomingCauseInBackground(
-          callKitCallID,
+              callKitCallID,
 
-          /// not need check in callkit func
-          needCheckHasCallkitIncoming: false,
-        );
+              /// not need check in callkit func
+              needCheckHasCallkitIncoming: false,
+            );
         await ZegoUIKitCallCache().offlineCallKit.clearCallID();
       });
     }
@@ -398,8 +417,9 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
             subTag: 'ios callkit, on callkit perform answer call action',
           );
 
-          ZegoCallKitBackgroundService()
-              .setIOSCallKitCallingDisplayState(false);
+          ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(
+            false,
+          );
           await clearAllCallKitCalls();
         } else {
           ZegoLoggerService.logInfo(
@@ -427,9 +447,7 @@ class ZegoCallInvitationServiceIOSCallKitPrivatePrivateImpl {
     );
 
     /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
-    await ZegoUIKit().setAdvanceConfigs({
-      "support_apple_callkit": "false",
-    });
+    await ZegoUIKit().setAdvanceConfigs({"support_apple_callkit": "false"});
 
     ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
 

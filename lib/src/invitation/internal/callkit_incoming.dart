@@ -51,7 +51,7 @@ Future<CallKitParams> _makeCallKitParam({
   if (tempRingtonePath.isEmpty) {
     tempRingtonePath =
         prefs.getString(CallKitInnerVariable.ringtonePath.cacheKey) ??
-            CallKitInnerVariable.ringtonePath.defaultValue;
+        CallKitInnerVariable.ringtonePath.defaultValue;
   }
 
   var tempTitle = title ?? '';
@@ -61,7 +61,8 @@ Future<CallKitParams> _makeCallKitParam({
 
   var tempBody = body ?? '';
   if (tempBody.isEmpty) {
-    tempBody = (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
+    tempBody =
+        (prefs.getBool(CallKitInnerVariable.callIDVisibility.cacheKey) ??
             CallKitInnerVariable.callIDVisibility.defaultValue)
         ? callID
         : '';
@@ -69,12 +70,13 @@ Future<CallKitParams> _makeCallKitParam({
 
   final isShowFullLockedScreen =
       (prefs.getBool(CallKitInnerVariable.showFullLockedScreen.cacheKey) ??
-          CallKitInnerVariable.showFullLockedScreen.defaultValue);
+      CallKitInnerVariable.showFullLockedScreen.defaultValue);
 
   return CallKitParams(
     id: const Uuid().v4(),
     nameCaller: tempTitle,
-    appName: prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
+    appName:
+        prefs.getString(CallKitInnerVariable.textAppName.cacheKey) ??
         CallKitInnerVariable.textAppName.defaultValue,
     // avatar: 'https://i.pravatar.cc/100',
     handle: tempBody,
@@ -86,11 +88,12 @@ Future<CallKitParams> _makeCallKitParam({
     missedCallNotification: NotificationParams(
       showNotification: false,
       isShowCallback: true,
-      subtitle: prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
+      subtitle:
+          prefs.getString(CallKitInnerVariable.textMissedCall.cacheKey) ??
           CallKitInnerVariable.textMissedCall.defaultValue,
       callbackText:
           prefs.getString(CallKitInnerVariable.textCallback.cacheKey) ??
-              CallKitInnerVariable.textCallback.defaultValue,
+          CallKitInnerVariable.textCallback.defaultValue,
     ),
     android: AndroidParams(
       isCustomNotification: true,
@@ -99,15 +102,18 @@ Future<CallKitParams> _makeCallKitParam({
       ringtonePath: tempRingtonePath,
       backgroundColor:
           prefs.getString(CallKitInnerVariable.backgroundColor.cacheKey) ??
-              CallKitInnerVariable.backgroundColor.defaultValue,
+          CallKitInnerVariable.backgroundColor.defaultValue,
       backgroundUrl:
           prefs.getString(CallKitInnerVariable.backgroundUrl.cacheKey) ??
-              CallKitInnerVariable.backgroundUrl.defaultValue,
-      actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
+          CallKitInnerVariable.backgroundUrl.defaultValue,
+      actionColor:
+          prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
           CallKitInnerVariable.actionColor.defaultValue,
-      textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
+      textAccept:
+          prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
           CallKitInnerVariable.textAccept.defaultValue,
-      textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
+      textDecline:
+          prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
           CallKitInnerVariable.textDecline.defaultValue,
     ),
     ios: IOSParams(

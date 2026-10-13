@@ -76,21 +76,21 @@ class _ZegoCallMinimizingButtonState extends State<ZegoCallMinimizingButton> {
             widget.pageManager != null &&
             widget.callInvitationData != null) {
           success = ZegoUIKitPrebuiltCallController().minimize.minimizeInviting(
-                context,
-                rootNavigator: widget.rootNavigator,
-                invitationType: widget.invitationType!,
-                inviter: widget.inviter!,
-                invitees: widget.invitees!,
-                isInviter: widget.isInviter!,
-                pageManager: widget.pageManager!,
-                callInvitationData: widget.callInvitationData!,
-                customData: widget.customData,
-              );
+            context,
+            rootNavigator: widget.rootNavigator,
+            invitationType: widget.invitationType!,
+            inviter: widget.inviter!,
+            invitees: widget.invitees!,
+            isInviter: widget.isInviter!,
+            pageManager: widget.pageManager!,
+            callInvitationData: widget.callInvitationData!,
+            customData: widget.customData,
+          );
         } else {
           success = ZegoUIKitPrebuiltCallController().minimize.minimize(
-                context,
-                rootNavigator: widget.rootNavigator,
-              );
+            context,
+            rootNavigator: widget.rootNavigator,
+          );
         }
         if (!success) {
           return;
@@ -103,13 +103,15 @@ class _ZegoCallMinimizingButtonState extends State<ZegoCallMinimizingButton> {
         width: widget.buttonSize?.width ?? 96,
         height: widget.buttonSize?.height ?? 96,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ??
+          color:
+              widget.icon?.backgroundColor ??
               ZegoUIKitDefaultTheme.buttonBackgroundColor,
           shape: BoxShape.circle,
         ),
         child: SizedBox.fromSize(
           size: widget.iconSize ?? Size(56, 56),
-          child: widget.icon?.icon ??
+          child:
+              widget.icon?.icon ??
               ZegoCallImage.asset(ZegoCallIconUrls.minimizing),
         ),
       ),

@@ -103,15 +103,16 @@ class RingtoneOperationController {
     _isStarting = false;
 
     late final Future<bool?> stopOperation;
-    stopOperation = _stopAfterPendingStart(
-      request: request,
-      operation: operation,
-      onError: onError,
-    ).whenComplete(() {
-      if (identical(_stopOperation, stopOperation)) {
-        _stopOperation = null;
-      }
-    });
+    stopOperation =
+        _stopAfterPendingStart(
+          request: request,
+          operation: operation,
+          onError: onError,
+        ).whenComplete(() {
+          if (identical(_stopOperation, stopOperation)) {
+            _stopOperation = null;
+          }
+        });
     _stopOperation = stopOperation;
     return stopOperation;
   }

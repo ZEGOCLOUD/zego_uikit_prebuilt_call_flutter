@@ -112,15 +112,15 @@ class ZegoCallAudioVideoEvents {
 
   /// local microphone device exceptions
   void Function(ZegoUIKitDeviceExceptionType?)?
-      onLocalMicrophoneExceptionOccurred;
+  onLocalMicrophoneExceptionOccurred;
 
   /// remote camera device exceptions
   void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
-      onRemoteCameraExceptionOccurred;
+  onRemoteCameraExceptionOccurred;
 
   /// remote microphone device exceptions
   void Function(ZegoUIKitUser, ZegoUIKitDeviceExceptionType?)?
-      onRemoteMicrophoneExceptionOccurred;
+  onRemoteMicrophoneExceptionOccurred;
 
   ZegoCallAudioVideoEvents({
     this.onCameraStateChanged,
@@ -156,10 +156,7 @@ class ZegoCallUserEvents {
   /// This callback is triggered when user leave
   void Function(ZegoUIKitUser)? onLeave;
 
-  ZegoCallUserEvents({
-    this.onEnter,
-    this.onLeave,
-  });
+  ZegoCallUserEvents({this.onEnter, this.onLeave});
 
   @override
   String toString() {
@@ -181,10 +178,7 @@ class ZegoCallRoomEvents {
   /// If there is no update, it will affect the user's next login and publish streaming operation, and will not affect the current operation.
   String? Function(int remainSeconds)? onTokenExpired;
 
-  ZegoCallRoomEvents({
-    this.onStateChanged,
-    this.onTokenExpired,
-  });
+  ZegoCallRoomEvents({this.onStateChanged, this.onTokenExpired});
 
   @override
   String toString() {
@@ -196,10 +190,7 @@ class ZegoCallRoomEvents {
 }
 
 class ZegoCallBeautyEvents {
-  ZegoCallBeautyEvents({
-    this.onError,
-    this.onFaceDetection,
-  });
+  ZegoCallBeautyEvents({this.onError, this.onFaceDetection});
 
   /// error stream
   ///

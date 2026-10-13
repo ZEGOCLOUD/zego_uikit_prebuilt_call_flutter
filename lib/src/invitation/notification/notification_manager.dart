@@ -26,40 +26,56 @@ class ZegoCallInvitationNotificationManager {
   final int _callInvitationNotificationID = Random().nextInt(2147483647);
   final Map<int, ZegoCallInvitationData> _missedCallNotificationIDDataMap = {};
 
-  ZegoCallInvitationNotificationManager({
-    required this.callInvitationData,
-  });
+  ZegoCallInvitationNotificationManager({required this.callInvitationData});
 
   static bool hasInvitation = false;
 
   String get callChannelKey =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.callChannel.channelID ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.callChannel
+          .channelID ??
       defaultCallChannelKey;
 
   String get callChannelName =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.callChannel.channelName ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.callChannel
+          .channelName ??
       defaultCallChannelName;
 
   String get missedCallChannelKey =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.missedCallChannel.channelID ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.missedCallChannel
+          .channelID ??
       defaultMissedCallChannelKey;
 
   String get missedCallChannelName =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.missedCallChannel.channelName ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.missedCallChannel
+          .channelName ??
       defaultMissedCallChannelName;
 
   String get messageChannelID =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.messageChannel.channelID ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.messageChannel
+          .channelID ??
       defaultMessageChannelID;
 
   String get messageChannelName =>
-      callInvitationData.notificationConfig.androidNotificationConfig
-          ?.messageChannel.channelName ??
+      callInvitationData
+          .notificationConfig
+          .androidNotificationConfig
+          ?.messageChannel
+          .channelName ??
       defaultMessageChannelName;
 
   Future<void> init(BuildContext? context) async {
@@ -87,10 +103,10 @@ class ZegoCallInvitationNotificationManager {
 
     await requestNotificationPermission();
     await requestSystemAlertWindowPermission();
-    if (callInvitationData.config.permissions
-        .contains(ZegoCallInvitationPermission.manuallyByUser)) {
-      await ZegoUIKitPrebuiltCallInvitationService()
-          .private
+    if (callInvitationData.config.permissions.contains(
+      ZegoCallInvitationPermission.manuallyByUser,
+    )) {
+      await ZegoUIKitPrebuiltCallInvitationService().private
           .requestPermissionsNeedManuallyByUser();
     }
 
@@ -104,19 +120,21 @@ class ZegoCallInvitationNotificationManager {
       subTag: 'notification manager',
     );
 
-    await requestPermission(Permission.notification).then((value) {
-      ZegoLoggerService.logInfo(
-        'request notification permission result:$value',
-        tag: 'call-invitation',
-        subTag: 'notification manager',
-      );
-    }).then((_) {
-      ZegoLoggerService.logInfo(
-        'requestPermission of notification done',
-        tag: 'call-invitation',
-        subTag: 'notification manager',
-      );
-    });
+    await requestPermission(Permission.notification)
+        .then((value) {
+          ZegoLoggerService.logInfo(
+            'request notification permission result:$value',
+            tag: 'call-invitation',
+            subTag: 'notification manager',
+          );
+        })
+        .then((_) {
+          ZegoLoggerService.logInfo(
+            'requestPermission of notification done',
+            tag: 'call-invitation',
+            subTag: 'notification manager',
+          );
+        });
   }
 
   Future<bool> requestSystemAlertWindowPermission() async {
@@ -126,10 +144,10 @@ class ZegoCallInvitationNotificationManager {
       subTag: 'notification manager',
     );
 
-    if (callInvitationData.config.permissions
-        .contains(ZegoCallInvitationPermission.systemAlertWindow)) {
-      return await ZegoUIKitPrebuiltCallInvitationService()
-          .private
+    if (callInvitationData.config.permissions.contains(
+      ZegoCallInvitationPermission.systemAlertWindow,
+    )) {
+      return await ZegoUIKitPrebuiltCallInvitationService().private
           .requestSystemAlertWindowPermission();
     }
 
@@ -154,69 +172,90 @@ class ZegoCallInvitationNotificationManager {
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoCallNotificationChannelConfig(
-        channelID: callChannelKey,
-        channelName: callChannelName,
-        vibrate: callInvitationData.notificationConfig.androidNotificationConfig
-                ?.callChannel.vibrate ??
-            true,
-        soundSource: getSoundSource(
-          callInvitationData
-              .notificationConfig.androidNotificationConfig?.callChannel.sound,
-        ),
-      ),
-    )
+          ZegoCallNotificationChannelConfig(
+            channelID: callChannelKey,
+            channelName: callChannelName,
+            vibrate:
+                callInvitationData
+                    .notificationConfig
+                    .androidNotificationConfig
+                    ?.callChannel
+                    .vibrate ??
+                true,
+            soundSource: getSoundSource(
+              callInvitationData
+                  .notificationConfig
+                  .androidNotificationConfig
+                  ?.callChannel
+                  .sound,
+            ),
+          ),
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'createNotificationChannel of call done',
-        tag: 'call-invitation',
-        subTag: 'notification manager',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'createNotificationChannel of call done',
+            tag: 'call-invitation',
+            subTag: 'notification manager',
+          );
+        });
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoCallNotificationChannelConfig(
-        channelID: missedCallChannelKey,
-        channelName: missedCallChannelName,
-        vibrate: callInvitationData.notificationConfig.androidNotificationConfig
-                ?.missedCallChannel.vibrate ??
-            true,
-        soundSource: getSoundSource(
-          callInvitationData.notificationConfig.androidNotificationConfig
-              ?.missedCallChannel.sound,
-        ),
-      ),
-    )
+          ZegoCallNotificationChannelConfig(
+            channelID: missedCallChannelKey,
+            channelName: missedCallChannelName,
+            vibrate:
+                callInvitationData
+                    .notificationConfig
+                    .androidNotificationConfig
+                    ?.missedCallChannel
+                    .vibrate ??
+                true,
+            soundSource: getSoundSource(
+              callInvitationData
+                  .notificationConfig
+                  .androidNotificationConfig
+                  ?.missedCallChannel
+                  .sound,
+            ),
+          ),
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'createNotificationChannel of missed call done',
-        tag: 'call-invitation',
-        subTag: 'notification manager',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'createNotificationChannel of missed call done',
+            tag: 'call-invitation',
+            subTag: 'notification manager',
+          );
+        });
 
     await ZegoCallPluginPlatform.instance
         .createNotificationChannel(
-      ZegoCallNotificationChannelConfig(
-        channelID: messageChannelID,
-        channelName: messageChannelName,
-        vibrate: callInvitationData.notificationConfig.androidNotificationConfig
-                ?.messageChannel.vibrate ??
-            false,
-        soundSource: getSoundSource(
-          callInvitationData.notificationConfig.androidNotificationConfig
-              ?.messageChannel.sound,
-        ),
-      ),
-    )
+          ZegoCallNotificationChannelConfig(
+            channelID: messageChannelID,
+            channelName: messageChannelName,
+            vibrate:
+                callInvitationData
+                    .notificationConfig
+                    .androidNotificationConfig
+                    ?.messageChannel
+                    .vibrate ??
+                false,
+            soundSource: getSoundSource(
+              callInvitationData
+                  .notificationConfig
+                  .androidNotificationConfig
+                  ?.messageChannel
+                  .sound,
+            ),
+          ),
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'createNotificationChannel of message done',
-        tag: 'call-invitation',
-        subTag: 'notification manager',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'createNotificationChannel of message done',
+            tag: 'call-invitation',
+            subTag: 'notification manager',
+          );
+        });
   }
 
   Future<void> cancelInvitationNotification() async {
@@ -227,8 +266,9 @@ class ZegoCallInvitationNotificationManager {
     );
 
     /// clear notifications
-    await ZegoCallPluginPlatform.instance
-        .dismissNotification(_callInvitationNotificationID);
+    await ZegoCallPluginPlatform.instance.dismissNotification(
+      _callInvitationNotificationID,
+    );
   }
 
   Future<void> cancelMissedCallNotification() async {
@@ -259,9 +299,8 @@ class ZegoCallInvitationNotificationManager {
 
   Future<void> addMissedCallNotification(
     ZegoCallInvitationData invitationData,
-    Future<void> Function(
-      ZegoCallInvitationData invitationData,
-    ) clickedCallback,
+    Future<void> Function(ZegoCallInvitationData invitationData)
+    clickedCallback,
   ) async {
     if (!isInit) {
       ZegoLoggerService.logError(
@@ -295,15 +334,16 @@ class ZegoCallInvitationNotificationManager {
         subTag: 'notification manager, missed call notification',
       );
 
-      final groupMissedCallContent = ZegoCallInvitationType.videoCall ==
-              invitationData.type
+      final groupMissedCallContent =
+          ZegoCallInvitationType.videoCall == invitationData.type
           ? callInvitationData.innerText.missedGroupVideoCallNotificationContent
           : callInvitationData
-              .innerText.missedGroupAudioCallNotificationContent;
+                .innerText
+                .missedGroupAudioCallNotificationContent;
       final oneOnOneMissedCallContent =
           ZegoCallInvitationType.videoCall == invitationData.type
-              ? callInvitationData.innerText.missedVideoCallNotificationContent
-              : callInvitationData.innerText.missedAudioCallNotificationContent;
+          ? callInvitationData.innerText.missedVideoCallNotificationContent
+          : callInvitationData.innerText.missedAudioCallNotificationContent;
 
       ZegoCallPluginPlatform.instance.showNormalNotification(
         ZegoCallNormalNotificationConfig(
@@ -312,12 +352,26 @@ class ZegoCallInvitationNotificationManager {
           title: callInvitationData.innerText.missedCallNotificationTitle,
           content:
               '${invitationData.inviter?.name ?? ''} ${invitationData.invitees.length > 1 ? groupMissedCallContent : oneOnOneMissedCallContent}',
-          iconSource: getIconSource(callInvitationData.notificationConfig
-              .androidNotificationConfig?.missedCallChannel.icon),
-          soundSource: getSoundSource(callInvitationData.notificationConfig
-              .androidNotificationConfig?.missedCallChannel.sound),
-          vibrate: callInvitationData.notificationConfig
-                  .androidNotificationConfig?.missedCallChannel.vibrate ??
+          iconSource: getIconSource(
+            callInvitationData
+                .notificationConfig
+                .androidNotificationConfig
+                ?.missedCallChannel
+                .icon,
+          ),
+          soundSource: getSoundSource(
+            callInvitationData
+                .notificationConfig
+                .androidNotificationConfig
+                ?.missedCallChannel
+                .sound,
+          ),
+          vibrate:
+              callInvitationData
+                  .notificationConfig
+                  .androidNotificationConfig
+                  ?.missedCallChannel
+                  .vibrate ??
               false,
           clickCallback: (int notificationID) async {
             ZegoLoggerService.logInfo(
@@ -328,12 +382,14 @@ class ZegoCallInvitationNotificationManager {
 
             final missedCallInvitationData =
                 _missedCallNotificationIDDataMap[notificationID] ??
-                    ZegoCallInvitationData.empty();
-            _missedCallNotificationIDDataMap
-                .removeWhere((id, _) => id == notificationID);
+                ZegoCallInvitationData.empty();
+            _missedCallNotificationIDDataMap.removeWhere(
+              (id, _) => id == notificationID,
+            );
 
-            await ZegoCallPluginPlatform.instance
-                .dismissNotification(notificationID);
+            await ZegoCallPluginPlatform.instance.dismissNotification(
+              notificationID,
+            );
 
             await ZegoUIKit().activeAppToForeground();
             await ZegoUIKit().requestDismissKeyguard();
@@ -350,28 +406,28 @@ class ZegoCallInvitationNotificationManager {
             }
 
             defaultAction() async {
-              await clickedCallback(
-                missedCallInvitationData,
-              );
+              await clickedCallback(missedCallInvitationData);
             }
 
             if (null !=
                 callInvitationData
-                    .invitationEvents?.onIncomingMissedCallClicked) {
+                    .invitationEvents
+                    ?.onIncomingMissedCallClicked) {
               await callInvitationData
-                  .invitationEvents?.onIncomingMissedCallClicked
+                  .invitationEvents
+                  ?.onIncomingMissedCallClicked
                   ?.call(
-                missedCallInvitationData.callID,
-                ZegoCallUser.fromUIKit(
-                  invitationData.inviter ?? ZegoUIKitUser.empty(),
-                ),
-                missedCallInvitationData.type,
-                missedCallInvitationData.invitees
-                    .map((invitee) => ZegoCallUser.fromUIKit(invitee))
-                    .toList(),
-                missedCallInvitationData.customData,
-                defaultAction,
-              );
+                    missedCallInvitationData.callID,
+                    ZegoCallUser.fromUIKit(
+                      invitationData.inviter ?? ZegoUIKitUser.empty(),
+                    ),
+                    missedCallInvitationData.type,
+                    missedCallInvitationData.invitees
+                        .map((invitee) => ZegoCallUser.fromUIKit(invitee))
+                        .toList(),
+                    missedCallInvitationData.customData,
+                    defaultAction,
+                  );
             } else {
               await defaultAction.call();
             }
@@ -401,8 +457,9 @@ class ZegoCallInvitationNotificationManager {
       tag: 'call-invitation',
       subTag: 'notification manager',
     );
-    return await hasSystemAlertWindowPermission()
-        .then((bool hasPermission) async {
+    return await hasSystemAlertWindowPermission().then((
+      bool hasPermission,
+    ) async {
       if (!hasPermission) {
         ZegoLoggerService.logWarn(
           'show invitation notification, '
@@ -434,11 +491,17 @@ class ZegoCallInvitationNotificationManager {
         timeoutSeconds: invitationData.timeoutSeconds,
         callChannelName: callChannelName,
         missedCallChannelName: missedCallChannelName,
-        ringtonePath: callInvitationData.notificationConfig
-                .androidNotificationConfig?.callChannel.sound ??
+        ringtonePath:
+            callInvitationData
+                .notificationConfig
+                .androidNotificationConfig
+                ?.callChannel
+                .sound ??
             '',
         iOSIconName: callInvitationData
-            .notificationConfig.iOSNotificationConfig?.systemCallingIconName,
+            .notificationConfig
+            .iOSNotificationConfig
+            ?.systemCallingIconName,
       );
 
       return true;

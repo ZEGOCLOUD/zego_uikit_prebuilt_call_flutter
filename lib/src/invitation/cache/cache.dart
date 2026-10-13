@@ -39,13 +39,11 @@ class ZegoUIKitCallCache {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(
       messageConversationCacheKey,
-      const JsonEncoder().convert(
-        {
-          messageConversationCacheID: conversationID,
-          messageConversationCacheTypeIndex: conversationTypeIndex,
-          messageConversationSenderID: senderID,
-        },
-      ),
+      const JsonEncoder().convert({
+        messageConversationCacheID: conversationID,
+        messageConversationCacheTypeIndex: conversationTypeIndex,
+        messageConversationSenderID: senderID,
+      }),
     );
   }
 

@@ -79,10 +79,8 @@ class ZegoEffectGrid extends StatefulWidget {
 
 /// @nodoc
 class _ZegoEffectGridState extends State<ZegoEffectGrid> {
-  TextStyle get gridItemTextStyle => TextStyle(
-        fontSize: 24.zR,
-        fontWeight: FontWeight.w500,
-      );
+  TextStyle get gridItemTextStyle =>
+      TextStyle(fontSize: 24.zR, fontWeight: FontWeight.w500);
 
   @override
   Widget build(BuildContext context) {
@@ -93,10 +91,7 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
         children: [
           header(),
           line(),
-          SizedBox(
-            height: 133.zR,
-            child: grid(),
-          )
+          SizedBox(height: 133.zR, child: grid()),
         ],
       ),
     );
@@ -140,20 +135,21 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
             children: widget.model.items
                 .map((item) {
                   var buttonSize = widget.buttonSize ?? Size(88.zR, 133.zR);
-                  final bestButtonWidth =
-                      getTextSize(item.iconText, gridItemTextStyle).width;
-                  buttonSize = Size(
-                    bestButtonWidth + 20.zR,
-                    buttonSize.height,
-                  );
+                  final bestButtonWidth = getTextSize(
+                    item.iconText,
+                    gridItemTextStyle,
+                  ).width;
+                  buttonSize = Size(bestButtonWidth + 20.zR, buttonSize.height);
                   return gridItem(item, buttonSize);
                 })
-                .map((item) => Row(
-                      children: [
-                        item,
-                        Container(width: widget.itemSpacing ?? 40.zR)
-                      ],
-                    ))
+                .map(
+                  (item) => Row(
+                    children: [
+                      item,
+                      Container(width: widget.itemSpacing ?? 40.zR),
+                    ],
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -166,13 +162,15 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
         widget.selectedIconBorderColor ?? const Color(0xffA653FF);
     final normalIconBorderColor =
         widget.normalIconBorderColor ?? Colors.transparent;
-    final selectedTextStyle = widget.selectedTextStyle ??
+    final selectedTextStyle =
+        widget.selectedTextStyle ??
         TextStyle(
           color: const Color(0xffA653FF),
           fontSize: 24.zR,
           fontWeight: FontWeight.w500,
         );
-    final normalTextStyle = widget.normalTextStyle ??
+    final normalTextStyle =
+        widget.normalTextStyle ??
         TextStyle(
           color: const Color(0xffCCCCCC),
           fontSize: 24.zR,
@@ -194,8 +192,8 @@ class _ZegoEffectGridState extends State<ZegoEffectGrid> {
           : item.icon,
       iconBorderColor: widget.withBorderColor
           ? (item.id == widget.model.selectedID.value
-              ? selectedIconBorderColor
-              : normalIconBorderColor)
+                ? selectedIconBorderColor
+                : normalIconBorderColor)
           : normalIconBorderColor,
       text: item.iconText,
       textStyle: item.id == widget.model.selectedID.value

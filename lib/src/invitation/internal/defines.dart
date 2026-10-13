@@ -33,12 +33,12 @@ class ZegoUIKitPrebuiltCallInvitationData {
     ZegoCallInvitationUIConfig? uiConfig,
     ZegoCallInvitationConfig? config,
     ZegoCallInvitationNotificationConfig? notificationConfig,
-  })  : ringtoneConfig = ringtoneConfig ?? ZegoCallRingtoneConfig(),
-        config = config ?? ZegoCallInvitationConfig(),
-        uiConfig = uiConfig ?? ZegoCallInvitationUIConfig(),
-        innerText = innerText ?? ZegoCallInvitationInnerText(),
-        notificationConfig =
-            notificationConfig ?? ZegoCallInvitationNotificationConfig();
+  }) : ringtoneConfig = ringtoneConfig ?? ZegoCallRingtoneConfig(),
+       config = config ?? ZegoCallInvitationConfig(),
+       uiConfig = uiConfig ?? ZegoCallInvitationUIConfig(),
+       innerText = innerText ?? ZegoCallInvitationInnerText(),
+       notificationConfig =
+           notificationConfig ?? ZegoCallInvitationNotificationConfig();
 
   /// you need to fill in the appID you obtained from console.zegocloud.com
   final int appID;

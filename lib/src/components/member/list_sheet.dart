@@ -43,23 +43,28 @@ class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Column(
-        children: [
-          header(98.zH),
-          Container(height: 1.zR, color: Colors.white.withValues(alpha: 0.15)),
-          SizedBox(
-            height: constraints.maxHeight - 1.zR - 98.zH,
-            child: ZegoMemberList(
-              showCameraState: widget.showCameraState,
-              showMicrophoneState: widget.showMicrophoneState,
-              avatarBuilder: widget.avatarBuilder,
-              itemBuilder: widget.itemBuilder,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            header(98.zH),
+            Container(
+              height: 1.zR,
+              color: Colors.white.withValues(alpha: 0.15),
             ),
-          ),
-        ],
-      );
-    });
+            SizedBox(
+              height: constraints.maxHeight - 1.zR - 98.zH,
+              child: ZegoMemberList(
+                showCameraState: widget.showCameraState,
+                showMicrophoneState: widget.showMicrophoneState,
+                avatarBuilder: widget.avatarBuilder,
+                itemBuilder: widget.itemBuilder,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget header(double height) {
@@ -74,10 +79,7 @@ class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
                 tag: 'call',
                 subTag: 'list sheet, Navigator',
               );
-              Navigator.of(
-                context,
-                rootNavigator: widget.rootNavigator,
-              ).pop();
+              Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
             },
             child: SizedBox(
               width: 70.zR,
@@ -93,7 +95,7 @@ class _ZegoCallMemberListSheetState extends State<ZegoCallMemberListSheet> {
               color: const Color(0xffffffff),
               decoration: TextDecoration.none,
             ),
-          )
+          ),
         ],
       ),
     );

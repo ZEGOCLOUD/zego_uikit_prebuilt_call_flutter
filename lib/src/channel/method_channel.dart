@@ -93,9 +93,7 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   /// Prepare audio for CallKit. CallKit must activate the session itself.
   /// only support ios
   @override
-  Future<void> prepareAudioSessionForCallKit({
-    bool isVideoCall = false,
-  }) async {
+  Future<void> prepareAudioSessionForCallKit({bool isVideoCall = false}) async {
     if (Platform.isAndroid) {
       ZegoLoggerService.logInfo(
         'not support in Android',
@@ -420,7 +418,8 @@ class MethodChannelZegoCallPlugin extends ZegoCallPluginPlatform {
   /// only support android
   @override
   void setAudioRouteChangedCallback(
-      Function(Map<dynamic, dynamic> info)? callback) {
+    Function(Map<dynamic, dynamic> info)? callback,
+  ) {
     if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'not support in iOS',

@@ -35,8 +35,9 @@ class ZegoCallAndroidBackgroundMessageHandler {
     required String title,
     required Map<String, Object?> extras,
   }) {
-    final currentListeningIsolatePort =
-        IsolateNameServer.lookupPortByName(backgroundMessageIsolatePortName);
+    final currentListeningIsolatePort = IsolateNameServer.lookupPortByName(
+      backgroundMessageIsolatePortName,
+    );
     final isAppRunning = null != currentListeningIsolatePort;
 
     if (!isAppRunning) {
@@ -61,10 +62,9 @@ class ZegoCallAndroidBackgroundMessageHandler {
       tag: 'call-invitation',
       subTag: 'offline, isolate',
     );
-    currentListeningIsolatePort.send(jsonEncode({
-      'title': title,
-      'extras': extras,
-    }));
+    currentListeningIsolatePort.send(
+      jsonEncode({'title': title, 'extras': extras}),
+    );
 
     return true;
   }
@@ -77,10 +77,12 @@ class ZegoCallAndroidBackgroundMessageHandler {
     );
 
     WidgetsFlutterBinding.ensureInitialized();
-    WidgetsBinding.instance.addObserver(ZegoCallIsolateNameServerGuard(
-      backgroundPort: _listeningIsolatePort!,
-      portName: backgroundMessageIsolatePortName,
-    ));
+    WidgetsBinding.instance.addObserver(
+      ZegoCallIsolateNameServerGuard(
+        backgroundPort: _listeningIsolatePort!,
+        portName: backgroundMessageIsolatePortName,
+      ),
+    );
 
     ZegoLoggerService.logInfo(
       'registered, ',
@@ -99,9 +101,7 @@ class ZegoCallAndroidBackgroundMessageHandler {
     _listeningIsolatePort?.close();
     _listeningIsolatePort = null;
 
-    IsolateNameServer.removePortNameMapping(
-      backgroundMessageIsolatePortName,
-    );
+    IsolateNameServer.removePortNameMapping(backgroundMessageIsolatePortName);
   }
 
   void listenIsolate() {

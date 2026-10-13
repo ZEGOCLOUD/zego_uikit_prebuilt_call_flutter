@@ -4,23 +4,25 @@ import 'package:flutter/cupertino.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
-typedef ZegoCallEndCallback = void Function(
-  ZegoCallEndEvent event,
+typedef ZegoCallEndCallback =
+    void Function(
+      ZegoCallEndEvent event,
 
-  /// defaultAction to return to the previous page
-  VoidCallback defaultAction,
-);
+      /// defaultAction to return to the previous page
+      VoidCallback defaultAction,
+    );
 
-typedef ZegoCallHangUpConfirmationCallback = Future<bool> Function(
-  ZegoCallHangUpConfirmationEvent event,
+typedef ZegoCallHangUpConfirmationCallback =
+    Future<bool> Function(
+      ZegoCallHangUpConfirmationEvent event,
 
-  /// defaultAction to **return to the previous page** or **hide the minimize page**
-  ///
-  /// If you do not execute defaultAction and want to control the end time of the call yourself, then:
-  /// when [event.isFromMinimizing] is false, just call **Navigator.pop()** or **ZegoUIKitPrebuiltCallController().hangUp()**to return to the previous page
-  /// when [event.isFromMinimizing] is true, just hide the minimize page by call **ZegoUIKitPrebuiltCallController().minimize.hide()**
-  Future<bool> Function() defaultAction,
-);
+      /// defaultAction to **return to the previous page** or **hide the minimize page**
+      ///
+      /// If you do not execute defaultAction and want to control the end time of the call yourself, then:
+      /// when [event.isFromMinimizing] is false, just call **Navigator.pop()** or **ZegoUIKitPrebuiltCallController().hangUp()**to return to the previous page
+      /// when [event.isFromMinimizing] is true, just hide the minimize page by call **ZegoUIKitPrebuiltCallController().minimize.hide()**
+      Future<bool> Function() defaultAction,
+    );
 
 /// The default behavior is to return to the previous page.
 ///
@@ -91,9 +93,7 @@ class ZegoCallEndEvent {
 class ZegoCallHangUpConfirmationEvent {
   BuildContext context;
 
-  ZegoCallHangUpConfirmationEvent({
-    required this.context,
-  });
+  ZegoCallHangUpConfirmationEvent({required this.context});
 
   @override
   String toString() {

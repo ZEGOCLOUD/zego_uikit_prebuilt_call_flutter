@@ -411,69 +411,68 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await private
         ._initPrivate(
-      appID: appID,
-      appSign: appSign,
-      token: token,
-      userID: userID,
-      userName: userName,
-      plugins: plugins,
-      requireConfig: requireConfig,
-      ringtoneConfig: ringtoneConfig,
-      config: config,
-      uiConfig: uiConfig,
-      notificationConfig: notificationConfig,
-      innerText: innerText,
-      events: events,
-      invitationEvents: invitationEvents,
-      invitationImpl: _invitation,
-    )
+          appID: appID,
+          appSign: appSign,
+          token: token,
+          userID: userID,
+          userName: userName,
+          plugins: plugins,
+          requireConfig: requireConfig,
+          ringtoneConfig: ringtoneConfig,
+          config: config,
+          uiConfig: uiConfig,
+          notificationConfig: notificationConfig,
+          innerText: innerText,
+          events: events,
+          invitationEvents: invitationEvents,
+          invitationImpl: _invitation,
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'initPrivate done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), init',
-      );
-    });
-    _invitation._private.init(
-      innerText: innerText,
-      events: events,
-    );
+          ZegoLoggerService.logInfo(
+            'initPrivate done',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), init',
+          );
+        });
+    _invitation._private.init(innerText: innerText, events: events);
 
     try {
       await private
-          ._initContext(
-        config: config,
-        requireConfig: requireConfig,
-      )
+          ._initContext(config: config, requireConfig: requireConfig)
           .then((_) async {
-        ZegoLoggerService.logInfo(
-          'initContext done',
-          tag: 'call-invitation',
-          subTag: 'service(${identityHashCode(this)}), init',
-        );
-
-        if (notificationConfig?.androidNotificationConfig?.showOnFullScreen ??
-            true) {
-          if (Platform.isAndroid) {
-            final mobileSystemVersion = ZegoUIKit().getMobileSystemVersionX();
             ZegoLoggerService.logInfo(
-              'mobile system version:$mobileSystemVersion',
+              'initContext done',
               tag: 'call-invitation',
               subTag: 'service(${identityHashCode(this)}), init',
             );
 
-            if (mobileSystemVersion.major >= 14) {
-              FlutterCallkitIncoming.requestFullIntentPermission().then((res) {
+            if (notificationConfig
+                    ?.androidNotificationConfig
+                    ?.showOnFullScreen ??
+                true) {
+              if (Platform.isAndroid) {
+                final mobileSystemVersion = ZegoUIKit()
+                    .getMobileSystemVersionX();
                 ZegoLoggerService.logInfo(
-                  'requestFullIntentPermission done, res:$res',
+                  'mobile system version:$mobileSystemVersion',
                   tag: 'call-invitation',
-                  subTag: 'callkit',
+                  subTag: 'service(${identityHashCode(this)}), init',
                 );
-              });
+
+                if (mobileSystemVersion.major >= 14) {
+                  FlutterCallkitIncoming.requestFullIntentPermission().then((
+                    res,
+                  ) {
+                    ZegoLoggerService.logInfo(
+                      'requestFullIntentPermission done, res:$res',
+                      tag: 'call-invitation',
+                      subTag: 'callkit',
+                    );
+                  });
+                }
+              }
             }
-          }
-        }
-      });
+          });
     } catch (e) {
       ZegoLoggerService.logError(
         'initContext exception:$e',
@@ -484,45 +483,44 @@ class ZegoUIKitPrebuiltCallInvitationService
 
     await private.callkit
         ._initCallKit(
-      pageManager: private._pageManager!,
-      androidNotificationConfig:
-          private._data!.notificationConfig.androidNotificationConfig,
-    )
+          pageManager: private._pageManager!,
+          androidNotificationConfig:
+              private._data!.notificationConfig.androidNotificationConfig,
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'initCallKit done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), init',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'initCallKit done',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), init',
+          );
+        });
 
     await private
         ._initPlugins(
-      appID: appID,
-      appSign: appSign,
-      token: token,
-      userID: userID,
-      userName: userName,
-    )
+          appID: appID,
+          appSign: appSign,
+          token: token,
+          userID: userID,
+          userName: userName,
+        )
         .then((_) {
-      ZegoLoggerService.logInfo(
-        'initPlugins done',
-        tag: 'call-invitation',
-        subTag: 'service(${identityHashCode(this)}), init',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'initPlugins done',
+            tag: 'call-invitation',
+            subTag: 'service(${identityHashCode(this)}), init',
+          );
+        });
 
-    await ZegoUIKitCallCache()
-        .missedCall
-        .getNotificationID()
-        .then((notificationID) async {
+    await ZegoUIKitCallCache().missedCall.getNotificationID().then((
+      notificationID,
+    ) async {
       if (null == notificationID) {
         return;
       }
 
       await ZegoUIKitCallCache().missedCall.clearNotificationID();
-      final missedCallInvitationData =
-          await ZegoUIKitCallCache().missedCall.getNotification(notificationID);
+      final missedCallInvitationData = await ZegoUIKitCallCache().missedCall
+          .getNotification(notificationID);
       await ZegoUIKitCallCache().missedCall.clearNotification(notificationID);
 
       ZegoLoggerService.logInfo(
@@ -544,27 +542,34 @@ class ZegoUIKitPrebuiltCallInvitationService
       }
 
       defaultAction() async {
-        await private._pageManager
-            ?.onMissedCallNotificationClicked(missedCallInvitationData);
+        await private._pageManager?.onMissedCallNotificationClicked(
+          missedCallInvitationData,
+        );
       }
 
       if (null !=
-          private._pageManager?.callInvitationData.invitationEvents
+          private
+              ._pageManager
+              ?.callInvitationData
+              .invitationEvents
               ?.onIncomingMissedCallClicked) {
-        await private._pageManager?.callInvitationData.invitationEvents
+        await private
+            ._pageManager
+            ?.callInvitationData
+            .invitationEvents
             ?.onIncomingMissedCallClicked
             ?.call(
-          missedCallInvitationData.callID,
-          ZegoCallUser.fromUIKit(
-            missedCallInvitationData.inviter ?? ZegoUIKitUser.empty(),
-          ),
-          missedCallInvitationData.type,
-          missedCallInvitationData.invitees
-              .map((invitee) => ZegoCallUser.fromUIKit(invitee))
-              .toList(),
-          missedCallInvitationData.customData,
-          defaultAction,
-        );
+              missedCallInvitationData.callID,
+              ZegoCallUser.fromUIKit(
+                missedCallInvitationData.inviter ?? ZegoUIKitUser.empty(),
+              ),
+              missedCallInvitationData.type,
+              missedCallInvitationData.invitees
+                  .map((invitee) => ZegoCallUser.fromUIKit(invitee))
+                  .toList(),
+              missedCallInvitationData.customData,
+              defaultAction,
+            );
       } else {
         await defaultAction.call();
       }
@@ -747,12 +752,12 @@ class ZegoUIKitPrebuiltCallInvitationService
             key: 'zego_callkit',
           )
           .then((_) {
-        ZegoLoggerService.logInfo(
-          'setBackgroundMessageHandler done',
-          tag: 'call-invitation',
-          subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
-        );
-      });
+            ZegoLoggerService.logInfo(
+              'setBackgroundMessageHandler done',
+              tag: 'call-invitation',
+              subTag: 'service(${identityHashCode(this)}), useSystemCallingUI',
+            );
+          });
     } else if (Platform.isIOS) {
       ZegoLoggerService.logInfo(
         'register incoming push receive handler',
@@ -762,9 +767,9 @@ class ZegoUIKitPrebuiltCallInvitationService
 
       private._enableIOSVoIP = true;
 
-      await ZegoUIKit()
-          .getSignalingPlugin()
-          .setIncomingPushReceivedHandler(onIncomingPushReceived);
+      await ZegoUIKit().getSignalingPlugin().setIncomingPushReceivedHandler(
+        onIncomingPushReceived,
+      );
 
       private.iOSCallkit._initIOSCallkitService();
     }
@@ -812,10 +817,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     required List<ZegoCallUser> callees,
     String customData = '',
   }) async {
-    return _invitation.cancel(
-      callees: callees,
-      customData: customData,
-    );
+    return _invitation.cancel(callees: callees, customData: customData);
   }
 
   /// Reject the received call invitation.
@@ -834,17 +836,17 @@ class ZegoUIKitPrebuiltCallInvitationService
     final needHideInvitationTopSheet = !causeByPopScope;
     return _invitation
         .reject(
-      customData: customData,
-      needHideInvitationTopSheet: needHideInvitationTopSheet,
-    )
+          customData: customData,
+          needHideInvitationTopSheet: needHideInvitationTopSheet,
+        )
         .then((result) {
-      if (!needHideInvitationTopSheet) {
-        /// update state
-        _private._pageManager?.invitationTopSheetVisibility = false;
-      }
+          if (!needHideInvitationTopSheet) {
+            /// update state
+            _private._pageManager?.invitationTopSheetVisibility = false;
+          }
 
-      return result;
-    });
+          return result;
+        });
   }
 
   /// Accept the received call invitation and enter the call.
@@ -854,9 +856,7 @@ class ZegoUIKitPrebuiltCallInvitationService
   ///
   /// Additionally, the inviting party can receive notifications by listening
   /// to [onOutgoingCallAccepted] when the other party accepts the call invitation.
-  Future<bool> accept({
-    String customData = '',
-  }) async {
+  Future<bool> accept({String customData = ''}) async {
     return _invitation.accept(customData: customData);
   }
 

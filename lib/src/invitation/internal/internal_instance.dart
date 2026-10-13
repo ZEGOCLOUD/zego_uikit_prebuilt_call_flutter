@@ -18,8 +18,10 @@ class ZegoCallInvitationInternalInstance {
   ZegoUIKitPrebuiltCallInvitationData? _callInvitationData;
 
   ZegoCallInvitationPageManager? get pageManager {
-    assert(_pageManager != null,
-        'pageManager is null, please call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
+    assert(
+      _pageManager != null,
+      'pageManager is null, please call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login',
+    );
     return _pageManager;
   }
 

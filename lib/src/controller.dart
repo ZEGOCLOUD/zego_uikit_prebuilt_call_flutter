@@ -158,7 +158,8 @@ class ZegoUIKitPrebuiltCallController
 
       var canHangUp = true;
       if (private.events?.onHangUpConfirmation != null) {
-        canHangUp = await private.events?.onHangUpConfirmation?.call(
+        canHangUp =
+            await private.events?.onHangUpConfirmation?.call(
               hangUpConfirmationEvent,
               defaultAction,
             ) ??

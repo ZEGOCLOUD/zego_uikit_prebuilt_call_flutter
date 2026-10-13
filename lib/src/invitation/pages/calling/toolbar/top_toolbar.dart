@@ -64,9 +64,7 @@ class _ZegoInviterCallingTopToolBarState
     return SafeArea(
       child: Container(
         //test
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.05),
-        ),
+        decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.05)),
         padding: EdgeInsets.only(left: 36.zR, right: 36.zR),
         height: 88.zH,
         width: double.infinity,
@@ -75,10 +73,12 @@ class _ZegoInviterCallingTopToolBarState
           children: [
             ZegoCallMinimizingButton(
               invitationType: widget.invitationType,
-              inviter: widget.pageManager.invitationData.inviter ??
+              inviter:
+                  widget.pageManager.invitationData.inviter ??
                   ZegoUIKitUser.empty(),
               invitees: widget.pageManager.invitationData.invitees,
-              isInviter: widget.pageManager.invitationData.inviter?.id ==
+              isInviter:
+                  widget.pageManager.invitationData.inviter?.id ==
                   ZegoUIKit().getLocalUser().id,
               pageManager: widget.pageManager,
               callInvitationData: widget.pageManager.callInvitationData,
@@ -100,13 +100,15 @@ class _ZegoInviterCallingTopToolBarState
 
     return (widget.switchButtonConfig?.visible ?? false)
         ? ValueListenableBuilder<bool>(
-            valueListenable: ZegoUIKit()
-                .getCameraStateNotifier(ZegoUIKit().getLocalUser().id),
+            valueListenable: ZegoUIKit().getCameraStateNotifier(
+              ZegoUIKit().getLocalUser().id,
+            ),
             builder: (context, isCameraOn, _) {
               return ValueListenableBuilder<bool>(
                 valueListenable: ZegoUIKit()
                     .getUseFrontFacingCameraStateNotifier(
-                        ZegoUIKit().getLocalUser().id),
+                      ZegoUIKit().getLocalUser().id,
+                    ),
                 builder: (context, isFrontFacing, _) {
                   return ZegoCallingTopToolBarButton(
                     icon: widget.switchButtonConfig?.icon,
@@ -118,9 +120,12 @@ class _ZegoInviterCallingTopToolBarState
                             await ZegoUIKit()
                                 .useFrontFacingCamera(targetState)
                                 .then((_) {
-                              widget.pageManager.callingConfig
-                                  .useFrontCameraWhenJoining = targetState;
-                            });
+                                  widget
+                                          .pageManager
+                                          .callingConfig
+                                          .useFrontCameraWhenJoining =
+                                      targetState;
+                                });
                           }
                         : null,
                   );

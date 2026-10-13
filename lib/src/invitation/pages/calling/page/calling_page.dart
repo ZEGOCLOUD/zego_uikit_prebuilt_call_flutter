@@ -99,56 +99,58 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         );
         final invitationView = localUserIsInviter
             ? (widget.callInvitationData.uiConfig.inviter.pageBuilder?.call(
-                  context,
-                  ZegoCallingBuilderInfo(
+                    context,
+                    ZegoCallingBuilderInfo(
+                      inviter: widget.inviter,
+                      invitees: widget.invitees,
+                      callType: widget.pageManager.invitationData.type,
+                      customData: widget.pageManager.invitationData.customData,
+                    ),
+                  ) ??
+                  ZegoCallingInviterView(
+                    pageManager: widget.pageManager,
+                    callInvitationData: widget.callInvitationData,
                     inviter: widget.inviter,
                     invitees: widget.invitees,
-                    callType: widget.pageManager.invitationData.type,
+                    invitationType: widget.pageManager.invitationData.type,
                     customData: widget.pageManager.invitationData.customData,
-                  ),
-                ) ??
-                ZegoCallingInviterView(
-                  pageManager: widget.pageManager,
-                  callInvitationData: widget.callInvitationData,
-                  inviter: widget.inviter,
-                  invitees: widget.invitees,
-                  invitationType: widget.pageManager.invitationData.type,
-                  customData: widget.pageManager.invitationData.customData,
-                  avatarBuilder: prebuiltCallConfig.avatarBuilder,
-                  foregroundBuilder: widget
-                      .callInvitationData.uiConfig.inviter.foregroundBuilder,
-                  backgroundBuilder: widget
-                      .callInvitationData.uiConfig.inviter.backgroundBuilder,
-                ))
+                    avatarBuilder: prebuiltCallConfig.avatarBuilder,
+                    foregroundBuilder: widget
+                        .callInvitationData
+                        .uiConfig
+                        .inviter
+                        .foregroundBuilder,
+                    backgroundBuilder: widget
+                        .callInvitationData
+                        .uiConfig
+                        .inviter
+                        .backgroundBuilder,
+                  ))
             : (widget.callInvitationData.uiConfig.invitee.pageBuilder?.call(
-                  context,
-                  ZegoCallingBuilderInfo(
+                    context,
+                    ZegoCallingBuilderInfo(
+                      inviter: widget.inviter,
+                      invitees: widget.invitees,
+                      callType: widget.pageManager.invitationData.type,
+                      customData: widget.pageManager.invitationData.customData,
+                    ),
+                  ) ??
+                  ZegoCallingInviteeView(
+                    pageManager: widget.pageManager,
+                    callInvitationData: widget.callInvitationData,
                     inviter: widget.inviter,
                     invitees: widget.invitees,
-                    callType: widget.pageManager.invitationData.type,
+                    invitationType: widget.pageManager.invitationData.type,
                     customData: widget.pageManager.invitationData.customData,
-                  ),
-                ) ??
-                ZegoCallingInviteeView(
-                  pageManager: widget.pageManager,
-                  callInvitationData: widget.callInvitationData,
-                  inviter: widget.inviter,
-                  invitees: widget.invitees,
-                  invitationType: widget.pageManager.invitationData.type,
-                  customData: widget.pageManager.invitationData.customData,
-                  avatarBuilder: prebuiltCallConfig.avatarBuilder,
-                  uiConfig: widget.callInvitationData.uiConfig.invitee,
-                ));
+                    avatarBuilder: prebuiltCallConfig.avatarBuilder,
+                    uiConfig: widget.callInvitationData.uiConfig.invitee,
+                  ));
         view = widget.callInvitationData.uiConfig.withSafeArea
-            ? SafeArea(
-                child: invitationView,
-              )
+            ? SafeArea(child: invitationView)
             : invitationView;
         break;
       case CallingState.kOnlineAudioVideo:
-        view = prebuiltCallPage(
-          localUserIsInviter: localUserIsInviter,
-        );
+        view = prebuiltCallPage(localUserIsInviter: localUserIsInviter);
         break;
     }
 
@@ -163,9 +165,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     );
   }
 
-  Widget prebuiltCallPage({
-    required bool localUserIsInviter,
-  }) {
+  Widget prebuiltCallPage({required bool localUserIsInviter}) {
     ZegoLoggerService.logInfo(
       'create prebuilt call page, '
       'is group call:${widget.pageManager.isGroupCall}, '
@@ -240,7 +240,8 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         if (null != offlineRequiredInviter) {
           /// 优先使用离线缓存的 requiredInviter 配置
           final isOneOnOneCall = !widget.pageManager.isGroupCall;
-          final shouldEnableRequiredInviter = (isOneOnOneCall &&
+          final shouldEnableRequiredInviter =
+              (isOneOnOneCall &&
                   offlineRequiredInviter.enabledOnOneOnOneCall) ||
               (!isOneOnOneCall && offlineRequiredInviter.enabledOnGroupCall);
 
@@ -293,9 +294,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     );
 
     return widget.callInvitationData.uiConfig.withSafeArea
-        ? SafeArea(
-            child: prebuiltCall,
-          )
+        ? SafeArea(child: prebuiltCall)
         : prebuiltCall;
   }
 }

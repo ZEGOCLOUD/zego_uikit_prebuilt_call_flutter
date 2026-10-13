@@ -41,7 +41,8 @@ class ZegoCallPrebuiltPlugins {
   List<StreamSubscription<dynamic>?> subscriptions = [];
   ValueNotifier<ZegoSignalingPluginConnectionState> pluginUserStateNotifier =
       ValueNotifier<ZegoSignalingPluginConnectionState>(
-          ZegoSignalingPluginConnectionState.disconnected);
+        ZegoSignalingPluginConnectionState.disconnected,
+      );
   bool tryReLogging = false;
   bool initialized = false;
 
@@ -60,21 +61,22 @@ class ZegoCallPrebuiltPlugins {
 
       if (ZegoPluginAdapter().getPlugin(ZegoUIKitPluginType.signaling) !=
           null) {
-        subscriptions.add(ZegoUIKit()
-            .getSignalingPlugin()
-            .getErrorStream()
-            .listen(onSignalingError));
+        subscriptions.add(
+          ZegoUIKit().getSignalingPlugin().getErrorStream().listen(
+            onSignalingError,
+          ),
+        );
       }
     }
 
-    pluginUserStateNotifier.value =
-        ZegoUIKit().getSignalingPlugin().getConnectionState();
+    pluginUserStateNotifier.value = ZegoUIKit()
+        .getSignalingPlugin()
+        .getConnectionState();
 
     subscriptions.add(
-      ZegoUIKit()
-          .getSignalingPlugin()
-          .getConnectionStateStream()
-          .listen(onInvitationConnectionState),
+      ZegoUIKit().getSignalingPlugin().getConnectionStateStream().listen(
+        onInvitationConnectionState,
+      ),
     );
   }
 
@@ -84,10 +86,9 @@ class ZegoCallPrebuiltPlugins {
       tag: 'call-invitation',
       subTag: 'plugin',
     );
-    await ZegoUIKit()
-        .getSignalingPlugin()
-        .init(appID, appSign: appSign)
-        .then((value) async {
+    await ZegoUIKit().getSignalingPlugin().init(appID, appSign: appSign).then((
+      value,
+    ) async {
       await onPluginInit?.call();
     });
 
@@ -97,10 +98,10 @@ class ZegoCallPrebuiltPlugins {
       subTag: 'plugin',
     );
     await ZegoUIKit().getSignalingPlugin().login(
-          id: userID,
-          name: userName,
-          token: token,
-        );
+      id: userID,
+      name: userName,
+      token: token,
+    );
     ZegoLoggerService.logInfo(
       'plugins login done',
       tag: 'call-invitation',
@@ -188,14 +189,15 @@ class ZegoCallPrebuiltPlugins {
 
     await ZegoUIKit().getSignalingPlugin().logout();
     await ZegoUIKit().getSignalingPlugin().login(
-          id: userID,
-          name: userName,
-          token: token,
-        );
+      id: userID,
+      name: userName,
+      token: token,
+    );
   }
 
   void onInvitationConnectionState(
-      ZegoSignalingPluginConnectionStateChangedEvent event) {
+    ZegoSignalingPluginConnectionStateChangedEvent event,
+  ) {
     ZegoLoggerService.logInfo(
       '[call invitation] onInvitationConnectionState, $event',
       tag: 'call-invitation',
@@ -219,11 +221,13 @@ class ZegoCallPrebuiltPlugins {
       subTag: 'plugin',
     );
 
-    onError?.call(ZegoUIKitError(
-      code: error.code,
-      message: error.message,
-      method: error.method,
-    ));
+    onError?.call(
+      ZegoUIKitError(
+        code: error.code,
+        message: error.message,
+        method: error.method,
+      ),
+    );
   }
 
   void didChangeAppLifecycleState(bool isAppInBackground) {
@@ -279,10 +283,10 @@ class ZegoCallPrebuiltPlugins {
     tryReLogging = true;
     await ZegoUIKit().getSignalingPlugin().logout().then((value) async {
       await ZegoUIKit().getSignalingPlugin().login(
-            id: userID,
-            name: userName,
-            token: token,
-          );
+        id: userID,
+        name: userName,
+        token: token,
+      );
     });
   }
 }

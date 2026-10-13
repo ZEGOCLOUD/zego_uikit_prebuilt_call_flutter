@@ -11,8 +11,9 @@ mixin ZegoCallPrebuiltData {
   /// Whether the call hang-up operation is in progress
   /// such as clicking the close button in the upper right corner or calling the `hangUp` function of the controller.
   /// If it is not handled completely, it is considered as in progress.
-  final ValueNotifier<bool> isHangUpRequestingNotifier =
-      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isHangUpRequestingNotifier = ValueNotifier<bool>(
+    false,
+  );
 
   /// ZegoUIKitPrebuiltCall's config
   ZegoUIKitPrebuiltCallConfig? get prebuiltConfig => _prebuiltConfig;

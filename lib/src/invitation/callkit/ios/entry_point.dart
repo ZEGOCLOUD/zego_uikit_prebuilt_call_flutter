@@ -46,7 +46,5 @@ void onIncomingPushReceived(Map<dynamic, dynamic> extras, String uuid) async {
   iOSIncomingPushUUID = uuid;
 
   final handler = ZegoCallIOSBackgroundMessageHandler();
-  await handler.handleMessage(
-    messageExtras: Map<String, Object?>.from(extras),
-  );
+  await handler.handleMessage(messageExtras: Map<String, Object?>.from(extras));
 }

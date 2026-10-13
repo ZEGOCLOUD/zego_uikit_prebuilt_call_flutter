@@ -23,24 +23,27 @@ class ZegoCallInvitationConfig {
     ZegoCallInvitationMissedCallConfig? missedCall,
     ZegoCallInvitationPIPConfig? pip,
     @Deprecated(
-        'use inCalling.canInvitingInCalling instead$deprecatedTipsV4150')
+      'use inCalling.canInvitingInCalling instead$deprecatedTipsV4150',
+    )
     bool canInvitingInCalling = false,
     @Deprecated(
-        'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150')
+      'use inCalling.onlyInitiatorCanInvite instead$deprecatedTipsV4150',
+    )
     bool onlyInitiatorCanInvite = false,
     @Deprecated('use systemWindowConfirmDialog instead$deprecatedTipsV4172')
     ZegoCallSystemConfirmDialogConfig? systemAlertWindowConfirmDialog,
-  })  : systemWindowConfirmDialog =
-            systemWindowConfirmDialog ?? ZegoCallSystemConfirmDialogConfig(),
-        offline = offline ?? ZegoCallInvitationOfflineConfig(),
-        requiredInviter = requiredInviter ?? ZegoCallRequiredInviterConfig(),
-        inCalling = inCalling ??
-            ZegoCallInvitationInCallingConfig(
-              canInvitingInCalling: canInvitingInCalling,
-              onlyInitiatorCanInvite: onlyInitiatorCanInvite,
-            ),
-        missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig(),
-        pip = pip ?? ZegoCallInvitationPIPConfig();
+  }) : systemWindowConfirmDialog =
+           systemWindowConfirmDialog ?? ZegoCallSystemConfirmDialogConfig(),
+       offline = offline ?? ZegoCallInvitationOfflineConfig(),
+       requiredInviter = requiredInviter ?? ZegoCallRequiredInviterConfig(),
+       inCalling =
+           inCalling ??
+           ZegoCallInvitationInCallingConfig(
+             canInvitingInCalling: canInvitingInCalling,
+             onlyInitiatorCanInvite: onlyInitiatorCanInvite,
+           ),
+       missedCall = missedCall ?? ZegoCallInvitationMissedCallConfig(),
+       pip = pip ?? ZegoCallInvitationPIPConfig();
 
   /// If you want to a pure audio call with invitation without popping up
   /// camera permission requests, you can remove the camera in [permissions]
@@ -114,9 +117,7 @@ class ZegoCallInvitationConfig {
 }
 
 class ZegoCallInvitationOfflineConfig {
-  ZegoCallInvitationOfflineConfig({
-    this.autoEnterAcceptedOfflineCall = true,
-  });
+  ZegoCallInvitationOfflineConfig({this.autoEnterAcceptedOfflineCall = true});
 
   /// Due to some time-consuming and waiting operations, such as data loading
   /// or user login in the App.
@@ -278,17 +279,14 @@ class ZegoCallInvitationPIPConfig {
   /// ios config
   ZegoCallInvitationPIPIOSConfig iOS;
 
-  ZegoCallInvitationPIPConfig({
-    ZegoCallInvitationPIPIOSConfig? iOS,
-  }) : iOS = iOS ?? ZegoCallInvitationPIPIOSConfig();
+  ZegoCallInvitationPIPConfig({ZegoCallInvitationPIPIOSConfig? iOS})
+    : iOS = iOS ?? ZegoCallInvitationPIPIOSConfig();
 }
 
 /// iOS pip
 /// only available on 15.0
 class ZegoCallInvitationPIPIOSConfig {
-  ZegoCallInvitationPIPIOSConfig({
-    this.support = false,
-  });
+  ZegoCallInvitationPIPIOSConfig({this.support = false});
 
   /// Whether to enable PIP under iOS
   /// After setting, it cannot be modified again within one lifetime of prebuilt
@@ -324,8 +322,8 @@ class ZegoCallInvitationUIConfig {
     this.withSafeArea = true,
     ZegoCallInvitationInviterUIConfig? inviter,
     ZegoCallInvitationInviteeUIConfig? invitee,
-  })  : inviter = inviter ?? ZegoCallInvitationInviterUIConfig(),
-        invitee = invitee ?? ZegoCallInvitationInviteeUIConfig();
+  }) : inviter = inviter ?? ZegoCallInvitationInviterUIConfig(),
+       invitee = invitee ?? ZegoCallInvitationInviteeUIConfig();
 
   /// does invitation widget display with SafeArea or not
   bool withSafeArea;
@@ -365,12 +363,12 @@ class ZegoCallInvitationInviterUIConfig {
     ZegoCallButtonUIConfig? microphoneButton,
     ZegoCallButtonUIConfig? speakerButton,
     ZegoCallInvitationInviterMinimizedUIConfig? minimized,
-  })  : cancelButton = cancelButton ?? ZegoCallButtonUIConfig(),
-        cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
-        cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
-        microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
-        speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
-        minimized = minimized ?? ZegoCallInvitationInviterMinimizedUIConfig();
+  }) : cancelButton = cancelButton ?? ZegoCallButtonUIConfig(),
+       cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
+       cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
+       microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
+       speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
+       minimized = minimized ?? ZegoCallInvitationInviterMinimizedUIConfig();
 
   /// The foreground of the calling.
   ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -504,14 +502,14 @@ class ZegoCallInvitationInviteeUIConfig {
     ZegoCallButtonUIConfig? speakerButton,
     ZegoCallInvitationNotifyPopUpUIConfig? popUp,
     ZegoCallInvitationInviteeMinimizedUIConfig? minimized,
-  })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
-        acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
-        cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
-        cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
-        microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
-        speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
-        popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
-        minimized = minimized ?? ZegoCallInvitationInviteeMinimizedUIConfig();
+  }) : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
+       acceptButton = acceptButton ?? ZegoCallButtonUIConfig(),
+       cameraButton = cameraButton ?? ZegoCallButtonUIConfig(),
+       cameraSwitchButton = cameraSwitchButton ?? ZegoCallButtonUIConfig(),
+       microphoneButton = microphoneButton ?? ZegoCallButtonUIConfig(),
+       speakerButton = speakerButton ?? ZegoCallButtonUIConfig(),
+       popUp = popUp ?? ZegoCallInvitationNotifyPopUpUIConfig(),
+       minimized = minimized ?? ZegoCallInvitationInviteeMinimizedUIConfig();
 
   /// config of call invitation pop-up dialog
   ZegoCallInvitationNotifyPopUpUIConfig popUp;
@@ -652,8 +650,8 @@ class ZegoCallInvitationInviteeMinimizedUIConfig {
     this.showTips = true,
     ZegoCallButtonUIConfig? declineButton,
     ZegoCallButtonUIConfig? acceptButton,
-  })  : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
-        acceptButton = acceptButton ?? ZegoCallButtonUIConfig();
+  }) : declineButton = declineButton ?? ZegoCallButtonUIConfig(),
+       acceptButton = acceptButton ?? ZegoCallButtonUIConfig();
 
   /// accept button
   ZegoCallButtonUIConfig acceptButton;
@@ -703,10 +701,7 @@ class ZegoCallRingtoneConfig {
   /// example: "assets/ringtone/outgoingCallRingtone.mp3"
   String? outgoingCallPath;
 
-  ZegoCallRingtoneConfig({
-    this.incomingCallPath,
-    this.outgoingCallPath,
-  });
+  ZegoCallRingtoneConfig({this.incomingCallPath, this.outgoingCallPath});
 
   @override
   String toString() {
@@ -836,32 +831,35 @@ class ZegoCallAndroidNotificationConfig {
     @Deprecated('use messageChannel.vibrate instead$deprecatedTipsV4150')
     bool messageVibrate = false,
     ZegoCallAndroidNotificationChannelConfig? messageChannel,
-  })  : fullScreenBackgroundAssetURL =
-            fullScreenBackgroundAssetURL ?? fullScreenBackground ?? '',
-        callChannel = callChannel ??
-            ZegoCallAndroidNotificationChannelConfig(
-              channelID: channelID,
-              channelName: channelName,
-              icon: icon,
-              sound: sound,
-              vibrate: vibrate,
-            ),
-        missedCallChannel = missedCallChannel ??
-            ZegoCallAndroidNotificationChannelConfig(
-              channelID: 'missed_call',
-              channelName: 'Missed Call',
-              icon: '',
-              sound: '',
-              vibrate: false,
-            ),
-        messageChannel = messageChannel ??
-            ZegoCallAndroidNotificationChannelConfig(
-              channelID: messageChannelID,
-              channelName: messageChannelName,
-              icon: messageIcon,
-              sound: messageSound,
-              vibrate: messageVibrate,
-            );
+  }) : fullScreenBackgroundAssetURL =
+           fullScreenBackgroundAssetURL ?? fullScreenBackground ?? '',
+       callChannel =
+           callChannel ??
+           ZegoCallAndroidNotificationChannelConfig(
+             channelID: channelID,
+             channelName: channelName,
+             icon: icon,
+             sound: sound,
+             vibrate: vibrate,
+           ),
+       missedCallChannel =
+           missedCallChannel ??
+           ZegoCallAndroidNotificationChannelConfig(
+             channelID: 'missed_call',
+             channelName: 'Missed Call',
+             icon: '',
+             sound: '',
+             vibrate: false,
+           ),
+       messageChannel =
+           messageChannel ??
+           ZegoCallAndroidNotificationChannelConfig(
+             channelID: messageChannelID,
+             channelName: messageChannelName,
+             icon: messageIcon,
+             sound: messageSound,
+             vibrate: messageVibrate,
+           );
 
   @override
   toString() {

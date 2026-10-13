@@ -59,10 +59,13 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
           right: 0,
           top: headerHeight,
           child: Container(
-              height: 1.zR, color: Colors.white.withValues(alpha: 0.15)),
+            height: 1.zR,
+            color: Colors.white.withValues(alpha: 0.15),
+          ),
         ),
         messageList(
-          height: viewHeight -
+          height:
+              viewHeight -
               headerHeight -
               lineHeight -
               bottomBarHeight -
@@ -117,7 +120,9 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
             ),
           ),
           Container(
-              height: lineHeight, color: Colors.white.withValues(alpha: 0.15)),
+            height: lineHeight,
+            color: Colors.white.withValues(alpha: 0.15),
+          ),
         ],
       ),
     );
@@ -138,10 +143,7 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
                 tag: 'call',
                 subTag: 'in room message list sheet, Navigator',
               );
-              Navigator.of(
-                context,
-                rootNavigator: widget.rootNavigator,
-              ).pop();
+              Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
             },
             child: SizedBox(
               width: 70.zR,
@@ -166,8 +168,9 @@ class _ZegoCallMessageListSheetState extends State<ZegoCallMessageListSheet> {
   void onInputFocusChanged() {
     if (focusNotifier.value) {
       Future.delayed(const Duration(milliseconds: 100), () {
-        widget.scrollController
-            ?.jumpTo(widget.scrollController?.position.maxScrollExtent ?? 0);
+        widget.scrollController?.jumpTo(
+          widget.scrollController?.position.maxScrollExtent ?? 0,
+        );
       });
     }
   }

@@ -7,14 +7,15 @@ import 'package:zego_uikit/zego_uikit.dart';
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/internal/defines.dart';
 
-typedef ZegoCallAudioVideoContainerBuilder = Widget? Function(
-  BuildContext context,
-  List<ZegoUIKitUser> allUsers,
-  List<ZegoUIKitUser> audioVideoUsers,
+typedef ZegoCallAudioVideoContainerBuilder =
+    Widget? Function(
+      BuildContext context,
+      List<ZegoUIKitUser> allUsers,
+      List<ZegoUIKitUser> audioVideoUsers,
 
-  /// The default audio-video view creator, you can also use [ZegoAudioVideoView] as a child control to continue encapsulating
-  ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator,
-);
+      /// The default audio-video view creator, you can also use [ZegoAudioVideoView] as a child control to continue encapsulating
+      ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator,
+    );
 
 class ZegoCallHangUpConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
   ZegoCallHangUpConfirmDialogInfo({
@@ -65,10 +66,7 @@ class ZegoCallScreenSharingAutoStopConfig {
   /// returns false if you don't want to end
   bool Function()? canEnd;
 
-  ZegoCallScreenSharingAutoStopConfig({
-    this.invalidCount = 3,
-    this.canEnd,
-  });
+  ZegoCallScreenSharingAutoStopConfig({this.invalidCount = 3, this.canEnd});
 
   @override
   String toString() {
@@ -92,10 +90,7 @@ class ZegoCallNoResponseEndConfig {
   /// Default value is 3 seconds
   int timeoutSeconds;
 
-  ZegoCallNoResponseEndConfig({
-    this.enabled = false,
-    this.timeoutSeconds = 3,
-  });
+  ZegoCallNoResponseEndConfig({this.enabled = false, this.timeoutSeconds = 3});
 
   @override
   String toString() {

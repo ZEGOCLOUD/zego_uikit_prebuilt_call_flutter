@@ -164,8 +164,9 @@ class _ZegoSendCallInvitationButtonState
     super.initState();
 
     if (ZegoUIKit().getLocalUser().id.isEmpty) {
-      localUserJoinedSubscription =
-          ZegoUIKit().getUserJoinStream().listen(onUserJoined);
+      localUserJoinedSubscription = ZegoUIKit().getUserJoinStream().listen(
+        onUserJoined,
+      );
     } else {
       updateCallID();
     }
@@ -189,7 +190,8 @@ class _ZegoSendCallInvitationButtonState
   }
 
   void updateCallID() {
-    callIDNotifier.value = widget.callID ??
+    callIDNotifier.value =
+        widget.callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
 
     if ((widget.callID?.isNotEmpty ?? false) &&
@@ -227,15 +229,17 @@ class _ZegoSendCallInvitationButtonState
         resourceID: widget.resourceID ?? '',
         title: getNotificationTitle(
           defaultTitle: widget.notificationTitle,
-          callees:
-              widget.invitees.map((e) => ZegoCallUser(e.id, e.name)).toList(),
+          callees: widget.invitees
+              .map((e) => ZegoCallUser(e.id, e.name))
+              .toList(),
           isVideoCall: widget.isVideoCall,
           innerText: innerText,
         ),
         message: getNotificationMessage(
           defaultMessage: widget.notificationMessage,
-          callees:
-              widget.invitees.map((e) => ZegoCallUser(e.id, e.name)).toList(),
+          callees: widget.invitees
+              .map((e) => ZegoCallUser(e.id, e.name))
+              .toList(),
           isVideoCall: widget.isVideoCall,
           innerText: innerText,
         ),
@@ -245,11 +249,13 @@ class _ZegoSendCallInvitationButtonState
       ),
       icon: widget.iconVisible
           ? (widget.icon ??
-              ButtonIcon(
-                icon: widget.isVideoCall
-                    ? ZegoCallImage.asset(InvitationStyleIconUrls.inviteVideo)
-                    : ZegoCallImage.asset(InvitationStyleIconUrls.inviteVoice),
-              ))
+                ButtonIcon(
+                  icon: widget.isVideoCall
+                      ? ZegoCallImage.asset(InvitationStyleIconUrls.inviteVideo)
+                      : ZegoCallImage.asset(
+                          InvitationStyleIconUrls.inviteVoice,
+                        ),
+                ))
           : null,
       iconSize: widget.iconSize,
       text: widget.text,
@@ -266,7 +272,8 @@ class _ZegoSendCallInvitationButtonState
       unclickableTextColor: widget.unclickableTextColor,
       clickableBackgroundColor: widget.clickableBackgroundColor,
       unclickableBackgroundColor: widget.unclickableBackgroundColor,
-      networkLoadingConfig: widget.networkLoadingConfig ??
+      networkLoadingConfig:
+          widget.networkLoadingConfig ??
           ZegoNetworkLoadingConfig(enabled: true),
     );
   }
@@ -274,7 +281,8 @@ class _ZegoSendCallInvitationButtonState
   Future<bool> onWillPressed() async {
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
-      String errorTips = 'network state:${ZegoUIKit().getNetworkState()}, '
+      String errorTips =
+          'network state:${ZegoUIKit().getNetworkState()}, '
           'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
           'ZegoUIKitPrebuiltCallInvitationService is init: '
           '${ZegoUIKitPrebuiltCallInvitationService().isInit}, ';
@@ -318,7 +326,7 @@ class _ZegoSendCallInvitationButtonState
 
     final currentState =
         pageManager?.callingMachine?.machine.current?.identifier ??
-            CallingState.kIdle;
+        CallingState.kIdle;
     if (CallingState.kIdle != currentState) {
       ZegoLoggerService.logError(
         'is in calling, $currentState',
@@ -348,8 +356,8 @@ class _ZegoSendCallInvitationButtonState
     );
 
     ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
-          widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
-        );
+      widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
+    );
 
     return true;
   }

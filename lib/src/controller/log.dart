@@ -23,7 +23,7 @@ class ZegoCallControllerLogImpl {
     List<ZegoLogExporterFileType> fileTypes = const [
       ZegoLogExporterFileType.txt,
       ZegoLogExporterFileType.log,
-      ZegoLogExporterFileType.zip
+      ZegoLogExporterFileType.zip,
     ],
     List<ZegoLogExporterDirectoryType> directories = const [
       ZegoLogExporterDirectoryType.zegoUIKits,

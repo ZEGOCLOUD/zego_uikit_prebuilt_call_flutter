@@ -37,9 +37,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     _callKitServiceInit = true;
 
-    ZegoCallKitBackgroundService.instance.register(
-      pageManager: pageManager,
-    );
+    ZegoCallKitBackgroundService.instance.register(pageManager: pageManager);
 
     final callKitCallID = await ZegoUIKitCallCache().offlineCallKit.getCallID();
     ZegoLoggerService.logInfo(
@@ -61,7 +59,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       CallKitInnerVariable.ringtonePath:
           androidNotificationConfig?.callChannel.sound,
       CallKitInnerVariable.backgroundUrl:
-          androidNotificationConfig?.fullScreenBackgroundAssetURL ?? ''
+          androidNotificationConfig?.fullScreenBackgroundAssetURL ?? '',
     });
 
     ZegoLoggerService.logInfo(
@@ -200,14 +198,11 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       case CallKitIncomingAction.accept:
         // Online invitations are accepted through flutter_callkit_incoming. Clear the
         // previous call's state and select the event source expected for this answer.
-        ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .iOSCallkit
+        ZegoUIKitPrebuiltCallInvitationService().private.iOSCallkit
             .resetCallKitAudioActivation(source: 'flutter_callkit_incoming');
-        ZegoUIKitCallCache()
-            .offlineCallKit
-            .getCallID()
-            .then((callKitCallID) async {
+        ZegoUIKitCallCache().offlineCallKit.getCallID().then((
+          callKitCallID,
+        ) async {
           /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
           await ZegoUIKit().setAdvanceConfigs({
             "support_apple_callkit": "true",
@@ -227,9 +222,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         // Forward it to the shared iOS wait state used by both CallKit event sources.
         final isActive = callKitEvent?.isActive;
         if (isActive != null) {
-          ZegoUIKitPrebuiltCallInvitationService()
-              .private
-              .iOSCallkit
+          ZegoUIKitPrebuiltCallInvitationService().private.iOSCallkit
               .onFlutterCallKitAudioSessionChanged(isActive);
         } else {
           ZegoLoggerService.logWarn(
@@ -242,9 +235,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       case CallKitIncomingAction.ended:
 
         /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
-        await ZegoUIKit().setAdvanceConfigs({
-          "support_apple_callkit": "false",
-        });
+        await ZegoUIKit().setAdvanceConfigs({"support_apple_callkit": "false"});
 
         if (ZegoUIKitPrebuiltCallInvitationService().isInCall) {
           await ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();

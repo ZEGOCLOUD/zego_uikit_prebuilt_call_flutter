@@ -8,7 +8,8 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_page.dart';
 
-const deprecatedTipsV4_1_10 = ', '
+const deprecatedTipsV4_1_10 =
+    ', '
     'deprecated since 4.1.10, '
     'will be removed after 4.5.0,'
     'Migrate Guide:https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_4.x-topic.html#4110';
@@ -35,14 +36,16 @@ typedef ZegoUIKitPrebuiltCallUserEvents = ZegoCallUserEvents;
 typedef CallEndCallback = ZegoCallEndCallback;
 
 @Deprecated(
-    'use ZegoCallHangUpConfirmationCallback instead$deprecatedTipsV4_1_10')
+  'use ZegoCallHangUpConfirmationCallback instead$deprecatedTipsV4_1_10',
+)
 typedef CallHangUpConfirmationCallback = ZegoCallHangUpConfirmationCallback;
 
 @Deprecated('use ZegoCallMenuBarStyle instead$deprecatedTipsV4_1_10')
 typedef ZegoMenuBarStyle = ZegoCallMenuBarStyle;
 
 @Deprecated(
-    'use ZegoCallAndroidNotificationConfig instead$deprecatedTipsV4_1_10')
+  'use ZegoCallAndroidNotificationConfig instead$deprecatedTipsV4_1_10',
+)
 typedef ZegoAndroidNotificationConfig = ZegoCallAndroidNotificationConfig;
 
 @Deprecated('use ZegoCallIOSNotificationConfig instead$deprecatedTipsV4_1_10')
@@ -58,13 +61,15 @@ typedef PrebuiltConfigQuery = ZegoCallPrebuiltConfigQuery;
 typedef ZegoInvitationType = ZegoCallInvitationType;
 
 @Deprecated(
-    'use ZegoUIKitPrebuiltCallMiniOverlayPage instead$deprecatedTipsV4_1_10')
+  'use ZegoUIKitPrebuiltCallMiniOverlayPage instead$deprecatedTipsV4_1_10',
+)
 typedef ZegoMiniOverlayPage = ZegoUIKitPrebuiltCallMiniOverlayPage;
 
 extension ZegoCallControllerInvitationImplDeprecated
     on ZegoCallControllerInvitationImpl {
   @Deprecated(
-      'use ZegoUIKitPrebuiltCallInvitationService().send instead$deprecatedTipsV4_1_10')
+    'use ZegoUIKitPrebuiltCallInvitationService().send instead$deprecatedTipsV4_1_10',
+  )
   Future<bool> send({
     required List<ZegoCallUser> invitees,
     required bool isVideoCall,
@@ -88,7 +93,8 @@ extension ZegoCallControllerInvitationImplDeprecated
   }
 
   @Deprecated(
-      'use ZegoUIKitPrebuiltCallInvitationService().cancel instead$deprecatedTipsV4_1_10')
+    'use ZegoUIKitPrebuiltCallInvitationService().cancel instead$deprecatedTipsV4_1_10',
+  )
   Future<bool> cancel({
     required List<ZegoCallUser> callees,
     String customData = '',
@@ -100,20 +106,18 @@ extension ZegoCallControllerInvitationImplDeprecated
   }
 
   @Deprecated(
-      'use ZegoUIKitPrebuiltCallInvitationService().reject instead$deprecatedTipsV4_1_10')
-  Future<bool> reject({
-    String customData = '',
-  }) async {
+    'use ZegoUIKitPrebuiltCallInvitationService().reject instead$deprecatedTipsV4_1_10',
+  )
+  Future<bool> reject({String customData = ''}) async {
     return ZegoUIKitPrebuiltCallInvitationService().reject(
       customData: customData,
     );
   }
 
   @Deprecated(
-      'use ZegoUIKitPrebuiltCallInvitationService().accept instead$deprecatedTipsV4_1_10')
-  Future<bool> accept({
-    String customData = '',
-  }) async {
+    'use ZegoUIKitPrebuiltCallInvitationService().accept instead$deprecatedTipsV4_1_10',
+  )
+  Future<bool> accept({String customData = ''}) async {
     return ZegoUIKitPrebuiltCallInvitationService().accept(
       customData: customData,
     );

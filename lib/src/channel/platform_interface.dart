@@ -35,18 +35,15 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
   }
 
   /// showCallNotification
-  Future<void> showCallNotification(
-    ZegoCallCallNotificationConfig config,
-  ) {
+  Future<void> showCallNotification(ZegoCallCallNotificationConfig config) {
     throw UnimplementedError('showCallNotification has not been implemented.');
   }
 
   /// showNormalNotification
-  Future<void> showNormalNotification(
-    ZegoCallNormalNotificationConfig config,
-  ) {
+  Future<void> showNormalNotification(ZegoCallNormalNotificationConfig config) {
     throw UnimplementedError(
-        'showNormalNotification has not been implemented.');
+      'showNormalNotification has not been implemented.',
+    );
   }
 
   /// createNotificationChannel
@@ -54,31 +51,36 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
     ZegoCallNotificationChannelConfig config,
   ) {
     throw UnimplementedError(
-        'createNotificationChannel has not been implemented.');
+      'createNotificationChannel has not been implemented.',
+    );
   }
 
   /// dismissAllNotifications
   Future<void> dismissNotification(int notificationID) {
     throw UnimplementedError(
-        'dismissAllNotifications has not been implemented.');
+      'dismissAllNotifications has not been implemented.',
+    );
   }
 
   /// dismissAllNotifications
   Future<void> dismissAllNotifications() {
     throw UnimplementedError(
-        'dismissAllNotifications has not been implemented.');
+      'dismissAllNotifications has not been implemented.',
+    );
   }
 
   /// startMonitoringAudioRoute (Android only)
   Future<void> startMonitoringAudioRoute() {
     throw UnimplementedError(
-        'startMonitoringAudioRoute has not been implemented.');
+      'startMonitoringAudioRoute has not been implemented.',
+    );
   }
 
   /// stopMonitoringAudioRoute (Android only)
   Future<void> stopMonitoringAudioRoute() {
     throw UnimplementedError(
-        'stopMonitoringAudioRoute has not been implemented.');
+      'stopMonitoringAudioRoute has not been implemented.',
+    );
   }
 
   /// getAudioRouteInfo (Android only)
@@ -88,8 +90,10 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
 
   /// setAudioRouteChangedCallback (Android only)
   void setAudioRouteChangedCallback(
-      Function(Map<dynamic, dynamic> info)? callback) {
+    Function(Map<dynamic, dynamic> info)? callback,
+  ) {
     throw UnimplementedError(
-        'setAudioRouteChangedCallback has not been implemented.');
+      'setAudioRouteChangedCallback has not been implemented.',
+    );
   }
 }

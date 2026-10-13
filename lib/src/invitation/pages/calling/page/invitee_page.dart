@@ -66,20 +66,19 @@ class ZegoCallingInviteeView extends StatelessWidget {
     if (ZegoCallInvitationType.videoCall == invitationType) {
       return ZegoAudioVideoView(
         user: ZegoUIKit().getLocalUser(),
-        avatarConfig: const ZegoAvatarConfig(
-          showInAudioMode: false,
-        ),
-        backgroundBuilder: (
-          BuildContext context,
-          Size size,
-          ZegoUIKitUser? user,
+        avatarConfig: const ZegoAvatarConfig(showInAudioMode: false),
+        backgroundBuilder:
+            (
+              BuildContext context,
+              Size size,
+              ZegoUIKitUser? user,
 
-          /// {ZegoViewBuilderMapExtraInfoKey:value}
-          /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
-          Map<String, dynamic> extraInfo,
-        ) {
-          return defaultBackground();
-        },
+              /// {ZegoViewBuilderMapExtraInfoKey:value}
+              /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
+              Map<String, dynamic> extraInfo,
+            ) {
+              return defaultBackground();
+            },
       );
     }
 
@@ -87,19 +86,21 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }
 
   Widget defaultBackground() {
-    return LayoutBuilder(builder: (context, constraints) {
-      return uiConfig.backgroundBuilder?.call(
-            context,
-            Size(constraints.maxWidth, constraints.maxHeight),
-            ZegoCallingBuilderInfo(
-              inviter: inviter,
-              invitees: invitees,
-              callType: invitationType,
-              customData: customData,
-            ),
-          ) ??
-          backgroundImage();
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return uiConfig.backgroundBuilder?.call(
+              context,
+              Size(constraints.maxWidth, constraints.maxHeight),
+              ZegoCallingBuilderInfo(
+                inviter: inviter,
+                invitees: invitees,
+                callType: invitationType,
+                customData: customData,
+              ),
+            ) ??
+            backgroundImage();
+      },
+    );
   }
 
   Widget surface(BuildContext context) {
@@ -121,7 +122,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
           child: config.showAvatar
               ? ValueListenableBuilder(
                   valueListenable: ZegoUIKitUserPropertiesNotifier(inviter),
-                  builder: (context, _, __) {
+                  builder: (context, _, _) {
                     return avatarBuilder?.call(
                           context,
                           Size(200.zR, 200.zR),
@@ -135,29 +136,29 @@ class ZegoCallingInviteeView extends StatelessWidget {
         ),
         SizedBox(height: config.spacingBetweenAvatarAndName ?? 10.zR),
         config.showCentralName
-            ? centralName((isVideo
-                    ? (invitees.length > 1
-                        ? innerText.incomingGroupVideoCallPageTitle
-                        : innerText.incomingVideoCallPageTitle)
-                    : (invitees.length > 1
-                        ? innerText.incomingGroupVoiceCallPageTitle
-                        : innerText.incomingVoiceCallPageTitle))
-                .replaceFirst(param_1, inviter.name))
-            : SizedBox(
-                height: 59.zH,
-              ),
+            ? centralName(
+                (isVideo
+                        ? (invitees.length > 1
+                              ? innerText.incomingGroupVideoCallPageTitle
+                              : innerText.incomingVideoCallPageTitle)
+                        : (invitees.length > 1
+                              ? innerText.incomingGroupVoiceCallPageTitle
+                              : innerText.incomingVoiceCallPageTitle))
+                    .replaceFirst(param_1, inviter.name),
+              )
+            : SizedBox(height: 59.zH),
         SizedBox(height: config.spacingBetweenNameAndCallingText ?? 47.zR),
         config.showCallingText
-            ? callingText(isVideo
-                ? (invitees.length > 1
-                    ? (innerText.incomingGroupVideoCallPageMessage)
-                    : (innerText.incomingVideoCallPageMessage))
-                : (invitees.length > 1
-                    ? (innerText.incomingGroupVoiceCallPageMessage)
-                    : (innerText.incomingVoiceCallPageMessage)))
-            : SizedBox(
-                height: 32.0.zR,
-              ),
+            ? callingText(
+                isVideo
+                    ? (invitees.length > 1
+                          ? (innerText.incomingGroupVideoCallPageMessage)
+                          : (innerText.incomingVideoCallPageMessage))
+                    : (invitees.length > 1
+                          ? (innerText.incomingGroupVoiceCallPageMessage)
+                          : (innerText.incomingVoiceCallPageMessage)),
+              )
+            : SizedBox(height: 32.0.zR),
         const Expanded(child: SizedBox()),
         ZegoInviteeCallingBottomToolBar(
           pageManager: pageManager,
@@ -173,18 +174,20 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }
 
   Widget foreground(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return uiConfig.foregroundBuilder?.call(
-            context,
-            Size(constraints.maxWidth, constraints.maxHeight),
-            ZegoCallingBuilderInfo(
-              inviter: inviter,
-              invitees: invitees,
-              callType: invitationType,
-              customData: customData,
-            ),
-          ) ??
-          Container();
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return uiConfig.foregroundBuilder?.call(
+              context,
+              Size(constraints.maxWidth, constraints.maxHeight),
+              ZegoCallingBuilderInfo(
+                inviter: inviter,
+                invitees: invitees,
+                callType: invitationType,
+                customData: customData,
+              ),
+            ) ??
+            Container();
+      },
+    );
   }
 }

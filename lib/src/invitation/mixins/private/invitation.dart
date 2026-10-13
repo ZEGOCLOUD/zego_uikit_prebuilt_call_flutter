@@ -93,8 +93,9 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         .value
         .map((e) => e.id)
         .toList();
-    callees
-        .removeWhere((callee) => localInvitingInviteeIDs.contains(callee.id));
+    callees.removeWhere(
+      (callee) => localInvitingInviteeIDs.contains(callee.id),
+    );
     ZegoLoggerService.logInfo(
       'clear inviting invitee id, '
       'localInvitingInviteeIDs:$localInvitingInviteeIDs, '
@@ -139,10 +140,10 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
             callID: callID,
             inviterName: ZegoUIKit().getLocalUser().name,
             invitees: callees
-                .map((invitee) => ZegoUIKitUser(
-                      id: invitee.id,
-                      name: invitee.name,
-                    ))
+                .map(
+                  (invitee) =>
+                      ZegoUIKitUser(id: invitee.id, name: invitee.name),
+                )
                 .toList(),
             timeout: timeoutSeconds,
             customData: customData,
@@ -165,26 +166,26 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
           ),
         )
         .then((result) {
-      _pageManager?.onLocalAddInvitation(
-        callID: callID,
-        invitees: callees
-            .map((invitee) => ZegoUIKitUser(
-                  id: invitee.id,
-                  name: invitee.name,
-                ))
-            .toList(),
-        invitationType: isVideoCall
-            ? ZegoCallInvitationType.videoCall
-            : ZegoCallInvitationType.voiceCall,
-        customData: customData,
-        code: result.error?.code ?? '',
-        message: result.error?.message ?? '',
-        invitationID: result.invitationID,
-        errorInvitees: result.errorInvitees.keys.toList(),
-      );
+          _pageManager?.onLocalAddInvitation(
+            callID: callID,
+            invitees: callees
+                .map(
+                  (invitee) =>
+                      ZegoUIKitUser(id: invitee.id, name: invitee.name),
+                )
+                .toList(),
+            invitationType: isVideoCall
+                ? ZegoCallInvitationType.videoCall
+                : ZegoCallInvitationType.voiceCall,
+            customData: customData,
+            code: result.error?.code ?? '',
+            message: result.error?.message ?? '',
+            invitationID: result.invitationID,
+            errorInvitees: result.errorInvitees.keys.toList(),
+          );
 
-      return result.error?.code.isEmpty ?? true;
-    });
+          return result.error?.code.isEmpty ?? true;
+        });
   }
 
   Future<bool> _sendInvitation({
@@ -211,17 +212,14 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     );
 
     ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
-          List.from(callees),
-        );
+      List.from(callees),
+    );
 
     final sendProtocol = ZegoCallInvitationSendRequestProtocol(
       callID: callID,
       inviterName: ZegoUIKit().getLocalUser().name,
       invitees: callees
-          .map((invitee) => ZegoUIKitUser(
-                id: invitee.id,
-                name: invitee.name,
-              ))
+          .map((invitee) => ZegoUIKitUser(id: invitee.id, name: invitee.name))
           .toList(),
       timeout: timeoutSeconds,
       customData: customData,
@@ -263,10 +261,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       await _pageManager?.onLocalSendInvitation(
         callID: callID,
         invitees: callees
-            .map((invitee) => ZegoUIKitUser(
-                  id: invitee.id,
-                  name: invitee.name,
-                ))
+            .map((invitee) => ZegoUIKitUser(id: invitee.id, name: invitee.name))
             .toList(),
         invitationType: isVideoCall
             ? ZegoCallInvitationType.videoCall
@@ -391,21 +386,21 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     ) async {
       _pageManager
           ?.onLocalRefuseInvitation(
-        result.invitationID,
-        result.error?.code ?? '',
-        result.error?.message ?? '',
-        needHideInvitationTopSheet: needHideInvitationTopSheet,
-      )
+            result.invitationID,
+            result.error?.code ?? '',
+            result.error?.message ?? '',
+            needHideInvitationTopSheet: needHideInvitationTopSheet,
+          )
           .then((_) {
-        ZegoLoggerService.logInfo(
-          'callerID:$callerID, '
-          'customData:$customData, '
-          'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
-          'onLocalRefuseInvitation done',
-          tag: 'call-invitation',
-          subTag: 'service.p, reject call invitation',
-        );
-      });
+            ZegoLoggerService.logInfo(
+              'callerID:$callerID, '
+              'customData:$customData, '
+              'needHideInvitationTopSheet:$needHideInvitationTopSheet, '
+              'onLocalRefuseInvitation done',
+              tag: 'call-invitation',
+              subTag: 'service.p, reject call invitation',
+            );
+          });
 
       return result.error?.code.isEmpty ?? true;
     }
@@ -497,8 +492,8 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
           ).toJson(),
         )
         .then((result) {
-      return result.error?.code.isEmpty ?? true;
-    });
+          return result.error?.code.isEmpty ?? true;
+        });
   }
 
   /// Waits until the specified condition is met.
@@ -570,7 +565,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   bool _checkInCall() {
     final currentState =
         _pageManager?.callingMachine?.machine.current?.identifier ??
-            CallingState.kIdle;
+        CallingState.kIdle;
     if (CallingState.kOnlineAudioVideo == currentState) {
       ZegoLoggerService.logWarn(
         'in call now, $currentState',
@@ -586,7 +581,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   bool _checkInNotCalling() {
     final currentState =
         _pageManager?.callingMachine?.machine.current?.identifier ??
-            CallingState.kIdle;
+        CallingState.kIdle;
     if (CallingState.kCallingWithVoice != currentState &&
         CallingState.kCallingWithVideo != currentState &&
         CallingState.kOnlineAudioVideo != currentState) {

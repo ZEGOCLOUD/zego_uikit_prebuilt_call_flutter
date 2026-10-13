@@ -18,9 +18,9 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
     int aspectHeight = 16,
   }) async {
     return private.pipImpl().enable(
-          aspectWidth: aspectWidth,
-          aspectHeight: aspectHeight,
-        );
+      aspectWidth: aspectWidth,
+      aspectHeight: aspectHeight,
+    );
   }
 
   Future<ZegoPiPStatus> enableWhenBackground({
@@ -28,9 +28,9 @@ class ZegoCallControllerPIPImpl with ZegoCallControllerPIPImplPrivate {
     int aspectHeight = 16,
   }) async {
     return private.pipImpl().enableWhenBackground(
-          aspectWidth: aspectWidth,
-          aspectHeight: aspectHeight,
-        );
+      aspectWidth: aspectWidth,
+      aspectHeight: aspectHeight,
+    );
   }
 
   Future<void> cancelBackground() async {
