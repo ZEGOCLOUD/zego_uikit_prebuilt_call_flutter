@@ -3,6 +3,7 @@
 - Add iOS Swift Package Manager support while retaining CocoaPods support.
 - Require Dart 3.12.0, Flutter 3.44.0, iOS 15.0, and Android compileSdk 37.
 - Upgrade permission_handler to 13.0.2, package_info_plus to 10.2.2, flutter_volume_controller to 2.0.2, proximity_sensor to 2.0.0, and screen_brightness to 2.1.11.
+- Replace `flutter_ringtone_player` with SPM-compatible `flutter_ringtone_player_plus`; await ringtone operations, log errors, and clean up canceled starts.
 
 ## 4.24.5
 

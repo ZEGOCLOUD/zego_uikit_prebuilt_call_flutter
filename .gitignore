@@ -9,6 +9,11 @@
 .history
 .svn/
 /test/*
+!/test/src/
+/test/src/**
+!/test/src/invitation/
+!/test/src/invitation/notification/
+!/test/src/invitation/notification/ringtone_operation_test.dart
 example/test/*
 dgph
 pubspec_overrides.yaml
