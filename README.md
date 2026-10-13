@@ -14,6 +14,18 @@ We also support online invitation and offline invitation.
 
 And it includes the business logic with the UI, you can add or remove features accordingly by customizing UI components.
 
+## Android configuration
+
+The Android implementation of `permission_handler` (`permission_handler_android`) requires `compileSdk` 37 or higher. Set it in your app module:
+
+```gradle
+android {
+    compileSdk = 37
+}
+```
+
+This compile-time requirement does not require changing `minSdk` or `targetSdk`.
+
 [![ZEGOCLOUD Video Call Feature Intro](https://res.cloudinary.com/marcomontalbano/image/upload/v1682407474/video_to_markdown/images/youtube--mEg32GyIqgI-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/embed/mEg32GyIqgI "ZEGOCLOUD Video Call Feature Intro")
 
 ## Demo
