@@ -81,10 +81,6 @@ Future<CallKitParams> _makeCallKitParam({
     //  callkit type: 0 - Audio Call, 1 - Video Call
     type: callType.index,
     duration: timeoutSeconds * 1000,
-    textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
-        CallKitInnerVariable.textAccept.defaultValue,
-    textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
-        CallKitInnerVariable.textDecline.defaultValue,
     extra: <String, dynamic>{},
     headers: <String, dynamic>{},
     missedCallNotification: NotificationParams(
@@ -109,6 +105,10 @@ Future<CallKitParams> _makeCallKitParam({
               CallKitInnerVariable.backgroundUrl.defaultValue,
       actionColor: prefs.getString(CallKitInnerVariable.actionColor.cacheKey) ??
           CallKitInnerVariable.actionColor.defaultValue,
+      textAccept: prefs.getString(CallKitInnerVariable.textAccept.cacheKey) ??
+          CallKitInnerVariable.textAccept.defaultValue,
+      textDecline: prefs.getString(CallKitInnerVariable.textDecline.cacheKey) ??
+          CallKitInnerVariable.textDecline.defaultValue,
     ),
     ios: IOSParams(
       iconName: iOSIconName,

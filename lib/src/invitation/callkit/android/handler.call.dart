@@ -20,6 +20,7 @@ import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/cache/cache.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/android/entry_point.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/callkit/callkit_event_adapter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/callkit_incoming.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
@@ -388,14 +389,15 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
         return;
       }
 
+      final callKitEvent = adaptCallKitIncomingEvent(event);
       ZegoLoggerService.logInfo(
-        'android callkit incoming event, event:${event.event}, body:${event.body}',
+        'android callkit incoming event, event:${event.eventName}',
         tag: 'call-invitation',
         subTag: 'offline, call handler',
       );
 
-      switch (event.event) {
-        case Event.actionCallAccept:
+      switch (callKitEvent?.action) {
+        case CallKitIncomingAction.accept:
           // /// todo 这里逻辑也要改，prebuilt-call 里面就不用再同意了
           /// After launching the app, will check in the [ZegoUIKitPrebuiltCallInvitationService.init] method.
           /// If there is exist an OfflineCallKitParams, simulate accepting the online call and join the room directly.
@@ -422,19 +424,23 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
           );
 
           break;
-        case Event.actionCallDecline:
-        case Event.actionCallTimeout:
+        case CallKitIncomingAction.decline:
+        case CallKitIncomingAction.timeout:
           await _refuseCallInvitation(message: message);
           break;
-        default:
+        case CallKitIncomingAction.incoming:
+        case CallKitIncomingAction.ended:
+        case CallKitIncomingAction.toggleAudioSession:
+        case CallKitIncomingAction.toggleMute:
+        case null:
           break;
       }
 
-      switch (event.event) {
-        case Event.actionCallAccept:
-        case Event.actionCallDecline:
-        case Event.actionCallEnded:
-        case Event.actionCallTimeout:
+      switch (callKitEvent?.action) {
+        case CallKitIncomingAction.accept:
+        case CallKitIncomingAction.decline:
+        case CallKitIncomingAction.ended:
+        case CallKitIncomingAction.timeout:
           closeIsolate();
 
           for (final subscription in signalingSubscriptions) {
@@ -452,7 +458,10 @@ class ZegoCallAndroidCallBackgroundMessageHandler {
             await _uninstallSignalingPlugin(); // todo judge app is running or not?
           }
           break;
-        default:
+        case CallKitIncomingAction.incoming:
+        case CallKitIncomingAction.toggleAudioSession:
+        case CallKitIncomingAction.toggleMute:
+        case null:
           break;
       }
 

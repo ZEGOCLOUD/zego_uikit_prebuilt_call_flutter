@@ -12,6 +12,8 @@
 !/test/src/
 /test/src/**
 !/test/src/invitation/
+!/test/src/invitation/callkit/
+!/test/src/invitation/callkit/callkit_event_adapter_test.dart
 !/test/src/invitation/notification/
 !/test/src/invitation/notification/ringtone_operation_test.dart
 example/test/*
