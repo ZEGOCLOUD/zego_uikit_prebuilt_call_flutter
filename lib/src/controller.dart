@@ -88,7 +88,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
-  String get version => "4.24.6";
+  String get version => "4.24.6"; // zego_uikit_prebuilt_call:
 
   /// This function is used to end the current call.
   ///
