@@ -85,15 +85,13 @@ class ZegoCallingMachine {
     });
 
     stateIdle = machine.newState(CallingState.kIdle)
-      ..onEntry(
-        () {
-          ZegoLoggerService.logInfo(
-            'calling machine to be idle',
-            tag: 'call-invitation',
-            subTag: 'machine',
-          );
-        },
-      ); // default state
+      ..onEntry(() {
+        ZegoLoggerService.logInfo(
+          'calling machine to be idle',
+          tag: 'call-invitation',
+          subTag: 'machine',
+        );
+      }); // default state
 
     stateCallingWithVoice = machine.newState(CallingState.kCallingWithVoice)
       ..onEntry(onCallingEntry);

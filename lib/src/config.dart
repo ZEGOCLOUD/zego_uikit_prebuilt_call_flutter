@@ -245,26 +245,27 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
     ZegoCallNoResponseEndConfig? noResponseEnd,
-  })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
-        topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
-        bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
-        memberList = memberListConfig ?? ZegoCallMemberListConfig(),
-        duration = durationConfig ?? ZegoCallDurationConfig(),
-        chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
-        user = userConfig ?? ZegoCallUserConfig(),
-        device = deviceConfig ?? ZegoCallDeviceConfig(),
-        hangUpConfirmDialog =
-            hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig(),
-        layout = layout ??
-            ZegoLayout.pictureInPicture(
-              smallViewPosition: ZegoViewPosition.topRight,
-            ),
-        translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
-        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
-        pip = pipConfig ?? ZegoCallPIPConfig(),
-        screenSharing = ZegoCallScreenSharingConfig(),
-        noResponseEnd = noResponseEnd ?? ZegoCallNoResponseEndConfig();
+  }) : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
+       audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
+       topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
+       bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
+       memberList = memberListConfig ?? ZegoCallMemberListConfig(),
+       duration = durationConfig ?? ZegoCallDurationConfig(),
+       chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
+       user = userConfig ?? ZegoCallUserConfig(),
+       device = deviceConfig ?? ZegoCallDeviceConfig(),
+       hangUpConfirmDialog =
+           hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig(),
+       layout =
+           layout ??
+           ZegoLayout.pictureInPicture(
+             smallViewPosition: ZegoViewPosition.topRight,
+           ),
+       translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
+       audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
+       pip = pipConfig ?? ZegoCallPIPConfig(),
+       screenSharing = ZegoCallScreenSharingConfig(),
+       noResponseEnd = noResponseEnd ?? ZegoCallNoResponseEndConfig();
 
   @override
   String toString() {
@@ -636,10 +637,7 @@ class ZegoCallDurationConfig {
   /// ```
   void Function(Duration)? onDurationUpdate;
 
-  ZegoCallDurationConfig({
-    this.isVisible = true,
-    this.onDurationUpdate,
-  });
+  ZegoCallDurationConfig({this.isVisible = true, this.onDurationUpdate});
 
   @override
   String toString() {
@@ -670,9 +668,7 @@ class ZegoCallInRoomChatViewConfig {
   /// For example, you can modify the background color, opacity, border radius, or add additional information like the sender's level or role.
   ZegoInRoomMessageItemBuilder? itemBuilder;
 
-  ZegoCallInRoomChatViewConfig({
-    this.itemBuilder,
-  });
+  ZegoCallInRoomChatViewConfig({this.itemBuilder});
 
   @override
   String toString() {
@@ -731,14 +727,9 @@ extension ZegoUIKitPrebuiltCallConfigExtension on ZegoUIKitPrebuiltCallConfig {
           ? ZegoCallTopMenuBarConfig(
               isVisible: true,
               style: ZegoCallMenuBarStyle.dark,
-              buttons: [
-                ZegoCallMenuBarButtonName.showMemberListButton,
-              ],
+              buttons: [ZegoCallMenuBarButtonName.showMemberListButton],
             )
-          : ZegoCallTopMenuBarConfig(
-              isVisible: false,
-              buttons: [],
-            ),
+          : ZegoCallTopMenuBarConfig(isVisible: false, buttons: []),
       bottomMenuBarConfig: isGroup
           ? ZegoCallBottomMenuBarConfig(
               style: ZegoCallMenuBarStyle.dark,
@@ -907,9 +898,8 @@ class ZegoCallAudioEffectConfig {
 }
 
 class ZegoCallUserConfig {
-  ZegoCallUserConfig({
-    ZegoCallRequiredUserConfig? requiredUsers,
-  }) : requiredUsers = requiredUsers ?? ZegoCallRequiredUserConfig();
+  ZegoCallUserConfig({ZegoCallRequiredUserConfig? requiredUsers})
+    : requiredUsers = requiredUsers ?? ZegoCallRequiredUserConfig();
 
   /// necessary user in the call.
   ZegoCallRequiredUserConfig requiredUsers;
@@ -923,9 +913,7 @@ class ZegoCallUserConfig {
 }
 
 class ZegoCallDeviceConfig {
-  ZegoCallDeviceConfig({
-    this.enableSyncDeviceStatusBySEI = true,
-  });
+  ZegoCallDeviceConfig({this.enableSyncDeviceStatusBySEI = true});
 
   bool enableSyncDeviceStatusBySEI;
 
@@ -995,8 +983,8 @@ class ZegoCallPIPConfig {
     this.enableWhenBackground = true,
     ZegoCallPIPAndroidConfig? android,
     ZegoCallPIPIOSConfig? iOS,
-  })  : android = android ?? ZegoCallPIPAndroidConfig(),
-        iOS = iOS ?? ZegoCallPIPIOSConfig();
+  }) : android = android ?? ZegoCallPIPAndroidConfig(),
+       iOS = iOS ?? ZegoCallPIPIOSConfig();
 
   /// android config
   ZegoCallPIPAndroidConfig android;
@@ -1039,9 +1027,7 @@ class ZegoCallPIPConfig {
 /// android pip
 /// only available on SDK higher than 26(>=26)
 class ZegoCallPIPAndroidConfig {
-  ZegoCallPIPAndroidConfig({
-    this.background,
-  });
+  ZegoCallPIPAndroidConfig({this.background});
 
   /// default is black
   Widget? background;
@@ -1057,9 +1043,7 @@ class ZegoCallPIPAndroidConfig {
 /// iOS pip
 /// only available on 15.0
 class ZegoCallPIPIOSConfig {
-  ZegoCallPIPIOSConfig({
-    this.support = true,
-  });
+  ZegoCallPIPIOSConfig({this.support = true});
 
   /// Whether to enable PIP under iOS
   /// After setting, it cannot be modified again within one lifetime of prebuilt

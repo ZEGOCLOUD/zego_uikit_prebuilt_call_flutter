@@ -8,15 +8,11 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 
 /// @nodoc
-typedef ZegoCallPrebuiltConfigQuery = ZegoUIKitPrebuiltCallConfig Function(
-  ZegoCallInvitationData,
-);
+typedef ZegoCallPrebuiltConfigQuery =
+    ZegoUIKitPrebuiltCallConfig Function(ZegoCallInvitationData);
 
 /// Call Type
-enum ZegoCallInvitationType {
-  voiceCall,
-  videoCall,
-}
+enum ZegoCallInvitationType { voiceCall, videoCall }
 // ZegoLiveStreamingInvitationType.requestCoHost: 2,
 // ZegoLiveStreamingInvitationType.inviteToJoinCoHost: 3,
 // ZegoLiveStreamingInvitationType.removeFromCoHost: 4,
@@ -87,7 +83,8 @@ class ZegoCallInvitationData {
   void _parseFromMap(Map<String, dynamic> dict) {
     callID = dict['call_id'] as String? ?? '';
     invitationID = dict['invitation_id'] as String? ?? '';
-    type = ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
+    type =
+        ZegoCallTypeExtension.mapValue[dict['type'] as int? ?? 0] ??
         ZegoCallInvitationType.voiceCall;
     customData = dict['data'] as String? ?? '';
     timeoutSeconds = dict['timeout'] as int? ?? 60;
@@ -116,8 +113,9 @@ class ZegoCallInvitationData {
       'data': customData,
       'inviter_id': inviter?.id ?? '',
       'inviter_name': inviter?.name ?? '',
-      'invitees':
-          invitees.map((user) => {'id': user.id, 'name': user.name}).toList(),
+      'invitees': invitees
+          .map((user) => {'id': user.id, 'name': user.name})
+          .toList(),
     };
 
     return const JsonEncoder().convert(dict);

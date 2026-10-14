@@ -31,7 +31,7 @@ class ZegoCallBottomMenuBar extends StatefulWidget {
   final ZegoUIKitPrebuiltCallEvents events;
   final void Function(ZegoCallEndEvent event) defaultEndAction;
   final Future<bool> Function(ZegoCallHangUpConfirmationEvent event)
-      defaultHangUpConfirmationAction;
+  defaultHangUpConfirmationAction;
 
   final Size buttonSize;
   final ValueNotifier<bool> visibilityNotifier;
@@ -136,11 +136,9 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
   List<Widget> getDisplayButtons(BuildContext context) {
     final needRestoreDeviceState =
         widget.minimizeData.inCall?.isPrebuiltFromMinimizing == true ||
-            ZegoUIKitPrebuiltCallController()
-                .pip
-                .private
-                .pipImpl()
-                .isRestoredFromPIP;
+        ZegoUIKitPrebuiltCallController().pip.private
+            .pipImpl()
+            .isRestoredFromPIP;
 
     final buttonList = <Widget>[
       ...getDefaultButtons(
@@ -173,56 +171,57 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
               }
             : null,
       ),
-      ...widget.config.bottomMenuBar.extendButtons
-          .map((extendButton) => buttonWrapper(child: extendButton))
+      ...widget.config.bottomMenuBar.extendButtons.map(
+        (extendButton) => buttonWrapper(child: extendButton),
+      ),
     ];
 
     var displayButtonList = <Widget>[];
     if (buttonList.length > widget.config.bottomMenuBar.maxCount) {
       /// the list count exceeds the limit, so divided into two parts,
       /// one part display in the Menu bar, the other part display in the menu with more buttons
-      displayButtonList = buttonList.sublist(
-          0, widget.config.bottomMenuBar.maxCount - 1)
-        ..add(
-          buttonWrapper(
-            child: ZegoMoreButton(
-              menuButtonListFunc: () {
-                final buttonList = <Widget>[
-                  ...getDefaultButtons(
-                    context,
-                    cameraDefaultValueFunc: () {
-                      return ZegoUIKit()
-                          .getCameraStateNotifier(ZegoUIKit().getLocalUser().id)
-                          .value;
-                    },
-                    microphoneDefaultValueFunc: () {
-                      return ZegoUIKit()
-                          .getMicrophoneStateNotifier(
-                              ZegoUIKit().getLocalUser().id)
-                          .value;
-                    },
-                    speakerDefaultValueFunc: () {
-                      /// if is minimizing, take the local device state
-                      return ZegoUIKitAudioRoute.speaker ==
-                          ZegoUIKit()
-                              .getAudioOutputDeviceNotifier(
-                                ZegoUIKit().getLocalUser().id,
-                              )
-                              .value;
-                    },
-                  ),
-                  ...widget.config.bottomMenuBar.extendButtons
-                      .map((extendButton) => buttonWrapper(child: extendButton))
-                ]..removeRange(
-                    0,
-                    widget.config.bottomMenuBar.maxCount - 1,
-                  );
+      displayButtonList =
+          buttonList.sublist(0, widget.config.bottomMenuBar.maxCount - 1)..add(
+            buttonWrapper(
+              child: ZegoMoreButton(
+                menuButtonListFunc: () {
+                  final buttonList = <Widget>[
+                    ...getDefaultButtons(
+                      context,
+                      cameraDefaultValueFunc: () {
+                        return ZegoUIKit()
+                            .getCameraStateNotifier(
+                              ZegoUIKit().getLocalUser().id,
+                            )
+                            .value;
+                      },
+                      microphoneDefaultValueFunc: () {
+                        return ZegoUIKit()
+                            .getMicrophoneStateNotifier(
+                              ZegoUIKit().getLocalUser().id,
+                            )
+                            .value;
+                      },
+                      speakerDefaultValueFunc: () {
+                        /// if is minimizing, take the local device state
+                        return ZegoUIKitAudioRoute.speaker ==
+                            ZegoUIKit()
+                                .getAudioOutputDeviceNotifier(
+                                  ZegoUIKit().getLocalUser().id,
+                                )
+                                .value;
+                      },
+                    ),
+                    ...widget.config.bottomMenuBar.extendButtons.map(
+                      (extendButton) => buttonWrapper(child: extendButton),
+                    ),
+                  ]..removeRange(0, widget.config.bottomMenuBar.maxCount - 1);
 
-                return buttonList;
-              },
+                  return buttonList;
+                },
+              ),
             ),
-          ),
-        );
+          );
     } else {
       displayButtonList = buttonList;
     }
@@ -306,21 +305,24 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
         return ZegoToggleMicrophoneButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: microphoneDefaultValueFunc?.call() ??
+          defaultOn:
+              microphoneDefaultValueFunc?.call() ??
               widget.config.turnOnMicrophoneWhenJoining,
         );
       case ZegoCallMenuBarButtonName.switchAudioOutputButton:
         return ZegoSwitchAudioOutputButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultUseSpeaker: speakerDefaultValueFunc?.call() ??
+          defaultUseSpeaker:
+              speakerDefaultValueFunc?.call() ??
               widget.config.useSpeakerWhenJoining,
         );
       case ZegoCallMenuBarButtonName.toggleCameraButton:
         return ZegoToggleCameraButton(
           buttonSize: buttonSize,
           iconSize: iconSize,
-          defaultOn: cameraDefaultValueFunc?.call() ??
+          defaultOn:
+              cameraDefaultValueFunc?.call() ??
               widget.config.turnOnCameraWhenJoining,
         );
       case ZegoCallMenuBarButtonName.switchCameraButton:
@@ -329,7 +331,8 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
           iconSize: iconSize,
           defaultUseFrontFacingCamera: ZegoUIKit()
               .getUseFrontFacingCameraStateNotifier(
-                  ZegoUIKit().getLocalUser().id)
+                ZegoUIKit().getLocalUser().id,
+              )
               .value,
         );
       case ZegoCallMenuBarButtonName.hangUpButton:
@@ -345,13 +348,15 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
               context: context,
             );
             defaultAction() async {
-              return widget
-                  .defaultHangUpConfirmationAction(hangUpConfirmationEvent);
+              return widget.defaultHangUpConfirmationAction(
+                hangUpConfirmationEvent,
+              );
             }
 
             var canHangUp = true;
             if (widget.events.onHangUpConfirmation != null) {
-              canHangUp = await widget.events.onHangUpConfirmation?.call(
+              canHangUp =
+                  await widget.events.onHangUpConfirmation?.call(
                     hangUpConfirmationEvent,
                     defaultAction,
                   ) ??
@@ -384,7 +389,8 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
-              isFromMinimizing: ZegoCallMiniOverlayPageState.inCallMinimized ==
+              isFromMinimizing:
+                  ZegoCallMiniOverlayPageState.inCallMinimized ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
               invitationData: ZegoUIKitPrebuiltCallInvitationService()
                   .private

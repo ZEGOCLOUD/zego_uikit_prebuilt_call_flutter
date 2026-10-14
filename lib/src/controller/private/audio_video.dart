@@ -65,14 +65,12 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
 
   void listenDeviceExceptionOccurred() {
     /// local user
-    ZegoUIKit()
-        .getLocalUser()
-        .cameraException
-        .addListener(onLocalCameraExceptionOccurred);
-    ZegoUIKit()
-        .getLocalUser()
-        .microphoneException
-        .addListener(onLocalMicrophoneExceptionOccurred);
+    ZegoUIKit().getLocalUser().cameraException.addListener(
+      onLocalCameraExceptionOccurred,
+    );
+    ZegoUIKit().getLocalUser().microphoneException.addListener(
+      onLocalMicrophoneExceptionOccurred,
+    );
 
     /// remote users
     ZegoUIKit().getRemoteUsers().forEach((user) {
@@ -86,21 +84,21 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
 
   void stopListenDeviceExceptionOccurred() {
     /// local user
-    ZegoUIKit()
-        .getLocalUser()
-        .cameraException
-        .removeListener(onLocalCameraExceptionOccurred);
-    ZegoUIKit()
-        .getLocalUser()
-        .microphoneException
-        .removeListener(onLocalMicrophoneExceptionOccurred);
+    ZegoUIKit().getLocalUser().cameraException.removeListener(
+      onLocalCameraExceptionOccurred,
+    );
+    ZegoUIKit().getLocalUser().microphoneException.removeListener(
+      onLocalMicrophoneExceptionOccurred,
+    );
 
     /// remote users
     ZegoUIKit().getRemoteUsers().forEach((user) {
-      user.cameraException
-          .removeListener(remoteCameraExceptionCallbacks[user.id] ?? () {});
-      user.microphoneException
-          .removeListener(remoteMicrophoneExceptionCallbacks[user.id] ?? () {});
+      user.cameraException.removeListener(
+        remoteCameraExceptionCallbacks[user.id] ?? () {},
+      );
+      user.microphoneException.removeListener(
+        remoteMicrophoneExceptionCallbacks[user.id] ?? () {},
+      );
     });
     remoteCameraExceptionCallbacks.clear();
     remoteMicrophoneExceptionCallbacks.clear();
@@ -132,10 +130,12 @@ class ZegoCallControllerAudioVideoImplPrivateImpl {
 
   void onUserLeave(List<ZegoUIKitUser> users) {
     for (var user in users) {
-      user.cameraException
-          .removeListener(remoteMicrophoneExceptionCallbacks[user.id] ?? () {});
-      user.microphoneException
-          .removeListener(remoteCameraExceptionCallbacks[user.id] ?? () {});
+      user.cameraException.removeListener(
+        remoteMicrophoneExceptionCallbacks[user.id] ?? () {},
+      );
+      user.microphoneException.removeListener(
+        remoteCameraExceptionCallbacks[user.id] ?? () {},
+      );
 
       remoteCameraExceptionCallbacks.remove(user.id);
       remoteMicrophoneExceptionCallbacks.remove(user.id);
@@ -168,9 +168,7 @@ class ZegoCallControllerAudioVideoImplDevicePrivateImpl {
   ZegoUIKitPrebuiltCallConfig? config;
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltLiveAudioRoom.
-  void initByPrebuilt({
-    required ZegoUIKitPrebuiltCallConfig? config,
-  }) {
+  void initByPrebuilt({required ZegoUIKitPrebuiltCallConfig? config}) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',
       tag: 'call',

@@ -58,9 +58,7 @@ class ZegoUIKitMissedCallCache {
   }
 
   /// Retrieve the cached ID of the missed call
-  Future<ZegoCallInvitationData> getNotification(
-    int notificationID,
-  ) async {
+  Future<ZegoCallInvitationData> getNotification(int notificationID) async {
     final prefs = await SharedPreferences.getInstance();
     final dataJson = prefs.getString(notificationID.toString());
 

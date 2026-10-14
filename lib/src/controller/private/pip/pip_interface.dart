@@ -12,10 +12,7 @@ abstract class ZegoCallControllerPIPInterface {
   bool get isRestoredFromPIP;
 
   /// sourceRectHint: Rectangle of int(0, 0, width, height)
-  Future<ZegoPiPStatus> enable({
-    int aspectWidth = 9,
-    int aspectHeight = 16,
-  });
+  Future<ZegoPiPStatus> enable({int aspectWidth = 9, int aspectHeight = 16});
 
   Future<ZegoPiPStatus> enableWhenBackground({
     int aspectWidth = 9,
@@ -25,9 +22,7 @@ abstract class ZegoCallControllerPIPInterface {
   Future<void> cancelBackground();
 
   /// Please do not call this interface. It is the internal logic of Prebuilt.
-  Future<void> initByPrebuilt({
-    required ZegoUIKitPrebuiltCallConfig? config,
-  });
+  Future<void> initByPrebuilt({required ZegoUIKitPrebuiltCallConfig? config});
 
   /// Please do not call this interface. It is the internal logic of ZegoUIKitPrebuiltCall.
   void uninitByPrebuilt();

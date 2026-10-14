@@ -29,7 +29,8 @@ Future<bool> showSystemConfirmationDialog(
   var result = false;
 
   try {
-    result = await showDialog(
+    result =
+        await showDialog(
           context: context!,
           barrierDismissible: false,
           builder: (BuildContext context) {
@@ -48,7 +49,8 @@ Future<bool> showSystemConfirmationDialog(
                     title: Text(
                       dialogInfo.title,
                       textAlign: TextAlign.center,
-                      style: dialogConfig.titleStyle ??
+                      style:
+                          dialogConfig.titleStyle ??
                           TextStyle(
                             fontSize: 25.zR,
                             fontWeight: FontWeight.w600,
@@ -71,7 +73,8 @@ Future<bool> showSystemConfirmationDialog(
                         isDestructiveAction: false,
                         child: Text(
                           dialogInfo.cancelButtonName,
-                          style: dialogConfig.actionTextStyle ??
+                          style:
+                              dialogConfig.actionTextStyle ??
                               TextStyle(
                                 fontSize: 25.zR,
                                 fontWeight: FontWeight.w400,
@@ -102,7 +105,8 @@ Future<bool> showSystemConfirmationDialog(
                         isDefaultAction: true,
                         child: Text(
                           dialogInfo.confirmButtonName,
-                          style: dialogConfig.actionTextStyle ??
+                          style:
+                              dialogConfig.actionTextStyle ??
                               TextStyle(
                                 fontSize: 25.zR,
                                 fontWeight: FontWeight.w600,

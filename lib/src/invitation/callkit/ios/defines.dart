@@ -149,9 +149,7 @@ class ZegoCallIOSBackgroundMessageHandlerMessage {
   String customData = '';
   ZegoCallInvitationType callType = ZegoCallInvitationType.voiceCall;
 
-  ZegoCallIOSBackgroundMessageHandlerMessage({
-    required this.extras,
-  }) {
+  ZegoCallIOSBackgroundMessageHandlerMessage({required this.extras}) {
     invitationID =
         extras[ZegoCallInvitationProtocolKey.callID]?.toString() ?? '';
   }
@@ -298,8 +296,9 @@ class ZegoCallIOSBackgroundMessageHandlerMessage {
 
     int invitationType = -1;
     if (isAdvanceMode) {
-      final sendProtocol =
-          ZegoUIKitAdvanceInvitationSendProtocol.fromJson(payloadMap);
+      final sendProtocol = ZegoUIKitAdvanceInvitationSendProtocol.fromJson(
+        payloadMap,
+      );
 
       ZegoLoggerService.logInfo(
         'advance send protocol:$sendProtocol',
@@ -324,7 +323,8 @@ class ZegoCallIOSBackgroundMessageHandlerMessage {
       invitationType = sendProtocol.type;
     }
 
-    callType = ZegoCallTypeExtension.mapValue[invitationType] ??
+    callType =
+        ZegoCallTypeExtension.mapValue[invitationType] ??
         ZegoCallInvitationType.voiceCall;
   }
 
@@ -349,8 +349,9 @@ class ZegoCallIOSBackgroundMessageHandlerMessage {
   }
 
   Future<void> _getHandlerInfo() async {
-    final handlerInfoJson =
-        await getPreferenceString(serializationKeyHandlerInfo);
+    final handlerInfoJson = await getPreferenceString(
+      serializationKeyHandlerInfo,
+    );
     ZegoLoggerService.logInfo(
       'parsing handler info:$handlerInfoJson',
       tag: 'call-invitation',

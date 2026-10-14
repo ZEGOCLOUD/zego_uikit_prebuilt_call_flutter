@@ -153,13 +153,17 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
               callID: widget.pageManager!.currentCallID,
             ).toJson(),
             text: widget.inviterUIConfig?.showMainButtonsText == true
-                ? widget.pageManager!.callInvitationData.innerText
-                    .outgoingCallPageACancelButton
+                ? widget
+                      .pageManager!
+                      .callInvitationData
+                      .innerText
+                      .outgoingCallPageACancelButton
                 : null,
             textStyle:
                 widget.inviterUIConfig?.minimized?.cancelButton.textStyle,
             icon: ButtonIcon(
-              icon: widget.inviterUIConfig?.minimized?.cancelButton.icon ??
+              icon:
+                  widget.inviterUIConfig?.minimized?.cancelButton.icon ??
                   Image(
                     image: ZegoCallImage.asset(
                       InvitationStyleIconUrls.toolbarBottomCancel,
@@ -167,17 +171,12 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
                     fit: BoxFit.fill,
                   ),
             ),
-            buttonSize: widget.inviterUIConfig?.minimized?.cancelButton.size ??
-                Size(
-                  widget.size.width * 0.25,
-                  widget.size.width * 0.25,
-                ),
+            buttonSize:
+                widget.inviterUIConfig?.minimized?.cancelButton.size ??
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             iconSize:
                 widget.inviterUIConfig?.minimized?.cancelButton.iconSize ??
-                    Size(
-                      widget.size.width * 0.25,
-                      widget.size.width * 0.25,
-                    ),
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             onPressed: (ZegoCancelInvitationButtonResult result) {
               widget.pageManager!.onLocalCancelInvitation(
                 invitationID,
@@ -210,31 +209,30 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
                   ZegoCallInvitationProtocolKey.refuseByDecline,
             }),
             text: widget.inviteeUIConfig?.showMainButtonsText == true
-                ? widget.pageManager!.callInvitationData.innerText
-                    .incomingCallPageDeclineButton
+                ? widget
+                      .pageManager!
+                      .callInvitationData
+                      .innerText
+                      .incomingCallPageDeclineButton
                 : null,
             textStyle:
                 widget.inviteeUIConfig?.minimized?.declineButton.textStyle,
             icon: ButtonIcon(
-              icon: widget.inviteeUIConfig?.minimized?.declineButton.icon ??
+              icon:
+                  widget.inviteeUIConfig?.minimized?.declineButton.icon ??
                   Image(
                     image: ZegoCallImage.asset(
-                            InvitationStyleIconUrls.toolbarBottomDecline)
-                        .image,
+                      InvitationStyleIconUrls.toolbarBottomDecline,
+                    ).image,
                     fit: BoxFit.fill,
                   ),
             ),
-            buttonSize: widget.inviteeUIConfig?.minimized?.declineButton.size ??
-                Size(
-                  widget.size.width * 0.25,
-                  widget.size.width * 0.25,
-                ),
+            buttonSize:
+                widget.inviteeUIConfig?.minimized?.declineButton.size ??
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             iconSize:
                 widget.inviteeUIConfig?.minimized?.declineButton.iconSize ??
-                    Size(
-                      widget.size.width * 0.25,
-                      widget.size.width * 0.25,
-                    ),
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             onPressed: (ZegoRefuseInvitationButtonResult result) {
               widget.pageManager!.onLocalRefuseInvitation(
                 invitationID,
@@ -263,31 +261,30 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
             targetInvitationID: invitationID,
             customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
             text: widget.inviteeUIConfig?.showMainButtonsText == true
-                ? widget.pageManager!.callInvitationData.innerText
-                    .incomingCallPageAcceptButton
+                ? widget
+                      .pageManager!
+                      .callInvitationData
+                      .innerText
+                      .incomingCallPageAcceptButton
                 : null,
             textStyle:
                 widget.inviteeUIConfig?.minimized?.acceptButton.textStyle,
             icon: ButtonIcon(
-              icon: widget.inviteeUIConfig?.minimized?.acceptButton.icon ??
+              icon:
+                  widget.inviteeUIConfig?.minimized?.acceptButton.icon ??
                   Image(
                     image: ZegoCallImage.asset(
-                            imageURLByInvitationType(widget.invitationType))
-                        .image,
+                      imageURLByInvitationType(widget.invitationType),
+                    ).image,
                     fit: BoxFit.fill,
                   ),
             ),
-            buttonSize: widget.inviteeUIConfig?.minimized?.acceptButton.size ??
-                Size(
-                  widget.size.width * 0.25,
-                  widget.size.width * 0.25,
-                ),
+            buttonSize:
+                widget.inviteeUIConfig?.minimized?.acceptButton.size ??
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             iconSize:
                 widget.inviteeUIConfig?.minimized?.acceptButton.iconSize ??
-                    Size(
-                      widget.size.width * 0.25,
-                      widget.size.width * 0.25,
-                    ),
+                Size(widget.size.width * 0.25, widget.size.width * 0.25),
             onPressed: (ZegoAcceptInvitationButtonResult result) {
               widget.pageManager!.onLocalAcceptInvitation(
                 invitationID,
@@ -324,7 +321,10 @@ class _ZegoMinimizingCallingPageState extends State<ZegoMinimizingCallingPage> {
       return Container();
     }
 
-    final text = widget.pageManager!.callInvitationData.innerText
+    final text = widget
+        .pageManager!
+        .callInvitationData
+        .innerText
         .minimizedCallingPageWaitingText;
 
     return Text(

@@ -72,7 +72,8 @@ class ZegoCallInvitationServiceAPIImpl
             );
     }
 
-    final currentCallID = callID ??
+    final currentCallID =
+        callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
     if ((callID?.isNotEmpty ?? false) && currentCallID != callID) {
       ZegoLoggerService.logWarn(
@@ -82,14 +83,16 @@ class ZegoCallInvitationServiceAPIImpl
       );
     }
     if (private._pageManager?.callingMachine?.isPagePushed ?? false) {
-      return private._waitUntil(() {
-        if (null == private._pageManager?.callingMachine) {
-          return true;
-        }
-        return private._pageManager!.callingMachine!.isPagePushed;
-      }).then((value) {
-        return sendInvitationFunc(currentCallID);
-      });
+      return private
+          ._waitUntil(() {
+            if (null == private._pageManager?.callingMachine) {
+              return true;
+            }
+            return private._pageManager!.callingMachine!.isPagePushed;
+          })
+          .then((value) {
+            return sendInvitationFunc(currentCallID);
+          });
     }
 
     return sendInvitationFunc(currentCallID);
@@ -129,10 +132,7 @@ class ZegoCallInvitationServiceAPIImpl
       return false;
     }
 
-    return private._cancelInvitation(
-      callees: callees,
-      customData: customData,
-    );
+    return private._cancelInvitation(callees: callees, customData: customData);
   }
 
   Future<bool> reject({
@@ -187,9 +187,7 @@ class ZegoCallInvitationServiceAPIImpl
     );
   }
 
-  Future<bool> accept({
-    String customData = '',
-  }) async {
+  Future<bool> accept({String customData = ''}) async {
     ZegoLoggerService.logInfo(
       'accept call invitation',
       tag: 'call-invitation',

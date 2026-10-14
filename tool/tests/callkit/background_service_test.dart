@@ -12,8 +12,9 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart'
 
 void main() {
   group('iOS CallKit page transition frame', () {
-    testWidgets('schedules a frame for the page transition callback',
-        (tester) async {
+    testWidgets('schedules a frame for the page transition callback', (
+      tester,
+    ) async {
       await tester.pump();
       var callbackExecuted = false;
 
@@ -108,8 +109,9 @@ void main() {
 
   group('ZegoUIKitPrebuiltCallingConfig.sync speaker precedence', () {
     test('invitee default overrides a speaker-enabled call config', () {
-      final callConfig =
-          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      final callConfig = ZegoUIKitPrebuiltCallConfig(
+        useSpeakerWhenJoining: true,
+      );
       ZegoUIKitPrebuiltCallingConfig().sync(
         ZegoCallInvitationType.videoCall,
         callConfig,
@@ -117,15 +119,13 @@ void main() {
         ZegoCallInvitationInviteeUIConfig(defaultSpeakerOn: false),
         localUserIsInviter: false,
       );
-      expect(
-        callConfig.useSpeakerWhenJoining,
-        isFalse,
-      );
+      expect(callConfig.useSpeakerWhenJoining, isFalse);
     });
 
     test('explicit receiver selection overrides the invitee default', () {
-      final callConfig =
-          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      final callConfig = ZegoUIKitPrebuiltCallConfig(
+        useSpeakerWhenJoining: true,
+      );
       ZegoUIKitPrebuiltCallingConfig()
         ..useSpeakerWhenJoining = false
         ..sync(
@@ -139,8 +139,9 @@ void main() {
     });
 
     test('explicit speaker selection overrides the invitee default', () {
-      final callConfig =
-          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: false);
+      final callConfig = ZegoUIKitPrebuiltCallConfig(
+        useSpeakerWhenJoining: false,
+      );
       ZegoUIKitPrebuiltCallingConfig()
         ..useSpeakerWhenJoining = true
         ..sync(
@@ -154,8 +155,9 @@ void main() {
     });
 
     test('falls back to call config when invitation config is unset', () {
-      final callConfig =
-          ZegoUIKitPrebuiltCallConfig(useSpeakerWhenJoining: true);
+      final callConfig = ZegoUIKitPrebuiltCallConfig(
+        useSpeakerWhenJoining: true,
+      );
       ZegoUIKitPrebuiltCallingConfig().sync(
         ZegoCallInvitationType.videoCall,
         callConfig,
@@ -187,29 +189,31 @@ void main() {
   });
 
   group('IOSCallKitHangupOperation', () {
-    test('shares an in-flight cleanup between overlapping end events',
-        () async {
-      final operation = IOSCallKitHangupOperation();
-      final cleanupGate = Completer<void>();
-      var cleanupCount = 0;
+    test(
+      'shares an in-flight cleanup between overlapping end events',
+      () async {
+        final operation = IOSCallKitHangupOperation();
+        final cleanupGate = Completer<void>();
+        var cleanupCount = 0;
 
-      final first = operation.run(() async {
-        cleanupCount++;
-        await cleanupGate.future;
-      });
-      final second = operation.run(() async {
-        cleanupCount++;
-      });
+        final first = operation.run(() async {
+          cleanupCount++;
+          await cleanupGate.future;
+        });
+        final second = operation.run(() async {
+          cleanupCount++;
+        });
 
-      expect(cleanupCount, 1);
-      cleanupGate.complete();
-      await Future.wait([first, second]);
+        expect(cleanupCount, 1);
+        cleanupGate.complete();
+        await Future.wait([first, second]);
 
-      await operation.run(() async {
-        cleanupCount++;
-      });
-      expect(cleanupCount, 2);
-    });
+        await operation.run(() async {
+          cleanupCount++;
+        });
+        expect(cleanupCount, 2);
+      },
+    );
 
     test('allows a new cleanup after an earlier cleanup fails', () async {
       final operation = IOSCallKitHangupOperation();
@@ -231,46 +235,48 @@ void main() {
   });
 
   group('runIOSCallKitHangupWithPageDisposeWait', () {
-    test('holds the flag during cleanup and releases stale waiters afterward',
-        () async {
-      final guard = IOSCallKitHangupWaitFlagGuard();
-      final cleanupGate = Completer<void>();
-      var waitFlag = true;
-      var listenerReleased = false;
+    test(
+      'holds the flag during cleanup and releases stale waiters afterward',
+      () async {
+        final guard = IOSCallKitHangupWaitFlagGuard();
+        final cleanupGate = Completer<void>();
+        var waitFlag = true;
+        var listenerReleased = false;
 
-      void setWaitFlag(bool value) {
-        if (guard.shouldApplyWaitFlag(value)) {
-          waitFlag = value;
-          if (!value) {
-            listenerReleased = true;
+        void setWaitFlag(bool value) {
+          if (guard.shouldApplyWaitFlag(value)) {
+            waitFlag = value;
+            if (!value) {
+              listenerReleased = true;
+            }
           }
         }
-      }
 
-      final cleanup = runIOSCallKitHangupWithPageDisposeWait(
-        cleanup: () async {
-          expect(waitFlag, isTrue);
-          await cleanupGate.future;
-        },
-        hasCallPageToDispose: () => false,
-        setWaitFlag: setWaitFlag,
-        beginCleanup: guard.beginCleanup,
-        endCleanup: guard.endCleanup,
-      );
+        final cleanup = runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: () async {
+            expect(waitFlag, isTrue);
+            await cleanupGate.future;
+          },
+          hasCallPageToDispose: () => false,
+          setWaitFlag: setWaitFlag,
+          beginCleanup: guard.beginCleanup,
+          endCleanup: guard.endCleanup,
+        );
 
-      expect(waitFlag, isTrue);
+        expect(waitFlag, isTrue);
 
-      // A CallPage dispose callback can fire before leaveRoom completes.
-      setWaitFlag(false);
-      expect(waitFlag, isTrue);
-      expect(listenerReleased, isFalse);
+        // A CallPage dispose callback can fire before leaveRoom completes.
+        setWaitFlag(false);
+        expect(waitFlag, isTrue);
+        expect(listenerReleased, isFalse);
 
-      cleanupGate.complete();
-      await cleanup;
+        cleanupGate.complete();
+        await cleanup;
 
-      expect(waitFlag, isFalse);
-      expect(listenerReleased, isTrue);
-    });
+        expect(waitFlag, isFalse);
+        expect(listenerReleased, isTrue);
+      },
+    );
 
     test('keeps waiting when a call page push is still pending', () async {
       final guard = IOSCallKitHangupWaitFlagGuard();
@@ -298,113 +304,119 @@ void main() {
       expect(waitFlag, isFalse);
     });
 
-    test('keeps waiting while an existing call page still needs dispose',
-        () async {
-      final guard = IOSCallKitHangupWaitFlagGuard();
-      var waitFlag = false;
+    test(
+      'keeps waiting while an existing call page still needs dispose',
+      () async {
+        final guard = IOSCallKitHangupWaitFlagGuard();
+        var waitFlag = false;
 
-      await runIOSCallKitHangupWithPageDisposeWait(
-        cleanup: () async {},
-        hasCallPageToDispose: () => true,
-        setWaitFlag: (value) {
+        await runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: () async {},
+          hasCallPageToDispose: () => true,
+          setWaitFlag: (value) {
+            if (guard.shouldApplyWaitFlag(value)) {
+              waitFlag = value;
+            }
+          },
+          beginCleanup: guard.beginCleanup,
+          endCleanup: guard.endCleanup,
+        );
+
+        expect(waitFlag, isTrue);
+      },
+    );
+
+    test(
+      'keeps the flag set until every overlapping cleanup completes',
+      () async {
+        final guard = IOSCallKitHangupWaitFlagGuard();
+        final firstCleanupGate = Completer<void>();
+        final secondCleanupGate = Completer<void>();
+        var waitFlag = false;
+
+        void setWaitFlag(bool value) {
           if (guard.shouldApplyWaitFlag(value)) {
             waitFlag = value;
           }
-        },
-        beginCleanup: guard.beginCleanup,
-        endCleanup: guard.endCleanup,
-      );
-
-      expect(waitFlag, isTrue);
-    });
-
-    test('keeps the flag set until every overlapping cleanup completes',
-        () async {
-      final guard = IOSCallKitHangupWaitFlagGuard();
-      final firstCleanupGate = Completer<void>();
-      final secondCleanupGate = Completer<void>();
-      var waitFlag = false;
-
-      void setWaitFlag(bool value) {
-        if (guard.shouldApplyWaitFlag(value)) {
-          waitFlag = value;
         }
-      }
 
-      final firstCleanup = runIOSCallKitHangupWithPageDisposeWait(
-        cleanup: () => firstCleanupGate.future,
-        hasCallPageToDispose: () => false,
-        setWaitFlag: setWaitFlag,
-        beginCleanup: guard.beginCleanup,
-        endCleanup: guard.endCleanup,
-      );
-      final secondCleanup = runIOSCallKitHangupWithPageDisposeWait(
-        cleanup: () => secondCleanupGate.future,
-        hasCallPageToDispose: () => false,
-        setWaitFlag: setWaitFlag,
-        beginCleanup: guard.beginCleanup,
-        endCleanup: guard.endCleanup,
-      );
-
-      firstCleanupGate.complete();
-      await firstCleanup;
-      setWaitFlag(false);
-      expect(waitFlag, isTrue);
-
-      secondCleanupGate.complete();
-      await secondCleanup;
-      expect(waitFlag, isFalse);
-    });
-
-    test('keeps the wait flag on cleanup failure and allows a successful retry',
-        () async {
-      final guard = IOSCallKitHangupWaitFlagGuard();
-      var waitFlag = false;
-
-      void setWaitFlag(bool value) {
-        if (guard.shouldApplyWaitFlag(value)) {
-          waitFlag = value;
-        }
-      }
-
-      await expectLater(
-        runIOSCallKitHangupWithPageDisposeWait(
-          cleanup: () async => throw StateError('leave room failed'),
+        final firstCleanup = runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: () => firstCleanupGate.future,
           hasCallPageToDispose: () => false,
           setWaitFlag: setWaitFlag,
           beginCleanup: guard.beginCleanup,
           endCleanup: guard.endCleanup,
-        ),
-        throwsStateError,
-      );
+        );
+        final secondCleanup = runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: () => secondCleanupGate.future,
+          hasCallPageToDispose: () => false,
+          setWaitFlag: setWaitFlag,
+          beginCleanup: guard.beginCleanup,
+          endCleanup: guard.endCleanup,
+        );
 
-      expect(waitFlag, isTrue);
-      expect(guard.isCleanupInProgress, isFalse);
-      final hangupBlocksPageEntry = guard.blocksCallPageEntry(waitFlag);
-      expect(hangupBlocksPageEntry, isTrue);
-      expect(
-        shouldEnterIOSCallPageAfterCallKitAnswer(
-          isAppInBackground: false,
-          isIOSCallKitHangupBlockingCallPageEntry: hangupBlocksPageEntry,
-          callPageIsIdle: true,
-          acceptedCallID: 'accepted-call',
-          activeCallID: 'accepted-call',
-          acceptedInvitationID: 'accepted-invitation',
-          activeInvitationID: 'accepted-invitation',
-        ),
-        isFalse,
-      );
+        firstCleanupGate.complete();
+        await firstCleanup;
+        setWaitFlag(false);
+        expect(waitFlag, isTrue);
 
-      await runIOSCallKitHangupWithPageDisposeWait(
-        cleanup: () async {},
-        hasCallPageToDispose: () => false,
-        setWaitFlag: setWaitFlag,
-        beginCleanup: guard.beginCleanup,
-        endCleanup: guard.endCleanup,
-      );
+        secondCleanupGate.complete();
+        await secondCleanup;
+        expect(waitFlag, isFalse);
+      },
+    );
 
-      expect(waitFlag, isFalse);
-    });
+    test(
+      'keeps the wait flag on cleanup failure and allows a successful retry',
+      () async {
+        final guard = IOSCallKitHangupWaitFlagGuard();
+        var waitFlag = false;
+
+        void setWaitFlag(bool value) {
+          if (guard.shouldApplyWaitFlag(value)) {
+            waitFlag = value;
+          }
+        }
+
+        await expectLater(
+          runIOSCallKitHangupWithPageDisposeWait(
+            cleanup: () async => throw StateError('leave room failed'),
+            hasCallPageToDispose: () => false,
+            setWaitFlag: setWaitFlag,
+            beginCleanup: guard.beginCleanup,
+            endCleanup: guard.endCleanup,
+          ),
+          throwsStateError,
+        );
+
+        expect(waitFlag, isTrue);
+        expect(guard.isCleanupInProgress, isFalse);
+        final hangupBlocksPageEntry = guard.blocksCallPageEntry(waitFlag);
+        expect(hangupBlocksPageEntry, isTrue);
+        expect(
+          shouldEnterIOSCallPageAfterCallKitAnswer(
+            isAppInBackground: false,
+            isIOSCallKitHangupBlockingCallPageEntry: hangupBlocksPageEntry,
+            callPageIsIdle: true,
+            acceptedCallID: 'accepted-call',
+            activeCallID: 'accepted-call',
+            acceptedInvitationID: 'accepted-invitation',
+            activeInvitationID: 'accepted-invitation',
+          ),
+          isFalse,
+        );
+
+        await runIOSCallKitHangupWithPageDisposeWait(
+          cleanup: () async {},
+          hasCallPageToDispose: () => false,
+          setWaitFlag: setWaitFlag,
+          beginCleanup: guard.beginCleanup,
+          endCleanup: guard.endCleanup,
+        );
+
+        expect(waitFlag, isFalse);
+      },
+    );
   });
 
   group('pushCallPageWithPendingState', () {

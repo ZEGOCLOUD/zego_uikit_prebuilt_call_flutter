@@ -84,11 +84,13 @@ class _ZegoCallInRoomMessageButtonState
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ??
+          color:
+              widget.icon?.backgroundColor ??
               const Color(0xff2C2F3E).withValues(alpha: 0.6),
           borderRadius: BorderRadius.all(
             Radius.circular(
-                math.min(containerSize.width, containerSize.height) / 2),
+              math.min(containerSize.width, containerSize.height) / 2,
+            ),
           ),
         ),
         child: SizedBox.fromSize(

@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 
 /// @nodoc
 class ZegoCallImage {
-  static Image asset(
-    String name, {
-    double? width,
-    double? height,
-  }) {
+  static Image asset(String name, {double? width, double? height}) {
     return Image.asset(
       name,
       package: 'zego_uikit_prebuilt_call',

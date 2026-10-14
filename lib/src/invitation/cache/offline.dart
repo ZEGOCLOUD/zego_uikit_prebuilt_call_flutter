@@ -44,7 +44,7 @@ class ZegoUIKitOfflineCallKitCache {
   /// cached ID of the current params
   Future<void> setCacheParams(
     ZegoCallInvitationOfflineCallKitCacheParameterProtocol
-        callKitParameterProtocol,
+    callKitParameterProtocol,
   ) async {
     callKitParameterProtocol.datetime = DateTime.now().millisecondsSinceEpoch;
     final jsonString = callKitParameterProtocol.toJson();
@@ -65,7 +65,7 @@ class ZegoUIKitOfflineCallKitCache {
   }
 
   Future<ZegoCallInvitationOfflineCallKitCacheParameterProtocol>
-      getCacheParams() async {
+  getCacheParams() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(callkitParamsCacheKey) ?? '';
 

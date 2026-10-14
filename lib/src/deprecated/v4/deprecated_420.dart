@@ -2,7 +2,8 @@
 import 'package:zego_uikit_prebuilt_call/src/deprecated/v4/deprecated_4_11_0.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
 
-const deprecatedTipsV420 = ', '
+const deprecatedTipsV420 =
+    ', '
     'deprecated since 4.2.0, '
     'will be removed after 4.5.0,'
     'Migrate Guide:https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_4.x-topic.html#4111';

@@ -135,43 +135,44 @@ class ZegoUIKitPrebuiltCallInnerText {
     String? stopScreenSharingButtonText,
     String? screenBlockedTitle,
     String? screenBlockedSubtitle,
-  })  : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
-        audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',
-        audioEffectVoiceChangingTitle =
-            audioEffectVoiceChangingTitle ?? 'Voice changing',
-        voiceChangerNoneTitle = voiceChangerNoneTitle ?? 'None',
-        voiceChangerLittleBoyTitle = voiceChangerLittleBoyTitle ?? 'Little boy',
-        voiceChangerLittleGirlTitle =
-            voiceChangerLittleGirlTitle ?? 'Little girl',
-        voiceChangerDeepTitle = voiceChangerDeepTitle ?? 'Deep',
-        voiceChangerCrystalClearTitle =
-            voiceChangerCrystalClearTitle ?? 'Crystal-clear',
-        voiceChangerRobotTitle = voiceChangerRobotTitle ?? 'Robot',
-        voiceChangerEtherealTitle = voiceChangerEtherealTitle ?? 'Ethereal',
-        voiceChangerFemaleTitle = voiceChangerFemaleTitle ?? 'Female',
-        voiceChangerMaleTitle = voiceChangerMaleTitle ?? 'Male',
-        voiceChangerOptimusPrimeTitle =
-            voiceChangerOptimusPrimeTitle ?? 'Optimus Prime',
-        voiceChangerCMajorTitle = voiceChangerCMajorTitle ?? 'C major',
-        voiceChangerAMajorTitle = voiceChangerAMajorTitle ?? 'A major',
-        voiceChangerHarmonicMinorTitle =
-            voiceChangerHarmonicMinorTitle ?? 'Harmonic minor',
-        reverbTypeNoneTitle = reverbTypeNoneTitle ?? 'None',
-        reverbTypeKTVTitle = reverbTypeKTVTitle ?? 'Karaoke',
-        reverbTypeHallTitle = reverbTypeHallTitle ?? 'Hall',
-        reverbTypeConcertTitle = reverbTypeConcertTitle ?? 'Concert',
-        reverbTypeRockTitle = reverbTypeRockTitle ?? 'Rock',
-        reverbTypeSmallRoomTitle = reverbTypeSmallRoomTitle ?? 'Small room',
-        reverbTypeLargeRoomTitle = reverbTypeLargeRoomTitle ?? 'Large room',
-        reverbTypeValleyTitle = reverbTypeValleyTitle ?? 'Valley',
-        reverbTypeRecordingStudioTitle =
-            reverbTypeRecordingStudioTitle ?? 'Recording studio',
-        reverbTypeBasementTitle = reverbTypeBasementTitle ?? 'Basement',
-        reverbTypePopularTitle = reverbTypePopularTitle ?? 'Pop',
-        reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone',
-        screenSharingTipText = 'You are sharing screen',
-        stopScreenSharingButtonText = 'Stop sharing',
-        screenBlockedTitle = screenBlockedTitle ?? 'Call in progress...',
-        screenBlockedSubtitle = screenBlockedSubtitle ??
-            'Move phone away from ear to restore operation';
+  }) : audioEffectTitle = audioEffectTitle ?? 'Audio effects',
+       audioEffectReverbTitle = audioEffectReverbTitle ?? 'Reverb',
+       audioEffectVoiceChangingTitle =
+           audioEffectVoiceChangingTitle ?? 'Voice changing',
+       voiceChangerNoneTitle = voiceChangerNoneTitle ?? 'None',
+       voiceChangerLittleBoyTitle = voiceChangerLittleBoyTitle ?? 'Little boy',
+       voiceChangerLittleGirlTitle =
+           voiceChangerLittleGirlTitle ?? 'Little girl',
+       voiceChangerDeepTitle = voiceChangerDeepTitle ?? 'Deep',
+       voiceChangerCrystalClearTitle =
+           voiceChangerCrystalClearTitle ?? 'Crystal-clear',
+       voiceChangerRobotTitle = voiceChangerRobotTitle ?? 'Robot',
+       voiceChangerEtherealTitle = voiceChangerEtherealTitle ?? 'Ethereal',
+       voiceChangerFemaleTitle = voiceChangerFemaleTitle ?? 'Female',
+       voiceChangerMaleTitle = voiceChangerMaleTitle ?? 'Male',
+       voiceChangerOptimusPrimeTitle =
+           voiceChangerOptimusPrimeTitle ?? 'Optimus Prime',
+       voiceChangerCMajorTitle = voiceChangerCMajorTitle ?? 'C major',
+       voiceChangerAMajorTitle = voiceChangerAMajorTitle ?? 'A major',
+       voiceChangerHarmonicMinorTitle =
+           voiceChangerHarmonicMinorTitle ?? 'Harmonic minor',
+       reverbTypeNoneTitle = reverbTypeNoneTitle ?? 'None',
+       reverbTypeKTVTitle = reverbTypeKTVTitle ?? 'Karaoke',
+       reverbTypeHallTitle = reverbTypeHallTitle ?? 'Hall',
+       reverbTypeConcertTitle = reverbTypeConcertTitle ?? 'Concert',
+       reverbTypeRockTitle = reverbTypeRockTitle ?? 'Rock',
+       reverbTypeSmallRoomTitle = reverbTypeSmallRoomTitle ?? 'Small room',
+       reverbTypeLargeRoomTitle = reverbTypeLargeRoomTitle ?? 'Large room',
+       reverbTypeValleyTitle = reverbTypeValleyTitle ?? 'Valley',
+       reverbTypeRecordingStudioTitle =
+           reverbTypeRecordingStudioTitle ?? 'Recording studio',
+       reverbTypeBasementTitle = reverbTypeBasementTitle ?? 'Basement',
+       reverbTypePopularTitle = reverbTypePopularTitle ?? 'Pop',
+       reverbTypeGramophoneTitle = reverbTypeGramophoneTitle ?? 'Gramophone',
+       screenSharingTipText = 'You are sharing screen',
+       stopScreenSharingButtonText = 'Stop sharing',
+       screenBlockedTitle = screenBlockedTitle ?? 'Call in progress...',
+       screenBlockedSubtitle =
+           screenBlockedSubtitle ??
+           'Move phone away from ear to restore operation';
 }

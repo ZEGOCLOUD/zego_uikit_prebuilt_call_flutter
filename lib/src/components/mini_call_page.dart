@@ -80,9 +80,10 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
   bool get playingStreamInPIPUnderIOS {
     bool isPlaying = false;
     if (Platform.isIOS) {
-      isPlaying = (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
-              as ZegoCallControllerIOSPIP)
-          .isSupportInConfig;
+      isPlaying =
+          (ZegoUIKitPrebuiltCallController().pip.private.pipImpl()
+                  as ZegoCallControllerIOSPIP)
+              .isSupportInConfig;
     }
 
     return isPlaying;
@@ -93,8 +94,8 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     super.initState();
 
     ZegoUIKitPrebuiltCallController().minimize.private.activeUser.start(
-          showLocalUserView: widget.showLocalUserView,
-        );
+      showLocalUserView: widget.showLocalUserView,
+    );
   }
 
   @override
@@ -159,7 +160,8 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
                 filterAudioVideo: (List<ZegoUIKitUser> users) {
                   if (!widget.showLocalUserView) {
                     users.removeWhere(
-                        (user) => user.id == ZegoUIKit().getLocalUser().id);
+                      (user) => user.id == ZegoUIKit().getLocalUser().id,
+                    );
                   }
 
                   return users;
@@ -168,31 +170,36 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
                   builder: widget.avatarBuilder,
                   soundWaveColor: widget.soundWaveColor,
                 ),
-                foregroundBuilder: (
-                  BuildContext context,
-                  Size size,
-                  ZegoUIKitUser? user,
+                foregroundBuilder:
+                    (
+                      BuildContext context,
+                      Size size,
+                      ZegoUIKitUser? user,
 
-                  /// {ZegoViewBuilderMapExtraInfoKey:value}
-                  /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
-                  Map<String, dynamic> extraInfo,
-                ) {
-                  if (playingStreamInPIPUnderIOS) {
-                    /// not support if ios pip, platform view will be render wrong user
-                    /// after changed
-                    return Container();
-                  }
+                      /// {ZegoViewBuilderMapExtraInfoKey:value}
+                      /// final value = extraInfo[ZegoViewBuilderMapExtraInfoKey.key.name]
+                      Map<String, dynamic> extraInfo,
+                    ) {
+                      if (playingStreamInPIPUnderIOS) {
+                        /// not support if ios pip, platform view will be render wrong user
+                        /// after changed
+                        return Container();
+                      }
 
-                  final isActiveUser = activeUserID == user?.id;
-                  return widget.foregroundBuilder
-                          ?.call(context, size, user, extraInfo) ??
-                      Stack(
-                        children: [
-                          if (isActiveUser) devices(user),
-                          userName(user, alignCenter: !isActiveUser),
-                        ],
-                      );
-                },
+                      final isActiveUser = activeUserID == user?.id;
+                      return widget.foregroundBuilder?.call(
+                            context,
+                            size,
+                            user,
+                            extraInfo,
+                          ) ??
+                          Stack(
+                            children: [
+                              if (isActiveUser) devices(user),
+                              userName(user, alignCenter: !isActiveUser),
+                            ],
+                          );
+                    },
                 backgroundBuilder: widget.backgroundBuilder,
                 onUserListUpdated: (List<ZegoUIKitUser> userList) {
                   pipLayoutUserListNotifier.value = userList;
@@ -202,11 +209,7 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
             durationTimeBoard(),
             widget.foreground ?? Container(),
             widget.showLeaveButton
-                ? Positioned(
-                    top: 10.zR,
-                    right: 10.zR,
-                    child: leaveButton(),
-                  )
+                ? Positioned(top: 10.zR, right: 10.zR, child: leaveButton())
                 : Container(),
           ],
         );
@@ -236,7 +239,8 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
       buttonSize: Size(widget.size.width * 0.4, widget.size.width * 0.4),
       iconSize: Size(widget.size.width * 0.2, widget.size.width * 0.2),
       icon: ButtonIcon(
-        icon: widget.leaveButtonIcon ??
+        icon:
+            widget.leaveButtonIcon ??
             Image(
               image: ZegoCallImage.asset(
                 InvitationStyleIconUrls.toolbarBottomCancel,
@@ -254,10 +258,7 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
     );
   }
 
-  Widget userName(
-    ZegoUIKitUser? activeUser, {
-    bool alignCenter = false,
-  }) {
+  Widget userName(ZegoUIKitUser? activeUser, {bool alignCenter = false}) {
     return widget.showUserName
         ? Positioned(
             left: alignCenter ? 0 : null,
@@ -337,8 +338,10 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         return GestureDetector(
           onTap: activeUser.id == ZegoUIKit().getLocalUser().id
               ? () {
-                  ZegoUIKit()
-                      .turnCameraOn(!isCameraEnabled, userID: activeUser.id);
+                  ZegoUIKit().turnCameraOn(
+                    !isCameraEnabled,
+                    userID: activeUser.id,
+                  );
                 }
               : null,
           child: Container(
@@ -376,8 +379,10 @@ class _ZegoMinimizingCallPageState extends State<ZegoMinimizingCallPage> {
         return GestureDetector(
           onTap: activeUser.id == ZegoUIKit().getLocalUser().id
               ? () {
-                  ZegoUIKit().turnMicrophoneOn(!isMicrophoneEnabled,
-                      userID: activeUser.id);
+                  ZegoUIKit().turnMicrophoneOn(
+                    !isMicrophoneEnabled,
+                    userID: activeUser.id,
+                  );
                 }
               : null,
           child: Container(

@@ -53,9 +53,9 @@ class _ZegoCallPIPButtonState extends State<ZegoCallPIPButton> {
     return GestureDetector(
       onTap: () async {
         final pipStatus = await ZegoUIKitPrebuiltCallController().pip.enable(
-              aspectWidth: widget.aspectWidth,
-              aspectHeight: widget.aspectHeight,
-            );
+          aspectWidth: widget.aspectWidth,
+          aspectHeight: widget.aspectHeight,
+        );
         if (ZegoPiPStatus.enabled != pipStatus) {
           return;
         }
@@ -68,7 +68,8 @@ class _ZegoCallPIPButtonState extends State<ZegoCallPIPButton> {
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.icon?.backgroundColor ??
+          color:
+              widget.icon?.backgroundColor ??
               ZegoUIKitDefaultTheme.buttonBackgroundColor,
           shape: BoxShape.circle,
         ),

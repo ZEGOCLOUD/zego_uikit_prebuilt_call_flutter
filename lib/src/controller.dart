@@ -88,7 +88,7 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
-  String get version => "4.24.4";
+  String get version => "4.24.6"; // zego_uikit_prebuilt_call:
 
   /// This function is used to end the current call.
   ///
@@ -158,7 +158,8 @@ class ZegoUIKitPrebuiltCallController
 
       var canHangUp = true;
       if (private.events?.onHangUpConfirmation != null) {
-        canHangUp = await private.events?.onHangUpConfirmation?.call(
+        canHangUp =
+            await private.events?.onHangUpConfirmation?.call(
               hangUpConfirmationEvent,
               defaultAction,
             ) ??

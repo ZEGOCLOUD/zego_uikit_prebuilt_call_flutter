@@ -23,10 +23,7 @@ class ZegoCallPopUpManager {
         tag: 'call',
         subTag: 'popup manager, Navigator',
       );
-      Navigator.of(
-        context,
-        rootNavigator: rootNavigator,
-      ).pop();
+      Navigator.of(context, rootNavigator: rootNavigator).pop();
     }
 
     _popupSheetKeys.clear();

@@ -7,20 +7,17 @@ import 'package:flutter/cupertino.dart';
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:flutter_ringtone_player_plus/flutter_ringtone_player.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:vibration/vibration.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
 import 'package:zego_uikit_prebuilt_call/src/channel/platform_interface.dart';
+import 'package:zego_uikit_prebuilt_call/src/invitation/notification/ringtone_operation.dart';
 
 /// Audio context type enumeration
-enum AudioContextType {
-  speaker,
-  earpiece,
-  unknown,
-}
+enum AudioContextType { speaker, earpiece, unknown }
 
 /// Custom exception for audio context switching errors
 class AudioContextSwitchException implements Exception {
@@ -38,7 +35,8 @@ class AudioContextSwitchException implements Exception {
 class ZegoRingtone {
   double audioPlayerVolume = 1.0;
   bool _isRingTimerRunning = false;
-  bool _isRingtoneRunning = false;
+  final RingtoneOperationController _ringtoneOperationController =
+      RingtoneOperationController();
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
@@ -72,35 +70,35 @@ class ZegoRingtone {
       'isEarpiece: $isUsingEarpiece';
 
   AudioContext get defaultAudioContext => AudioContext(
-        iOS: AudioContextIOS(
-          /// not silenced
-          category: AVAudioSessionCategory.ambient,
-          options: const {
-            // AVAudioSessionOptions.mixWithOthers,
+    iOS: AudioContextIOS(
+      /// not silenced
+      category: AVAudioSessionCategory.ambient,
+      options: const {
+        // AVAudioSessionOptions.mixWithOthers,
 
-            // /// Use defaultToSpeaker to prevent background music from being interrupted when category is playAndRecord,.
-            // /// Without this, PlayAndRecord defaults to the receiver (earpiece) on iPhone,
-            // /// which silences the speaker (and thus the background music).
-            // AVAudioSessionOptions.defaultToSpeaker,
-          },
-        ),
-        android: const AudioContextAndroid(
-          isSpeakerphoneOn: true,
-          stayAwake: true,
+        // /// Use defaultToSpeaker to prevent background music from being interrupted when category is playAndRecord,.
+        // /// Without this, PlayAndRecord defaults to the receiver (earpiece) on iPhone,
+        // /// which silences the speaker (and thus the background music).
+        // AVAudioSessionOptions.defaultToSpeaker,
+      },
+    ),
+    android: const AudioContextAndroid(
+      isSpeakerphoneOn: true,
+      stayAwake: true,
 
-          /// Use speech content type and voiceCommunication usage to prevent
-          /// Android AudioPolicyManager from automatically switching audio route
-          /// from earpiece to speaker during ringtone playback loop.
-          /// This ensures the audio stays on the selected output device (speaker/earpiece).
-          contentType: AndroidContentType.speech,
-          usageType: AndroidUsageType.voiceCommunication,
-          audioFocus: AndroidAudioFocus.gain,
+      /// Use speech content type and voiceCommunication usage to prevent
+      /// Android AudioPolicyManager from automatically switching audio route
+      /// from earpiece to speaker during ringtone playback loop.
+      /// This ensures the audio stays on the selected output device (speaker/earpiece).
+      contentType: AndroidContentType.speech,
+      usageType: AndroidUsageType.voiceCommunication,
+      audioFocus: AndroidAudioFocus.gain,
 
-          /// Use inCommunication mode to match voice call scenario,
-          /// which properly supports both speaker and earpiece routing
-          audioMode: AndroidAudioMode.inCommunication,
-        ),
-      );
+      /// Use inCommunication mode to match voice call scenario,
+      /// which properly supports both speaker and earpiece routing
+      audioMode: AndroidAudioMode.inCommunication,
+    ),
+  );
 
   AudioContext get earpieceAudioContextConfig {
     /// For iOS, explicitly use playAndRecord category to support earpiece routing
@@ -110,9 +108,7 @@ class ZegoRingtone {
     return AudioContext(
       iOS: AudioContextIOS(
         category: AVAudioSessionCategory.playAndRecord,
-        options: const {
-          AVAudioSessionOptions.mixWithOthers,
-        },
+        options: const {AVAudioSessionOptions.mixWithOthers},
       ),
       android: const AudioContextAndroid(
         isSpeakerphoneOn: false,
@@ -143,9 +139,7 @@ class ZegoRingtone {
     return AudioContext(
       iOS: AudioContextIOS(
         category: AVAudioSessionCategory.ambient,
-        options: const {
-          AVAudioSessionOptions.mixWithOthers,
-        },
+        options: const {AVAudioSessionOptions.mixWithOthers},
       ),
       android: const AudioContextAndroid(
         isSpeakerphoneOn: true,
@@ -169,12 +163,12 @@ class ZegoRingtone {
     );
   }
 
-  bool get isRingtoneRunning => _isRingtoneRunning;
+  bool get isRingtoneRunning => _ringtoneOperationController.isRunning;
   set isRingtoneRunning(bool value) {
-    _isRingtoneRunning = value;
+    _ringtoneOperationController.isRunning = value;
 
     ZegoLoggerService.logInfo(
-      'set _isRingtoneRunning to $_isRingtoneRunning',
+      'set _isRingtoneRunning to $value',
       tag: 'call-invitation',
       subTag: 'ringtone',
     );
@@ -286,8 +280,9 @@ class ZegoRingtone {
 
     if (info.containsKey('devices')) {
       final devices = info['devices'] as List;
-      final deviceInfo =
-          StringBuffer('Available Devices (${devices.length}):\n');
+      final deviceInfo = StringBuffer(
+        'Available Devices (${devices.length}):\n',
+      );
       for (var device in devices) {
         deviceInfo.write('  📱 ${device['type']} (ID: ${device['id']})\n');
       }
@@ -445,8 +440,9 @@ class ZegoRingtone {
             );
 
             throw AudioContextSwitchException(
-                'MediaPlayer error during context switch after ${maxRetries + 1} attempts',
-                error);
+              'MediaPlayer error during context switch after ${maxRetries + 1} attempts',
+              error,
+            );
           } else {
             // Calculate exponential backoff delay: 50ms, 100ms, 200ms
             final delayMs = 50 * (1 << attempt);
@@ -571,7 +567,9 @@ class ZegoRingtone {
 
   /// Set global audio context
   Future<void> _setGlobalAudioContext(
-      AudioContext context, AudioContextType type) async {
+    AudioContext context,
+    AudioContextType type,
+  ) async {
     ZegoLoggerService.logInfo(
       'Setting global audio context to ${type.name}',
       tag: 'call-invitation',
@@ -621,9 +619,19 @@ class ZegoRingtone {
     return val.abs() < 1e-6;
   }
 
-  Future<void> startRing({
-    required bool testPlayRingtone,
-  }) async {
+  void _logRingtoneOperationError(
+    String operation,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    ZegoLoggerService.logError(
+      '$operation ringtone operation failed: $error\n$stackTrace',
+      tag: 'call-invitation',
+      subTag: 'ringtone',
+    );
+  }
+
+  Future<void> startRing({required bool testPlayRingtone}) async {
     if (isRingTimerRunning) {
       ZegoLoggerService.logInfo(
         'ring is running',
@@ -634,20 +642,47 @@ class ZegoRingtone {
       return;
     }
 
-    bool isPlayByRingtone = false;
-    if (testPlayRingtone) {
-      /// don't play on callee if silent mode
-      final volume = await FlutterVolumeController.getVolume(
-            stream: AudioStream.music,
-          ) ??
-          1.0;
-      isPlayByRingtone = isZero(volume);
+    final startRequest = _ringtoneOperationController.reserveStart();
+    if (startRequest == null) {
+      ZegoLoggerService.logInfo(
+        'ring is running',
+        tag: 'call-invitation',
+        subTag: 'ringtone',
+      );
+      return;
     }
 
-    isRingTimerRunning = true;
+    bool isPlayByRingtone = false;
+    try {
+      if (testPlayRingtone) {
+        /// don't play on callee if silent mode
+        final volume =
+            await FlutterVolumeController.getVolume(
+              stream: AudioStream.music,
+            ) ??
+            1.0;
+        if (!_ringtoneOperationController.isCurrentStart(startRequest)) {
+          return;
+        }
+        isPlayByRingtone = isZero(volume);
+      }
 
-    // Enable audio route monitoring for Android
-    await _enableAudioRouteMonitoring();
+      isRingTimerRunning = true;
+
+      // Enable audio route monitoring for Android
+      final monitoringReady = await runCancellableRingtonePreparation(
+        operation: _enableAudioRouteMonitoring,
+        shouldContinue: () =>
+            _ringtoneOperationController.isCurrentStart(startRequest),
+        onCancelled: _disableAudioRouteMonitoring,
+      );
+      if (!monitoringReady) {
+        return;
+      }
+    } catch (_) {
+      _ringtoneOperationController.cancelStart(startRequest);
+      rethrow;
+    }
 
     ZegoLoggerService.logInfo(
       '(${identityHashCode(this)}) '
@@ -666,32 +701,53 @@ class ZegoRingtone {
     AudioCache.instance.prefix = prefix;
 
     if (isPlayByRingtone) {
-      isRingtoneRunning = true;
-      FlutterRingtonePlayer().play(
-        volume: 0.3,
-        fromAsset: '$prefix$sourcePath',
-        looping: true,
+      await _ringtoneOperationController.start(
+        request: startRequest,
+        operation: () => FlutterRingtonePlayer().play(
+          volume: 0.3,
+          fromAsset: '$prefix$sourcePath',
+          looping: true,
+        ),
+        onError: (error, stackTrace) =>
+            _logRingtoneOperationError('play', error, stackTrace),
       );
+      isRingtoneRunning = _ringtoneOperationController.isRunning;
+      if (!isRingTimerRunning) {
+        return;
+      }
     } else {
+      _ringtoneOperationController.cancelStart(startRequest);
       // Set corresponding audio context based on current audio route
       final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
       final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
-      
+
       ZegoLoggerService.logInfo(
         'Routing info: route=$currentAudioRoute, isSpeaker=$isSpeaker',
         tag: 'call-invitation',
         subTag: 'ringtone',
       );
 
-      final targetContext =
-          isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
-      final targetType =
-          isSpeaker ? AudioContextType.speaker : AudioContextType.earpiece;
+      final targetContext = isSpeaker
+          ? speakerAudioContextConfig
+          : earpieceAudioContextConfig;
+      final targetType = isSpeaker
+          ? AudioContextType.speaker
+          : AudioContextType.earpiece;
 
       await _setAudioPlayerContext(targetContext, targetType);
+      if (!_ringtoneOperationController.isCurrentRequest(startRequest)) {
+        return;
+      }
 
       await audioPlayer.setReleaseMode(ReleaseMode.loop);
+      if (!_ringtoneOperationController.isCurrentRequest(startRequest)) {
+        return;
+      }
+
       await audioPlayer.setVolume(audioPlayerVolume);
+      if (!_ringtoneOperationController.isCurrentRequest(startRequest)) {
+        return;
+      }
 
       onAudioRouteChanged();
       ZegoUIKit().getLocalUser().audioRoute.addListener(onAudioRouteChanged);
@@ -709,6 +765,10 @@ class ZegoRingtone {
           tag: 'call-invitation',
           subTag: 'ringtone',
         );
+      }
+      if (!_ringtoneOperationController.isCurrentRequest(startRequest)) {
+        await audioPlayer.stop();
+        return;
       }
     }
 
@@ -775,6 +835,12 @@ class ZegoRingtone {
   }
 
   Future<void> stopRing() async {
+    final ringtoneStop = _ringtoneOperationController.stop(
+      operation: () => FlutterRingtonePlayer().stop(),
+      onError: (error, stackTrace) =>
+          _logRingtoneOperationError('stop', error, stackTrace),
+    );
+
     // Log current audio route info before stopping (Android only)
     await _logCurrentAudioRouteInfo('stopRing');
 
@@ -792,6 +858,7 @@ class ZegoRingtone {
 
     // Return directly if no ringtone or ringtone player is started
     if (!isRingTimerRunning && !isRingtoneRunning) {
+      await ringtoneStop;
       ZegoLoggerService.logInfo(
         'no ring is running, skip stop',
         tag: 'call-invitation',
@@ -800,12 +867,9 @@ class ZegoRingtone {
       return;
     }
 
-    if (isRingtoneRunning) {
-      isRingtoneRunning = false;
-
-      FlutterRingtonePlayer().stop();
-      // await ZegoCallPluginPlatform.instance.stopRingtone();
-    }
+    await ringtoneStop;
+    isRingtoneRunning = _ringtoneOperationController.isRunning;
+    // await ZegoCallPluginPlatform.instance.stopRingtone();
 
     try {
       ZegoUIKit().getLocalUser().audioRoute.removeListener(onAudioRouteChanged);
@@ -853,10 +917,12 @@ class ZegoRingtone {
       subTag: 'ringtone',
     );
 
-    final targetContext =
-        isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
-    final targetType =
-        isSpeaker ? AudioContextType.speaker : AudioContextType.earpiece;
+    final targetContext = isSpeaker
+        ? speakerAudioContextConfig
+        : earpieceAudioContextConfig;
+    final targetType = isSpeaker
+        ? AudioContextType.speaker
+        : AudioContextType.earpiece;
 
     // Check if switching is needed (avoid repeatedly setting the same context)
     if (_currentAudioContextType == targetType) {
@@ -947,10 +1013,12 @@ class ZegoRingtone {
       // Set correct audio context based on current route with retry mechanism
       final currentAudioRoute = ZegoUIKit().getLocalUser().audioRoute.value;
       final isSpeaker = currentAudioRoute == ZegoUIKitAudioRoute.speaker;
-      final targetContext =
-          isSpeaker ? speakerAudioContextConfig : earpieceAudioContextConfig;
-      final targetType =
-          isSpeaker ? AudioContextType.speaker : AudioContextType.earpiece;
+      final targetContext = isSpeaker
+          ? speakerAudioContextConfig
+          : earpieceAudioContextConfig;
+      final targetType = isSpeaker
+          ? AudioContextType.speaker
+          : AudioContextType.earpiece;
 
       // Use retry mechanism for recovery as well, but with fewer retries
       await _setAudioPlayerContextWithRetry(

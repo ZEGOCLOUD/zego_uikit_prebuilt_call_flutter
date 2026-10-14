@@ -49,8 +49,9 @@ class ZegoCallControllerMinimizePrivateImpl {
     activeUser.setConfig(config: config);
 
     isMinimizingNotifier.value = ZegoCallMiniOverlayMachine().isInCallMinimized;
-    ZegoCallMiniOverlayMachine()
-        .listenStateChanged(onMiniOverlayMachineStateChanged);
+    ZegoCallMiniOverlayMachine().listenStateChanged(
+      onMiniOverlayMachineStateChanged,
+    );
   }
 
   /// Please do not call this interface. It is the internal logic of Prebuilt.
@@ -66,8 +67,9 @@ class ZegoCallControllerMinimizePrivateImpl {
     config = null;
     activeUser.setConfig(config: null);
 
-    ZegoCallMiniOverlayMachine()
-        .removeListenStateChanged(onMiniOverlayMachineStateChanged);
+    ZegoCallMiniOverlayMachine().removeListenStateChanged(
+      onMiniOverlayMachineStateChanged,
+    );
   }
 
   void onMiniOverlayMachineStateChanged(ZegoCallMiniOverlayPageState state) {
@@ -101,15 +103,11 @@ class ZegoCallControllerMinimizePrivateActiveUser {
     return ignore ? ignore : !showLocalUserView;
   }
 
-  void setConfig({
-    required ZegoUIKitPrebuiltCallConfig? config,
-  }) {
+  void setConfig({required ZegoUIKitPrebuiltCallConfig? config}) {
     this.config = config;
   }
 
-  void start({
-    bool showLocalUserView = false,
-  }) {
+  void start({bool showLocalUserView = false}) {
     if (isStarted) {
       ZegoLoggerService.logInfo(
         'start, but already start',
@@ -158,13 +156,15 @@ class ZegoCallControllerMinimizePrivateActiveUser {
   }
 
   void listenAudioVideoList() {
-    audioVideoListSubscription =
-        ZegoUIKit().getAudioVideoListStream().listen(onAudioVideoListUpdated);
+    audioVideoListSubscription = ZegoUIKit().getAudioVideoListStream().listen(
+      onAudioVideoListUpdated,
+    );
 
     final audioVideoList = ZegoUIKit().getAudioVideoList();
     if (ignoreLocalUser) {
-      audioVideoList
-          .removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
+      audioVideoList.removeWhere(
+        (user) => user.id == ZegoUIKit().getLocalUser().id,
+      );
     }
     onAudioVideoListUpdated(audioVideoList);
 
@@ -187,13 +187,15 @@ class ZegoCallControllerMinimizePrivateActiveUser {
       users.removeWhere((user) => user.id == ZegoUIKit().getLocalUser().id);
     }
     for (final user in users) {
-      soundLevelSubscriptions.add(user.soundLevel.listen((soundLevel) {
-        if (rangeSoundLevels.containsKey(user.id)) {
-          rangeSoundLevels[user.id]!.add(soundLevel);
-        } else {
-          rangeSoundLevels[user.id] = [soundLevel];
-        }
-      }));
+      soundLevelSubscriptions.add(
+        user.soundLevel.listen((soundLevel) {
+          if (rangeSoundLevels.containsKey(user.id)) {
+            rangeSoundLevels[user.id]!.add(soundLevel);
+          } else {
+            rangeSoundLevels[user.id] = [soundLevel];
+          }
+        }),
+      );
     }
   }
 

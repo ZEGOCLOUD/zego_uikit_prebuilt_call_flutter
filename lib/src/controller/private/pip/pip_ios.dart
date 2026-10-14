@@ -161,15 +161,12 @@ class ZegoCallControllerPIPImplPrivateIOS {
         .activeUser
         .activeUserIDNotifier
         .addListener(onMinimizeActiveUserChanged);
-    ZegoUIKitPrebuiltCallController()
-        .minimize
-        .private
-        .isMinimizingNotifier
+    ZegoUIKitPrebuiltCallController().minimize.private.isMinimizingNotifier
         .addListener(onMinimizeStateChanged);
 
-    ZegoUIKit()
-        .adapterService()
-        .registerMessageHandler(_onAppLifecycleStateChanged);
+    ZegoUIKit().adapterService().registerMessageHandler(
+      _onAppLifecycleStateChanged,
+    );
 
     if (isSupportInConfig) {
       if (config?.pip.enableWhenBackground ?? true) {
@@ -198,15 +195,12 @@ class ZegoCallControllerPIPImplPrivateIOS {
         .activeUser
         .activeUserIDNotifier
         .removeListener(onMinimizeActiveUserChanged);
-    ZegoUIKitPrebuiltCallController()
-        .minimize
-        .private
-        .isMinimizingNotifier
+    ZegoUIKitPrebuiltCallController().minimize.private.isMinimizingNotifier
         .removeListener(onMinimizeStateChanged);
 
-    ZegoUIKit()
-        .adapterService()
-        .unregisterMessageHandler(_onAppLifecycleStateChanged);
+    ZegoUIKit().adapterService().unregisterMessageHandler(
+      _onAppLifecycleStateChanged,
+    );
   }
 
   Future<ZegoPiPStatus> enableWhenBackground({
@@ -266,7 +260,8 @@ class ZegoCallControllerPIPImplPrivateIOS {
 
   Future<void> forceUpdatePIPVC() async {
     if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
-      final currentActiveUserID = ZegoUIKitPrebuiltCallController()
+      final currentActiveUserID =
+          ZegoUIKitPrebuiltCallController()
               .minimize
               .private
               .activeUser
@@ -303,10 +298,7 @@ class ZegoCallControllerPIPImplPrivateIOS {
     } else if (AppLifecycleState.inactive == appLifecycleState) {
       /// pip need render remote user's stream, local can not render
       if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
-        ZegoUIKitPrebuiltCallController()
-            .minimize
-            .private
-            .activeUser
+        ZegoUIKitPrebuiltCallController().minimize.private.activeUser
             .switchActiveUserToRemoteUser();
       }
     }

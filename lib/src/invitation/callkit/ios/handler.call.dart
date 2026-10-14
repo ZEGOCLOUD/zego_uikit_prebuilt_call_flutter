@@ -40,7 +40,8 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       );
 
       payloadCustomData = sendProtocol.customData;
-      callType = ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
+      callType =
+          ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
           ZegoCallInvitationType.voiceCall;
     } else {
       final sendProtocol = ZegoUIKitInvitationSendProtocol.fromJson(
@@ -54,7 +55,8 @@ class ZegoCallIOSCallBackgroundMessageHandler {
       );
 
       payloadCustomData = sendProtocol.customData;
-      callType = ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
+      callType =
+          ZegoCallTypeExtension.mapValue[sendProtocol.type] ??
           ZegoCallInvitationType.voiceCall;
     }
     ZegoLoggerService.logInfo(
@@ -76,18 +78,17 @@ class ZegoCallIOSCallBackgroundMessageHandler {
 
     /// cache callkit param,
     /// and wait for the onInvitationReceive callback of page manger
-    await ZegoUIKitCallCache()
-        .offlineCallKit
+    await ZegoUIKitCallCache().offlineCallKit
         .setCallID(invitationInternalData.callID)
         .then((value) {
-      // flag[0] = true;
+          // flag[0] = true;
 
-      ZegoLoggerService.logInfo(
-        'cache ${invitationInternalData.callID} done',
-        tag: 'call-invitation',
-        subTag: 'offline',
-      );
-    });
+          ZegoLoggerService.logInfo(
+            'cache ${invitationInternalData.callID} done',
+            tag: 'call-invitation',
+            subTag: 'offline',
+          );
+        });
   }
 
   void saveToPageManager(
@@ -97,10 +98,10 @@ class ZegoCallIOSCallBackgroundMessageHandler {
     ZegoCallInvitationType type,
   ) {
     ZegoUIKitPrebuiltCallInvitationService().private.updateInvitationData(
-          sendRequestProtocol,
-          invitationID,
-          inviter,
-          type,
-        );
+      sendRequestProtocol,
+      invitationID,
+      inviter,
+      type,
+    );
   }
 }

@@ -267,108 +267,108 @@ class ZegoCallInvitationInnerText {
     String? callingToolbarCameraOnButtonText,
     String? callingToolbarCameraOffButtonText,
     String? minimizedCallingPageWaitingText,
-  })  : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
-        incomingVideoCallDialogMessage =
-            incomingVideoCallDialogMessage ?? 'Incoming video call...',
-        incomingVoiceCallDialogTitle = incomingVoiceCallDialogTitle ?? param_1,
-        incomingVoiceCallDialogMessage =
-            incomingVoiceCallDialogMessage ?? 'Incoming voice call...',
-        incomingVideoCallPageTitle = incomingVideoCallPageTitle ?? param_1,
-        incomingVideoCallPageMessage =
-            incomingVideoCallPageMessage ?? 'Incoming video call...',
-        incomingVoiceCallPageTitle = incomingVoiceCallPageTitle ?? param_1,
-        incomingVoiceCallPageMessage =
-            incomingVoiceCallPageMessage ?? 'Incoming voice call...',
-        incomingCallPageDeclineButton =
-            incomingCallPageDeclineButton ?? 'Decline',
-        incomingCallPageAcceptButton = incomingCallPageAcceptButton ?? 'Accept',
-        outgoingCallPageACancelButton =
-            outgoingCallPageACancelButton ?? 'Cancel',
-        outgoingVideoCallPageTitle = outgoingVideoCallPageTitle ?? param_1,
-        outgoingVideoCallPageMessage =
-            outgoingVideoCallPageMessage ?? 'Calling...',
-        outgoingVoiceCallPageTitle = outgoingVoiceCallPageTitle ?? param_1,
-        outgoingVoiceCallPageMessage =
-            outgoingVoiceCallPageMessage ?? 'Calling...',
-        incomingGroupVideoCallDialogTitle =
-            incomingGroupVideoCallDialogTitle ?? param_1,
-        incomingGroupVideoCallDialogMessage =
-            incomingGroupVideoCallDialogMessage ??
-                'Incoming group video call...',
-        incomingGroupVoiceCallDialogTitle =
-            incomingGroupVoiceCallDialogTitle ?? param_1,
-        incomingGroupVoiceCallDialogMessage =
-            incomingGroupVoiceCallDialogMessage ??
-                'Incoming group voice call...',
-        incomingGroupVideoCallPageTitle =
-            incomingGroupVideoCallPageTitle ?? param_1,
-        incomingGroupVideoCallPageMessage =
-            incomingGroupVideoCallPageMessage ?? 'Incoming group video call...',
-        incomingGroupVoiceCallPageTitle =
-            incomingGroupVoiceCallPageTitle ?? param_1,
-        incomingGroupVoiceCallPageMessage =
-            incomingGroupVoiceCallPageMessage ?? 'Incoming group voice call...',
-        outgoingGroupVideoCallPageTitle =
-            outgoingGroupVideoCallPageTitle ?? param_1,
-        outgoingGroupVideoCallPageMessage =
-            outgoingGroupVideoCallPageMessage ?? 'Calling...',
-        outgoingGroupVoiceCallPageTitle =
-            outgoingGroupVoiceCallPageTitle ?? param_1,
-        outgoingGroupVoiceCallPageMessage =
-            outgoingGroupVoiceCallPageMessage ?? 'Calling...',
-        missedCallNotificationTitle =
-            missedCallNotificationTitle ?? 'Missed Call',
-        missedGroupVideoCallNotificationContent =
-            missedGroupVideoCallNotificationContent ?? 'Group Video Call',
-        missedGroupAudioCallNotificationContent =
-            missedGroupAudioCallNotificationContent ?? 'Group Audio Call',
-        missedVideoCallNotificationContent =
-            missedVideoCallNotificationContent ?? 'Video Call',
-        missedAudioCallNotificationContent =
-            missedAudioCallNotificationContent ?? 'Audio Call',
-        systemAlertWindowConfirmDialogSubTitle =
-            systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
-        permissionManuallyConfirmDialogTitle =
-            permissionManuallyConfirmDialogTitle ??
-                'Please turn on the following permissions to receive call invitations',
-        permissionManuallyConfirmDialogSubTitle =
-            permissionManuallyConfirmDialogSubTitle ??
-                '• Allow auto launch\n'
-                    '• Allow notification on Banner and Lock screen\n'
-                    '• Allow display over other apps\n'
-                    '• Show on lock screen\n'
-                    '• Show floating window\n'
-                    '• Pop up interface in background\n',
-        permissionConfirmDialogTitle =
-            permissionConfirmDialogTitle ?? 'Allow $param_1 to',
-        permissionConfirmDialogAllowButton =
-            permissionConfirmDialogAllowButton ?? 'Allow',
-        permissionConfirmDialogDenyButton =
-            permissionConfirmDialogDenyButton ?? 'Deny',
-        permissionConfirmDialogCancelButton =
-            permissionConfirmDialogCancelButton ?? 'Cancel',
-        permissionConfirmDialogOKButton =
-            permissionConfirmDialogOKButton ?? 'OK',
-        callingToolbarMicrophoneButtonText =
-            callingToolbarMicrophoneButtonText ?? 'Microphone',
-        callingToolbarMicrophoneOnButtonText =
-            callingToolbarMicrophoneOnButtonText ?? 'Microphone ON',
-        callingToolbarMicrophoneOffButtonText =
-            callingToolbarMicrophoneOffButtonText ?? 'Microphone OFF',
-        callingToolbarSpeakerButtonText =
-            callingToolbarSpeakerButtonText ?? 'Speaker',
-        callingToolbarSpeakerOnButtonText =
-            callingToolbarSpeakerOnButtonText ?? 'Speaker ON',
-        callingToolbarSpeakerOffButtonText =
-            callingToolbarSpeakerOffButtonText ?? 'Speaker OFF',
-        callingToolbarCameraButtonText =
-            callingToolbarCameraButtonText ?? 'Camera',
-        callingToolbarCameraOnButtonText =
-            callingToolbarCameraOnButtonText ?? 'Camera ON',
-        callingToolbarCameraOffButtonText =
-            callingToolbarCameraOffButtonText ?? 'Camera OFF',
-        minimizedCallingPageWaitingText =
-            minimizedCallingPageWaitingText ?? 'Waiting for answer';
+  }) : incomingVideoCallDialogTitle = incomingVideoCallDialogTitle ?? param_1,
+       incomingVideoCallDialogMessage =
+           incomingVideoCallDialogMessage ?? 'Incoming video call...',
+       incomingVoiceCallDialogTitle = incomingVoiceCallDialogTitle ?? param_1,
+       incomingVoiceCallDialogMessage =
+           incomingVoiceCallDialogMessage ?? 'Incoming voice call...',
+       incomingVideoCallPageTitle = incomingVideoCallPageTitle ?? param_1,
+       incomingVideoCallPageMessage =
+           incomingVideoCallPageMessage ?? 'Incoming video call...',
+       incomingVoiceCallPageTitle = incomingVoiceCallPageTitle ?? param_1,
+       incomingVoiceCallPageMessage =
+           incomingVoiceCallPageMessage ?? 'Incoming voice call...',
+       incomingCallPageDeclineButton =
+           incomingCallPageDeclineButton ?? 'Decline',
+       incomingCallPageAcceptButton = incomingCallPageAcceptButton ?? 'Accept',
+       outgoingCallPageACancelButton =
+           outgoingCallPageACancelButton ?? 'Cancel',
+       outgoingVideoCallPageTitle = outgoingVideoCallPageTitle ?? param_1,
+       outgoingVideoCallPageMessage =
+           outgoingVideoCallPageMessage ?? 'Calling...',
+       outgoingVoiceCallPageTitle = outgoingVoiceCallPageTitle ?? param_1,
+       outgoingVoiceCallPageMessage =
+           outgoingVoiceCallPageMessage ?? 'Calling...',
+       incomingGroupVideoCallDialogTitle =
+           incomingGroupVideoCallDialogTitle ?? param_1,
+       incomingGroupVideoCallDialogMessage =
+           incomingGroupVideoCallDialogMessage ??
+           'Incoming group video call...',
+       incomingGroupVoiceCallDialogTitle =
+           incomingGroupVoiceCallDialogTitle ?? param_1,
+       incomingGroupVoiceCallDialogMessage =
+           incomingGroupVoiceCallDialogMessage ??
+           'Incoming group voice call...',
+       incomingGroupVideoCallPageTitle =
+           incomingGroupVideoCallPageTitle ?? param_1,
+       incomingGroupVideoCallPageMessage =
+           incomingGroupVideoCallPageMessage ?? 'Incoming group video call...',
+       incomingGroupVoiceCallPageTitle =
+           incomingGroupVoiceCallPageTitle ?? param_1,
+       incomingGroupVoiceCallPageMessage =
+           incomingGroupVoiceCallPageMessage ?? 'Incoming group voice call...',
+       outgoingGroupVideoCallPageTitle =
+           outgoingGroupVideoCallPageTitle ?? param_1,
+       outgoingGroupVideoCallPageMessage =
+           outgoingGroupVideoCallPageMessage ?? 'Calling...',
+       outgoingGroupVoiceCallPageTitle =
+           outgoingGroupVoiceCallPageTitle ?? param_1,
+       outgoingGroupVoiceCallPageMessage =
+           outgoingGroupVoiceCallPageMessage ?? 'Calling...',
+       missedCallNotificationTitle =
+           missedCallNotificationTitle ?? 'Missed Call',
+       missedGroupVideoCallNotificationContent =
+           missedGroupVideoCallNotificationContent ?? 'Group Video Call',
+       missedGroupAudioCallNotificationContent =
+           missedGroupAudioCallNotificationContent ?? 'Group Audio Call',
+       missedVideoCallNotificationContent =
+           missedVideoCallNotificationContent ?? 'Video Call',
+       missedAudioCallNotificationContent =
+           missedAudioCallNotificationContent ?? 'Audio Call',
+       systemAlertWindowConfirmDialogSubTitle =
+           systemAlertWindowConfirmDialogSubTitle ?? 'Display over other apps',
+       permissionManuallyConfirmDialogTitle =
+           permissionManuallyConfirmDialogTitle ??
+           'Please turn on the following permissions to receive call invitations',
+       permissionManuallyConfirmDialogSubTitle =
+           permissionManuallyConfirmDialogSubTitle ??
+           '• Allow auto launch\n'
+               '• Allow notification on Banner and Lock screen\n'
+               '• Allow display over other apps\n'
+               '• Show on lock screen\n'
+               '• Show floating window\n'
+               '• Pop up interface in background\n',
+       permissionConfirmDialogTitle =
+           permissionConfirmDialogTitle ?? 'Allow $param_1 to',
+       permissionConfirmDialogAllowButton =
+           permissionConfirmDialogAllowButton ?? 'Allow',
+       permissionConfirmDialogDenyButton =
+           permissionConfirmDialogDenyButton ?? 'Deny',
+       permissionConfirmDialogCancelButton =
+           permissionConfirmDialogCancelButton ?? 'Cancel',
+       permissionConfirmDialogOKButton =
+           permissionConfirmDialogOKButton ?? 'OK',
+       callingToolbarMicrophoneButtonText =
+           callingToolbarMicrophoneButtonText ?? 'Microphone',
+       callingToolbarMicrophoneOnButtonText =
+           callingToolbarMicrophoneOnButtonText ?? 'Microphone ON',
+       callingToolbarMicrophoneOffButtonText =
+           callingToolbarMicrophoneOffButtonText ?? 'Microphone OFF',
+       callingToolbarSpeakerButtonText =
+           callingToolbarSpeakerButtonText ?? 'Speaker',
+       callingToolbarSpeakerOnButtonText =
+           callingToolbarSpeakerOnButtonText ?? 'Speaker ON',
+       callingToolbarSpeakerOffButtonText =
+           callingToolbarSpeakerOffButtonText ?? 'Speaker OFF',
+       callingToolbarCameraButtonText =
+           callingToolbarCameraButtonText ?? 'Camera',
+       callingToolbarCameraOnButtonText =
+           callingToolbarCameraOnButtonText ?? 'Camera ON',
+       callingToolbarCameraOffButtonText =
+           callingToolbarCameraOffButtonText ?? 'Camera OFF',
+       minimizedCallingPageWaitingText =
+           minimizedCallingPageWaitingText ?? 'Waiting for answer';
 
   /// if add a new text, need check [ZegoCallInvitationInnerTextForCallInvitationServicePrivate]
 }

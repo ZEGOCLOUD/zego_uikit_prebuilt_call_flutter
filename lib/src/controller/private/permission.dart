@@ -13,9 +13,7 @@ class ZegoCallControllerPermissionImplPrivateImpl {
   ZegoUIKitPrebuiltCallConfig? config;
 
   /// Please do not call this interface. It is the internal logic of Prebuilt.
-  void initByPrebuilt({
-    required ZegoUIKitPrebuiltCallConfig? config,
-  }) {
+  void initByPrebuilt({required ZegoUIKitPrebuiltCallConfig? config}) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',
       tag: 'call',

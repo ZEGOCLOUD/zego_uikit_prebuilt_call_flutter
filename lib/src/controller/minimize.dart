@@ -56,25 +56,23 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
         subTag: 'controller.minimize Navigator',
       );
       Navigator.of(context, rootNavigator: rootNavigator).push(
-        MaterialPageRoute(builder: (context) {
-          final prebuiltCall = ZegoUIKitPrebuiltCall(
-            appID: minimizeData.appID,
-            appSign: minimizeData.appSign,
-            token: minimizeData.token,
-            userID: minimizeData.userID,
-            userName: minimizeData.userName,
-            callID: minimizeData.callID,
-            config: minimizeData.inCall!.config,
-            events: minimizeData.inCall!.events,
-            plugins: minimizeData.inCall!.plugins,
-            onDispose: minimizeData.onDispose,
-          );
-          return withSafeArea
-              ? SafeArea(
-                  child: prebuiltCall,
-                )
-              : prebuiltCall;
-        }),
+        MaterialPageRoute(
+          builder: (context) {
+            final prebuiltCall = ZegoUIKitPrebuiltCall(
+              appID: minimizeData.appID,
+              appSign: minimizeData.appSign,
+              token: minimizeData.token,
+              userID: minimizeData.userID,
+              userName: minimizeData.userName,
+              callID: minimizeData.callID,
+              config: minimizeData.inCall!.config,
+              events: minimizeData.inCall!.events,
+              plugins: minimizeData.inCall!.plugins,
+              onDispose: minimizeData.onDispose,
+            );
+            return withSafeArea ? SafeArea(child: prebuiltCall) : prebuiltCall;
+          },
+        ),
       );
     } catch (e) {
       ZegoLoggerService.logError(
@@ -90,10 +88,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   }
 
   /// To minimize the ZegoUIKitPrebuiltCall
-  bool minimize(
-    BuildContext context, {
-    bool rootNavigator = true,
-  }) {
+  bool minimize(BuildContext context, {bool rootNavigator = true}) {
     if (ZegoCallMiniOverlayPageState.inCallMinimized ==
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
@@ -119,10 +114,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       );
 
       /// pop call page
-      Navigator.of(
-        context,
-        rootNavigator: rootNavigator,
-      ).pop();
+      Navigator.of(context, rootNavigator: rootNavigator).pop();
     } catch (e) {
       ZegoLoggerService.logError(
         'minimize, navigator pop exception:$e',
@@ -198,10 +190,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       );
 
       /// pop calling page
-      Navigator.of(
-        context,
-        rootNavigator: rootNavigator,
-      ).pop();
+      Navigator.of(context, rootNavigator: rootNavigator).pop();
     } catch (e) {
       ZegoLoggerService.logError(
         'minimize, navigator pop exception:$e',
@@ -264,34 +253,39 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
             invitingData.pageManager.setWaitCallPageDisposeFlag(false),
         push: () {
           Navigator.of(context, rootNavigator: rootNavigator).push(
-            MaterialPageRoute(builder: (context) {
-              return ZegoCallingPage(
-                pageManager: invitingData.pageManager,
-                callInvitationData: invitingData.callInvitationData,
-                inviter: invitingData.inviter,
-                invitees: invitingData.invitees,
-                onInitState: () {
-                  ZegoLoggerService.logInfo(
-                    'ZegoCallingPage onInitState called, setting overlay state to idle',
-                    tag: 'call',
-                    subTag: 'controller.minimize',
-                  );
-                  invitingData.pageManager.callingMachine?.isPagePushed = true;
-                  // When the inviting interface is restored, set the overlay state to idle
-                  ZegoCallMiniOverlayMachine()
-                      .changeState(ZegoCallMiniOverlayPageState.idle);
-                },
-                onDispose: () {
-                  ZegoLoggerService.logInfo(
-                    'ZegoCallingPage onDispose called',
-                    tag: 'call',
-                    subTag: 'controller.minimize',
-                  );
-                  invitingData.pageManager.callingMachine?.isPagePushed = false;
-                  invitingData.pageManager.setWaitCallPageDisposeFlag(false);
-                },
-              );
-            }),
+            MaterialPageRoute(
+              builder: (context) {
+                return ZegoCallingPage(
+                  pageManager: invitingData.pageManager,
+                  callInvitationData: invitingData.callInvitationData,
+                  inviter: invitingData.inviter,
+                  invitees: invitingData.invitees,
+                  onInitState: () {
+                    ZegoLoggerService.logInfo(
+                      'ZegoCallingPage onInitState called, setting overlay state to idle',
+                      tag: 'call',
+                      subTag: 'controller.minimize',
+                    );
+                    invitingData.pageManager.callingMachine?.isPagePushed =
+                        true;
+                    // When the inviting interface is restored, set the overlay state to idle
+                    ZegoCallMiniOverlayMachine().changeState(
+                      ZegoCallMiniOverlayPageState.idle,
+                    );
+                  },
+                  onDispose: () {
+                    ZegoLoggerService.logInfo(
+                      'ZegoCallingPage onDispose called',
+                      tag: 'call',
+                      subTag: 'controller.minimize',
+                    );
+                    invitingData.pageManager.callingMachine?.isPagePushed =
+                        false;
+                    invitingData.pageManager.setWaitCallPageDisposeFlag(false);
+                  },
+                );
+              },
+            ),
           );
         },
       );
@@ -316,9 +310,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
     ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
 
-    ZegoCallMiniOverlayMachine().changeState(
-      ZegoCallMiniOverlayPageState.idle,
-    );
+    ZegoCallMiniOverlayMachine().changeState(ZegoCallMiniOverlayPageState.idle);
   }
 
   /// Listens for changes in the invitation state machine
@@ -326,7 +318,8 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   ///
   /// [pageManager] The invitation page manager that contains the calling state machine
   void _listenInvitationStateChanged(
-      ZegoCallInvitationPageManager pageManager) {
+    ZegoCallInvitationPageManager pageManager,
+  ) {
     // Listen for state changes in the calling state machine
     pageManager.callingMachine?.onStateChanged = (CallingState state) {
       ZegoLoggerService.logInfo(
@@ -368,7 +361,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   /// Listen for invitation events
   void _listenInvitationEvents(ZegoCallInvitationPageManager pageManager) {
     // Listen for invitation being declined
-    pageManager.callInvitationData.invitationEvents
+    pageManager
+        .callInvitationData
+        .invitationEvents
         ?.onIncomingCallDeclineButtonPressed = () {
       ZegoLoggerService.logInfo(
         'invitation declined, hiding overlay',
@@ -378,7 +373,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     };
 
     // Listen for invitation being canceled
-    pageManager.callInvitationData.invitationEvents
+    pageManager
+        .callInvitationData
+        .invitationEvents
         ?.onOutgoingCallCancelButtonPressed = () {
       ZegoLoggerService.logInfo(
         'invitation canceled, hiding overlay',
@@ -390,53 +387,55 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     // Listen for invitation timeout
     pageManager.callInvitationData.invitationEvents?.onIncomingCallTimeout =
         (String callID, ZegoCallUser inviter) {
-      ZegoLoggerService.logInfo(
-        'invitation timeout, hiding overlay',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-    };
+          ZegoLoggerService.logInfo(
+            'invitation timeout, hiding overlay',
+            tag: 'call-minimize',
+            subTag: 'controller.minimize',
+          );
+        };
 
     // Listen for invitation response timeout
     pageManager.callInvitationData.invitationEvents?.onOutgoingCallTimeout =
         (String callID, List<ZegoCallUser> invitees, bool isVideoCall) {
-      ZegoLoggerService.logInfo(
-        'invitation response timeout, hiding overlay',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-    };
+          ZegoLoggerService.logInfo(
+            'invitation response timeout, hiding overlay',
+            tag: 'call-minimize',
+            subTag: 'controller.minimize',
+          );
+        };
 
     // Listen for invitation being rejected (busy)
-    pageManager.callInvitationData.invitationEvents
+    pageManager
+            .callInvitationData
+            .invitationEvents
             ?.onOutgoingCallRejectedCauseBusy =
         (String callID, ZegoCallUser invitee, String customData) {
-      ZegoLoggerService.logInfo(
-        'invitation rejected (busy), hiding overlay',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-    };
+          ZegoLoggerService.logInfo(
+            'invitation rejected (busy), hiding overlay',
+            tag: 'call-minimize',
+            subTag: 'controller.minimize',
+          );
+        };
 
     // Listen for invitation being declined (actively declined)
     pageManager.callInvitationData.invitationEvents?.onOutgoingCallDeclined =
         (String callID, ZegoCallUser invitee, String customData) {
-      ZegoLoggerService.logInfo(
-        'invitation declined, hiding overlay',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-    };
+          ZegoLoggerService.logInfo(
+            'invitation declined, hiding overlay',
+            tag: 'call-minimize',
+            subTag: 'controller.minimize',
+          );
+        };
 
     // Listen for incoming call being canceled
     pageManager.callInvitationData.invitationEvents?.onIncomingCallCanceled =
         (String callID, ZegoCallUser caller, String customData) {
-      ZegoLoggerService.logInfo(
-        'incoming call canceled, hiding overlay',
-        tag: 'call-minimize',
-        subTag: 'controller.minimize',
-      );
-    };
+          ZegoLoggerService.logInfo(
+            'incoming call canceled, hiding overlay',
+            tag: 'call-minimize',
+            subTag: 'controller.minimize',
+          );
+        };
   }
 
   /// Automatically convert to in-call minimized state
@@ -454,8 +453,10 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       // Create in-call minimized data
       final inCallData = ZegoInCallMinimizeData(
         config: _convertCallingConfigToPrebuiltConfig(
-            invitingData.pageManager.callingConfig),
-        events: invitingData.callInvitationData.events ??
+          invitingData.pageManager.callingConfig,
+        ),
+        events:
+            invitingData.callInvitationData.events ??
             ZegoUIKitPrebuiltCallEvents(),
         isPrebuiltFromMinimizing: true,
         plugins: invitingData.callInvitationData.plugins,
@@ -478,8 +479,9 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       private.updateMinimizeData(newMinimizeData);
 
       // Immediately hide overlay to ensure call page initializes with idle state
-      ZegoCallMiniOverlayMachine()
-          .changeState(ZegoCallMiniOverlayPageState.idle);
+      ZegoCallMiniOverlayMachine().changeState(
+        ZegoCallMiniOverlayPageState.idle,
+      );
 
       // Clear minimized data to prevent call page from detecting non-idle state during initialization
       private.clearMinimizeData();

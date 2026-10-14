@@ -159,16 +159,18 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     topLeft = Offset(50, 100); // Changed from (100, 100) to (50, 100)
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ZegoCallMiniOverlayMachine()
-          .listenStateChanged(onMiniOverlayMachineStateChanged);
+      ZegoCallMiniOverlayMachine().listenStateChanged(
+        onMiniOverlayMachineStateChanged,
+      );
 
       if (null != ZegoCallMiniOverlayMachine().machine.current) {
         syncState();
       }
     });
 
-    userListStreamSubscription =
-        ZegoUIKit().getUserLeaveStream().listen(onUserLeave);
+    userListStreamSubscription = ZegoUIKit().getUserLeaveStream().listen(
+      onUserLeave,
+    );
   }
 
   @override
@@ -177,8 +179,9 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
 
     userListStreamSubscription?.cancel();
 
-    ZegoCallMiniOverlayMachine()
-        .removeListenStateChanged(onMiniOverlayMachineStateChanged);
+    ZegoCallMiniOverlayMachine().removeListenStateChanged(
+      onMiniOverlayMachineStateChanged,
+    );
   }
 
   @override
@@ -203,19 +206,25 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
                 var x = topLeft.dx + details.delta.dx;
                 var y = topLeft.dy + details.delta.dy;
                 x = x.clamp(
-                    0.0, MediaQuery.of(context).size.width - itemSize.width);
+                  0.0,
+                  MediaQuery.of(context).size.width - itemSize.width,
+                );
                 y = y.clamp(
-                    0.0, MediaQuery.of(context).size.height - itemSize.height);
+                  0.0,
+                  MediaQuery.of(context).size.height - itemSize.height,
+                );
                 topLeft = Offset(x, y);
               });
             },
-            child: LayoutBuilder(builder: (context, constraints) {
-              return SizedBox(
-                width: itemSize.width,
-                height: itemSize.height,
-                child: overlayItem(),
-              );
-            }),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SizedBox(
+                  width: itemSize.width,
+                  height: itemSize.height,
+                  child: overlayItem(),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -254,19 +263,23 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     return GestureDetector(
       onTap: () {
         ZegoUIKitPrebuiltCallController().minimize.restore(
-              widget.contextQuery(),
-              rootNavigator: widget.rootNavigator,
-              withSafeArea: widget.navigatorWithSafeArea,
-            );
+          widget.contextQuery(),
+          rootNavigator: widget.rootNavigator,
+          withSafeArea: widget.navigatorWithSafeArea,
+        );
       },
       child: ZegoMinimizingCallPage(
         size: itemSize,
         durationNotifier: ZegoCallMiniOverlayMachine().durationNotifier(),
-        showCameraButton: minimizeData?.inCall?.config.bottomMenuBar.buttons
-                .contains(ZegoCallMenuBarButtonName.toggleCameraButton) ??
+        showCameraButton:
+            minimizeData?.inCall?.config.bottomMenuBar.buttons.contains(
+              ZegoCallMenuBarButtonName.toggleCameraButton,
+            ) ??
             true,
-        showMicrophoneButton: minimizeData?.inCall?.config.bottomMenuBar.buttons
-                .contains(ZegoCallMenuBarButtonName.toggleMicrophoneButton) ??
+        showMicrophoneButton:
+            minimizeData?.inCall?.config.bottomMenuBar.buttons.contains(
+              ZegoCallMenuBarButtonName.toggleMicrophoneButton,
+            ) ??
             true,
         durationVisible:
             minimizeData?.inCall?.config.duration.isVisible ?? true,
@@ -294,10 +307,10 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     return GestureDetector(
       onTap: () {
         ZegoUIKitPrebuiltCallController().minimize.restoreInviting(
-              widget.contextQuery(),
-              rootNavigator: widget.rootNavigator,
-              withSafeArea: widget.navigatorWithSafeArea,
-            );
+          widget.contextQuery(),
+          rootNavigator: widget.rootNavigator,
+          withSafeArea: widget.navigatorWithSafeArea,
+        );
       },
       child: ZegoMinimizingCallingPage(
         size: itemSize,
@@ -325,7 +338,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     final newState = ZegoCallMiniOverlayMachine().state();
     final newVisibility =
         newState == ZegoCallMiniOverlayPageState.inCallMinimized ||
-            newState == ZegoCallMiniOverlayPageState.invitingMinimized;
+        newState == ZegoCallMiniOverlayPageState.invitingMinimized;
 
     setState(() {
       currentState = newState;
@@ -393,9 +406,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
       ZegoUIKitPrebuiltCallController().minimize.private.uninitByPrebuilt();
       ZegoUIKitPrebuiltCallController().permission.private.uninitByPrebuilt();
       ZegoUIKitPrebuiltCallController().pip.private.uninitByPrebuilt();
-      ZegoUIKitPrebuiltCallController()
-          .screenSharing
-          .private
+      ZegoUIKitPrebuiltCallController().screenSharing.private
           .uninitByPrebuilt();
 
       ZegoUIKit().leaveRoom().then((_) {
@@ -424,10 +435,7 @@ class ZegoUIKitPrebuiltCallMiniOverlayPageState
     }
 
     ZegoUIKit().uninstallPlugins(
-      ZegoUIKitPrebuiltCallController()
-              .minimize
-              .private
-              .plugins
+      ZegoUIKitPrebuiltCallController().minimize.private.plugins
               ?.where((e) => e.getPluginType() == ZegoUIKitPluginType.beauty)
               .toList() ??
           [],

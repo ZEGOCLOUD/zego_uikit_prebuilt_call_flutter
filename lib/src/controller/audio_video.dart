@@ -49,17 +49,15 @@ class ZegoCallControllerAudioVideoMicrophoneImpl
       subTag: 'controller-audioVideo',
     );
 
-    return ZegoUIKit().turnMicrophoneOn(
-      isOn,
-      userID: userID,
-    );
+    return ZegoUIKit().turnMicrophoneOn(isOn, userID: userID);
   }
 
   /// switch [userID] microphone state, if [userID] is empty, then it refers to local user
   void switchState({String? userID}) {
     final targetUserID = userID ?? ZegoUIKit().getLocalUser().id;
-    final currentMicrophoneState =
-        ZegoUIKit().getMicrophoneStateNotifier(targetUserID).value;
+    final currentMicrophoneState = ZegoUIKit()
+        .getMicrophoneStateNotifier(targetUserID)
+        .value;
 
     turnOn(!currentMicrophoneState, userID: targetUserID);
   }
@@ -91,17 +89,15 @@ class ZegoCallControllerAudioVideoCameraImpl
       subTag: 'controller-audioVideo',
     );
 
-    return ZegoUIKit().turnCameraOn(
-      isOn,
-      userID: userID,
-    );
+    return ZegoUIKit().turnCameraOn(isOn, userID: userID);
   }
 
   /// switch [userID] camera state, if [userID] is empty, then it refers to local user
   void switchState({String? userID}) {
     final targetUserID = userID ?? ZegoUIKit().getLocalUser().id;
-    final currentCameraState =
-        ZegoUIKit().getCameraStateNotifier(targetUserID).value;
+    final currentCameraState = ZegoUIKit()
+        .getCameraStateNotifier(targetUserID)
+        .value;
 
     turnOn(!currentCameraState, userID: targetUserID);
   }
@@ -136,9 +132,7 @@ class ZegoCallControllerAudioVideoAudioOutputImpl
       notifier(ZegoUIKit().getLocalUser().id);
 
   /// get audio output device notifier
-  ValueNotifier<ZegoUIKitAudioRoute> notifier(
-    String userID,
-  ) {
+  ValueNotifier<ZegoUIKitAudioRoute> notifier(String userID) {
     return ZegoUIKit().getAudioOutputDeviceNotifier(userID);
   }
 

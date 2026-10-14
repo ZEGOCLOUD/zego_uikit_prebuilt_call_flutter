@@ -31,45 +31,45 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
       return Container(color: Colors.transparent);
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        padding: const EdgeInsets.all(5),
-        child: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    userName(
-                      context,
-                      constraints.maxWidth * 0.4,
-                    ),
-                    microphoneStateIcon(),
-                    cameraStateIcon(),
-                  ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          padding: const EdgeInsets.all(5),
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 3,
+                    horizontal: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      userName(context, constraints.maxWidth * 0.4),
+                      microphoneStateIcon(),
+                      cameraStateIcon(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget userName(BuildContext context, double maxWidth) {
     return showUserNameOnView
         ? ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxWidth,
-            ),
+            constraints: BoxConstraints(maxWidth: maxWidth),
             child: Text(
               user?.name ?? '',
               overflow: TextOverflow.ellipsis,
@@ -119,54 +119,50 @@ class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        padding: const EdgeInsets.all(5),
-        child: Stack(
-          children: [
-            const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                backgroundColor: Colors.grey,
-                color: Colors.grey,
-              ),
-            ),
-            Positioned(
-              bottom: 100.zR,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ZegoTextIconButton(
-                  text: invitationInnerText.outgoingCallPageACancelButton,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15.zR,
-                  ),
-                  iconTextSpacing: 5.zR,
-                  buttonSize: Size(120.zR, 120.zR),
-                  iconSize: Size(60.zR, 60.zR),
-                  icon: ButtonIcon(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: () async {
-                    await ZegoUIKit()
-                        .getSignalingPlugin()
-                        .cancelAdvanceInvitation(
-                      invitees: [user?.id ?? ''],
-                      data: cancelData ?? '',
-                      invitationID: invitationID,
-                    );
-                  },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          padding: const EdgeInsets.all(5),
+          child: Stack(
+            children: [
+              const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                  backgroundColor: Colors.grey,
+                  color: Colors.grey,
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              Positioned(
+                bottom: 100.zR,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: ZegoTextIconButton(
+                    text: invitationInnerText.outgoingCallPageACancelButton,
+                    textStyle: TextStyle(color: Colors.white, fontSize: 15.zR),
+                    iconTextSpacing: 5.zR,
+                    buttonSize: Size(120.zR, 120.zR),
+                    iconSize: Size(60.zR, 60.zR),
+                    icon: ButtonIcon(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () async {
+                      await ZegoUIKit()
+                          .getSignalingPlugin()
+                          .cancelAdvanceInvitation(
+                            invitees: [user?.id ?? ''],
+                            data: cancelData ?? '',
+                            invitationID: invitationID,
+                          );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

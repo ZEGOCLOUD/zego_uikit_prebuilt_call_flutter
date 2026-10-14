@@ -65,7 +65,8 @@ class ZegoSendCallingInvitationButton extends StatefulWidget {
 
     /// action to send invitation to selected users of this sheet
     void Function(List<ZegoCallUser> selectedUsers) defaultInviteAction,
-  )? sheetBuilder;
+  )?
+  sheetBuilder;
 
   /// color of user name
   final Color? userNameColor;
@@ -120,7 +121,8 @@ class _ZegoSendCallingInvitationButtonState
       splitScreenMode: true,
       builder: (context, child) {
         return ZegoNetworkLoading(
-          config: widget.networkLoadingConfig ??
+          config:
+              widget.networkLoadingConfig ??
               ZegoNetworkLoadingConfig(enabled: true),
           child: button(),
         );
@@ -138,27 +140,28 @@ class _ZegoSendCallingInvitationButtonState
         width: containerSize.width,
         height: containerSize.height,
         decoration: BoxDecoration(
-          color: widget.buttonIcon?.backgroundColor ??
+          color:
+              widget.buttonIcon?.backgroundColor ??
               ZegoUIKitDefaultTheme.buttonBackgroundColor,
           borderRadius: BorderRadius.all(
             Radius.circular(
-                math.min(containerSize.width, containerSize.height) / 2),
+              math.min(containerSize.width, containerSize.height) / 2,
+            ),
           ),
         ),
         child: SizedBox.fromSize(
           size: sizeBoxSize,
-          child: widget.buttonIcon?.icon ??
-              const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
+          child:
+              widget.buttonIcon?.icon ??
+              const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );
   }
 
   void onPressed() {
-    final canInvitingInCalling = ZegoUIKitPrebuiltCallInvitationService()
+    final canInvitingInCalling =
+        ZegoUIKitPrebuiltCallInvitationService()
             .private
             .callInvitationConfig
             ?.inCalling
@@ -177,7 +180,7 @@ class _ZegoSendCallingInvitationButtonState
 
     final currentState =
         pageManager?.callingMachine?.machine.current?.identifier ??
-            CallingState.kIdle;
+        CallingState.kIdle;
     if (CallingState.kOnlineAudioVideo != currentState) {
       ZegoLoggerService.logError(
         'not in calling, $currentState',
@@ -195,10 +198,12 @@ class _ZegoSendCallingInvitationButtonState
         true) {
       final callInitiatorUserID = ZegoUIKit()
           .getSignalingPlugin()
-          .getAdvanceInitiator(ZegoUIKitPrebuiltCallInvitationService()
-              .private
-              .currentCallInvitationDataSafe
-              .invitationID)
+          .getAdvanceInitiator(
+            ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .currentCallInvitationDataSafe
+                .invitationID,
+          )
           ?.userID;
       ZegoLoggerService.logInfo(
         'config is only initiator can invite, '
@@ -232,8 +237,9 @@ class _ZegoSendCallingInvitationButtonState
         waitingSelectUsers: widget.waitingSelectUsers,
         userSort: widget.userSort,
         onPressed: sendInvitation,
-        backgroundColor:
-            ZegoUIKitDefaultTheme.viewBackgroundColor.withValues(alpha: 0.6),
+        backgroundColor: ZegoUIKitDefaultTheme.viewBackgroundColor.withValues(
+          alpha: 0.6,
+        ),
         defaultChecked: widget.defaultChecked,
         buttonIcon: widget.buttonIcon,
         buttonIconSize: widget.buttonIconSize,

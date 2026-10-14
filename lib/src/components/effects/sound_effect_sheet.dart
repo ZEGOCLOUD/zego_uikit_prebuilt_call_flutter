@@ -108,22 +108,21 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
                 tag: 'call',
                 subTag: 'sound effect sheet, Navigator',
               );
-              Navigator.of(
-                context,
-                rootNavigator: widget.rootNavigator,
-              ).pop();
+              Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
             },
             child: SizedBox(
               width: 70.zR,
               height: 70.zR,
-              child: widget.config.backIcon ??
+              child:
+                  widget.config.backIcon ??
                   ZegoCallImage.asset(ZegoCallIconUrls.back),
             ),
           ),
           SizedBox(width: 10.zR),
           Text(
             widget.translationText.audioEffectTitle,
-            style: widget.config.headerTitleTextStyle ??
+            style:
+                widget.config.headerTitleTextStyle ??
                 TextStyle(
                   fontSize: 36.0.zR,
                   color: const Color(0xffffffff),
@@ -141,8 +140,10 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
           ..removeWhere((effect) => effect == VoiceChangerType.none)
           ..insert(0, VoiceChangerType.none);
     if (widget.voiceChangerSelectedIDNotifier.value.isEmpty) {
-      widget.voiceChangerSelectedIDNotifier.value =
-          voiceChangerEffect.first.index.toString();
+      widget.voiceChangerSelectedIDNotifier.value = voiceChangerEffect
+          .first
+          .index
+          .toString();
     }
 
     voiceChangerModel = ZegoEffectGridModel(
@@ -190,8 +191,8 @@ class _ZegoCallSoundEffectSheetState extends State<ZegoCallSoundEffectSheet> {
       ..removeWhere((effect) => effect == ReverbType.none)
       ..insert(0, ReverbType.none);
     if (widget.reverbSelectedIDNotifier.value.isEmpty) {
-      widget.reverbSelectedIDNotifier.value =
-          reverbEffect.first.index.toString();
+      widget.reverbSelectedIDNotifier.value = reverbEffect.first.index
+          .toString();
     }
 
     reverbPresetModel = ZegoEffectGridModel(

@@ -37,9 +37,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
     _callKitServiceInit = true;
 
-    ZegoCallKitBackgroundService.instance.register(
-      pageManager: pageManager,
-    );
+    ZegoCallKitBackgroundService.instance.register(pageManager: pageManager);
 
     final callKitCallID = await ZegoUIKitCallCache().offlineCallKit.getCallID();
     ZegoLoggerService.logInfo(
@@ -61,7 +59,7 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       CallKitInnerVariable.ringtonePath:
           androidNotificationConfig?.callChannel.sound,
       CallKitInnerVariable.backgroundUrl:
-          androidNotificationConfig?.fullScreenBackgroundAssetURL ?? ''
+          androidNotificationConfig?.fullScreenBackgroundAssetURL ?? '',
     });
 
     ZegoLoggerService.logInfo(
@@ -138,18 +136,17 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
   }
 
   Future<void> _onAndroidCallKitIncomingEvent(CallEvent? event) async {
+    final callKitEvent = adaptCallKitIncomingEvent(event);
     ZegoLoggerService.logInfo(
-      'online callkit incoming event, event:${event?.event}, body:${event?.body}',
+      'online callkit incoming event, event:${event?.eventName}',
       tag: 'call-invitation',
       subTag: 'callkit',
     );
 
-    switch (event!.event) {
-      case Event.actionCallIncoming:
+    switch (callKitEvent?.action) {
+      case CallKitIncomingAction.incoming:
         break;
-      case Event.actionCallStart:
-        break;
-      case Event.actionCallAccept:
+      case CallKitIncomingAction.accept:
         ZegoLoggerService.logInfo(
           'LocalNotification, acceptCallback',
           tag: 'call-invitation',
@@ -163,9 +160,9 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
         ZegoCallKitBackgroundService().acceptInvitationInBackground();
         break;
-      case Event.actionCallDecline:
+      case CallKitIncomingAction.decline:
       //  slide to cancel notification
-      case Event.actionCallTimeout:
+      case CallKitIncomingAction.timeout:
         ZegoLoggerService.logInfo(
           'LocalNotification, rejectCallback',
           tag: 'call-invitation',
@@ -176,13 +173,10 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
 
         ZegoCallKitBackgroundService().refuseInvitationInBackground();
         break;
-      case Event.actionCallEnded:
-        break;
-      case Event.actionCallCallback:
-        break;
-      case Event.actionCallCustom:
-        break;
-      default:
+      case CallKitIncomingAction.ended:
+      case CallKitIncomingAction.toggleAudioSession:
+      case CallKitIncomingAction.toggleMute:
+      case null:
         break;
     }
   }
@@ -193,24 +187,22 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
       return;
     }
 
+    final callKitEvent = adaptCallKitIncomingEvent(event);
     ZegoLoggerService.logInfo(
-      'online callkit incoming event, event:${event?.event}, body:${event?.body}',
+      'online callkit incoming event, event:${event?.eventName}',
       tag: 'call-invitation',
       subTag: 'callkit',
     );
 
-    switch (event?.event) {
-      case Event.actionCallAccept:
+    switch (callKitEvent?.action) {
+      case CallKitIncomingAction.accept:
         // Online invitations are accepted through flutter_callkit_incoming. Clear the
         // previous call's state and select the event source expected for this answer.
-        ZegoUIKitPrebuiltCallInvitationService()
-            .private
-            .iOSCallkit
+        ZegoUIKitPrebuiltCallInvitationService().private.iOSCallkit
             .resetCallKitAudioActivation(source: 'flutter_callkit_incoming');
-        ZegoUIKitCallCache()
-            .offlineCallKit
-            .getCallID()
-            .then((callKitCallID) async {
+        ZegoUIKitCallCache().offlineCallKit.getCallID().then((
+          callKitCallID,
+        ) async {
           /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
           await ZegoUIKit().setAdvanceConfigs({
             "support_apple_callkit": "true",
@@ -220,34 +212,30 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
               .acceptCallKitIncomingCauseInBackground(callKitCallID);
         });
         break;
-      case Event.actionCallDecline:
+      case CallKitIncomingAction.decline:
         await ZegoCallKitBackgroundService().refuseInvitationInBackground();
         break;
-      case Event.actionCallIncoming:
+      case CallKitIncomingAction.incoming:
         break;
-      case Event.actionCallToggleAudioSession:
+      case CallKitIncomingAction.toggleAudioSession:
         // Online invitations report AVAudioSession activation through this event.
         // Forward it to the shared iOS wait state used by both CallKit event sources.
-        final body = event?.body;
-        if (body is Map && body['isActivate'] is bool) {
-          ZegoUIKitPrebuiltCallInvitationService()
-              .private
-              .iOSCallkit
-              .onFlutterCallKitAudioSessionChanged(body['isActivate'] as bool);
+        final isActive = callKitEvent?.isActive;
+        if (isActive != null) {
+          ZegoUIKitPrebuiltCallInvitationService().private.iOSCallkit
+              .onFlutterCallKitAudioSessionChanged(isActive);
         } else {
           ZegoLoggerService.logWarn(
-            'ignore invalid CallKit audio session event body:$body',
+            'ignore CallKit audio session event without isActive state',
             tag: 'call-invitation',
             subTag: 'ios callkit audio sequencing',
           );
         }
         break;
-      case Event.actionCallEnded:
+      case CallKitIncomingAction.ended:
 
         /// https://zegocloud.feishu.cn/wiki/IDAgwKcXMisFmBkfyiic7Iw3nXb
-        await ZegoUIKit().setAdvanceConfigs({
-          "support_apple_callkit": "false",
-        });
+        await ZegoUIKit().setAdvanceConfigs({"support_apple_callkit": "false"});
 
         if (ZegoUIKitPrebuiltCallInvitationService().isInCall) {
           await ZegoCallKitBackgroundService().handUpCurrentCallByCallKit();
@@ -256,22 +244,22 @@ class ZegoCallInvitationServiceCallKitPrivateImpl {
         }
         _myPageManager?.hasCallkitIncomingCauseAppInBackground = false;
         break;
-      case Event.actionCallToggleMute:
-        final params = event?.body as Map<String, dynamic>? ?? {};
-        final isMute = params['isMuted'] as bool? ?? false;
+      case CallKitIncomingAction.toggleMute:
+        final isMute = callKitEvent?.isMuted ?? false;
         ZegoUIKit().turnMicrophoneOn(!isMute);
         break;
-      default:
+      case CallKitIncomingAction.timeout:
+      case null:
         break;
     }
 
     /// update ios callkit pop-up display state
-    if (event?.event == Event.actionCallIncoming) {
+    if (callKitEvent?.action == CallKitIncomingAction.incoming) {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(true);
-    } else if (event?.event == Event.actionCallDecline ||
-        event?.event == Event.actionCallTimeout ||
-        event?.event == Event.actionCallEnded ||
-        event?.event == Event.actionCallAccept) {
+    } else if (callKitEvent?.action == CallKitIncomingAction.decline ||
+        callKitEvent?.action == CallKitIncomingAction.timeout ||
+        callKitEvent?.action == CallKitIncomingAction.ended ||
+        callKitEvent?.action == CallKitIncomingAction.accept) {
       ZegoCallKitBackgroundService().setIOSCallKitCallingDisplayState(false);
     }
   }

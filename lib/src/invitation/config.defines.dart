@@ -22,22 +22,22 @@ class ZegoCallingBuilderInfo {
   final String customData;
 }
 
-typedef ZegoCallingBackgroundBuilder = Widget? Function(
-  BuildContext context,
-  Size size,
-  ZegoCallingBuilderInfo info,
-);
+typedef ZegoCallingBackgroundBuilder =
+    Widget? Function(
+      BuildContext context,
+      Size size,
+      ZegoCallingBuilderInfo info,
+    );
 
-typedef ZegoCallingForegroundBuilder = Widget? Function(
-  BuildContext context,
-  Size size,
-  ZegoCallingBuilderInfo info,
-);
+typedef ZegoCallingForegroundBuilder =
+    Widget? Function(
+      BuildContext context,
+      Size size,
+      ZegoCallingBuilderInfo info,
+    );
 
-typedef ZegoCallingPageBuilder = Widget? Function(
-  BuildContext context,
-  ZegoCallingBuilderInfo info,
-);
+typedef ZegoCallingPageBuilder =
+    Widget? Function(BuildContext context, ZegoCallingBuilderInfo info);
 
 /// Button UI configuration class for button visibility, size, icons, and styling.
 class ZegoCallButtonUIConfig {
@@ -67,9 +67,8 @@ class ZegoCallButtonUIConfig {
   }
 }
 
-typedef ZegoCallInvitationNotifyDialogBuilder = Widget Function(
-  ZegoCallInvitationData invitationData,
-);
+typedef ZegoCallInvitationNotifyDialogBuilder =
+    Widget Function(ZegoCallInvitationData invitationData);
 
 /// Invitation popup UI configuration class for displaying invitation popups and custom builders when receiving invitations.
 class ZegoCallInvitationNotifyPopUpUIConfig {
@@ -156,12 +155,12 @@ enum ZegoCallInvitationPermission {
 
 class ZegoCallInvitationPermissions {
   static List<ZegoCallInvitationPermission> get withoutSystemAlertWindow => [
-        ZegoCallInvitationPermission.camera,
-        ZegoCallInvitationPermission.microphone,
-      ];
+    ZegoCallInvitationPermission.camera,
+    ZegoCallInvitationPermission.microphone,
+  ];
   static List<ZegoCallInvitationPermission> get audio => [
-        ZegoCallInvitationPermission.microphone,
-      ];
+    ZegoCallInvitationPermission.microphone,
+  ];
 }
 
 class ZegoCallSystemConfirmDialogInfo extends ZegoCallConfirmDialogInfo {

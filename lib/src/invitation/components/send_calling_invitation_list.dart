@@ -22,6 +22,7 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 /// In the [onPressed] callback, send a call invitation.
 void showCallingInvitationListSheet(
   BuildContext context, {
+
   /// Members waiting to be selected (not in a call, not invited)
   required List<ZegoCallUser> waitingSelectUsers,
 
@@ -55,7 +56,8 @@ void showCallingInvitationListSheet(
   showModalBottomSheet(
     context: context,
     barrierColor: ZegoUIKitDefaultTheme.viewBarrierColor,
-    backgroundColor: backgroundColor ??
+    backgroundColor:
+        backgroundColor ??
         ZegoUIKitDefaultTheme.viewBackgroundColor.withValues(alpha: 0.6),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -174,18 +176,12 @@ class _ZegoSendCallingInvitationListState
         waitingSelectUsers.add(waitingSelectUser);
       }
     }
-    selectedUsers = [
-      ...invitingWaitingSelectUsers,
-      ...widget.selectedUsers,
-    ];
+    selectedUsers = [...invitingWaitingSelectUsers, ...widget.selectedUsers];
 
     if (widget.defaultChecked) {
       userSelectedStatusNotifier.value = waitingSelectUsers.asMap().map(
-            (key, user) => MapEntry(
-              user.id,
-              true,
-            ),
-          );
+        (key, user) => MapEntry(user.id, true),
+      );
     } else {
       userSelectedStatusNotifier.value = {};
     }
@@ -218,11 +214,13 @@ class _ZegoSendCallingInvitationListState
               children: [
                 popUpTitle(height: titleHeight),
                 userListView(
-                    height: totalHeight -
-                        titleHeight -
-                        controlsHeight -
-                        2 * padding -
-                        2),
+                  height:
+                      totalHeight -
+                      titleHeight -
+                      controlsHeight -
+                      2 * padding -
+                      2,
+                ),
                 controls(height: controlsHeight),
               ],
             ),
@@ -251,7 +249,8 @@ class _ZegoSendCallingInvitationListState
                 Navigator.of(context).pop();
               },
               iconSize: 20,
-              icon: widget.popUpBackIcon ??
+              icon:
+                  widget.popUpBackIcon ??
                   const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
@@ -263,7 +262,8 @@ class _ZegoSendCallingInvitationListState
             child: Center(
               child: Text(
                 widget.popUpTitle ?? 'Invitees',
-                style: widget.popUpTitleStyle ??
+                style:
+                    widget.popUpTitleStyle ??
                     const TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
@@ -305,27 +305,20 @@ class _ZegoSendCallingInvitationListState
           border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.all(Radius.circular(8.0.zR)),
         ),
-        child: const Center(
-          child: Icon(Icons.call, color: Colors.white),
-        ),
+        child: const Center(child: Icon(Icons.call, color: Colors.white)),
       ),
     );
   }
 
   Widget userListView({required double height}) {
-    final allUsers = [
-      ...waitingSelectUsers,
-      ...selectedUsers,
-    ];
+    final allUsers = [...waitingSelectUsers, ...selectedUsers];
     final checkedUserIDs = selectedUsers.map((e) => e.id).toList();
 
     var listUsers = <ZegoCallUser>[];
     if (null != widget.userSort) {
       listUsers = widget.userSort!.call(allUsers);
     } else {
-      allUsers.sort(
-        (l, r) => l.name.compareTo(r.name),
-      );
+      allUsers.sort((l, r) => l.name.compareTo(r.name));
       listUsers = allUsers;
     }
 
@@ -395,7 +388,6 @@ class _ZegoSendCallingInvitationListState
                     user.id: value!,
                   };
                 }
-
               /// disable
               : null,
           shape: RoundedRectangleBorder(
@@ -425,7 +417,7 @@ class _ZegoSendCallingInvitationListState
     final targetSize = size ?? Size(72.zR, 72.zR);
     return ValueListenableBuilder(
       valueListenable: ZegoUIKitUserPropertiesNotifier(user),
-      builder: (context, _, __) {
+      builder: (context, _, _) {
         return Container(
           width: targetSize.width,
           height: targetSize.height,
@@ -434,7 +426,8 @@ class _ZegoSendCallingInvitationListState
             borderRadius: BorderRadius.circular(8.zR),
             shape: BoxShape.rectangle,
           ),
-          child: avatarBuilder?.call(context, targetSize, user, {}) ??
+          child:
+              avatarBuilder?.call(context, targetSize, user, {}) ??
               circleName(context, targetSize, user),
         );
       },

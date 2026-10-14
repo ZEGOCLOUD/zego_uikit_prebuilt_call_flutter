@@ -13,8 +13,9 @@ class ZegoCallControllerPrivateImpl {
   /// Whether the call hang-up operation is in progress
   /// such as clicking the close button in the upper right corner or calling the `hangUp` function of the controller.
   /// If it is not handled completely, it is considered as in progress.
-  final ValueNotifier<bool> isHangUpRequestingNotifier =
-      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isHangUpRequestingNotifier = ValueNotifier<bool>(
+    false,
+  );
 
   /// ZegoUIKitPrebuiltCall's config
   ZegoUIKitPrebuiltCallConfig? get prebuiltConfig => _prebuiltConfig;
@@ -68,7 +69,8 @@ class ZegoCallControllerPrivateImpl {
     final key = DateTime.now().millisecondsSinceEpoch;
     _popUpManager?.addAPopUpSheet(key);
 
-    final dialogInfo = _prebuiltConfig?.hangUpConfirmDialog.info ??
+    final dialogInfo =
+        _prebuiltConfig?.hangUpConfirmDialog.info ??
         ZegoCallHangUpConfirmDialogInfo();
     return showAlertDialog(
       event.context,
@@ -78,7 +80,8 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.cancelButtonName,
-            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
+            style:
+                _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
                 TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
           ),
           onPressed: () {
@@ -107,7 +110,8 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.confirmButtonName,
-            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
+            style:
+                _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
                 TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {

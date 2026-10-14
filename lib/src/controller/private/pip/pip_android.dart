@@ -48,11 +48,8 @@ class ZegoCallControllerPIPAndroid implements ZegoCallControllerPIPInterface {
     var status = ZegoPiPStatus.unavailable;
     try {
       status = (await _private.floating.enable(
-        ImmediatePiP(
-          aspectRatio: Rational(aspectWidth, aspectHeight),
-        ),
-      ))
-          .toZego();
+        ImmediatePiP(aspectRatio: Rational(aspectWidth, aspectHeight)),
+      )).toZego();
     } catch (e) {
       ZegoLoggerService.logInfo(
         'enable exception:${e.toString()}',
@@ -135,10 +132,7 @@ class ZegoCallControllerPIPImplPrivateAndroid {
 
     this.config = config;
 
-    ZegoUIKitPrebuiltCallController()
-        .minimize
-        .private
-        .isMinimizingNotifier
+    ZegoUIKitPrebuiltCallController().minimize.private.isMinimizingNotifier
         .addListener(onMinimizeStateChanged);
 
     subscription = floating.pipStatusStream.listen(onPIPStatusUpdated);
@@ -181,11 +175,8 @@ class ZegoCallControllerPIPImplPrivateAndroid {
 
     try {
       return (await floating.enable(
-        OnLeavePiP(
-          aspectRatio: Rational(aspectWidth, aspectHeight),
-        ),
-      ))
-          .toZego();
+        OnLeavePiP(aspectRatio: Rational(aspectWidth, aspectHeight)),
+      )).toZego();
     } catch (e) {
       ZegoLoggerService.logWarn(
         'enableWhenBackground, '

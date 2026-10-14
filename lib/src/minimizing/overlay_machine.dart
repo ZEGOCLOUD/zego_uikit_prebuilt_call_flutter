@@ -13,8 +13,8 @@ import 'package:zego_uikit_prebuilt_call/src/controller.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/defines.dart';
 
 /// @nodoc
-typedef ZegoCallMiniOverlayMachineStateChanged = void Function(
-    ZegoCallMiniOverlayPageState);
+typedef ZegoCallMiniOverlayMachineStateChanged =
+    void Function(ZegoCallMiniOverlayPageState);
 
 /// @nodoc
 class ZegoCallMiniOverlayMachine {
@@ -53,7 +53,8 @@ class ZegoCallMiniOverlayMachine {
   }
 
   void removeListenStateChanged(
-      ZegoCallMiniOverlayMachineStateChanged listener) {
+    ZegoCallMiniOverlayMachineStateChanged listener,
+  ) {
     _onStateChangedListeners.remove(listener);
 
     ZegoLoggerService.logInfo(
@@ -84,10 +85,12 @@ class ZegoCallMiniOverlayMachine {
 
     _stateIdle = _machine.newState(ZegoCallMiniOverlayPageState.idle);
     _stateInCall = _machine.newState(ZegoCallMiniOverlayPageState.inCall);
-    _stateInCallMinimized =
-        _machine.newState(ZegoCallMiniOverlayPageState.inCallMinimized);
-    _stateInvitingMinimized =
-        _machine.newState(ZegoCallMiniOverlayPageState.invitingMinimized);
+    _stateInCallMinimized = _machine.newState(
+      ZegoCallMiniOverlayPageState.inCallMinimized,
+    );
+    _stateInvitingMinimized = _machine.newState(
+      ZegoCallMiniOverlayPageState.invitingMinimized,
+    );
 
     // Set default state
     _machine.current = _stateIdle;
@@ -120,14 +123,26 @@ class ZegoCallMiniOverlayMachine {
 
   void startDurationTimer() {
     final durationConfig = ZegoUIKitPrebuiltCallController
-        .instance.minimize.private.minimizeData?.inCall?.config.duration;
+        .instance
+        .minimize
+        .private
+        .minimizeData
+        ?.inCall
+        ?.config
+        .duration;
     final isVisible = durationConfig?.isVisible ?? true;
     if (!isVisible) {
       return;
     }
 
-    _durationStartTime = ZegoUIKitPrebuiltCallController.instance.minimize
-            .private.minimizeData?.inCall?.durationStartTime ??
+    _durationStartTime =
+        ZegoUIKitPrebuiltCallController
+            .instance
+            .minimize
+            .private
+            .minimizeData
+            ?.inCall
+            ?.durationStartTime ??
         DateTime.now();
     _durationNotifier.value = DateTime.now().difference(_durationStartTime!);
 
