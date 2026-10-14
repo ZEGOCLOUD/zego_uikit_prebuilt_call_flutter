@@ -28,7 +28,8 @@ pubspec_overrides.yaml
 .idea/
 .omc/
 .serena/
-example/
+example/android/.gradle/
+example/android/.settings/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line

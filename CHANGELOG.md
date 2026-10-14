@@ -17,7 +17,7 @@
 
 ## 4.24.4
 
-- Support [Call Protocol Tool](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter/tree/master/tools/zim_protocol_inspector.html) to generate and inspect ZIM call invitation protocol data in normal and advanced modes.
+- Support [Call Protocol Tool](https://github.com/ZEGOCLOUD/zego_uikit_prebuilt_call_flutter/tree/master/tool/zim_protocol_inspector.html) to generate and inspect ZIM call invitation protocol data in normal and advanced modes.
 
 ## 4.24.3
 
