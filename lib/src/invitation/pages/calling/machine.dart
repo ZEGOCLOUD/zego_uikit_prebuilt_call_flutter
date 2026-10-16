@@ -45,7 +45,40 @@ class ZegoCallingMachine {
   late sm.State<CallingState> stateCallingWithVideo;
   late sm.State<CallingState> stateOnlineAudioVideo;
 
-  bool isPagePushed = false;
+  bool _isPagePushed = false;
+
+  /// Whether the calling page currently owns the navigator route.
+  bool get isPagePushed => _isPagePushed;
+
+  /// Pushes [route] as the calling page, guarding against a second push.
+  ///
+  /// The flag is raised before `Navigator.push` rather than from the page's
+  /// `initState`, so a state transition that happens between the push and the
+  /// first frame cannot stack a second calling page. It is lowered when the
+  /// route is done, which also covers a route that is removed before it ever
+  /// gets mounted.
+  ///
+  /// Returns whether the route was pushed.
+  bool pushCallingPage({
+    required NavigatorState navigator,
+    required MaterialPageRoute<void> route,
+  }) {
+    if (_isPagePushed) {
+      return false;
+    }
+
+    _isPagePushed = true;
+    try {
+      navigator.push(route);
+      route.completed.then((_) {
+        _isPagePushed = false;
+      });
+      return true;
+    } catch (_) {
+      _isPagePushed = false;
+      rethrow;
+    }
+  }
 
   void init() {
     ZegoLoggerService.logInfo(
@@ -109,6 +142,23 @@ class ZegoCallingMachine {
       return;
     }
 
+    /// Capture the participants for this invitation before pushing. The page
+    /// builder may run again while the route is alive (a rebuild, or a restore
+    /// from the minimized overlay), and by then `invitationData` can already
+    /// have been cleared by a reject, cancel or timeout.
+    final inviter = pageManager.invitationData.inviter;
+    if (inviter == null) {
+      ZegoLoggerService.logInfo(
+        'entry without an inviter, skip pushing the calling page',
+        tag: 'call-invitation',
+        subTag: 'machine',
+      );
+      return;
+    }
+    final invitees = List<ZegoUIKitUser>.of(
+      pageManager.invitationData.invitees,
+    );
+
     //
     // 如果当前是最小化状态，记录日志但不阻止进入通话界面
     if (ZegoCallMiniOverlayPageState.invitingMinimized ==
@@ -134,21 +184,20 @@ class ZegoCallingMachine {
         subTag: 'machine, Navigator',
       );
       final currentContext = callInvitationData.contextQuery?.call();
-      Navigator.of(currentContext!).push(
-        MaterialPageRoute(
+      pushCallingPage(
+        navigator: Navigator.of(currentContext!),
+        route: MaterialPageRoute<void>(
           builder: (context) => ZegoCallingPage(
             pageManager: pageManager,
             callInvitationData: callInvitationData,
-            inviter: pageManager.invitationData.inviter!,
-            invitees: pageManager.invitationData.invitees,
+            inviter: inviter,
+            invitees: invitees,
             onInitState: () {
               ZegoLoggerService.logInfo(
                 'push from onCallingEntry, onInitState',
                 tag: 'call',
                 subTag: 'machine, Navigator',
               );
-
-              isPagePushed = true;
             },
             onDispose: () {
               ZegoLoggerService.logInfo(
@@ -156,8 +205,6 @@ class ZegoCallingMachine {
                 tag: 'call',
                 subTag: 'machine, Navigator',
               );
-
-              isPagePushed = false;
             },
           ),
         ),
